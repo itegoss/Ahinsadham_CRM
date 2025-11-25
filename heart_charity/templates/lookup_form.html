@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .main-bg {
+        background-color: #eef8ef;
+        border-radius: 20px;
+        padding: 30px;
+    }
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #176b2c;
+        margin-bottom: 10px;
+    }
+    .custom-card {
+        background: #f6fff7;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    .custom-input {
+        height: 45px;
+        border-radius: 8px;
+        border: 1px solid #c8e6c9;
+        background: white;
+    }
+</style>
+
+<div class="container mt-4 main-bg">
+    <div class="custom-card">
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Page Title -->
+        <h2 class="text-center fw-bold" style="color: #1f7a3e;">
+            {% if lookup %} Update Lookup {% else %} Add Lookup {% endif %}
+        </h2>
+        <p class="text-center text-muted mb-4">Please fill in the required details below</p>
+
+        <!-- Section Title -->
+        <div class="section-title mt-4">Lookup Details</div>
+        <hr>
+
+        <!-- Form -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Lookup Name -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Lookup Name</label>
+                <input 
+                    type="text"
+                    name="lookup_name"
+                    class="form-control custom-input shadow-none"
+                    placeholder="Enter Lookup Name"
+                    value="{{ lookup_name|default:'' }}"
+                    required
+                >
+            </div>
+
+            <!-- Lookup Type -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Lookup Type</label>
+                <select 
+                    name="lookup_type"
+                    class="form-control custom-input shadow-none"
+                    required
+                >
+                    <option value="">-- Select Lookup Type --</option>
+
+                    {% for t in lookup_types %}
+                        <option value="{{ t.id }}"
+                            {% if lookup_type_id == t.id|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ t.type_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
+                    <i class="bi bi-save"></i> Submit
+                </button>
+
+                <a href="{% url 'welcome' %}?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
+                    ← Back
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
