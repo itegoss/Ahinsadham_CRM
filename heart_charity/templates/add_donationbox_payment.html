@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Donation Box Payment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      width: 420px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    input[readonly] {
+      background: #f8f8f8;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .expired-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.95);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .expired-overlay h3 {
+      color: red;
+      margin-bottom: 10px;
+    }
+
+    .expired-overlay p {
+      color: #555;
+    }
+
+    .timer {
+      text-align: right;
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Add Donation Box Payment</h2>
+
+    <form id="donationForm" method="POST">
+      {% csrf_token %}
+
+      <!-- Select Donation Box Owner -->
+      <label for="owner_name">Donation Box Owner</label>
+      <select name="owner_name" id="owner_name" required>
+        <option value="">-- Select Owner --</option>
+        {% for owner in owners %}
+          <option value="{{ owner.id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Select Donation Box (Foreign Key) -->
+      <label for="donation_box">Donation Box</label>
+      <select name="donation_box" id="donation_box" required>
+        <option value="">-- Select Donation Box --</option>
+        {% for box in donation_boxes %}
+          <option value="{{ box.donation_id }}">{{ box.donation_name }} (ID: {{ box.donation_id }})</option>
+        {% endfor %}
+      </select>
+
+      <!-- Amount Field -->
+      <label for="amount">Amount (₹)</label>
+      <input type="number" step="0.01" name="amount" id="amount" required>
+
+      <!-- Payment Method -->
+      <label for="payment_method">Payment Method</label>
+      <select name="payment_method" id="payment_method" required>
+        <option value="">-- Select Method --</option>
+        {% for key, val in payment_methods %}
+          <option value="{{ key }}">{{ val }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Date & Time -->
+      <label for="created_at">Date & Time</label>
+      <input type="text" id="created_at" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly>
+
+      <!-- Countdown Timer -->
+      <div class="timer" id="timer">Form expires in: 60s</div>
+
+      <button type="submit" id="submitButton">Save Payment</button>
+    </form>
+
+    <!-- Overlay for Session Expiry -->
+    <div class="expired-overlay" id="expiredOverlay">
+      <h3>⏰ Session Expired</h3>
+      <p>Your form session has expired. Please reopen the form to submit again.</p>
+    </div>
+  </div>
+
+  <script>
+    let timeLeft = 60; // 1 minute countdown
+    const timerDisplay = document.getElementById("timer");
+    const form = document.getElementById("donationForm");
+    const overlay = document.getElementById("expiredOverlay");
+
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerDisplay.innerText = `Form expires in: ${timeLeft}s`;
+
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        expireForm();
+      }
+    }, 1000);
+
+    function expireForm() {
+      // Disable all form fields without refreshing
+      const inputs = form.querySelectorAll("input, select, button");
+      inputs.forEach(i => i.disabled = true);
+      overlay.style.display = "flex"; // show overlay message
+    }
+  </script>
+</body>
+</html>
