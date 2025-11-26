@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-<<<<<<< HEAD
 from django.utils import timezone
-=======
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 
 from django.conf import settings  # make sure you import this
@@ -14,7 +11,6 @@ class Module(models.Model):
     def __str__(self):
         return self.module_name
 
-<<<<<<< HEAD
 # from django.db import models
 # from django.contrib.auth.models import User
 
@@ -30,29 +26,12 @@ class UserModuleAccess(models.Model):
     description = models.TextField(blank=True, null=True)
 
     # Permissions for this role
-=======
-from django.db import models
-from django.contrib.auth.models import User
-
-class Module(models.Model):
-    module_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.module_name
-
-
-class UserModuleAccess(models.Model):
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     can_access = models.BooleanField(default=False)
     can_add = models.BooleanField(default=False)
     can_edit = models.BooleanField(default=False)
     can_delete = models.BooleanField(default=False)
     can_view = models.BooleanField(default=False)
 
-<<<<<<< HEAD
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_created')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_updated')
@@ -83,31 +62,6 @@ class UserRole(models.Model):
 
 gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 
-=======
-    class Meta:
-        unique_together = ('module', 'role')
-
-    def __str__(self):
-        return f"{self.role or 'No Role'} - {self.module.module_name}"
-
-
-
-from django.contrib.auth.models import User
-from django.db import models
-
-class UserRole(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.ForeignKey(UserModuleAccess,on_delete=models.SET_NULL,null=True,blank=True,related_name='user_roles')
-
-    def __str__(self):
-        return f"{self.user.username} - {self.role.role.name if self.role and self.role.role else 'No Role'}"
-
-from django.db import models
-from django.contrib.auth.models import User
-from datetime import datetime, date
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 class DonorVolunteer(models.Model):
 
     BLOOD_GROUP_CHOICES = [
@@ -255,111 +209,6 @@ class Lookup(models.Model):
     def __str__(self):
         return f"{self.lookup_name} ({self.lookup_type.type_name})"
 
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from django.utils import timezone
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-
-class Donation(models.Model):
-
-    # 🔗 Multi-donor support — ManyToMany
-    donors = models.ManyToManyField(
-        'DonorVolunteer',
-        limit_choices_to={'person_type__lookup_name': 'Donor'},
-        related_name='donations'
-    )
-
-    # 💰 Donation Lookup Fields (NOW FIXED)
-    donation_mode = models.ForeignKey(
-        Lookup, on_delete=models.SET_NULL, null=True, related_name='donation_modes'
-    )
-    payment_method = models.ForeignKey(
-        Lookup, on_delete=models.SET_NULL, null=True, related_name='payment_methods'
-    )
-    payment_status = models.ForeignKey(
-        Lookup, on_delete=models.SET_NULL, null=True, related_name='payment_statuses'
-    )
-    donation_category = models.ForeignKey(
-        Lookup, on_delete=models.SET_NULL, null=True, related_name='donation_categories'
-    )
-
-    # 💳 Payment Info
-    transaction_id = models.CharField(max_length=50, blank=True, null=True)
-
-    # 🧾 Receipt
-    receipt_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
-
-    def __str__(self):
-        donors_list = ", ".join(
-            [f"{d.first_name} {d.last_name}" for d in self.donors.all()]
-        )
-        return f"Donation by {donors_list}"
-
-
-# 🔹 Auto-generate unique receipt ID before saving
-@receiver(pre_save, sender=Donation)
-def generate_receipt_id(sender, instance, **kwargs):
-    if not instance.receipt_id:
-        prefix = "RCPT"
-        year = timezone.now().year
-        last_entry = Donation.objects.filter(receipt_id__startswith=f"{prefix}-{year}-").order_by('-id').first()
-
-        if last_entry and last_entry.receipt_id:
-            last_number = int(last_entry.receipt_id.split('-')[-1])
-            new_number = last_number + 1
-        else:
-            new_number = 1
-
-        instance.receipt_id = f"{prefix}-{year}-{new_number:04d}"
-
-
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 # models.py
 # from django.contrib.auth.models import User
 # from django.db import models
@@ -495,7 +344,6 @@ class Employee(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.middle_name or ''} {self.last_name}".strip()
-<<<<<<< HEAD
 
 
 
@@ -608,5 +456,3 @@ def generate_receipt_id(sender, instance, **kwargs):
             new_number = 1
 
         instance.receipt_id = f"{prefix}-{year}-{new_number:04d}"
-=======
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f

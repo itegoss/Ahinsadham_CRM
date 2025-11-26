@@ -28,19 +28,6 @@
 <div class="container mt-4 main-bg">
     <div class="custom-card">
 
-<<<<<<< HEAD
-=======
-        <!-- 🔔 Message Alerts -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-2" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         <!-- Page Title -->
         <h2 class="text-center fw-bold" style="color: #1f7a3e;">
             {% if lookup_type %}
@@ -71,7 +58,6 @@
                 >
             </div>
 
-<<<<<<< HEAD
 
             <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
@@ -84,23 +70,8 @@
 
 
       </div>
-=======
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-                    <i class="bi bi-save"></i> Submit
-                </button>
-
-                <a href="{% url 'welcome' %}?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
-                    ← Back
-                </a>
-            </div>
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         </form>
 
     </div>
 </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 {% endblock %}
