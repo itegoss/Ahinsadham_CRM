@@ -31,6 +31,19 @@
 <div class="container mt-4 main-bg">
     <div class="custom-card">
 
+<<<<<<< HEAD
+=======
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         <!-- Page Title -->
         <h2 class="text-center fw-bold" style="color: #1f7a3e;">
             {% if lookup %} Update Lookup {% else %} Add Lookup {% endif %}
@@ -53,7 +66,11 @@
                     name="lookup_name"
                     class="form-control custom-input shadow-none"
                     placeholder="Enter Lookup Name"
+<<<<<<< HEAD
                     value="{{ lookup.lookup_name|default:'' }}"
+=======
+                    value="{{ lookup_name|default:'' }}"
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
                     required
                 >
             </div>
@@ -70,7 +87,11 @@
 
                     {% for t in lookup_types %}
                         <option value="{{ t.id }}"
+<<<<<<< HEAD
                             {% if lookup and lookup.lookup_type.id == t.id %}
+=======
+                            {% if lookup_type_id == t.id|stringformat:"s" %}
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
                                 selected
                             {% endif %}
                         >
@@ -80,6 +101,7 @@
                 </select>
             </div>
 
+<<<<<<< HEAD
 
             <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
@@ -89,8 +111,25 @@
           ← Back
         </a>
       </div>
+=======
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
+                    <i class="bi bi-save"></i> Submit
+                </button>
+
+                <a href="{% url 'welcome' %}?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
+                    ← Back
+                </a>
+            </div>
+
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         </form>
 
     </div>
 </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+
+{% endblock %}
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f

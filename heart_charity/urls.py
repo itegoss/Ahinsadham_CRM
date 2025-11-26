@@ -3,8 +3,12 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
+<<<<<<< HEAD
 
     path('login/', views.signin_view, name='login'),
+=======
+    path("signin", views.signin_view, name="signin"),
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     path("logout", views.logout_view, name="logout"),
     path("request_password_reset/", views.request_password_reset, name="request_password_reset"),
     path("reset_password/<uname>/", views.reset_password, name="reset_password"),
@@ -15,9 +19,14 @@ urlpatterns = [
     path('access_control/', views.access_control, name='access_control'),
     path('check_module_access/<int:user_id>', views.check_module_access, name='check_module_access'),
     path('search/', views.search_users, name='search_users'),
+<<<<<<< HEAD
     path('add_donor_volunteer/', views.add_donor_volunteer, name='add_donor_volunteer'),
 path('adddonation',views.adddonation,name='adddonation'),
     path('donation-list/', views.donation_list, name='donation-list'),
+=======
+    path('donor-volunteer-register/', views.donor_volunteer_register, name='donor_volunteer_register'),
+    path('add_donor_volunteer/', views.add_donor_volunteer, name='add_donor_volunteer'),
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     path('download-donor-report/', views.download_donor_report, name='download_donor_report'),
     path('edit_user/<int:id>/', views.edit_user, name='edit_user'),
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
@@ -28,13 +37,18 @@ path('adddonation',views.adddonation,name='adddonation'),
     path('all_donations/', views.all_donations, name='all_donations'),  # ✅ Add this
     path('donation-boxes/', views.donationbox_list, name='donationbox_list'),
     path('download_filtered_donations/', views.download_filtered_donations, name='download_filtered_donations'),
+<<<<<<< HEAD
     path('donation_list',views.donation_list,name='donation_list'),
+=======
+    path('adddonation',views.adddonation,name='adddonation'),
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
     path('search_roles/', views.search_roles, name='search_roles'),
     path('search_donor_volunteer/', views.search_donor_volunteer, name='search_donor_volunteer'),
     path('search_donation/', views.search_donation, name='search_donation'),
     path('manage_user_roles/', views.manage_user_roles, name='manage_user_roles'),
     path('assign_role/', views.assign_role, name='assign_role'),
+<<<<<<< HEAD
 
 
 
@@ -46,6 +60,16 @@ path('adddonation',views.adddonation,name='adddonation'),
 path('user-access-list/', views.user_access_list, name='user_access_list'),
 
 path('search_id/', views.search_id, name='search_id'),
+=======
+    path('download_filtered_users/', views.download_filtered_users, name='download_filtered_users'),
+    path('download_filtered_user_access/', views.download_filtered_user_access, name='download_filtered_user_access'),
+    path('download_filtered_donor_volunteers/', views.download_filtered_donor_volunteers, name='download_filtered_donor_volunteers'),
+    path('donor_volunteer_register', views.donor_volunteer_register, name='donor_volunteer_register'),
+    path('user-access-list/', views.user_access_list, name='user_access_list'),
+    path('donor-volunteer/list/', views.donor_volunteer_list, name='donor_volunteer_list'),
+
+    path('search_id/', views.search_id, name='search_id'),
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     path('search-users/', views.search_users, name='search_users'),
     path('search-firstname/', views.searchfirstname, name='searchfirstname'),
     path('search-lastname/', views.searchlastname, name='searchlastname'),
@@ -55,6 +79,7 @@ path('search_id/', views.search_id, name='search_id'),
     path('search-superuser/', views.searchsuperuser, name='searchsuperuser'),
     path('search-lastlogin/', views.search_lastlogin, name='search_lastlogin'),
     path('searchdate/', views.searchdate, name='searchdate'),
+<<<<<<< HEAD
     path('show_lookup_data/', views.show_lookup_data, name='show_lookup_data'),
 
     path('lookup_type_create/', views.lookup_type_create, name='lookup_type_create'),
@@ -64,4 +89,11 @@ path('search_id/', views.search_id, name='search_id'),
 
 
 
+=======
+    path('lookup_type_create/', views.lookup_type_create, name='lookup_type_create'),
+    path("lookup/create/", views.lookup_create, name="lookup_create"),
+    path('donors/', views.donor_volunteer_list, name='donor_volunteer_list'),
+    path('show_lookup_data/', views.show_lookup_data, name='show_lookup_data'),
+    path('donor-success/', views.donor_success, name='donor_success'),
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 ]

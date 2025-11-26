@@ -57,11 +57,19 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+<<<<<<< HEAD
         'NAME': 'Ahinsadham',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+=======
+        'NAME': 'ahin',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '5433',
+>>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     }
 }
 
