@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<style>
+    /* Card Style */
+    .card {
+        background: #f2fff4 !important; /* soft light green */
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    
+
+    /* Input & Select Fields */
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #b5d7b8;
+        transition: 0.2s ease-in-out;
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 6px rgba(13, 122, 52, 0.3);
+    }
+
+    /* Labels */
+    .form-label {
+        font-weight: 600;
+    }
+
+    /* Submit Button */
+    .btn-success {
+        background: #0d7a34;
+        border: none;
+        border-radius: 8px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+
+    .btn-success:hover {
+        background: #0a5a27;
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 10px rgba(13, 122, 52, 0.3);
+    }
+
+    /* Section Divider */
+    hr {
+        border-top: 2px solid #b5d7b8;
+        margin-top: 6px;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header text-white">
+            <h3 class="mb-0">Add Donor</h3>
+        </div>
+        <div class="card-body">
+
+        <form method="POST" action="{% url 'add_donor_volunteer' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- ========================= PERSONAL DETAILS ========================= -->
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Middle Name</label>
+                        <input type="text" name="middle_name" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-select" required>
+                            <option value="">Select</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+          <label class="form-label fw-semibold">Date of Birth</label>
+          <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Age</label>
+          <input type="number" id="age" name="age" class="form-control" readonly>
+        </div>
+
+
+                    <div class="col-md-4">
+            <label class="form-label">Blood Group</label>
+            <select name="blood_group" class="form-select" required>
+                <option value="">Select</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+            </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">WhatsApp Number</label>
+                        <input type="text" name="whatsapp_number" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Donor Box ID</label>
+                        <input type="text" name="donor_box_id" class="form-control">
+                    </div>
+
+                </div>
+
+                <!-- ========================= ADDRESS DETAILS ========================= -->
+                <h5 class="mt-4 fw-bold text-primary">Address Details</h5>
+                <hr>
+<div class="col-md-4">
+          <label class="form-label fw-semibold">Native Place</label>
+          <input type="text" id="native_place" name="native_place" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Native Postal Code</label>
+          <input type="text" id="native_postal_code" name="native_postal_code" class="form-control">
+        </div>
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">House Number</label>
+                        <input type="text" name="house_number" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Building Name</label>
+                        <input type="text" name="building_name" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Landmark</label>
+                        <input type="text" name="landmark" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Area</label>
+                        <input type="text" name="area" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">State</label>
+                        <input type="text" name="state" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Country</label>
+                        <input type="text" name="country" value="India" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Postal Code</label>
+                        <input type="text" name="postal_code" class="form-control" required>
+                    </div>
+
+                </div>
+
+                <!-- ========================= LOOKUP DETAILS ========================= -->
+                <h5 class="mt-4 fw-bold text-primary">Lookup Details</h5>
+                <hr>
+
+                <div class="row g-3">
+
+                   <div class="col-md-6">
+    <label class="form-label">Person Type</label>
+    <select name="person_type" class="form-select">
+        <option value="">Select</option>
+        {% for option in person_type_options %}
+            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+        {% endfor %}
+
+    </select>
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">ID Type</label>
+    <select name="id_type" class="form-select">
+        <option value="">Select</option>
+        {% for option in id_type_options %}
+            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
+                </div>
+
+                <!-- ========================= ID & PAN DETAILS ========================= -->
+                <h5 class="mt-4 fw-bold text-primary">ID & PAN Details</h5>
+                <hr>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+    <label class="form-label">ID Number</label>
+<input type="text" name="id_number" class="form-control" placeholder="Enter ID Number">
+</div>
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">ID Proof Image</label>
+                        <input type="file" name="id_proof_image" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">PAN Number</label>
+                        <input type="text" name="pan_number" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">PAN Card Image</label>
+                        <input type="file" name="pan_card_image" class="form-control">
+                    </div>
+
+                </div>
+
+                <!-- ========================= SUBMIT ========================= -->
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
+                        Submit
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Show Donor Box ID only if type is "Donor-Box-Owner"
+  const personType = document.getElementById("person_type");
+  const donorBoxRow = document.getElementById("donor_box_id_row");
+  if(personType) {
+    personType.addEventListener("change", function() {
+      donorBoxRow.style.display = (this.value === "Donor-Box-Owner") ? "block" : "none";
+    });
+  }
+
+  // Auto-fill age based on DOB
+  const dobInput = document.getElementById("date_of_birth");
+  const ageInput = document.getElementById("age");
+  if(dobInput && ageInput) {
+    dobInput.addEventListener("change", function() {
+      const dob = new Date(this.value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      ageInput.value = age;
+    });
+  }
+});
+</script>
+
+{% endblock %}

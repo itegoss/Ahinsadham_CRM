@@ -1,0 +1,87 @@
+{% load custom_tags %}
+
+<form method="POST" action="{% url 'access_control' %}">
+    {% csrf_token %}
+
+    <!-- TOP ROLE & DESCRIPTION -->
+    <div class="module-card" style="margin-bottom: 20px;">
+        <h3>User Role & Description</h3>
+
+        <!-- ROLE -->
+        <div style="margin-top: 10px;">
+            <label><strong>Role:</strong></label>
+            <input type="text"
+                   name="role_name"
+                   value="{{ user_role|default_if_none:'' }}"
+                   placeholder="Enter user role"
+                   style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div style="margin-top: 10px;">
+            <label><strong>Description:</strong></label>
+            <textarea name="roleDescription"
+                      placeholder="Enter user description"
+                      style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;"
+                      rows="2">{{ user_description|default_if_none:'' }}</textarea>
+        </div>
+    </div>
+
+    <!-- MODULE PERMISSIONS -->
+    {% for module in modules %}
+        {% with perm=user_permissions|get_item:module.id %}
+            <div class="module-card">
+                <div class="module-title">{{ module.module_name }}</div>
+
+                <div class="perm-grid">
+
+                    <!-- REAL ACCESS CHECKBOX (for selecting module) -->
+                    <label class="perm-item">
+                        <input type="checkbox"
+                               name="modules"
+                               value="{{ module.id }}"
+                               {% if perm and perm.can_access %}checked{% endif %}>
+                        Access
+                    </label>
+
+                    <label class="perm-item">
+                        <input type="checkbox"
+                               name="permissions_{{ module.id }}_add"
+                               {% if perm and perm.can_add %}checked{% endif %}>
+                        Create
+                    </label>
+
+                    <label class="perm-item">
+                        <input type="checkbox"
+                               name="permissions_{{ module.id }}_edit"
+                               {% if perm and perm.can_edit %}checked{% endif %}>
+                        Update
+                    </label>
+
+                    <label class="perm-item">
+                        <input type="checkbox"
+                               name="permissions_{{ module.id }}_delete"
+                               {% if perm and perm.can_delete %}checked{% endif %}>
+                        Delete
+                    </label>
+
+                    <label class="perm-item">
+                        <input type="checkbox"
+                               name="permissions_{{ module.id }}_view"
+                               {% if perm and perm.can_view %}checked{% endif %}>
+                        View
+                    </label>
+
+                </div>
+            </div>
+
+            <br>
+        {% endwith %}
+    {% endfor %}
+
+    <!-- SAVE BUTTON -->
+    <button type="submit" class="btn btn-success" 
+            style="margin-top: 15px; padding: 10px 24px; font-size: 16px;">
+        Save
+    </button>
+</form>

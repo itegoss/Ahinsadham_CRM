@@ -1,0 +1,3926 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+
+<style>
+    * {
+      
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+    }
+    
+    .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+    }
+    
+    /* Mobile Header */
+    .mobile-header {
+        display: none;
+        background: #184d61;
+        color: white;
+        padding: 15px;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .mobile-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    
+    /* Sidebar */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
+  color: white;
+  transition: all 0.3s ease;
+  overflow-y: auto;        /* allow scrolling */
+  scrollbar-width: none;   /* hide scrollbar (for Firefox) */
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+    
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .sidebar-toggle {
+        position: absolute;
+        right: -15px;
+        top: 20px;
+        width: 30px;
+        height: 30px;
+        background: #184d61;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .sidebar.collapsed {
+        width: 70px;
+    }
+    
+    .sidebar.collapsed .sidebar-text {
+        display: none;
+    }
+    
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar a:hover, .sidebar a.active {
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border-left: 3px solid white;
+    }
+    
+    .sidebar i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .sidebar.collapsed i {
+        margin-right: 0;
+        font-size: 1.4rem;
+    }
+    
+    /* Main Content */
+    .content {
+        flex: 1;
+        padding: 20px;
+        overflow: auto;
+    }
+    
+    /* .content-header {
+        margin-bottom: 20px;
+    } */
+    
+    .content-header h1 {
+        color: #184d61;
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .content-header p {
+        color: #666;
+    }
+    
+    /* Search Bar */
+   
+    
+    .search-input {
+        width: 100%;
+        padding: 12px 45px 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        font-size: 1rem;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+    
+    .search-input:focus {
+        border-color: #184d61;
+        outline: none;
+        box-shadow: 0 2px 8px rgba(24, 77, 97, 0.2);
+    }
+    
+    .search-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+    
+    /* Tab Content */
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+     .hero-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 50px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    margin-bottom: 50px;
+  }
+
+  .hero-content {
+    max-width: 50%;
+  }
+
+  .hero-title {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #334155;
+    margin-bottom: 16px;
+  }
+
+  .hero-description {
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .hero-button {
+    background-color: #0284c7;
+    color: white;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.25s ease;
+  }
+
+  
+
+  .hero-image {
+    width: 45%;
+    text-align: right;
+  }
+
+  .hero-image img {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+
+  
+    /* Form Styles */
+    .form-container {
+        background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .form-header h2 {
+        color: #184d61;
+        margin-bottom: 5px;
+    }
+    
+    .progress-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .progress-bar::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 0;
+    }
+    
+    .progress-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+    
+    .progress-step-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 5px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    
+    .progress-step.active .progress-step-circle {
+        background: #184d61;
+        color: white;
+    }
+    
+    .progress-step-label {
+        font-size: 0.7rem;
+        color: #666;
+    }
+    
+    .form-step {
+        display: none;
+    }
+    
+    .form-step.active {
+        display: block;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .form-step h5 {
+        color: #184d61;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+    
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        border-color: #184d61;
+        outline: none;
+    }
+    
+    .form-group .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-group .checkbox-group input {
+        width: auto;
+    }
+
+ /* Align buttons (like View Donations) to the right inside their container */
+.button-group {
+  display: flex;
+  justify-content: flex-end;  /* pushes button to right */
+  margin-bottom: 15px;
+  padding-right: 10px;
+}
+
+    
+ .btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+    
+    .btn-primary {
+        background: #184d61;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0d3342;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    
+    /* Placeholder Content */
+    .placeholder-content {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+    }
+    
+    .placeholder-content i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .mobile-header {
+            display: flex;
+            height:70%;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            height: 100vh;
+            z-index: 1000;
+            transition: left 0.3s ease;
+                top: 76px
+        }
+        
+        .sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar.collapsed {
+            width: 250px;
+        }
+        
+        .sidebar.collapsed .sidebar-text {
+            display: inline;
+        }
+        
+        .sidebar-toggle {
+            display: none;
+        }
+        
+        .content {
+            margin-left: 0;
+        }
+        
+        .hero-title {
+            font-size: 1.5rem;
+        }
+        
+        .feature-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-container {
+            padding: 20px 15px;
+        }
+        
+        .progress-step-label {
+            font-size: 0.6rem;
+        }
+        
+        .button-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+          
+    .dashboard-container {
+        display: grid;
+        min-height: 100vh;
+    }
+    
+    }
+
+
+    /* 
+    user table  */
+     table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 14px 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background: #f1f3ff;
+    }
+   /* ==== ACTION BUTTONS ==== */
+td a.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  /* color: #fff; */
+  transition: all 0.25s ease;
+  /* box-shadow: 0 2px 6px rgba(0,0,0,0.1); */
+}
+
+
+
+/* Align top button to right */
+.button-group.top-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  padding-right: 15px;
+}
+
+/* View Donations button styling */
+#viewDonationsBtn {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+#viewDonationsBtn:hover {
+  background-color: #138496;
+  transform: translateY(-2px);
+}
+
+#viewDonationsBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.table-responsive{
+  margin-top: -1% !important;
+}
+
+.card{
+    --bs-card-bg: none !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+h1 {
+    text-align: center;
+    color: #1b5e20;
+    margin-bottom: 30px;
+  }
+
+  h3 {
+    color: #1b5e20;
+    margin-bottom: 15px;
+  }
+
+  /* 📄 Report Form Styling */
+  form {
+    border-radius: 10px;
+   
+  }
+
+  form label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+  }
+
+  form button {
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  
+
+  /* 📊 Table Styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  th, td {
+    padding: 12px 15px;
+  }
+
+  th {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+td {
+    font-size: 12px;
+}
+  tr:nth-child(even) {
+    background-color: #f3f6fc;
+  }
+
+  tr:hover {
+    background-color: #e6ecff;
+    transition: background 0.3s ease;
+  }
+
+
+  /* 🏷 Status Badges */
+  .badge-success {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+
+  .badge-warning {
+    background-color: #ffc107;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+
+  .badge-failed {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+
+  /* 🔙 Back Button */
+  .back-link {
+    display: inline-block;
+    margin-top: 30px;
+    background: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .back-link:hover {
+    background: #495057;
+  }
+
+  .content-header {
+    margin-bottom: 20px;
+    margin-left: 74%;
+}
+
+
+/* Make table header sticky and body scrollable */
+.sticky-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  display: block;
+  max-height: 500px;      /* Height of visible area */
+  overflow-y: auto;       /* Scroll only the body */
+}
+
+/* Sticky header styling */
+.sticky-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Ensure header background is visible when sticky */
+.sticky-table thead th {
+
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Make sure rows display properly */
+.sticky-table tbody tr td {
+  background: #fff;
+}
+
+/* Optional: hover and padding tweaks */
+.sticky-table tbody tr:hover {
+  background-color: #f6fff6;
+}
+
+  /* 📱 Responsive Design */
+  @media (max-width: 768px) {
+    form, table {
+      width: 100%;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px 8px;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+   /* Form Styles */
+    .form-container {
+        background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .form-header h2 {
+        color: #184d61;
+        margin-bottom: 5px;
+    }
+    
+    .progress-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .progress-bar::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 0;
+    }
+    
+    .progress-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+    
+    .progress-step-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 5px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    
+    .progress-step.active .progress-step-circle {
+        background: #184d61;
+        color: white;
+    }
+    
+    .progress-step-label {
+        font-size: 0.7rem;
+        color: #666;
+    }
+    
+    .form-step {
+        display: none;
+    }
+    
+    .form-step.active {
+        display: block;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .form-step h5 {
+        color: #184d61;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .form-group input, .form-group select, .form-group textarea {
+        width: 50% !important;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+    
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        border-color: #184d61;
+        outline: none;
+    }
+    
+    .form-group .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-group .checkbox-group input {
+        width: auto;
+    }
+
+ /* Align buttons (like View Donations) to the right inside their container */
+.button-group {
+  display: flex;
+  justify-content: flex-end;  /* pushes button to right */
+  margin-bottom: 15px;
+  padding-right: 10px;
+}
+
+    
+ .btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+    
+    .btn-primary {
+        background: #184d61;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0d3342;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    
+    /* Placeholder Content */
+    .placeholder-content {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+    }
+    
+    .placeholder-content i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+   
+
+  
+.download-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.download-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.download-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* 🌿 Input styling — bottom border only */
+.download-group input[type="date"],
+.download-group input[type="text"] {
+  border: none;
+  border-bottom: 2px solid #198754; 
+  padding: 8px 4px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+  background-color: transparent;
+  transition: border-color 0.3s ease;
+}
+
+.download-group input:focus {
+  border-bottom-color: #0f5132; 
+}
+
+/* 🌿 Button style */
+.download-btn {
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-top: 25px;
+}
+
+
+    
+
+/* ✅ Scrollable table wrapper */
+
+/* Make the table wrapper scrollable */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  scroll-behavior: smooth;
+}
+
+/* Keep table wide so scrollbars stay visible */
+.table-scroll-wrapper table {
+  min-width: max-content;
+  width: auto;
+}
+
+.table-scroll-wrapper th,
+.table-scroll-wrapper td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pagination-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+
+
+.card{
+    --bs-card-bg: none !important;
+}
+</style>
+
+<div class="dashboard-container">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <h1>Dashboard</h1>
+        <button class="menu-toggle" id="mobileMenuToggle">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-chevron-left" id="toggleIcon"></i>
+        </div>
+
+{% if user.is_superuser %}
+    <!-- show all modules -->
+     
+        <a class="active" data-tab="default-user">
+        <i class="bi bi-bar-chart-line"></i>
+            <span class="sidebar-text">Dashboard</span>
+        </a>
+        <a class="mdm" data-tab="mdm">
+            <i class="bi bi-table"></i>
+            <span class="sidebar-text">MDM</span>
+        </a>
+        <a class="user" data-tab="user">
+            <i class="bi bi-person"></i>
+            <span class="sidebar-text">User</span>
+        </a>
+        <a class="user" data-tab="roles">
+            <i class="bi bi-shield-lock"></i>
+            <span class="sidebar-text">Roles</span>
+        </a>
+         
+   
+        <a data-tab="Donor/Volunteer Management System">
+            <i class="bi bi-heart"></i>
+            <span class="sidebar-text">Donor/Volunteer</span>
+        </a>
+         <a data-tab="Donation Module">
+            <i class="bi bi-cash-coin"></i>
+            <span class="sidebar-text">Donation Module</span>
+        </a>
+         <a data-tab="Donation box (Daan Peti) & ACH Module">
+            <i class="bi bi-box"></i>
+            <span class="sidebar-text">Donation Box</span>
+        </a>
+        <a data-tab="Employee Management System">
+            <i class="bi bi-people"></i>
+            <span class="sidebar-text">Employee Management System</span>
+        </a>
+        <a data-tab="Timesheet System">
+            <i class="bi bi-clock"></i>
+            <span class="sidebar-text">Timesheet System</span>
+        </a>
+        <a data-tab="Leave Management System">
+            <i class="bi bi-calendar-x"></i>
+            <span class="sidebar-text">Leave Management</span>
+        </a>
+        
+        <a data-tab="Visitor Management System">
+            <i class="bi bi-person-badge"></i>
+            <span class="sidebar-text">Visitor Management</span>
+        </a>
+        <a data-tab="Vendor Management System">
+            <i class="bi bi-truck"></i>
+            <span class="sidebar-text">Vendor Management</span>
+        </a>
+        <a data-tab="Event Management System">
+            <i class="bi bi-calendar-event"></i>
+            <span class="sidebar-text">Event Management</span>
+        </a>
+        <a data-tab="Request Management System">
+            <i class="bi bi-clipboard-check"></i>
+            <span class="sidebar-text">Request Management</span>
+        </a>
+        <a data-tab="Inventory Management System">
+            <i class="bi bi-boxes"></i>
+            <span class="sidebar-text">Inventory Management</span>
+        </a>
+        <a data-tab="Asset Management System">
+            <i class="bi bi-pc-display"></i>
+            <span class="sidebar-text">Asset Management</span>
+        </a>
+        <a data-tab="Fleet Management System">
+            <i class="bi bi-truck"></i>
+            <span class="sidebar-text">Fleet Management</span>
+        </a>
+       
+       
+        <a data-tab="Financial Asset Module">
+            <i class="bi bi-graph-up"></i>
+            <span class="sidebar-text">Financial Asset</span>
+        </a>
+        <a data-tab="Expense Module">
+            <i class="bi bi-receipt"></i>
+            <span class="sidebar-text">Expense Module</span>
+        </a>
+        <a data-tab="Medical Module">
+<i class="fa-solid fa-syringe"></i>
+            <span class="sidebar-text">Medical Module</span>
+        </a>
+        <a data-tab="Rehabilitation Module">
+<i class="bi bi-hand-thumbs-up"></i>
+            <span class="sidebar-text">Rehabilitation</span>
+        </a>
+        <a data-tab="Adoption Module">
+            <i class="bi bi-people-fill"></i>
+            <span class="sidebar-text">Adoption Module</span>
+        </a>
+        <a data-tab="Trees Module">
+            <i class="bi bi-tree"></i>
+            <span class="sidebar-text">Trees Module</span>
+        </a>
+        <a data-tab="Seeds Module">
+            <i class="bi bi-flower1"></i>
+            <span class="sidebar-text">Seeds Module</span>
+        </a>
+
+
+{% elif not user.is_superuser and allowed_modules %}
+    <!-- Non-admin: show only allowed modules -->
+    {% for module_name in allowed_modules %}
+        <a data-tab="{{ module_name }}">{{ module_name }}</a>
+    {% endfor %}
+
+  
+
+{% else %}
+
+<div class="welcome-wrapper">
+    <div class="welcome-card">
+        <h3>Welcome, {{ user.username }}!</h3>
+        <p>You currently do not have admin access.</p>
+    </div>
+</div>
+    <!-- {% if allowed_modules %}
+        {% for module_name in allowed_modules %}
+            <a data-tab="{{ module_name }}">{{ module_name }}</a>
+        {% endfor %}
+    {% else %}
+        <p class="text-danger">No modules assigned yet. Please contact admin.</p>
+    {% endif %} -->
+{% endif %}
+    </div>
+
+<!-- =============Main Content========== -->
+    <div class="content">
+ <div class="tab-content active" id="default-user">
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to Your Dashboard 👋</h1>
+      <p class="hero-subtitle">Your personal control center</p>
+      <p class="hero-description">
+        From managing your profile to customizing your settings, your dashboard gives you quick access to everything you need to stay in control and productive.
+      </p>
+      <!-- <a href="#" class="hero-button">Explore Now</a> -->
+    </div>
+    <div class="hero-image">
+   <img src="{% static 'images/home.png' %}" alt="Dashboard Illustration">
+    </div>
+  </div></div>
+
+<!-- ----------- MDM (Master Data)------------------ -->
+ <div class="tab-content"  id="mdm">
+  <div class="card border-0">
+
+    <!-- 🌈 Navbar-style Header -->
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Master Data</h4>
+    </div>
+
+    <!-- ------------Lookup type table----------- -->
+    <div class="card-body">
+      <h3>Category/Lookup Type</h3>
+      <!-- 🔍 Search Section -->
+<div class="search-container d-flex align-items-center">
+
+  <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
+
+    <!-- Search Input -->
+    <input 
+      type="text" 
+      name="lookup_query"
+      class="form-control search-input me-2"
+      placeholder="🔍 Search..."
+      value="{{ lookup_query|default:'' }}">
+
+    <!-- Clear Button -->
+    {% if lookup_query %}
+      <a href="{% url 'search_lookup_type' %}" class="btn btn-outline-secondary me-2">
+        Clear
+      </a>
+    {% endif %}
+
+    <!-- Download Button -->
+    <!-- {% if lookup_page_obj.object_list %}
+      <a href="?lookup_query={{ lookup_query }}&download=1" class="btn btn-success">
+        Download CSV
+      </a>
+    {% endif %} -->
+
+  </form>
+</div>
+
+
+<!-- <div class="download-container">
+ <form method="GET" action="{% url 'download_filtered_users' %}" class="download-form">
+  <div class="download-group">
+    <label for="search">Search</label>
+    <input type="text" id="search" name="search" placeholder="Search...">
+  </div>
+
+  <div class="download-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" id="start_date" name="start_date">
+  </div>
+
+  <div class="download-group">
+    <label for="end_date">End Date</label>
+    <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit" class="download-btn1">⬇️</button>
+</form>
+</div> -->
+<!-- {% if messages %}
+  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %} -->
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+
+ <!-- 📄 Search Results -->
+      {% if lookup_query %}
+        <h5>Showing results for: "<span ">{{ lookup_query }}</span>"</h5>
+        <hr>
+      {% endif %}
+
+      <!-- 🧍‍♂️ User Table -->
+
+      {% if lookup_page_obj %}
+  <div class="table-responsive scrollable-table1">
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+              <th>Actions</th>
+              <th>ID</th>
+                <th>Type Name</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+  <td>
+  <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  
+  {% if lookup_page_obj.object_list %}
+      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+      </a>
+    {% endif %}
+</td>
+          {% for i in "1234"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
+{% for lt in lookup_page_obj %}
+        <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+                <td>{{ lt.formatted_id }}</td>
+                <td>{{ lt.type_name }}</td>
+                <td>{{ lt.created_by }}</td>
+                <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
+      {% else %}
+  <div class="table-responsive scrollable-table1">
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+               <th>Actions</th>
+              <th>ID</th>
+                <th>Type Name</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+        
+      <td>
+  <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  {% if lookup_page_obj.object_list %}
+      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color: black; text-decoration: none; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+      </a>
+    {% endif %}
+</td>
+          {% for i in "1234"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr> 
+   {% for lu in lookup_page_obj %}
+        <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+                <td>{{ lt.formatted_id }}</td>
+                <td>{{ lt.type_name }}</td>
+                <td>{{ lt.created_by }}</td>
+                <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+</div>
+<!-- ✅ Scroll CSS -->
+<style>
+.scrollable-table {
+  overflow-y: auto;
+  overflow-x: auto; /* Horizontal scroll */
+}
+table th, table td {
+  white-space: nowrap; /* Prevent wrapping */
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #e9f2ff;
+  z-index: 5;
+}
+</style>
+      {% endif %}
+    </div>
+    
+<!-- ✅ LookupType Pagination Controls -->
+<div class="pagination-container text-center">
+  
+  {% if lookup_types_page.has_previous %}
+      <a href="?lt_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+      <a href="?lt_page={{ lookup_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="ltPageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="lt_page"
+      id="ltPageSelect"
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()"
+    >
+      {% for p in lookup_page_obj.paginator.page_range %}
+        <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>
+          {{ p }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if lookup_types_page.has_next %}
+      <a href="?lt_page={{ lookup_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+      <a href="?lt_page={{ lookup_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+
+</div>
+
+
+<!-- ------------Lookup table----------- -->
+
+   <div class="card-body">
+      <h3>Subcategory/Lookup Table</h3>
+      <!-- 🔍 Search Section -->
+    <div class="search-container">
+  <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100" role="search">
+    <input 
+      type="text" 
+      name="sub_lookup_query" 
+      class="form-control search-input me-2 shadow-none" 
+      placeholder="🔍 Search..." 
+      value="{{ sub_lookup_query|default:'' }}">
+    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
+    <!-- {% if sub_lookup_query %}
+      <a href="{% url 'search_lookup_table' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
+    {% endif %} -->
+
+
+     <!-- Download Button -->
+    <!-- {% if lookup_table_obj.object_list %}
+      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" class="btn btn-success">
+        Download CSV
+      </a>
+    {% endif %} -->
+  </form>
+</div>
+
+<!-- {% if messages %}
+  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %} -->
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+
+ <!-- 📄 Search Results -->
+      {% if sub_lookup_query %}
+        <h5>Showing results for: "<span ">{{ sub_lookup_query }}</span>"</h5>
+        <hr>
+      {% endif %}
+
+      <!-- 🧍‍♂️ User Table -->
+
+      {% if lookup_table_obj %}
+  <div class="table-responsive scrollable-table1">
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+                     <th>Actions</th>
+           <th>ID</th>
+                <th>Lookup Name</th>
+                <th>Lookup Type</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+<td>
+  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+ {% if lookup_table_obj.object_list %}
+      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+      </a>
+    {% endif %}
+</td>
+
+          {% for i in "1234"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
+
+{% for l in lookup_table_obj %}
+            <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+                <td>{{ l.formatted_id }}</td>
+                <td>{{ l.lookup_name }}</td>
+                <td>{{ l.lookup_type.type_name }}</td>
+                <td>{{ l.created_by }}</td>
+                <td>{{ l.created_date|date:"d-m-Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
+      {% else %}
+  <div class="table-responsive scrollable-table1">
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+           <th>ID</th>
+                <th>Lookup Name</th>
+                <th>Lookup Type</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+        
+<td>
+  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+ {% if lookup_table_obj.object_list %}
+      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color: black; text-decoration: none; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+      </a>
+    {% endif %}
+</td>
+
+          {% for i in "1234"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
+
+{% for l in lookup_table_obj %}            <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ l.formatted_id }}</td>
+                <td>{{ l.lookup_name }}</td>
+                <td>{{ l.lookup_type.type_name }}</td>
+                <td>{{ l.created_by }}</td>
+                <td>{{ l.created_date|date:"d-m-Y H:i" }}</td>
+                </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+</div>
+<!-- ✅ Scroll CSS -->
+<style>
+.scrollable-table {
+  overflow-y: auto;
+  overflow-x: auto; /* Horizontal scroll */
+}
+table th, table td {
+  white-space: nowrap; /* Prevent wrapping */
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #e9f2ff;
+  z-index: 5;
+}
+</style>
+      {% endif %}
+    </div>
+<!-- ✅ Lookups Pagination Controls -->
+<div class="pagination-container text-center">
+
+  {% if lookup_table_obj.has_previous %}
+      <a href="?lu_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+      <a href="?lu_page={{ lookup_table_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Info + Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="lookupPageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="lu_page" 
+      id="lookupPageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()"
+    >
+      {% for page_num in lookup_table_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if lookups_page.has_next %}
+    <a href="?lu_page={{ lookup_table_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?lu_page={{ lookup_table_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+
+</div>
+
+</div>
+</div>
+
+<!--   🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 All Users Section 🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 -->
+<div class="tab-content" id="user">
+  <div class="card border-0">
+    
+    <!-- 🌈 Navbar-style Header -->
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All Users</h4>
+    </div>
+
+    <div class="card-body">
+      <!-- 🔍 Search Section -->
+    <div class="search-container">
+<form method="GET" action="{% url 'search_users' %}" class="d-flex align-items-center w-100">
+    <input type="hidden" name="active_tab" value="user">
+
+    <input 
+      type="text" 
+      name="user_query" 
+      class="form-control search-input me-2 shadow-none" 
+      placeholder="🔍 Search..."
+      value="{{ user_query|default:'' }}"
+    >
+</form>
+</div>
+<!-- <div class="download-container">
+ <form method="GET" action="{% url 'download_filtered_users' %}" class="download-form">
+  <div class="download-group">
+    <label for="search">Search</label>
+    <input type="text" id="search" name="search" placeholder="Search...">
+  </div>
+
+  <div class="download-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" id="start_date" name="start_date">
+  </div>
+
+  <div class="download-group">
+    <label for="end_date">End Date</label>
+    <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit" class="download-btn1">⬇️</button>
+</form>
+</div> -->
+{% if messages %}
+  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+
+ <!-- 📄 Search Results -->
+      {% if query %}
+        <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
+        <hr>
+      {% endif %}
+
+      <!-- 🧍‍♂️ User Table -->
+
+      {% if user_page_obj %}
+  <div class="table-responsive scrollable-table1">
+  
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+          <th>Actions</th>
+          <th>Role</th>
+          <th>ID</th>
+          <th>Username</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Is Active</th>
+          <th>Is Superuser</th>
+          <!-- <th>Last Login</th> -->
+          <th>Date of join</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td> 
+<form method="GET" action="{% url 'search_users' %}"  style="margin: 0; padding: 0;">
+    <input type="hidden" name="active_tab" value="user">
+    <input type="hidden" name="user_query" value="{{ user_query }}">
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit"
+        style="background:none; color:black; cursor:pointer; font-size:22px;">
+        <i class="bi bi-download"></i>
+    </button>
+</form>
+
+
+       
+</td>
+          {% for i in "123456789"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
+
+        {% for user in user_page_obj %}
+        <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+
+    <!-- 🔐 Access -->
+    <!-- <a href="{% url 'access_control' %}" class="btn btn-sm p-1">
+      <i class="bi bi-shield-lock"></i>
+    </a> -->
+            </div>
+          </td>
+
+<td>
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+
+    <div class="d-flex align-items-center justify-content-center gap-1">
+
+     <select name="role" required>
+        {% for r in role_names %}
+            <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+    </select>
+
+      <button 
+        type="submit"
+        class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
+        title="Save Role" name="save_user_role"
+        {% if not user.userrole or not user.userrole.role %}
+          disabled
+        {% endif %}
+      >
+        <i class="bi bi-floppy-fill"></i>💾
+      </button>
+
+    </div>
+  </form>
+
+<!-- <form method="POST">
+    {% csrf_token %}
+
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+
+    <label>Select Role:</label>
+    <select name="role" required>
+        {% for r in role_names %}
+            <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" name="save_user_role">Assign Role</button>
+</form> -->
+
+</td>
+
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.last_name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            {% if user.is_active %}
+              <span class="badge1">Active</span>
+            {% else %}
+              <span class="badge1">Inactive</span>
+            {% endif %}
+          </td>
+          <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
+          <!-- <td>{{ user.is_superuser }}</td> -->
+          <!-- <td>{{ user.last_login }}</td> -->
+          <td>{{ user.date_joined }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
+      {% else %}
+  <div class="table-responsive scrollable-table1">
+  <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+          <th>Actions</th>
+          <th>Role</th>
+          <th>ID</th>
+          <th>Username</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Is Active</th>
+          <th>Is Superuser</th>
+          <!-- <th>Last Login</th> -->
+          <th>Date of joined</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+        
+      <td>
+<form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;>
+    <input type="hidden" name="active_tab" value="user">
+    <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+</form>
+
+
+</td>
+          {% for i in "123456789"|make_list %}
+          <td>
+            <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+            </div>
+          </td>
+          {% endfor %}
+        </tr>
+
+        {% for user in user_page_obj %}
+        <tr>
+          <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              <!-- 📝 Edit -->
+              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+
+              <!-- 🗑️ Delete -->
+              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm p-1"
+                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+
+    <!-- 🔐 Access -->
+    <!-- <a href="{% url 'access_control' %}" class="btn btn-sm p-1">
+      <i class="bi bi-shield-lock"></i>
+    </a> -->
+            </div>
+          </td>
+
+         <td>
+  
+
+ <form method="POST" action="{% url 'assign_role' %}">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+
+    <div class="d-flex align-items-center justify-content-center gap-1">
+
+     <select name="role" required>
+        {% for r in role_names %}
+            <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+    </select>
+
+      <button 
+        type="submit"
+        class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
+        title="Save Role" name="save_user_role"
+        {% if not user.userrole or not user.userrole.role %}
+          disabled
+        {% endif %}
+      >
+        <i class="bi bi-floppy-fill"></i>💾
+      </button>
+
+    </div>
+  </form>
+
+
+</td>
+<td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.last_name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            {% if user.is_active %}
+              <span class="badge1">Active</span>
+            {% else %}
+              <span class="badge1">Inactive</span>
+            {% endif %}
+          </td>
+          <!-- <td>{{ user.is_superuser }}</td> -->
+           <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
+          <td>{{ user.date_joined }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="12">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+</div>
+<!-- ✅ Scroll CSS -->
+<style>
+.scrollable-table {
+  overflow-y: auto;
+  overflow-x: auto; /* Horizontal scroll */
+}
+table th, table td {
+  white-space: nowrap; /* Prevent wrapping */
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #e9f2ff;
+  z-index: 5;
+}
+</style>
+      {% endif %}
+    </div>
+
+ <!-- ✅ Pagination Controls -->
+<div class="pagination-container text-center mt-3">
+  {% if user_page_obj.has_previous %}
+      <a href="?user_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+    <a href="?user_page={{ user_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Info + Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="pageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="user_page" 
+      id="pageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()">
+      {% for page_num in user_page_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == user_page_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ user_page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if user_page_obj.has_next %}
+    <a href="?user_page={{ user_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?user_page={{ user_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div>
+</div>
+</div>
+
+<!-- 💅 Optional: extra subtle styling -->
+<style>
+  .scrollable-table1 {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.table thead {
+  font-weight: 600;
+}
+.table td, .table th {
+    color:black;
+  vertical-align: middle;
+}
+</style>
+
+<!-- ================Roles================== -->
+
+<div class="tab-content" id="roles">
+  <div class="card border-0">
+    
+    <!-- 🌈 Navbar-style Header -->
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Roles</h4>
+    </div>
+
+    <div class="card-body">
+      <!-- 🔍 Search Section -->
+<div class="search-container">
+<form method="GET" action="{% url 'search_roles' %}" 
+      class="d-flex align-items-center w-100" 
+      role="search">
+
+  <input 
+    type="text" 
+    name="query1" 
+    class="form-control search-input me-2 shadow-none" 
+    placeholder="🔍 Search..." 
+    value="{{ query1|default:'' }}">
+  
+  <!-- Search button (optional) -->
+  <!-- <button type="submit" class="btn btn-primary ms-2">Search</button> -->
+
+</form>
+</div>
+
+
+
+
+
+<!-- <div class="download-container">
+ <form method="GET" action="{% url 'download_filtered_user_access' %}" class="download-form">
+  <div class="download-group">
+    <label for="search">Search</label>
+    <input type="text" id="search" name="search" placeholder="Search by donor, category, transaction ID...">
+  </div>
+
+  <div class="download-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" id="start_date" name="start_date">
+  </div>
+
+  <div class="download-group">
+    <label for="end_date">End Date</label>
+    <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit" class="download-btn1">⬇️</button>
+</form>
+</div> -->
+{% if messages %}
+  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+width: 35%;
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+
+      <!-- 📄 Search Results -->
+      {% if query %}
+        <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
+        <hr>
+      {% endif %}
+
+      <!-- 🧍‍♂️ User Table -->
+      {% if roles_page_obj %}
+<div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Actions</th>
+        <th>ID</th>
+        <th>Module id</th>
+        <th>Module Name</th>
+        <th>Description</th>
+        <th>Role</th>
+        <th>Access</th>
+        <th>Add</th>
+        <th>Delete</th>
+        <th>Edit</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+       <td>
+<div class="d-flex justify-content-between">
+
+    <!-- ➕ Add Button (Green Icon Only) -->
+    <a href="{% url 'access_control' %}" 
+       style="font-size: 24px; color: #16a34a; text-decoration: none;">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="query1" value="{{ query1 }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+
+</div>
+
+
+
+
+</td>
+
+        {% for i in "1234567891"|make_list %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+
+      {% for user in roles_page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          </div>
+        </td>
+        <td>{{ user.id }}</td>
+        <td>{{ user.module_id }}</td>
+<td>{{ user.module.module_name }}</td>
+        <td>{{ user.description }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.can_access }}</td>
+        <td>{{ user.can_add }}</td>
+        <td>{{ user.can_delete }}</td>
+        <td>{{ user.can_edit }}</td>
+          <td>{{ user.can_view }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <!-- ✅ Pagination -->
+  <!-- <div class="d-flex justify-content-center align-items-center mt-3 flex-wrap">
+    {% if roles_page_obj.has_previous %}
+      <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮ First</a>
+      <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀ Prev</a>
+    {% endif %}
+
+    <span class="fw-bold mb-2">Page {{ roles_page_obj.number }} of {{ roles_page_obj.paginator.num_pages }}</span>
+
+    {% if roles_page_obj.has_next %}
+      <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">Next ▶</a>
+      <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">Last ⏭</a>
+    {% endif %}
+  </div> -->
+
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No users found for "<strong>{{ query }}</strong>".</p>
+      {% else %}
+      <div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Actions</th>
+        <th>ID</th>
+        <th>Module id</th>
+        <th>Module Name</th>
+        <th>Description</th>
+        <th>Role</th>
+        <th>Access</th>
+        <th>Add</th>
+        <th>Delete</th>
+        <th>Edit</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+       <td>
+<div class="d-flex justify-content-between">
+
+    <!-- ➕ Add Button (Green Icon Only) -->
+    <a href="{% url 'access_control' %}" 
+       style="font-size: 24px; color: #16a34a; text-decoration: none;">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="query1" value="{{ query1 }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+
+</div>
+
+
+
+</td>
+
+        {% for i in "1234567891"|make_list %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+
+      {% for user in roles_page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          </div>
+        </td>
+        <td>{{ user.id }}</td>
+        <td>{{ user.module_id }}</td>
+<td>{{ user.module.module_name }}</td>
+        <td>{{ user.description }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.can_access }}</td>
+        <td>{{ user.can_add }}</td>
+        <td>{{ user.can_delete }}</td>
+        <td>{{ user.can_edit }}</td>
+          <td>{{ user.can_view }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+      {% endif %}
+    </div>
+<!-- ✅ Pagination -->
+<!-- <div class="d-flex justify-content-center align-items-center mt-3 flex-wrap">
+  {% if roles_page_obj.has_previous %}
+    <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+    <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <form method="get" class="d-inline-block mb-2">
+    <label for="pageSelect" class="fw-bold me-1">Page</label>
+    <select 
+      name="roles_page" 
+      id="pageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto" 
+      onchange="this.form.submit()"
+    >
+      {% for page_num in roles_page_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+    <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if roles_page_obj.has_next %}
+    <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div> -->
+
+ <!-- ✅ Pagination Controls -->
+<div class="pagination-container text-center mt-3">
+  {% if roles_page_obj.has_previous %}
+      <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+    <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Info + Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="pageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="roles_page" 
+      id="pageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()">
+      {% for page_num in roles_page_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if roles_page_obj.has_next %}
+    <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div>
+  </div>
+</div>
+
+
+<!-- -----------Employee Management System------------------ -->
+
+<div class="tab-content" id="Employee Management System">
+            <div class="content-header">
+                     <a href="{% url 'donation-list' %}" class="btn btn-primary next">Show Employees</a></div>
+            
+<div class="form-container">
+                <!-- <div class="form-header">
+                    <h2>Add New Employee</h2>
+                </div> -->
+                
+<form id="multiStepForm" method="POST" action="{% url 'add-employee' %}">
+    {% csrf_token %}               
+         <!-- Step 1: Personal Details -->
+                    <div class="form-step active" id="step1">
+                        <h5>Personal Details</h5>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="firstName" required>
+                        </div>
+                          <div class="form-group">
+                            <label>Middle Name</label>
+                            <input type="text" name="middleName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" name="phone" required>
+                        </div>
+                        <div class="button-group">
+                            <div></div>
+                            <button type="button" class="btn btn-primary next">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Contact Information -->
+                    <div class="form-step" id="step2">
+                        <h5>Contact Information</h5>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" name="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" name="state" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" name="postalCode" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary prev">Previous</button>
+                            <button type="button" class="btn btn-primary next">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Job Details -->
+                    <div class="form-step" id="step3">
+                        <h5>Job Details</h5>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="finance">Finance</option>
+                                <option value="it">Information Technology</option>
+                                <option value="marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Designation</label>
+                            <input type="text" name="designation" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Employee Type</label>
+                            <select name="employeeType" required>
+                                <option value="">Select Type</option>
+                                <option value="permanent">Permanent</option>
+                                <option value="contract">Contract</option>
+                                <option value="intern">Intern</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Joining Date</label>
+                            <input type="date" name="joiningDate" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary prev">Previous</button>
+                            <button type="button" class="btn btn-primary next">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Bank Details -->
+                    <div class="form-step" id="step4">
+                        <h5>Bank Details</h5>
+                        <div class="form-group">
+                            <label>Bank Name</label>
+                            <input type="text" name="bankName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Number</label>
+                            <input type="text" name="accountNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label>IFSC Code</label>
+                            <input type="text" name="ifscCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type</label>
+                            <select name="accountType" required>
+                                <option value="">Select Account Type</option>
+                                <option value="savings">Savings</option>
+                                <option value="current">Current</option>
+                                <option value="salary">Salary</option>
+                            </select>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary prev">Previous</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+</div>
+</div>
+
+<!-- ----------- Timesheet System------------------ -->
+
+<div class="tab-content" id="Timesheet System">
+            <div class="content-header">
+                <h1>Timesheet System</h1>
+                <p>Manage employee timesheets and work hours</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-clock-history"></i>
+                <h2>Timesheet Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Leave Management System------------------ -->
+
+<div class="tab-content" id="Leave Management System">
+            <div class="content-header">
+                <h1>Leave Management System</h1>
+                <p>Manage employee leave requests and balances</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-calendar-x"></i>
+                <h2>Leave Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Donor/Volunteer Management System ------------------ -->
+
+
+<div class="tab-content" id="Donor/Volunteer Management System">
+ <div class="card border-0">
+    
+    <!-- 🌈 Navbar-style Header -->
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All Donors and Volunteers</h4>
+    </div>
+
+    <div class="card-body">
+      
+      <!-- 🔍 Search Section -->
+    <div class="search-container">
+  <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100" role="search">
+    <input 
+      type="text" 
+      name="q" 
+      class="form-control search-input me-2 shadow-none" 
+      placeholder="🔍 Search..." 
+      value="{{ query|default:'' }}"
+    >
+    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
+    {% if query %}
+      <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
+    {% endif %}
+  </form>
+</div>
+    <!-- 📄 Search Results -->
+      {% if query2 %}
+        <h5>Showing results for: "<span ">{{ query2 }}</span>"</h5>
+        <hr>
+      {% endif %}
+<!-- <div class="download-container">
+
+ <form method="GET" action="{% url 'download_filtered_donor_volunteers' %}" class="download-form">
+  <div class="download-group">
+    <label for="search">Search</label>
+    <input type="text" id="search" name="search" placeholder="Search...">
+  </div>
+
+  <div class="download-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" id="start_date" name="start_date">
+  </div>
+
+  <div class="download-group">
+    <label for="end_date">End Date</label>
+    <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit" class="download-btn1">⬇️</button>
+</form>
+</div> -->
+
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+ <!-- 🧍‍♂️ donorvolunteer Table -->
+      {% if page_obj %}
+  <div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>ID</th>
+        <th>Person Type</th>
+        <th>First Name</th>
+        <th>Middle Name</th>
+        <th>Last Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Donor Box ID</th>
+        <th>ID Type</th>
+        <th>ID Number</th>
+        <th>House Number</th>
+        <th>Building Name</th>
+        <th>Landmark</th>
+        <th>Area</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Postal Code</th>
+        <th>Native Place</th>
+        <th>Native Postal Code</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- 🔍 Filter Row -->
+      <tr>
+      <td>
+  <a href="{% url 'add_donor_volunteer' %}" 
+       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  <button type="submit" name="download6" value="true" 
+          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+  </button>
+</td>
+
+   {% for i in "0123456789012345678901" %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+
+      <!-- 🧾 Paginated Data -->
+      {% for donation in page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          
+          </div>
+        </td>
+
+        <td>{{ donation.id }}</td>
+        <td>{{ donation.person_type }}</td>
+        <td>{{ donation.first_name }}</td>
+        <td>{{ donation.middle_name }}</td>
+        <td>{{ donation.last_name }}</td>
+        <td>{{ donation.gender }}</td>
+        <td>{{ donation.date_of_birth }}</td>
+        <td>{{ donation.contact_number }}</td>
+        <td>{{ donation.email }}</td>
+        <td>{{ donation.donor_box_id }}</td>
+        <td>{{ donation.id_type }}</td>
+        <td>{{ donation.id_number }}</td>
+        <td>{{ donation.house_number }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query2 }}</strong>".</p>
+      {% else %}
+<div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>ID</th>
+        <th>Person Type</th>
+        <th>First Name</th>
+        <th>Middle Name</th>
+        <th>Last Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Donor Box ID</th>
+        <th>ID Type</th>
+        <th>ID Number</th>
+        <th>House Number</th>
+        <th>Building Name</th>
+        <th>Landmark</th>
+        <th>Area</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Postal Code</th>
+        <th>Native Place</th>
+        <th>Native Postal Code</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- 🔍 Filter Row -->
+      <tr>
+      <td>
+  <a href="{% url 'add_donor_volunteer' %}" 
+        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  <button type="submit" name="download7" value="true" 
+          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+  </button>
+</td>
+{% for i in "0123456789012345678901" %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+
+      <!-- 🧾 Paginated Data -->
+      {% for donation in page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          
+          </div>
+        </td>
+
+        <td>{{ donation.id }}</td>
+        <td>{{ donation.person_type }}</td>
+        <td>{{ donation.first_name }}</td>
+        <td>{{ donation.middle_name }}</td>
+        <td>{{ donation.last_name }}</td>
+        <td>{{ donation.gender }}</td>
+        <td>{{ donation.date_of_birth }}</td>
+        <td>{{ donation.contact_number }}</td>
+        <td>{{ donation.email }}</td>
+        <td>{{ donation.donor_box_id }}</td>
+        <td>{{ donation.id_type }}</td>
+        <td>{{ donation.id_number }}</td>
+        <td>{{ donation.house_number }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+</div>
+
+<!-- ✅ Optional Scrollbar Styling -->
+<style>
+.table-responsive::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.paginated-table th,
+.paginated-table td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+</style>
+      {% endif %}
+    </div>
+ <!-- ✅ Pagination Controls -->
+<div class="pagination-container text-center mt-3">
+  {% if page_obj.has_previous %}
+      <a href="?donor_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+    <a href="?donor_page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Info + Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="pageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="donor_page" 
+      id="pageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()">
+      {% for page_num in page_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == page_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if page_obj.has_next %}
+    <a href="?donor_page={{ page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?donor_page={{ donor_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div>
+
+  </div>
+</div>
+
+<!-- ----------- Visitor Management System ------------------ -->
+
+
+<div class="tab-content" id="Visitor Management System">
+            <div class="content-header">
+                <h1>Visitor Management System</h1>
+                <p>Manage visitor records and appointments</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-person-badge"></i>
+                <h2>Visitor Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Vendor Management System ------------------ -->
+
+
+<div class="tab-content" id="Vendor Management System">
+            <div class="content-header">
+                <h1>Vendor Management System</h1>
+                <p>Manage vendor information and contracts</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-truck"></i>
+                <h2>Vendor Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Event Management System ------------------ -->
+
+<div class="tab-content" id="Event Management System">
+            <div class="content-header">
+                <h1>Event Management System</h1>
+                <p>Manage events and activities</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-calendar-event"></i>
+                <h2>Event Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Request Management System------------------ -->
+
+<div class="tab-content" id="Request Management System">
+            <div class="content-header">
+                <h1>Request Management System</h1>
+                <p>Manage various requests and approvals</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-clipboard-check"></i>
+                <h2>Request Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Inventory Management System------------------ -->
+
+<div class="tab-content" id="Inventory Management System">
+            <div class="content-header">
+                <h1>Inventory Management System</h1>
+                <p>Manage inventory and stock levels</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-boxes"></i>
+                <h2>Inventory Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Asset Management System------------------ -->
+
+<div class="tab-content" id="Asset Management System">
+            <div class="content-header">
+                <h1>Asset Management System</h1>
+                <p>Manage company assets and equipment</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-pc-display"></i>
+                <h2>Asset Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------- Fleet Management System------------------ -->
+
+<div class="tab-content" id="Fleet Management System">
+            <div class="content-header">
+                <h1>Fleet Management System</h1>
+                <p>Manage vehicle fleet and transportation</p>
+            </div>
+<div class="placeholder-content">
+                <i class="bi bi-truck"></i>
+                <h2>Fleet Management Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+</div>
+</div>
+
+<!-- ---------Donation box module-------- -->
+<div class="tab-content" id="Donation box (Daan Peti) & ACH Module">
+  <!-- 🟦 Top Buttons -->
+  <div class="d-flex justify-content-between align-items-center">
+    <h4 class="mb-0">Donation Owner Module</h4>
+    <a href="{% url 'show_donationbox' %}" class="btn btn-primary">
+      Show Donation Box
+    </a>
+  </div>
+
+  <!-- 🔍 Search Bar -->
+  <div class="search-container mb-3">
+    <form method="GET" action="" class="d-flex align-items-center gap-2" role="search">
+      <input 
+        type="text" 
+        name="q" 
+        class="form-control"
+        placeholder="🔍 Search by Owner Name, Donation Box, or Payment Method..."
+        value="{{ query|default:'' }}"
+        style="border-radius: 8px; padding: 10px;"
+      >
+      <button type="submit" class="btn btn-primary" style="border-radius: 8px;">Search</button>
+      {% if query %}
+        <a href="#" class="btn btn-outline-secondary" style="border-radius: 8px;">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- 🌟 Search Results Header -->
+  {% if query %}
+    <h5>Showing results for: "<span style="color:blue;">{{ query }}</span>"</h5>
+    <hr>
+  {% endif %}
+
+  <!-- 📦 Donation Owner Table -->
+  {% if donation_owners %}
+    <table class="table table-striped table-hover mt-3 align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Owner Name</th>
+          <th>Donation Box</th>
+          <th>Amount</th>
+          <th>Payment Method</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for owner in donation_owners %}
+        <tr>
+          <td>{{ owner.id }}</td>
+
+          <!-- Owner Full Name -->
+          <td>{{ owner.owner_name.first_name }} {{ owner.owner_name.last_name }}</td>
+
+          <!-- Donation Box Info -->
+          <td>
+            {% if owner.donation_box %}
+              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+
+          <!-- Amount -->
+          <td>₹{{ owner.amount }}</td>
+
+          <!-- Payment Method -->
+          <td>{{ owner.payment_method }}</td>
+
+          <!-- Date -->
+          <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
+
+          <!-- Actions -->
+          <!-- <td>
+            <a href="#" class="btn btn-sm btn-warning">Edit</a>
+            <a href="#" 
+               class="btn btn-sm btn-danger"
+               onclick="return confirm('Are you sure you want to delete this Donation Owner?')">
+               Delete
+            </a>
+          </td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% elif query %}
+    <p class="text-danger mt-3">No donation owners found for "<strong>{{ query }}</strong>".</p>
+
+  {% else %}
+    <p class="text-muted mt-3">No Donation Owners available yet.</p>
+  {% endif %}
+</div>
+
+<!-- --------------START:  DONATION MODULE---------- -->
+<div class="tab-content" id="Donation Module">
+  <div class="card border-0">
+    
+    <!-- 🌈 Navbar-style Header -->
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All Donations</h4>
+    </div>
+
+    <div class="card-body">
+      <!-- 🔍 Search Section -->
+    <div class="search-container">
+  <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100" role="search">
+    <input 
+      type="text" 
+      name="q" 
+      class="form-control search-input me-2 shadow-none" 
+      placeholder="🔍 Search..." 
+      value="{{ query3|default:'' }}"
+    >
+    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
+    {% if query3 %}
+      <a href="{% url 'search_donation' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
+    {% endif %}
+  </form>
+</div>
+     <!-- 📄 Search Results -->
+      {% if query3 %}
+        <h5>Showing results for: "<span ">{{ query3 }}</span>"</h5>
+        <hr>
+      {% endif %}
+<!-- <div class="download-container">
+
+ <form method="GET" action="{% url 'download_filtered_donations' %}" class="download-form">
+  <div class="download-group">
+    <label for="search">Search</label>
+    <input type="text" id="search" name="search" placeholder="Search...">
+  </div>
+
+  <div class="download-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" id="start_date" name="start_date">
+  </div>
+
+  <div class="download-group">
+    <label for="end_date">End Date</label>
+    <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit" class="download-btn1">⬇️</button>
+</form>
+</div> -->
+{% if messages %}
+  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<style>
+/* 🌿 Modern underline input */
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; /* success green line */
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; /* darker green when focused */
+}
+
+/* 🪄 Match buttons cleanly */
+.search-btn {
+  border-radius: 8px;
+}
+</style>
+
+ 
+
+      {% if donation_page_obj %}
+        <div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Donor</th>
+        <th>Address</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Mode</th>
+        <th>Payment Method</th>
+        <th>Transaction ID</th>
+        <th>Check number</th>
+        <th>Place of donation</th>
+        <th>Status</th>
+        <th>Description</th>
+        <th>Receipt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 🔍 Search Row -->
+      <tr>
+
+      <td>
+  <a href="{% url 'adddonation' %}" 
+       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  <button type="submit" name="download8" value="true" 
+          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+  </button>
+</td>
+
+        {% for i in "1234567891234" %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+          </div>
+        </td>
+        {% endfor %}
+        <td>.</td>
+      </tr>
+
+      <!-- 🧾 Paginated Donation Records -->
+      {% for donation in donation_page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          </div>
+        </td>
+
+        <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+        <td>{{ donation.donation_amount }}</td>
+        <td>{{ donation.donation_date }}</td>
+        <td>{{ donation.category }}</td>
+        <td>{{ donation.donation_mode }}</td>
+        <td>{{ donation.payment_method }}</td>
+        <td>{{ donation.transaction_id }}</td>
+        <td>{{ donation.payment_status }}</td>
+        <td>
+          <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
+</td>
+
+      </tr>
+      {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+      {% elif query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query3 }}</strong>".</p>
+      {% else %}
+  <div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Donor</th>
+        <th>Address</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Mode</th>
+        <th>Payment Method</th>
+        <th>Transaction ID</th>
+        <th>Check number</th>
+        <th>Place of donation</th>
+        <th>Status</th>
+        <th>Description</th>
+        <th>Receipt</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- 🔍 Search Row -->
+      <tr>
+
+      <td>
+  <a href="{% url 'adddonation' %}" 
+        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+  <button type="submit" name="download9" value="true" 
+          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
+    <i class="bi bi-download"></i>
+  </button>
+</td>
+
+    
+        {% for i in "1234567891234" %}
+        <td>
+          <div class="download-group">
+              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
+          </div>
+        </td>
+        {% endfor %}
+        <td>.</td>
+      </tr>
+
+      <!-- 🧾 Paginated Donation Records -->
+      {% for donation in donation_page_obj %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            <!-- 📝 Edit -->
+            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+
+            <!-- 🗑️ Delete -->
+            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm p-1"
+                onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          </div>
+        </td>
+
+        <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+        <td>{{ donation.donation_amount }}</td>
+        <td>{{ donation.donation_date }}</td>
+        <td>{{ donation.category }}</td>
+        <td>{{ donation.donation_mode }}</td>
+        <td>{{ donation.payment_method }}</td>
+        <td>{{ donation.transaction_id }}</td>
+        <td>{{ donation.payment_status }}</td>
+        <td>
+          <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
+</td>
+
+      </tr>
+      {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- ✅ Scrollbar + Style -->
+<style>
+.table-responsive::-webkit-scrollbar {
+  width: 10px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* ✅ Left-align table text (no centering) */
+.paginated-table th,
+.paginated-table td {
+  text-align: left;
+  vertical-align: middle;
+}
+</style>
+
+      {% endif %}
+    </div>
+
+
+    <div class="pagination-container text-center mt-3">
+  {% if donation_page_obj.has_previous %}
+      <a href="?donation_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+    <a href="?donation_page={{ donation_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+
+  <!-- Page Info + Dropdown -->
+  <form method="get" class="d-inline-block">
+    <label for="pageSelect" class="fw-bold me-1">Page</label>
+
+    <select 
+      name="donation_page" 
+      id="pageSelect" 
+      class="form-select form-select-sm d-inline-block w-auto"
+      onchange="this.form.submit()"
+    >
+      {% for page_num in donation_page_obj.paginator.page_range %}
+        <option value="{{ page_num }}" {% if page_num == donation_page_obj.number %}selected{% endif %}>
+          {{ page_num }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <span class="fw-bold">of {{ donation_page_obj.paginator.num_pages }}</span>
+  </form>
+
+  {% if donation_page_obj.has_next %}
+    <a href="?donation_page={{ donation_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?donation_page={{ donation_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div>
+
+  </div>
+<style>
+.download-container {
+  /* background: #f9fafb; */
+  /* border: 1px solid #d1d5db; */
+  border-radius: 12px;
+  /* padding: 25px; */
+  /* max-width: 700px; */
+  margin: 40px auto;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); */
+  font-family: "Segoe UI", sans-serif;
+}
+
+.download-container h3 {
+  color: #065f46;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 20px;
+}
+
+.download-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.download-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.download-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+
+
+
+</style>
+
+<!-- ----------Financial Asset Module----------- -->
+
+<div class="tab-content" id="Financial Asset Module">
+            <div class="content-header">
+                <h1>Financial Asset Module</h1>
+                <p>Manage financial assets and investments</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-graph-up"></i>
+                <h2>Financial Asset Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Expense Module----------- -->
+
+<div class="tab-content" id="Expense Module">
+            <div class="content-header">
+                <h1>Expense Module</h1>
+                <p>Manage expenses and reimbursements</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-receipt"></i>
+                <h2>Expense Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Medical Module----------- -->
+
+<div class="tab-content" id="Medical Module">
+            <div class="content-header">
+                <h1>Medical Module</h1>
+                <p>Manage medical services and records</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-hospital"></i>
+                <h2>Medical Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Rehabilitation Module----------- -->
+
+<div class="tab-content" id="Rehabilitation Module">
+            <div class="content-header">
+                <h1>Rehabilitation Module</h1>
+                <p>Manage rehabilitation programs and services</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-house-heart"></i>
+                <h2>Rehabilitation Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Adoption Module----------- -->
+
+<div class="tab-content" id="Adoption Module">
+            <div class="content-header">
+                <h1>Adoption Module</h1>
+                <p>Manage adoption processes and records</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-people-fill"></i>
+                <h2>Adoption Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Trees Module----------- -->
+
+<div class="tab-content" id="Trees Module">
+            <div class="content-header">
+                <h1>Trees Module</h1>
+                <p>Manage tree plantation and conservation</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-tree"></i>
+                <h2>Trees Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+
+<!-- ----------Seeds Module----------- -->
+
+<div class="tab-content" id="Seeds Module">
+            <div class="content-header">
+                <h1>Seeds Module</h1>
+                <p>Manage seed distribution and inventory</p>
+            </div>
+            <div class="placeholder-content">
+                <i class="bi bi-flower1"></i>
+                <h2>Seeds Module</h2>
+                <p>This module is under development. Check back soon for updates.</p>
+            </div>
+</div>
+</div>
+</div>
+
+<!-- -----------Javascript-------------- -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            
+            // Change icon based on sidebar state
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.className = 'bi bi-chevron-right';
+            } else {
+                toggleIcon.className = 'bi bi-chevron-left';
+            }
+        });
+        
+        // Mobile menu toggle
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.sidebar a');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const targetId = this.getAttribute('data-tab');
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+                
+                // Close mobile sidebar after selecting a tab
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+        
+        // --- Multi-step form functionality (Generic) ---
+        function setupMultiStepForm(formId, progressBarId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            const progressBar = document.getElementById(progressBarId);
+            const nextBtns = form.querySelectorAll('.next');
+            const prevBtns = form.querySelectorAll('.prev');
+            const formSteps = form.querySelectorAll('.form-step');
+            const progressSteps = progressBar ? progressBar.querySelectorAll('.progress-step') : [];
+            let currentStep = 0;
+
+            // Function to update progress bar
+            function updateProgressBar() {
+                progressSteps.forEach((step, index) => {
+                    if (index < currentStep) {
+                        step.classList.add('completed');
+                        step.classList.remove('active');
+                    } else if (index === currentStep) {
+                        step.classList.add('active');
+                        step.classList.remove('completed');
+                    } else {
+                        step.classList.remove('active', 'completed');
+                    }
+                });
+            }
+
+            // Next button functionality
+            nextBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const inputs = formSteps[currentStep].querySelectorAll('input[required], select[required], textarea[required]');
+                    let isValid = true;
+                    
+                    inputs.forEach(input => {
+                        if (!input.checkValidity()) {
+                            input.reportValidity();
+                            isValid = false;
+                        }
+                    });
+                    
+                    if (isValid) {
+                        formSteps[currentStep].classList.remove('active');
+                        currentStep++;
+                        formSteps[currentStep].classList.add('active');
+                        updateProgressBar();
+                        form.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Previous button functionality
+            prevBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    formSteps[currentStep].classList.remove('active');
+                    currentStep--;
+                    formSteps[currentStep].classList.add('active');
+                    updateProgressBar();
+                    form.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Reset form step on submission (handled by individual listeners)
+            form.addEventListener('submit', () => {
+                formSteps[currentStep].classList.remove('active');
+                currentStep = 0;
+                formSteps[currentStep].classList.add('active');
+                updateProgressBar();
+            });
+        }
+
+        // Setup Employee Form
+        setupMultiStepForm('multiStepForm', 'progressBar');
+
+        // Setup Donation Form
+        setupMultiStepForm('donationForm', 'donationProgressBar');
+
+
+        // --- Form Submission Handlers ---
+        
+        // Employee Form Submission
+        document.getElementById('multiStepForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showSuccessMessage('Employee information has been submitted successfully.');
+            document.getElementById('multiStepForm').reset();
+        });
+
+        // Donation Form Submission
+        document.getElementById('donationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showSuccessMessage('Donation has been recorded successfully.');
+            document.getElementById('donationForm').reset();
+        });
+
+        function showSuccessMessage(message) {
+            const successMessage = document.createElement('div');
+            successMessage.className = 'alert alert-success';
+            successMessage.innerHTML = `
+                <i class="bi bi-check-circle-fill"></i>
+                <strong>Success!</strong> ${message}
+            `;
+            successMessage.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background-color: #d4edda;
+                color: #155724;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(successMessage);
+            
+            setTimeout(() => {
+                successMessage.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(successMessage);
+                }, 300);
+            }, 5000);
+        }
+        
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    });
+
+
+
+
+
+
+    <!-- JavaScript to toggle Donor Box ID input -->
+
+document.addEventListener('DOMContentLoaded', function() {
+    const personTypeSelect = document.getElementById('person_type');
+    const donorBoxRow = document.getElementById('donor_box_id_row');
+
+    function toggleDonorBoxInput() {
+        if (personTypeSelect.value === 'Donor-Box-Owner') {
+            donorBoxRow.style.display = 'block';
+            document.getElementById('donor_box_id').required = true;
+        } else {
+            donorBoxRow.style.display = 'none';
+            document.getElementById('donor_box_id').required = false;
+        }
+    }
+
+    personTypeSelect.addEventListener('change', toggleDonorBoxInput);
+    toggleDonorBoxInput(); // initialize on page load
+});
+
+</script>
+
+
+{% endblock %}
