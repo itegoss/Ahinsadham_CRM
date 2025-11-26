@@ -1,0 +1,243 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Ahinsadham{% if block.title %} - {{ block.title }}{% endif %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS FILES -->        
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'css/templatemo-kind-heart-charity.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        :root {
+            --primary-color: #e63946;
+            --secondary-color: #457b9d;
+            --accent-color: #f1faee;
+            --dark-color: #1d3557;
+            --light-color: #a8dadc;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--accent-color);
+        }
+
+        /* Navbar */
+        .navbar {
+            /* padding: 0.8rem 1rem; */
+            transition: all 0.3s ease-in-out;
+             background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
+}        
+
+        .navbar-brand {
+            margin-left: 2%;
+            font-size: 1.6rem;
+            color: #07b907 !important;
+        }
+
+        /* Hamburger toggle */
+        .navbar-toggler {
+            border: none;
+            outline: none;
+            padding: 0.25rem 0.75rem;
+        }
+
+        .navbar-toggler-icon {
+            width: 30px;
+            height: 3px;
+            background-color: var(--primary-color);
+            display: block;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .navbar-toggler-icon::before,
+        .navbar-toggler-icon::after {
+            content: '';
+            width: 30px;
+            height: 3px;
+            background-color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            transition: all 0.3s;
+        }
+
+        .navbar-toggler-icon::before {
+            top: -10px;
+        }
+
+        .navbar-toggler-icon::after {
+            top: 10px;
+        }
+
+        .navbar-toggler.collapsed .navbar-toggler-icon {
+            background-color: var(--primary-color);
+        }
+
+        .navbar-toggler.collapsed .navbar-toggler-icon::before {
+            transform: rotate(0);
+            top: -10px;
+        }
+
+        .navbar-toggler.collapsed .navbar-toggler-icon::after {
+            transform: rotate(0);
+            top: 10px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            transition: 0.3s;
+        }
+
+      
+
+        .btn-outline-primary {
+            border-color: green !important;
+            color: green !important;
+            transition: 0.3s;
+        }
+
+        .btn-outline-primary:hover {
+            background-color:rgb(155, 201, 155) !important;
+            color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #012a1d;
+            color: #fff;
+            padding: 2rem 0;
+        }
+
+        footer a ,p{
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: var(--primary-color);
+        }
+
+        footer p {
+            margin-bottom: 1rem;
+        }
+
+        /* Main content spacing */
+        main {
+            padding: 3rem 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .navbar-collapse {
+                background-color: #fff;
+                padding: 1rem;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .navbar-nav .nav-item {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .navbar-nav .nav-item .btn {
+                width: 100%;
+                text-align: center;
+                padding: 0.6rem 0;
+                font-size: 1rem;
+            }
+        }
+
+/* navbar */
+ .nav-item{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #0f172a;           /* dark text */
+  transition: background 160ms ease, transform 120ms ease;
+}
+
+  .container{
+      max-width: 100% !important;
+    }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Header -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <div class="logo-box">
+    <img src="{% static 'images/alogo.png' %}" alt="Logo" 
+         style="width: 80px; height: auto; margin-left: 15px;">
+</div>
+           
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    {% if user.is_authenticated %}
+
+                        <li class="nav-item">
+                            <a href="#" class="welcome-link">Welcome, {{ request.user.username }}</a>
+<a href="/logout" class="btn ms-2" color:black;">
+    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+</a>
+</li>
+                        
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Sign In</a>
+                        </li>
+                        
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Main Content -->
+<main class="flex-grow-1 py-4">
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-auto">
+    <div class="container text-center">
+        <p>© {{ year|default:"2025" }} Ahinsadham. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

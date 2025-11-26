@@ -1,0 +1,523 @@
+{% extends 'base.html' %} 
+
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --primary-color: #e74c3c;
+        --secondary-color: #3498db;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --dark-color: #2c3e50;
+        --light-color: #ecf0f1;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .causes-header {
+        text-align: center;
+        padding: 60px 0 40px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border-radius: 20px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .causes-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("{% static 'images/pattern.png' %}") repeat;
+        opacity: 0.05;
+    }
+
+    .causes-header h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .causes-header h6 {
+        font-size: 1.2rem;
+        color: var(--dark-color);
+        opacity: 0.8;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cause-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .cause-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .cause-image-wrapper {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+    }
+
+    .cause-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .cause-card:hover .cause-image {
+        transform: scale(1.1);
+    }
+
+    .cause-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--gradient-primary);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .cause-content {
+        padding: 30px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cause-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 15px;
+        line-height: 1.3;
+    }
+
+    .cause-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        flex: 1;
+    }
+
+    .cause-progress {
+        margin-bottom: 20px;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .progress-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .progress-value {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .progress {
+        height: 10px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar {
+        background: var(--gradient-primary);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 1.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+        );
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .cause-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .donate-btn {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .donate-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+
+    .donate-btn:hover::before {
+        left: 100%;
+    }
+
+    .donate-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .cause-category {
+        display: inline-block;
+        background: rgba(102, 126, 234, 0.1);
+        color: var(--secondary-color);
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    .urgency-indicator {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .urgency-high {
+        color: #e74c3c;
+    }
+
+    .urginess-medium {
+        color: #f39c12;
+    }
+
+    .urgency-low {
+        color: #27ae60;
+    }
+
+    .urgency-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+        animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .cause-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+
+    .cause-card:hover .cause-overlay {
+        opacity: 1;
+    }
+
+    .overlay-content {
+        color: white;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .cause-card:hover .overlay-content {
+        transform: translateY(0);
+    }
+
+    .days-left {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .causes-header h2 {
+            font-size: 2rem;
+        }
+        
+        .cause-content {
+            padding: 20px;
+        }
+        
+        .cause-title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<div class="causes-header" data-aos="fade-up">
+    <h2>Our Causes</h2>
+    <h6>Your small help saves a life</h6>
+</div>
+
+<section class="section-padding" id="section_3">
+    <div class="container">
+        <div class="row">
+            {% for cause in causes %}
+            <div class="col-lg-4 col-md-6 col-12 mb-4 cause-item" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}">
+                <div class="cause-card">
+                    <div class="cause-image-wrapper">
+                        <img src="{{ cause.img.url }}" class="cause-image" alt="{{ cause.name }}">
+                        <div class="cause-overlay">
+                            <div class="overlay-content">
+                                <div class="days-left">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <span id="days-{{ cause.id }}">30 days left</span>
+                                </div>
+                                <p>Help us make a difference in someone's life today.</p>
+                            </div>
+                        </div>
+                        {% if cause.urgency == 'high' %}
+                        <div class="urgency-indicator urgency-high">
+                            <span class="urgency-dot" style="background: #e74c3c;"></span>
+                            Urgent
+                        </div>
+                        {% elif cause.urgency == 'medium' %}
+                        <div class="urgency-indicator urgency-medium">
+                            <span class="urgency-dot" style="background: #f39c12;"></span>
+                            Important
+                        </div>
+                        {% else %}
+                        <div class="urgency-indicator urgency-low">
+                            <span class="urgency-dot" style="background: #27ae60;"></span>
+                            Ongoing
+                        </div>
+                        {% endif %}
+                        <div class="cause-badge">
+                            <i class="bi bi-heart-fill me-1"></i>
+                            {{ cause.category|default:"General" }}
+                        </div>
+                    </div>
+                    
+                    <div class="cause-content">
+                        <div class="cause-category">
+                            <i class="bi bi-tag me-1"></i>
+                            {{ cause.category|default:"Charity" }}
+                        </div>
+                        
+                        <h5 class="cause-title">{{ cause.name }}</h5>
+                        
+                        <p class="cause-description">{{ cause.detail|truncatewords:30 }}</p>
+                        
+                        <div class="cause-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Progress</span>
+                                <span class="progress-value" id="progress-{{ cause.id }}">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="bar-{{ cause.id }}" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="cause-stats">
+                            <div class="stat-item">
+                                <span class="stat-value">₹{{ cause.raised|default:"0" }}</span>
+                                <span class="stat-label">Raised</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">₹{{ cause.goal|default:"0" }}</span>
+                                <span class="stat-label">Goal</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="donors-{{ cause.id }}">{{ cause.donors|default:"0" }}</span>
+                                <span class="stat-label">Donors</span>
+                            </div>
+                        </div>
+                        
+                        <a href="/donate/{{ cause.id }}" class="donate-btn w-100">
+                            <i class="bi bi-heart-fill me-2"></i>
+                            Donate Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if causes|length == 0 %}
+        <div class="text-center py-5" data-aos="fade-up">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h3 class="mt-4">No Causes Available</h3>
+            <p class="text-muted">Check back later for new opportunities to make a difference.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set staggered animation delays using JavaScript
+    const causeItems = document.querySelectorAll('.cause-item');
+    causeItems.forEach((item, index) => {
+        item.setAttribute('data-aos-delay', (index * 100).toString());
+    });
+    
+    // Animate progress bars on scroll
+    const progressBars = document.querySelectorAll('.progress-bar');
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const progressObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const causeId = bar.id.replace('bar-', '');
+                const raised = parseInt(document.querySelector(`#progress-${causeId}`).closest('.cause-card').querySelector('.stat-value').textContent.replace('₹', '').replace(',', ''));
+                const goal = parseInt(document.querySelector(`#progress-${causeId}`).closest('.cause-card').querySelectorAll('.stat-value')[1].textContent.replace('₹', '').replace(',', ''));
+                
+                if (!isNaN(raised) && !isNaN(goal) && goal > 0) {
+                    const percentage = Math.min((raised / goal) * 100, 100);
+                    bar.style.width = percentage + '%';
+                    document.getElementById(`progress-${causeId}`).textContent = percentage.toFixed(1) + '%';
+                }
+                
+                progressObserver.unobserve(bar);
+            }
+        });
+    }, observerOptions);
+
+    progressBars.forEach(bar => {
+        progressObserver.observe(bar);
+    });
+
+    // Simulate live donor count updates
+    setInterval(function() {
+        document.querySelectorAll('[id^="donors-"]').forEach(element => {
+            const currentCount = parseInt(element.textContent);
+            const randomIncrement = Math.random() > 0.8 ? Math.floor(Math.random() * 3) + 1 : 0;
+            if (randomIncrement > 0) {
+                element.textContent = currentCount + randomIncrement;
+                
+                // Add pulse animation
+                element.style.animation = 'pulse 0.5s ease';
+                setTimeout(() => {
+                    element.style.animation = '';
+                }, 500);
+            }
+        });
+    }, 10000);
+
+    // Countdown timer for days left
+    function updateDaysLeft() {
+        document.querySelectorAll('[id^="days-"]').forEach(element => {
+            const days = Math.floor(Math.random() * 30) + 1;
+            element.textContent = days + ' day' + (days > 1 ? 's' : '') + ' left';
+        });
+    }
+    
+    updateDaysLeft();
+    setInterval(updateDaysLeft, 86400000); // Update daily
+});
+</script>
+
+{% endblock %}

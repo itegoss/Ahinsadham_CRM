@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  .auth-wrapper {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 36px #6a88a233;
+    max-width: 500px;  /* wider than before */
+    width: 90%;         /* responsive on smaller screens */
+    padding: 2rem 2rem;
+    box-sizing: border-box;
+  }
+  h2 {
+    font-size: 2rem;
+    color: #2b475c;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .subtext {
+    font-size: 1rem;
+    color: #3866a6;
+    margin-bottom: 20px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-align: center;
+  }
+  .input-row {
+    margin-bottom: 12px; /* smaller margin to reduce height */
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    width: 100%;
+    padding: 10px 12px; /* reduce padding to reduce height */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: #fcfdff;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  select:focus {
+    border-color: #199ad5;
+    outline: none;
+  }
+  .auth-btn {
+    width: 100%;
+    padding: 10px; /* smaller button height */
+    background: linear-gradient(90deg, #3498db 0%, #6a88a2 85%);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 6px; /* reduce margin */
+    cursor: pointer;
+    box-shadow: 0 2px 14px #3498db40;
+    transition: background 0.2s ease;
+  }
+  .auth-btn:hover {
+    background: linear-gradient(90deg, #217dbb 0%, #57748d 85%);
+  }
+  .alt-option {
+    font-size: 14px;
+    color: #555;
+    margin-top: 16px; /* slightly less spacing */
+    text-align: center;
+  }
+  .alt-option a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+  .alt-option a:hover {
+    text-decoration: underline;
+    color: #21618c;
+  }
+  .alert {
+    width: 95%;
+    margin: 15px auto 8px auto;
+    border-radius: 7px;
+    font-size: 15px;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    h2 {
+        font-size: 26px;
+        letter-spacing: 0.5px;
+    }
+    .subtext {
+        font-size: 14px;
+    }
+    .auth-card {
+        max-width: 100%;   /* keep it fairly wide */
+        padding: 1.2rem 1rem; /* reduce padding to decrease height */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-card {
+        max-width: 100%;
+        padding: 1rem 0.8rem; /* even smaller for tiny screens */
+    }
+    .input-row {
+        margin-bottom: 5px;
+    }
+    .auth-btn {
+        padding: 8px;
+    }
+    .subtext {
+        font-size: 12px;
+    }
+  }
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Sign Up</h2>
+    <p class="subtext">Enter your details below. You’ll receive an OTP to verify your email.</p>
+
+    {% if errmsg %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> {{ errmsg }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'signup' %}" method="POST" autocomplete="off">
+      {% csrf_token %}
+      <div class="input-row">
+        <input type="text" name="username" placeholder="Username" required>
+      </div>
+      <div class="input-row">
+        <input type="email" name="email" placeholder="Email" required>
+      </div>
+      <div class="input-row">
+        <input type="password" name="password1" placeholder="Password" required>
+      </div>
+      <div class="input-row">
+        <input type="password" name="password2" placeholder="Confirm Password" required>
+      </div>
+      <div class="input-row">
+        <select name="role" required>
+          <option value="">Register as</option>
+          <option value="admin">Admin</option>
+          <option value="volunteer">Volunteer</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+      <button type="submit" class="auth-btn">Send OTP</button>
+    </form>
+
+    <p class="alt-option">Already have an account? <a href="{% url 'signin' %}">Sign In</a></p>
+  </div>
+</div>
+
+{% endblock %}
