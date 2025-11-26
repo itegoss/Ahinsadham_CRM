@@ -9,36 +9,13 @@ import random
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .models import DonationBox, User 
-<<<<<<< HEAD
 from heart_charity.models import LookupType   # ⬅️ ADD THIS
 
-=======
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 # Create your views here.
 def home(req):
     return render(req,'home.html')
 
-<<<<<<< HEAD
-=======
-
-def contact_view(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-
-        Contact.objects.create(
-            name=name,
-            email=email,
-            message=message
-        )
-        return redirect('thank_you')  # You can change this to your desired redirect
-
-    return render(request, 'home.html')
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 from django.contrib.auth import authenticate, login
 
 def signin_view(request):
@@ -68,79 +45,65 @@ def check_module_access(request,user_id):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import UserModuleAccess, Module
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Module, UserModuleAccess, UserRole
 
 def access_control(request):
-    # Get all modules (with name and description)
+
     modules = Module.objects.all()
-    permissions_list = ["Add", "Edit", "Delete", "View"]
-
-    # Defaults
-    access_module_ids = []
-    granted_permissions = []
-
     mode = request.GET.get("mode", "add")
-    role_id = request.GET.get("role_id") or request.POST.get("role_id")
+    role_id = request.GET.get("role_id")
 
-    # -------------------------------
-    # EDIT MODE
-    # -------------------------------
+    role_instance = None
+
+    # ---- EDIT MODE (load data) ----
     if mode == "edit" and role_id:
-        access_records = UserModuleAccess.objects.filter(role=role_id)
-        access_module_ids = list(access_records.values_list("module_id", flat=True))
-        granted_permissions = [
-            f"{record.module.id}-{perm}"
-            for record in access_records
-            for perm in ["add", "edit", "delete", "view"]
-            if getattr(record, f"can_{perm}")
-        ]
+        role_instance = UserModuleAccess.objects.filter(id=role_id).first()
 
-    # -------------------------------
-    # POST REQUEST
-    # -------------------------------
     if request.method == "POST":
-        role = request.POST.get("role_name") or "Unknown Role"
-        description = request.POST.get("roleDescription") or "Unknown Role"
+        role_name = request.POST.get("role_name").strip()
+        role_description = request.POST.get("roleDescription").strip()
 
-        if mode == "edit":
-            UserModuleAccess.objects.filter(role=role).delete()
+        # --- If Editing Existing Role ---
+        if mode == "edit" and role_instance:
+            UserModuleAccess.objects.filter(name=role_instance.name).delete()
 
+        # ---- Save Role + Permissions per Module ---
         selected_modules = request.POST.getlist("modules")
 
         for module_id in selected_modules:
             module = get_object_or_404(Module, id=module_id)
-            UserModuleAccess.objects.create(
 
-                role=role,
-                description=description,
+            UserModuleAccess.objects.create(
                 module=module,
+                name=role_name,
+                description=role_description,
                 can_access=True,
                 can_add=f"permissions_{module_id}_add" in request.POST,
                 can_edit=f"permissions_{module_id}_edit" in request.POST,
                 can_delete=f"permissions_{module_id}_delete" in request.POST,
                 can_view=f"permissions_{module_id}_view" in request.POST,
+                created_by=request.user,
+                updated_by=request.user,
             )
 
-        messages.success(request, "Access permissions saved successfully!")
+        messages.success(request, "Role & permissions saved successfully!")
         return redirect("welcome")
 
+    # ---- Return Context to Template ----
     context = {
-        "modules": modules,  # each module includes name, description, id
-        "permissions_list": permissions_list,
-        "access_module_ids": access_module_ids,
-        "granted_permissions": granted_permissions,
+        "modules": modules,
         "mode": mode,
+        "role_instance": role_instance,
     }
+
     return render(request, "access_control.html", context)
 
-<<<<<<< HEAD
-=======
 
 
 
 
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 from django.shortcuts import render, get_object_or_404
 from .models import UserModuleAccess, Module, User
 from django.utils.timezone import now
@@ -194,7 +157,6 @@ from django.utils.timezone import now
 from django.contrib.auth.models import User
 from .models import DonationOwner, DonorVolunteer, Donation, UserRole, UserModuleAccess, Module
 
-<<<<<<< HEAD
 
 from django.shortcuts import render
 from .models import LookupType, Lookup
@@ -326,119 +288,12 @@ def welcome_view(request):
         'roles': roles_qs,
         'role_names': role_names,
 
-=======
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.utils.timezone import now
-from .models import DonorVolunteer, UserModuleAccess, UserRole, User, Donation, DonationOwner, Module
-from .models import Lookup, LookupType
-
-@login_required
-@login_required
-def welcome_view(request):
-    user = request.user
-    users = User.objects.all().order_by('id')
-    donation_owners = DonationOwner.objects.all()
-    roles = UserModuleAccess.objects.all()
-    donations = Donation.objects.all()
-
-
-    # ----------------------------------------
-    # 🟩 FIX: FETCH PERSON TYPE LOOKUPS SAFELY
-    # ----------------------------------------
-    try:
-        person_type_lookup = LookupType.objects.get(type_name="Person Type")
-        donor_type = person_type_lookup.lookups.get(lookup_name__iexact="Donor")
-        volunteer_type = person_type_lookup.lookups.get(lookup_name__iexact="Volunteer")
-
-    except (LookupType.DoesNotExist, Lookup.DoesNotExist):
-        donor_type = None
-        volunteer_type = None
-
-    # Only filter if lookup exists
-    if donor_type and volunteer_type:
-        donors = DonorVolunteer.objects.filter(
-            Q(person_type_id=donor_type.id) |
-            Q(person_type_id=volunteer_type.id)
-)
-
-    else:
-        donors = DonorVolunteer.objects.none()
-
-    donations = Donation.objects.all().prefetch_related('donors')
-
-    # ----------------------------------------
-    # 🔄 Pagination
-    # ----------------------------------------
-    paginator = Paginator(donors, 1)
-    page_obj = paginator.get_page(request.GET.get('donor_page'))
-
-    donation_paginator = Paginator(donations, 1)
-    donation_page_obj = donation_paginator.get_page(request.GET.get('donation_page'))
-
-    user_paginator = Paginator(users, 1)
-    user_page_obj = user_paginator.get_page(request.GET.get('user_page'))
-
-    role_paginator = Paginator(roles, 1)
-    roles_page_obj = role_paginator.get_page(request.GET.get('roles_page'))
-
-    # Track active tab
-    active_tab = request.GET.get("tab", "default-user")
-
-    # ----------------------------------------
-    # 🟦 MDM DATA (LookupType + Lookup)
-    # ----------------------------------------
-    lookup_types = LookupType.objects.all().order_by("id")
-    lookups = Lookup.objects.select_related("lookup_type").order_by("id")
-
-    lookup_type_paginator = Paginator(lookup_types, 5)
-    lookup_types_page = lookup_type_paginator.get_page(request.GET.get("lookup_type_page"))
-
-    lookup_paginator = Paginator(lookups, 5)
-    lookups_page = lookup_paginator.get_page(request.GET.get("lookup_page"))
-
-    # ----------------------------------------
-    # 🟨 HANDLE POST (Role Assign)
-    # ----------------------------------------
-    if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        role_id = request.POST.get("role_id")
-
-        if user_id and role_id:
-            selected_user = get_object_or_404(User, id=user_id)
-            selected_role = get_object_or_404(UserModuleAccess, id=role_id)
-
-            user_role, created = UserRole.objects.get_or_create(user=selected_user)
-            user_role.role = selected_role
-            user_role.save()
-
-            messages.success(request, f"{selected_user.username}'s role updated successfully!")
-        else:
-            messages.error(request, "Please select both user and role before submitting.")
-
-        return redirect(f'{reverse("welcome")}?tab={active_tab}')
-
-    # ----------------------------------------
-    # 📦 CONTEXT BUILD
-    # ----------------------------------------
-    context = {
-        'user': user,
-        'donation_owners': donation_owners,
-        'roles': roles,
-        'username': user.username,
-        'first_name': user.first_name,
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         'page_obj': page_obj,
         'donations': donations,
         'today': now().date(),
         'donation_page_obj': donation_page_obj,
         'user_page_obj': user_page_obj,
         'roles_page_obj': roles_page_obj,
-<<<<<<< HEAD
         'lookup_types': lookup_types,
         'lookups': lookups,
         'lookup_page_obj': lookup_page_obj,
@@ -451,27 +306,11 @@ def welcome_view(request):
     # ACCESS CONTROL
     # ------------------------------------------------------------
     if user.is_superuser:
-=======
-        'active_tab': active_tab,
-        'donations': donations,
-
-        # 🔥 MDM data
-        'lookup_types_page': lookup_types_page,
-        'lookups_page': lookups_page,
-    }
-
-    # ----------------------------------------
-    # 🟩 SUPERUSER MODULE ACCESS
-    # ----------------------------------------
-    if user.is_superuser:
-        context['showall'] = User.objects.filter(is_superuser=False)
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         all_modules = Module.objects.all().values_list('module_name', flat=True)
         context['allowed_modules'] = list(all_modules)
 
     else:
         user_role = UserRole.objects.filter(user=user).select_related('role').first()
-<<<<<<< HEAD
 
         if user_role and user_role.role:
             allowed_modules = (
@@ -481,22 +320,11 @@ def welcome_view(request):
                 ).select_related('module')
                 .values_list('module__module_name', flat=True)
             )
-=======
-        if user_role and user_role.role:
-            allowed_modules = UserModuleAccess.objects.filter(
-                role=user_role.role, can_access=True
-            ).select_related('module').values_list('module__module_name', flat=True)
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
             context['allowed_modules'] = list(allowed_modules)
 
         else:
             context['allowed_modules'] = []
-<<<<<<< HEAD
             messages.warning(request, "⚠️ No role assigned. Contact admin.")
-=======
-            messages.warning(request, "No role assigned. Please contact the admin.")
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
     return render(request, 'welcome.html', context)
 
@@ -674,7 +502,6 @@ def send_otp(request):
         return redirect(f"/verify-otp/?phone={phone}")
     return redirect('signin')
 
-<<<<<<< HEAD
 # ------------Globle All Search-------------------
 
 from django.db.models import Q
@@ -787,12 +614,6 @@ def search_lookup_table(request):
 
 
 
-=======
-
-
-
-# ------------Globle All Search----------------
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 from .models import User, Module, UserModuleAccess
 from .models import User, Module, UserModuleAccess
@@ -808,7 +629,6 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .models import UserModuleAccess
-<<<<<<< HEAD
 
 def search_users(request):
     query = request.GET.get("user_query", "")
@@ -853,50 +673,6 @@ def search_users(request):
         "active_tab": active_tab,
     })
 
-=======
-def search_users(request):
-    query = request.GET.get('query', '').strip()
-    users = User.objects.all().order_by('id')
-
-    if query:
-        bool_value = None
-        if query.lower() in ['true', 'yes', 'active']:
-            bool_value = True
-        elif query.lower() in ['false', 'no', 'inactive']:
-            bool_value = False
-
-        filters = (
-            Q(username__icontains=query) |
-            Q(first_name__icontains=query) |
-            Q(last_name__icontains=query) |
-            Q(email__icontains=query) |
-            Q(date_joined__icontains=query)
-        )
-
-        if bool_value is not None:
-            filters |= Q(is_staff=bool_value) | Q(is_active=bool_value)
-
-        users = users.filter(filters)
-
-    paginator = Paginator(users, 5)
-    page_number = request.GET.get('user_page')
-    user_page_obj = paginator.get_page(page_number)
-
-    roles = UserModuleAccess.objects.all()
-
-    # ✅ Pass active tab info
-    active_tab = 'user' if query else 'dashboard'
-
-    return render(request, 'welcome.html', {
-        'user_page_obj': user_page_obj,
-        'query': query,
-        'roles': roles,
-        'active_tab': active_tab,  # new
-    })
-
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Q
@@ -904,7 +680,6 @@ from django.core.paginator import Paginator
 from .models import UserModuleAccess
 import csv
 
-<<<<<<< HEAD
 import csv
 from django.http import HttpResponse
 from django.core.paginator import Paginator
@@ -917,15 +692,6 @@ def search_roles(request):
 
     roles = UserModuleAccess.objects.all().order_by('id')
 
-=======
-def search_roles(request):
-    query1 = request.GET.get('query1', '').strip()
-
-    # ✅ Step 1: Always start with all roles
-    roles = UserModuleAccess.objects.all().order_by('id')
-
-    # ✅ Step 2: Filter first (BEFORE download or pagination)
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     if query1:
         roles = roles.filter(
             Q(can_access__icontains=query1) |
@@ -937,7 +703,6 @@ def search_roles(request):
             Q(description__icontains=query1)
         )
 
-<<<<<<< HEAD
     # Download CSV
     if request.GET.get('download') == '1':
 
@@ -945,12 +710,6 @@ def search_roles(request):
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
-=======
-    # ✅ Step 3: THEN handle CSV download (after filtering)
-    if 'download' in request.GET:
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="roles_{query1 or "all"}.csv"'
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
         writer = csv.writer(response)
         writer.writerow(['Role', 'Description', 'Can Access', 'Can Add', 'Can Edit', 'Can Delete', 'Can View'])
@@ -966,7 +725,6 @@ def search_roles(request):
                 getattr(role, 'can_view', ''),
             ])
 
-<<<<<<< HEAD
         return response
 
     # Pagination
@@ -981,30 +739,15 @@ def search_roles(request):
         'roles_page_obj': roles_page_obj,
         'query1': query1,
         'active_tab': active_tab,
-=======
-        return response  # ✅ exports only the filtered records
-
-    # ✅ Step 4: Pagination (applies only to displayed results)
-    role_paginator = Paginator(roles, 1)
-    page_number = request.GET.get('roles_page')
-    roles_page_obj = role_paginator.get_page(page_number)
-
-    return render(request, 'welcome.html', {
-        'roles_page_obj': roles_page_obj,
-        'query1': query1,
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     })
 
 
 
-<<<<<<< HEAD
 
 # at the top of views.py
 from .models import LookupType
 
 
-=======
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -1173,25 +916,6 @@ def search_id(request):
         'active_tab': active_tab
     })
 
-<<<<<<< HEAD
-# @login_required
-# def search_users(request):
-#     query = request.GET.get('search')
-#     users = User.objects.all()
-#     active_tab = 'user'  # 👈 ensure your tab id = "user"
-
-#     if query:
-#         # 🔹 Filter by username (case-insensitive)
-#         users = User.objects.filter(username__icontains=query)
-
-#     return render(request, 'welcome.html', {
-#         'users': users,
-#         'query': query,
-#         'active_tab': active_tab
-#     })
-
-=======
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 
 
@@ -1391,7 +1115,6 @@ def searchdate(request):
     return render(request, 'welcome.html', context)
 # ----------------------local search ends---------------
 
-<<<<<<< HEAD
 # def donor_volunteer_list(request):
 #     donations = DonorVolunteer.objects.all()
 #     return render(request, 'donor-volunteer-list.html', {'donations': donations})
@@ -1405,225 +1128,76 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Q
 from heart_charity.models import LookupType, Lookup, DonorVolunteer, UserModuleAccess, Module
-=======
-
-def donor_volunteer_list(request):
-    donations = DonorVolunteer.objects.all()
-
-    # Safe fetch for Person Type options
-    person_type_options = Lookup.objects.none()
-    try:
-        person_type_lookup = LookupType.objects.get(type_name__iexact="Person Type")
-        person_type_options = Lookup.objects.filter(lookup_type=person_type_lookup).order_by("id")
-    except LookupType.DoesNotExist:
-        # optional: show admin-friendly warning on UI
-        messages.warning(request, "Note: 'Person Type' lookup is missing. Add it from MDM to see options here.")
-
-    # Safe fetch for ID Type options
-    id_type_options = Lookup.objects.none()
-    try:
-        id_type_lookup = LookupType.objects.get(type_name__iexact="ID Type")
-        id_type_options = Lookup.objects.filter(lookup_type=id_type_lookup).order_by("id")
-    except LookupType.DoesNotExist:
-        messages.warning(request, "Note: 'ID Type' lookup is missing. Add it from MDM to see options here.")
-
-    return render(request, 'add_donor_volunteer.html', {
-        'donations': donations,
-        'person_type_options': person_type_options,
-        'id_type_options': id_type_options,
-    })
-
-
-
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import DonorVolunteer
-
-def donor_volunteer_register(request):
-    if request.method == 'POST':
-        print(request.POST)
-
-        try:
-            # Get Multi Select Values
-            person_types = request.POST.getlist('person_type')
-            person_type_str = ",".join(person_types)
-
-            donor_box_id = (
-                request.POST.get('donor_box_id')
-                if "Donor-Box-Owner" in person_types
-                else None
-            )
-
-            DonorVolunteer.objects.create(
-                person_type=person_type_str,
-                first_name=request.POST.get('first_name'),
-                middle_name=request.POST.get('middle_name'),
-                last_name=request.POST.get('last_name'),
-                gender=request.POST.get('gender'),
-                date_of_birth=request.POST.get('date_of_birth'),
-                contact_number=request.POST.get('contact_number'),
-                email=request.POST.get('email'),
-                donor_box_id=donor_box_id,
-                house_number=request.POST.get('house_number'),
-                landmark=request.POST.get('landmark'),
-                city=request.POST.get('city'),
-                state=request.POST.get('state'),
-                country=request.POST.get('country'),
-                postal_code=request.POST.get('postal_code'),
-                id_type=request.POST.get('id_type'),
-                id_number=request.POST.get('id_number')
-            )
-
-            messages.success(request, 'Registration successful!')
-            return redirect('welcome')
-
-        except Exception as e:
-            messages.error(request, f'Error saving data: {e}')
-            print("Error:", e)
-
-    donors_list = DonorVolunteer.objects.all().order_by('-id')
-
-    query = request.GET.get('q')
-    if query:
-        donors_list = donors_list.filter(first_name__icontains=query) | donors_list.filter(last_name__icontains=query)
-
-    paginator = Paginator(donors_list, 10)
-    page_number = request.GET.get('page')
-    donors = paginator.get_page(page_number)
-
-    return render(request, 'welcome.html', {'donors': donors})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from .models import DonorVolunteer, Lookup
+from django.core.files.storage import default_storage
+
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import DonorVolunteer, LookupType
-
-@login_required
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
+from .models import Lookup, DonorVolunteer
 
 def add_donor_volunteer(request):
-
     # Get Lookup options
-    person_type_lookup_type = LookupType.objects.get(type_name__iexact="Person Type")
-    id_type_lookup_type = LookupType.objects.get(type_name__iexact="ID Type")
+    person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
+    id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
 
-    person_type_options = Lookup.objects.filter(lookup_type=person_type_lookup_type)
-    id_type_options = Lookup.objects.filter(lookup_type=id_type_lookup_type)
-
-    if request.method == "POST":
-        email = request.POST.get("email")
-
-        # ✅ Check duplicate email
-        if DonorVolunteer.objects.filter(email=email).exists():
-            messages.error(request, "This email is already registered. Try another email.")
-            return redirect("add_donor_volunteer")
-
-        # ✅ Safe ID number
-        id_number_raw = request.POST.get("id_number")
-        id_number = id_number_raw.strip() if id_number_raw and id_number_raw.strip() != "" else None
-
-        # ✅ Get ForeignKey objects
-        person_type = Lookup.objects.get(pk=request.POST.get("person_type"))
-        id_type = Lookup.objects.get(pk=request.POST.get("id_type")) if request.POST.get("id_type") else None
-
-        # ✅ Create donor
-        try:
-            donor = DonorVolunteer.objects.create(
-                first_name=request.POST.get("first_name"),
-                middle_name=request.POST.get("middle_name"),
-                last_name=request.POST.get("last_name"),
-                gender=request.POST.get("gender"),
-                date_of_birth=request.POST.get("date_of_birth"),
-                
-                blood_group=request.POST.get("blood_group"),
-                contact_number=request.POST.get("contact_number"),
-                whatsapp_number=request.POST.get("whatsapp_number"),
-                email=email,
-                donor_box_id=request.POST.get("donor_box_id"),
-
-                house_number=request.POST.get("house_number"),
-                building_name=request.POST.get("building_name"),
-                landmark=request.POST.get("landmark"),
-                area=request.POST.get("area"),
-                city=request.POST.get("city"),
-                state=request.POST.get("state"),
-                country=request.POST.get("country"),
-                postal_code=request.POST.get("postal_code"),
-
-                native_place=request.POST.get("native_place"),
-                native_postal_code=request.POST.get("native_postal_code"),
-
-                person_type=person_type,
-                id_type=id_type,
-
-                id_number=id_number,
-                id_proof_image=request.FILES.get("id_proof_image"),
-                pan_number=request.POST.get("pan_number"),
-                pan_card_image=request.FILES.get("pan_card_image"),
-
-                created_by=request.user,
-                updated_by=request.user
-            )
-        except Exception as e:
-            messages.error(request, f"Error saving donor: {e}")
-            return render(request, "add_donor_volunteer.html", {
-                "person_type_options": person_type_options,
-                "id_type_options": id_type_options,
-            })
-
-        messages.success(request, "Donor/Volunteer added successfully!")
-        return redirect('donor_success')
-
-    return render(request, "add_donor_volunteer.html", {
-        "person_type_options": person_type_options,
-        "id_type_options": id_type_options,
-    })
+    # Get Donor-Box-Owner ID for template JS toggle
+    donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
 
 
+    if request.method == 'POST':
+        # Get Person Type instance
+        person_type_id = request.POST.get('person_type')
+        person_type_instance = Lookup.objects.get(id=int(person_type_id)) if person_type_id else None
 
+        # Handle file uploads
+        id_proof_image = request.FILES.get('id_proof_image')
+        pan_card_image = request.FILES.get('pan_card_image')
 
-<<<<<<< HEAD
-=======
+        donor = DonorVolunteer.objects.create(
+            person_type=person_type_instance,
+            first_name=request.POST.get('first_name'),
+            middle_name=request.POST.get('middle_name'),
+            last_name=request.POST.get('last_name'),
+            gender=request.POST.get('gender'),
+            date_of_birth=request.POST.get('date_of_birth'),
+            age=request.POST.get('age') or None,
+            blood_group=request.POST.get('blood_group'),
+            contact_number=request.POST.get('contact_number'),
+            whatsapp_number=request.POST.get('whatsapp_number'),
+            email=request.POST.get('email'),
+            donor_box_id=request.POST.get('donor_box_id') if person_type_instance.lookup_name == 'Donor-Box-Owner' else None,
+            house_number=request.POST.get('house_number'),
+            building_name=request.POST.get('building_name'),
+            landmark=request.POST.get('landmark'),
+            area=request.POST.get('area'),
+            city=request.POST.get('city'),
+            state=request.POST.get('state'),
+            country=request.POST.get('country'),
+            postal_code=request.POST.get('postal_code'),
+            native_place=request.POST.get('native_place'),
+            native_postal_code=request.POST.get('native_postal_code'),
+            id_number=request.POST.get('id_number'),
+            pan_number=request.POST.get('pan_number'),
+        )
+
+        # Save uploaded files if any
+        if id_proof_image:
+            donor.id_proof_image.save(id_proof_image.name, id_proof_image)
+        if pan_card_image:
+            donor.pan_card_image.save(pan_card_image.name, pan_card_image)
+
+        return redirect('welcome')  # Redirect to your welcome page
+
+    context = {
+        'person_type_options': person_type_options,
+        'id_type_options': id_type_options,
+        'donor_box_owner_id': donor_box_owner.id,  # Pass numeric ID for JS
+    }
+    return render(request, 'add_donor_volunteer.html', context)
+
 def donor_success(request):
     return render(request, "donor_success.html") 
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 
 
@@ -1640,7 +1214,6 @@ from django.contrib.auth.models import User
 
 from django.shortcuts import render, redirect
 from django.utils import timezone
-<<<<<<< HEAD
 from .models import Donation, DonorVolunteer, Lookup, LookupType
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1651,16 +1224,21 @@ def adddonation(request):
     donors = DonorVolunteer.objects.all()
     today = now().date()
 
-    # --- Universal lookup fetcher (more reliable) ---
-    def get_lookup_items(keyword):
-        return Lookup.objects.filter(
-            lookup_type__type_name__icontains=keyword
-        ).order_by("lookup_name")
+    donation_categories = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Donation Category"
+    ).order_by("lookup_name")
 
-    donation_categories = get_lookup_items("category")
-    donation_modes      = get_lookup_items("mode")
-    payment_methods     = get_lookup_items("method")
-    payment_statuses    = get_lookup_items("status")
+    donation_modes = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Donation Mode"
+    ).order_by("lookup_name")
+
+    payment_methods = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Payment Method"
+    ).order_by("lookup_name")
+
+    payment_statuses = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Payment Status"
+    ).order_by("lookup_name")
 
     if request.method == "POST":
         donor_id = request.POST.get("donor")
@@ -1678,7 +1256,6 @@ def adddonation(request):
         description = request.POST.get("description")
         transaction_id = request.POST.get("transaction_id")
 
-        # Save Donation
         Donation.objects.create(
             donor_id=donor_id,
             donation_amount_declared=donation_amount_declared,
@@ -1697,7 +1274,8 @@ def adddonation(request):
         )
 
         messages.success(request, "Donation added successfully!")
-        return redirect("add_donation")
+        return redirect("adddonation")
+
 
     return render(request, "adddonation.html", {
         "donors": donors,
@@ -1708,79 +1286,11 @@ def adddonation(request):
         "today": today
     })
 
+
+
 def donation_list(request):
     donations = Donation.objects.all().select_related('donor')
     return render(request, 'donation-list.html', {'donations': donations})
-=======
-from django.db.models import Q
-from .models import Donation, DonorVolunteer
-
-from django.utils.timezone import now
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import Donation, DonorVolunteer
-
-
-
-
-
-def add_donation(request):
-    # Get the lookup object for "Donor"
-    donor_lookup = Lookup.objects.filter(lookup_name__iexact="Donor").first()
-
-    # If lookup missing, avoid crash
-    if not donor_lookup:
-        donors = DonorVolunteer.objects.none()  # empty list
-    else:
-        donors = DonorVolunteer.objects.filter(person_type=donor_lookup)
-
-    if request.method == 'POST':
-        donor_ids = request.POST.getlist('donor')
-        donation_amount = request.POST.get('donation_amount')
-        donation_date = request.POST.get('donation_date')
-        donation_category = request.POST.get('donation_category')
-        donation_mode = request.POST.get('donation_mode')
-        payment_method = request.POST.get('payment_method')
-        transaction_id = request.POST.get('transaction_id')
-        payment_status = request.POST.get('payment_status')
-
-        if not donor_ids:
-            messages.error(request, "Please select at least one donor.")
-            return redirect('welcome')
-
-        # Create donation
-        donation = Donation.objects.create(
-            donation_amount=donation_amount,
-            donation_date=donation_date,
-            donation_category=donation_category,
-            donation_mode=donation_mode,
-            payment_method=payment_method,
-            transaction_id=transaction_id,
-            payment_status=payment_status,
-        )
-
-        # Multiple donors
-        donation.donors.set(donor_ids)
-
-        messages.success(request, "Donation added successfully!")
-        return redirect('welcome')
-
-    context = {
-        'donors': donors,
-        'today': now().date(),
-        'donation_categories': Donation.CATEGORY_CHOICES,
-        'donation_modes': Donation.DONATION_MODE_CHOICES,
-        'payment_methods': Donation.PAYMENT_METHOD_CHOICES,
-        'payment_statuses': Donation.PAYMENT_STATUS_CHOICES,
-    }
-
-    return render(request, 'adddonation.html', context)
-
-
-# def donation_list(request):
-#     donations = Donation.objects.all().select_related('donor')
-#     return render(request, 'donation-list.html', {'donations': donations})
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 
 
@@ -1862,38 +1372,6 @@ def download_donor_report(request):
     return render(request, 'download_donor_report.html')
 
 
-<<<<<<< HEAD
-=======
-def edit_user(request, id):
-    user = get_object_or_404(User, id=id)
-    
-    if request.method == 'POST':
-        # Get data from POST request
-        user.first_name = request.POST.get('first_name')
-        user.last_name = request.POST.get('last_name')
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-        
-        # Save changes to the database
-        user.save()
-        
-        # Redirect after successful update
-        return redirect('welcome')  # Update with your actual URL name for the users list page
-
-    # If GET request, render the form with user data
-    context = {'user': user}
-    return render(request, 'edit_user.html', context)
-
-
-@login_required
-def delete_user(request, user_id):
-    print("Delete function triggered for:", user_id)
-    user_to_delete = get_object_or_404(User, id=user_id)
-    user_to_delete.is_active = False  # deactivate instead of delete
-    user_to_delete.save()
-    return redirect('welcome')
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1943,10 +1421,6 @@ def show_donationbox(request):
 
 
 from .models import DonorVolunteer, DonationOwner, DonationBox
-<<<<<<< HEAD
-=======
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 def add_donationbox_payment(request):
     owners = DonorVolunteer.objects.filter(person_type='Donor-Box-Owner')
     donation_boxes = DonationBox.objects.all()
@@ -2029,13 +1503,6 @@ def add_employee(request):
     return render(request, 'welcome.html')  # Your form page template
 
 
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 def all_donations(request):
     q = request.GET.get('q', '').strip()
     donations = Donation.objects.all()
@@ -2055,11 +1522,7 @@ def all_donations(request):
     if q and not donations.exists():
         message = f'No matching records found for "{q}".'
 
-<<<<<<< HEAD
     return render(request, 'donation-list.html', {
-=======
-    return render(request, 'adddonation.html', {
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         'donations': donations,
         'query': q,
         'message': message
@@ -2426,7 +1889,6 @@ from .models import Donation  # Example model
 
 
 
-<<<<<<< HEAD
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import Donation
@@ -2444,70 +1906,6 @@ def donation_list(request):
 
 
 from heart_charity.models import LookupType   # ⬅️ ADD THIS
-=======
-def adddonation(request):
-    donors = DonorVolunteer.objects.all()
-    today = now().date()
-
-    # --- Universal lookup fetcher (more reliable) ---
-    def get_lookup_items(keyword):
-        return Lookup.objects.filter(
-            lookup_type__type_name__icontains=keyword
-        ).order_by("lookup_name")
-
-    donation_categories = get_lookup_items("category")
-    donation_modes      = get_lookup_items("mode")
-    payment_methods     = get_lookup_items("method")
-    payment_statuses    = get_lookup_items("status")
-
-    if request.method == "POST":
-        donor_id = request.POST.get("donor")
-        donation_amount_declared = request.POST.get("donation_amount_declared") or 0
-        donation_amount_paid = request.POST.get("donation_amount_paid") or 0
-        donation_date = request.POST.get("donation_date")
-        donation_category_id = request.POST.get("donation_category")
-        donation_mode_id = request.POST.get("donation_mode")
-        payment_method_id = request.POST.get("payment_method")
-        payment_status_id = request.POST.get("payment_status")
-        place_of_donation = request.POST.get("place_of_donation")
-        check_no = request.POST.get("check_no")
-        donation_received_by = request.POST.get("donation_received_by")
-        reference_name = request.POST.get("reference_name")
-        description = request.POST.get("description")
-        transaction_id = request.POST.get("transaction_id")
-
-        # Save Donation
-        Donation.objects.create(
-            donor_id=donor_id,
-            donation_amount_declared=donation_amount_declared,
-            donation_amount_paid=donation_amount_paid,
-            donation_date=donation_date,
-            donation_category_id=donation_category_id,
-            donation_mode_id=donation_mode_id,
-            payment_method_id=payment_method_id,
-            payment_status_id=payment_status_id,
-            place_of_donation=place_of_donation,
-            check_no=check_no,
-            donation_received_by=donation_received_by,
-            reference_name=reference_name,
-            description=description,
-            transaction_id=transaction_id
-        )
-
-        messages.success(request, "Donation added successfully!")
-        return redirect("add_donation")
-
-    return render(request, "adddonation.html", {
-        "donors": donors,
-        "donation_categories": donation_categories,
-        "donation_modes": donation_modes,
-        "payment_methods": payment_methods,
-        "payment_statuses": payment_statuses,
-        "today": today
-    })
-
-from django.contrib import messages
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 
 def lookup_type_create(request):
     if request.method == "POST":
@@ -2539,23 +1937,13 @@ def lookup_type_create(request):
     return render(request, "lookup_type_form.html", {
         "lookup_type": None
     })
-<<<<<<< HEAD
-=======
 
 
-
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
 def lookup_create(request):
     lookup_types = LookupType.objects.all()
 
     if request.method == "POST":
-<<<<<<< HEAD
         name = request.POST.get("lookup_name")
-=======
-        name = request.POST.get("lookup_name").strip()
-
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
         type_id = request.POST.get("lookup_type")
 
         # Check duplicate entry
@@ -2593,13 +1981,6 @@ def lookup_create(request):
         "lookup_types": lookup_types,
         "lookup": None
     })
-
-
-
-
-<<<<<<< HEAD
-
-
 
 
 
@@ -2644,17 +2025,3 @@ def delete_user(request, user_id):
 
 
 # ************* delete Data Start *************
-
-=======
-from django.shortcuts import render
-from .models import LookupType, Lookup
-
-def show_lookup_data(request):
-    lookup_types = LookupType.objects.all().order_by("id")
-    lookups = Lookup.objects.select_related("lookup_type").order_by("id")
-
-    return render(request, "lookup_display.html", {
-        "lookup_types": lookup_types,
-        "lookups": lookups
-    })
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f

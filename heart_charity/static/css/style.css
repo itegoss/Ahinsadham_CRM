@@ -11,16 +11,8 @@ h1 {
 
   /* 📄 Report Form Styling */
   form {
-<<<<<<< HEAD
     border-radius: 10px;
     
-=======
-    /* padding: 20px; */
-    border-radius: 10px;
-    /* box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); */
-    /* max-width: 600px; */
-    /* margin: 0 auto 40px auto; */
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
   }
 
   form label {
@@ -63,10 +55,6 @@ h1 {
   }
 
   th {
-<<<<<<< HEAD
-=======
-    background-color: #2a5298;
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
     color: #fff;
     text-transform: uppercase;
     font-size: 12px;
@@ -415,10 +403,6 @@ td {
 /* Make the table wrapper scrollable */
 .table-scroll-wrapper {
   width: 100%;
-<<<<<<< HEAD
-=======
-  max-height: 400px; /* vertical scrollbar height */
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
   overflow-x: auto;
   overflow-y: auto;
   border: 1px solid #ddd;
@@ -434,10 +418,6 @@ td {
 .table-scroll-wrapper th,
 .table-scroll-wrapper td {
   white-space: nowrap;
-<<<<<<< HEAD
-=======
-  min-width: 120px; /* consistent column width */
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
   vertical-align: middle;
 }
 

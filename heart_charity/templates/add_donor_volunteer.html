@@ -1,74 +1,56 @@
 {% extends "base.html" %}
+{% block title %}Add Donor / Volunteer{% endblock %}
+
 {% block content %}
 
-
 <style>
-    /* Card Style */
-    .card {
-        background: #f2fff4 !important; /* soft light green */
-        border-radius: 12px;
-    }
-
-    .card-header {
-        border-radius: 12px 12px 0 0 !important;
-    }
-
-    
-
-    /* Input & Select Fields */
-    .form-control, .form-select {
-        border-radius: 8px;
-        border: 1px solid #b5d7b8;
-        transition: 0.2s ease-in-out;
-    }
-
-    .form-control:focus, .form-select:focus {
-        box-shadow: 0 0 6px rgba(13, 122, 52, 0.3);
-    }
-
-    /* Labels */
-    .form-label {
-        font-weight: 600;
-    }
-
-    /* Submit Button */
-    .btn-success {
-        background: #0d7a34;
-        border: none;
-        border-radius: 8px;
-        transition: 0.3s;
-        font-size: 17px;
-    }
-
-    .btn-success:hover {
-        background: #0a5a27;
-        transform: translateY(-2px);
-        box-shadow: 0px 4px 10px rgba(13, 122, 52, 0.3);
-    }
-
-    /* Section Divider */
-    hr {
-        border-top: 2px solid #b5d7b8;
-        margin-top: 6px;
-        margin-bottom: 15px;
-    }
+    .card { background: #f2fff4 !important; border-radius: 12px; }
+    .card-header { border-radius: 12px 12px 0 0 !important; color: #fff; text-align: center; }
+    .form-control, .form-select { border-radius: 8px; border: 1px solid #b5d7b8; transition: 0.2s; }
+    .form-control:focus, .form-select:focus { box-shadow: 0 0 6px rgba(13, 122, 52, 0.3); }
+    .form-label { font-weight: 600; }
+    .btn-success { background: #0d7a34; border: none; border-radius: 8px; transition: 0.3s; font-size: 17px; }
+    .btn-success:hover { background: #0a5a27; transform: translateY(-2px); box-shadow: 0px 4px 10px rgba(13, 122, 52, 0.3); }
+    hr { border-top: 2px solid #b5d7b8; margin: 6px 0 15px 0; }
+    h5.section-title { color: #0d7a34; font-weight: 400; }
 </style>
 
 <div class="container mt-4 mb-5">
-
     <div class="card shadow-lg border-0">
-        <div class="card-header text-white">
-            <h3 class="mb-0">Add Donor</h3>
-        </div>
+        <div class="text-center mb-4">
+      <h3 class="fw-bold text-success">Add Donor/Volunteer</h3>
+      <p class="text-muted">Fill out the details to record a new donation</p>
+    </div>
+        <!-- <div class="card-header">
+            <h3 class="mb-0">Add Donor / Volunteer</h3>
+            <p class="mb-0 text-light">Fill out all donor / volunteer details</p>
+        </div> -->
         <div class="card-body">
 
-        <form method="POST" action="{% url 'add_donor_volunteer' %}" enctype="multipart/form-data">
+            <form method="POST" action="{% url 'add_donor_volunteer' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
+                <!-- ========================= PERSON TYPE ========================= -->
+                <h5 class="text-success fw-bold mb-2">Person Type</h5>
+                <hr>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Person Type</label>
+                        <select name="person_type" id="person_type" class="form-select" required>
+                            <option value="">Select</option>
+                            {% for option in person_type_options %}
+
+                                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <!-- ========================= PERSONAL DETAILS ========================= -->
+                <h5 class="text-success fw-bold mb-2">Personal Details</h5>
+                <hr>
 
-                <div class="row g-3">
-
+                <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label">First Name</label>
                         <input type="text" name="first_name" class="form-control" required>
@@ -95,30 +77,29 @@
                     </div>
 
                     <div class="col-md-4">
-          <label class="form-label fw-semibold">Date of Birth</label>
-          <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label fw-semibold">Age</label>
-          <input type="number" id="age" name="age" class="form-control" readonly>
-        </div>
-
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required>
+                    </div>
 
                     <div class="col-md-4">
-            <label class="form-label">Blood Group</label>
-            <select name="blood_group" class="form-select" required>
-                <option value="">Select</option>
-                <option value="A+">A+</option>
-                <option value="A-">A-</option>
-                <option value="B+">B+</option>
-                <option value="B-">B-</option>
-                <option value="O+">O+</option>
-                <option value="O-">O-</option>
-                <option value="AB+">AB+</option>
-                <option value="AB-">AB-</option>
-            </select>
-            </div>
+                        <label class="form-label">Age</label>
+                        <input type="number" name="age" id="age" class="form-control" readonly>
+                    </div>
 
+                    <div class="col-md-4">
+                        <label class="form-label">Blood Group</label>
+                        <select name="blood_group" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Contact Number</label>
@@ -135,26 +116,17 @@
                         <input type="email" name="email" class="form-control" required>
                     </div>
 
-                    <div class="col-md-4">
+                    <!-- Donor Box ID -->
+                    <div class="col-md-4" id="donor_box_id_row" style="display:none;">
                         <label class="form-label">Donor Box ID</label>
                         <input type="text" name="donor_box_id" class="form-control">
                     </div>
-
                 </div>
 
                 <!-- ========================= ADDRESS DETAILS ========================= -->
-                <h5 class="mt-4 fw-bold text-primary">Address Details</h5>
+                <h5 class="text-success fw-bold mb-2">Address Details</h5>
                 <hr>
-<div class="col-md-4">
-          <label class="form-label fw-semibold">Native Place</label>
-          <input type="text" id="native_place" name="native_place" class="form-control">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label fw-semibold">Native Postal Code</label>
-          <input type="text" id="native_postal_code" name="native_postal_code" class="form-control">
-        </div>
-                <div class="row g-3">
-
+                <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label">House Number</label>
                         <input type="text" name="house_number" class="form-control" required>
@@ -195,112 +167,83 @@
                         <input type="text" name="postal_code" class="form-control" required>
                     </div>
 
-                </div>
+                    <!-- Native Place last -->
+                    <div class="col-md-4">
+                        <label class="form-label">Native Place</label>
+                        <input type="text" name="native_place" class="form-control">
+                    </div>
 
-                <!-- ========================= LOOKUP DETAILS ========================= -->
-                <h5 class="mt-4 fw-bold text-primary">Lookup Details</h5>
-                <hr>
-
-                <div class="row g-3">
-
-                   <div class="col-md-6">
-    <label class="form-label">Person Type</label>
-    <select name="person_type" class="form-select">
-        <option value="">Select</option>
-        {% for option in person_type_options %}
-            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-        {% endfor %}
-
-    </select>
-</div>
-
-<div class="col-md-6">
-    <label class="form-label">ID Type</label>
-    <select name="id_type" class="form-select">
-        <option value="">Select</option>
-        {% for option in id_type_options %}
-            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-        {% endfor %}
-    </select>
-</div>
-
-
+                    <div class="col-md-4">
+                        <label class="form-label">Native Postal Code</label>
+                        <input type="text" name="native_postal_code" class="form-control">
+                    </div>
                 </div>
 
                 <!-- ========================= ID & PAN DETAILS ========================= -->
-                <h5 class="mt-4 fw-bold text-primary">ID & PAN Details</h5>
+                <h5 class="text-success fw-bold mb-2">ID & PAN Details</h5>
                 <hr>
-
-                <div class="row g-3">
-
+                <div class="row g-3 mb-3">
                     <div class="col-md-6">
-    <label class="form-label">ID Number</label>
-<input type="text" name="id_number" class="form-control" placeholder="Enter ID Number">
-</div>
-
-
+                        <label class="form-label">ID Number</label>
+                        <input type="text" name="id_number" class="form-control">
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label">ID Proof Image</label>
                         <input type="file" name="id_proof_image" class="form-control">
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">PAN Number</label>
                         <input type="text" name="pan_number" class="form-control">
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">PAN Card Image</label>
                         <input type="file" name="pan_card_image" class="form-control">
                     </div>
-
                 </div>
+ <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
+          <i class="bi bi-save"></i> Submit
+        </button>
 
-                <!-- ========================= SUBMIT ========================= -->
-                <div class="mt-4 text-end">
-                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
-                        Submit
-                    </button>
-                </div>
+        <a href="{% url 'welcome' %}?tab=Donation Module" class="btn btn-secondary px-5" style="border-radius: 8px;">
+  ← Back
+</a>
+      </div>
+                <!-- <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold">Submit</button>
+                    <a href="{% url 'welcome' %}" class="btn btn-secondary px-5 py-2 ms-3">← Back</a>
+                </div> -->
 
             </form>
         </div>
     </div>
 </div>
 
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // Show Donor Box ID only if type is "Donor-Box-Owner"
-  const personType = document.getElementById("person_type");
-  const donorBoxRow = document.getElementById("donor_box_id_row");
-  if(personType) {
-    personType.addEventListener("change", function() {
-      donorBoxRow.style.display = (this.value === "Donor-Box-Owner") ? "block" : "none";
-    });
-  }
+    const personType = document.getElementById("person_type");
+    const donorBoxRow = document.getElementById("donor_box_id_row");
+    const donorBoxOwnerId = "{{ donor_box_owner_id }}"; // Pass this from view
+    if(personType && donorBoxRow) {
+        donorBoxRow.style.display = "none";
+        personType.addEventListener("change", function() {
+            donorBoxRow.style.display = (this.value === donorBoxOwnerId) ? "block" : "none";
+        });
+    }
 
-  // Auto-fill age based on DOB
-  const dobInput = document.getElementById("date_of_birth");
-  const ageInput = document.getElementById("age");
-  if(dobInput && ageInput) {
-    dobInput.addEventListener("change", function() {
-      const dob = new Date(this.value);
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-        age--;
-      }
-      ageInput.value = age;
-    });
-  }
+    const dobInput = document.getElementById("date_of_birth");
+    const ageInput = document.getElementById("age");
+    if(dobInput && ageInput) {
+        dobInput.addEventListener("change", function() {
+            const dob = new Date(this.value);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
+            ageInput.value = age;
+        });
+    }
 });
 </script>
 
-<<<<<<< HEAD
 {% endblock %}
-=======
-{% endblock %}
->>>>>>> b13a385c30b37b8497297f761061bf1d6825637f
