@@ -1989,26 +1989,150 @@ def lookup_create(request):
 
 
 # ************* Edit Data Start *************
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import User
 
 def edit_user(request, id):
-    user = get_object_or_404(User, id=id)
-    
-    if request.method == 'POST':
-        # Get data from POST request
-        user.first_name = request.POST.get('first_name')
-        user.last_name = request.POST.get('last_name')
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-        
-        # Save changes to the database
-        user.save()
-        
-        # Redirect after successful update
-        return redirect('welcome')  # Update with your actual URL name for the users list page
+    user_obj = get_object_or_404(User, id=id)
 
-    # If GET request, render the form with user data
-    context = {'user': user}
-    return render(request, 'edit_user.html', context)
+    if request.method == 'POST':
+        user_obj.first_name = request.POST.get('first_name')
+        user_obj.last_name = request.POST.get('last_name')
+        user_obj.username = request.POST.get('username')
+        user_obj.email = request.POST.get('email')
+        
+        user_obj.save()
+        return redirect('welcome')
+
+    return render(request, 'edit_user.html', {'edit_user': user_obj})
+
+
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import UserModuleAccess
+
+def edit_usermoduleaccess(request, id):
+    record = get_object_or_404(UserModuleAccess, id=id)
+
+    if request.method == 'POST':
+        record.name = request.POST.get("name") or record.name
+        record.description = request.POST.get("description") or record.description
+
+        record.can_access = bool(request.POST.get("can_access"))
+        record.can_add = bool(request.POST.get("can_add"))
+        record.can_edit = bool(request.POST.get("can_edit"))
+        record.can_delete = bool(request.POST.get("can_delete"))
+        record.can_view = bool(request.POST.get("can_view"))
+
+        record.save()
+        return redirect("welcome")  # Change to your module list page
+
+    return render(request, "edit_usermoduleaccess.html", {"access": record})
+
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import DonorVolunteer, Lookup
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import DonorVolunteer, Lookup
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import DonorVolunteer, Lookup
+def edit_donor(request, donor_id):
+    donor = get_object_or_404(DonorVolunteer, id=donor_id)
+    donors = DonorVolunteer.objects.all()
+    person_types = Lookup.objects.filter(lookup_type__type_name="Person Type")
+    id_types = Lookup.objects.filter(lookup_type__type_name="ID Type")
+
+    if request.method == "POST":
+        donor.first_name = request.POST.get("first_name", donor.first_name)
+        donor.middle_name = request.POST.get("middle_name", donor.middle_name)
+        donor.last_name = request.POST.get("last_name", donor.last_name)
+        donor.person_type_id = request.POST.get("person_type", donor.person_type_id)
+        donor.id_type_id = request.POST.get("id_type", donor.id_type_id)
+        donor.gender = request.POST.get("gender", donor.gender)
+        donor.date_of_birth = request.POST.get("date_of_birth", donor.date_of_birth)
+        donor.blood_group = request.POST.get("blood_group", donor.blood_group)
+        donor.contact_number = request.POST.get("contact_number", donor.contact_number)
+        donor.whatsapp_number = request.POST.get("whatsapp_number", donor.whatsapp_number)
+        donor.email = request.POST.get("email", donor.email)
+        donor.house_number = request.POST.get("house_number", donor.house_number)
+        donor.building_name = request.POST.get("building_name", donor.building_name)
+        donor.landmark = request.POST.get("landmark", donor.landmark)
+        donor.area = request.POST.get("area", donor.area)
+        donor.city = request.POST.get("city", donor.city)
+        donor.state = request.POST.get("state", donor.state)
+        donor.country = request.POST.get("country", donor.country)
+        donor.postal_code = request.POST.get("postal_code", donor.postal_code)
+        donor.id_number = request.POST.get("id_number", donor.id_number)
+        donor.pan_number = request.POST.get("pan_number", donor.pan_number)
+        # handle file uploads if needed
+
+        donor.save()
+        return redirect("welcome")
+
+    return render(request, "edit_donor.html", {
+        "donors": donors,
+        "donor": donor,
+        "person_types": person_types,
+        "id_types": id_types,
+        "blood_groups": DonorVolunteer.BLOOD_GROUP_CHOICES,
+    })
+
+
+
+# views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Donation, Lookup, DonorVolunteer
+from django.contrib.auth.decorators import login_required
+
+from django.db.models import Q
+
+def edit_donation(request, id):
+    donation = get_object_or_404(Donation, id=id)
+
+    # Only Donors
+    donors = DonorVolunteer.objects.filter(person_type__lookup_name='Donor-Box-Owner')
+
+    donation_categories = Lookup.objects.filter(lookup_type__type_name="Donation Category")
+    donation_modes = Lookup.objects.filter(lookup_type__type_name="Donation Mode")
+    payment_methods = Lookup.objects.filter(lookup_type__type_name="Payment Method")
+    payment_statuses = Lookup.objects.filter(lookup_type__type_name="Payment Status")
+
+    if request.method == "POST":
+        donation.donor_id = request.POST.get("donor")
+        donation.donation_date = request.POST.get("donation_date")
+        donation.donation_category_id = request.POST.get("donation_category")
+        donation.donation_mode_id = request.POST.get("donation_mode")
+        donation.payment_method_id = request.POST.get("payment_method")
+        donation.payment_status_id = request.POST.get("payment_status")
+
+        donation.transaction_id = request.POST.get("transaction_id")
+        donation.receipt_id = request.POST.get("receipt_id")
+        donation.check_no = request.POST.get("check_no")
+        donation.description = request.POST.get("description")
+
+        donation.donation_amount_declared = request.POST.get("donation_amount_declared") or 0
+        donation.donation_amount_paid = request.POST.get("donation_amount_paid") or 0
+        donation.updated_by = request.user
+        donation.save()
+
+        messages.success(request, "Donation updated successfully!")
+        return redirect("welcome")
+
+    return render(request, "edit_donation.html", {
+        "donation": donation,
+        "donors": donors,
+        "donation_categories": donation_categories,
+        "donation_modes": donation_modes,
+        "payment_methods": payment_methods,
+        "payment_statuses": payment_statuses,
+    })
 
 
 

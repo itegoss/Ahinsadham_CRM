@@ -1,143 +1,209 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Edit User</title>
+
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-       
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f4faf4;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
+            align-items: center;
+            min-height: 100vh;
         }
-        
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 480px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(4px);
         }
-        
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 600;
+
+        .popup-card {
+            position: relative;
+            width: 85%;
+            max-width: 1100px;
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2);
+            animation: popup 0.4s ease;
+        }
+
+        @keyframes popup {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .title {
             text-align: center;
+            font-size: 38px;
+            font-weight: bold;
+            color: #1e7a33;
+            margin-bottom: 6px;
         }
-        
-        .form-group {
-            margin-bottom: 24px;
+
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: gray;
+            margin-bottom: 35px;
         }
-        
-        label {
-            display: block;
-            color: #555;
-            font-weight: 500;
+
+        .section-label {
+            font-size: 22px;
+            color: green;
             margin-bottom: 8px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: bold;
         }
-        
-        input[type="text"],
-        input[type="email"] {
+
+        .line {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            height: 2px;
+            background: #d1e5d1;
+            margin-bottom: 30px;
         }
-        
-        input[type="text"]:focus,
-        input[type="email"]:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 40px;  /* Increased spacing */
+            row-gap: 25px;
         }
-        
-        button[type="submit"] {
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input {
+            color:black;
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
+            border-radius: 10px;
+            border: 2px solid #cce4cc;
             font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background: #f8fff8;
+            transition: .3s ease;
         }
-        
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+
+        .form-group input:focus {
+            background: white;
+            border-color: #2f7d35;
+            outline: none;
         }
-        
-        .back-link {
+
+        .btn-area {
+            margin-top: 40px;
             text-align: center;
-            margin-top: 24px;
         }
-        
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
+
+        button {
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 0 15px;
         }
-        
-        .back-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+
+        .btn-submit {
+            background: #21873b;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #17612a;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #565e64;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 22px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333;
+        }
+
+        .close-btn:hover {
+            color: red;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h2>Edit User</h2>
-        <form method="POST">
-            {% csrf_token %}
-            
+
+<div class="overlay"></div>
+
+<div class="popup-card">
+
+    <button class="close-btn" onclick="window.history.back()">✖</button>
+
+    <div class="title">Edit User</div>
+    <div class="subtitle">Please update the required details below</div>
+
+    <div class="section-label">User Details</div>
+    <div class="line"></div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-grid">
+
             <div class="form-group">
-                <label for="firstname">First Name</label>
-                <input type="text" id="firstname" name="first_name" value="{{ user.first_name }}" required>
+                <label>First Name</label>
+              <input type="text" name="first_name" value="{{ edit_user.first_name }}" required>
             </div>
 
             <div class="form-group">
-                <label for="lastname">Last Name</label>
-                <input type="text" id="lastname" name="last_name" value="{{ user.last_name }}" required>
+                <label>Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}" required>
             </div>
 
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="{{ user.username }}" required>
+                <label>Username</label>
+                <input type="text" name="username" value="{{ user.username }}" required>
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required>
             </div>
 
-            <button type="submit">Update User</button>
-        </form>
-        
-        <div class="back-link">
-            <a href="{% url 'welcome' %}">← Back to Users</a>
         </div>
-    </div>
+
+        <div class="btn-area">
+            <button class="btn-submit" type="submit">✔ Update</button>
+            <a href="{% url 'welcome' %}">
+                <button type="button" class="btn-back">← Back</button>
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
 </body>
 </html>

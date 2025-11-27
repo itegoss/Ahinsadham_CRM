@@ -602,6 +602,8 @@ h1 {
   }
 
   form select {
+    color: black;
+    background-color: unset;
     width: 100%;
     padding: 10px;
     border: 1px solid #bbb;
@@ -1031,7 +1033,7 @@ td {
 
 {% if user.is_superuser %}
     <!-- show all modules -->
-     
+<!--      
         <a class="active" data-tab="default-user">
         <i class="bi bi-bar-chart-line"></i>
             <span class="sidebar-text">Dashboard</span>
@@ -1132,8 +1134,126 @@ td {
         <a data-tab="Seeds Module">
             <i class="bi bi-flower1"></i>
             <span class="sidebar-text">Seeds Module</span>
-        </a>
+        </a> -->
+<a class="tab-btn active" data-tab="default-user">
+    <i class="bi bi-bar-chart-line"></i>
+    <span class="sidebar-text">Dashboard</span>
+</a>
 
+<a class="tab-btn mdm" data-tab="mdm">
+    <i class="bi bi-table"></i>
+    <span class="sidebar-text">MDM</span>
+</a>
+
+<a class="tab-btn user" data-tab="user">
+    <i class="bi bi-person"></i>
+    <span class="sidebar-text">User</span>
+</a>
+
+<a class="tab-btn user" data-tab="roles">
+    <i class="bi bi-shield-lock"></i>
+    <span class="sidebar-text">Roles</span>
+</a>
+
+<a class="tab-btn" data-tab="Donor/Volunteer Management System">
+    <i class="bi bi-heart"></i>
+    <span class="sidebar-text">Donor/Volunteer</span>
+</a>
+
+<a class="tab-btn" data-tab="Donation Module">
+    <i class="bi bi-cash-coin"></i>
+    <span class="sidebar-text">Donation Module</span>
+</a>
+
+<a class="tab-btn" data-tab="Donation box (Daan Peti) & ACH Module">
+    <i class="bi bi-box"></i>
+    <span class="sidebar-text">Donation Box</span>
+</a>
+
+<a class="tab-btn" data-tab="Employee Management System">
+    <i class="bi bi-people"></i>
+    <span class="sidebar-text">Employee Management System</span>
+</a>
+
+<a class="tab-btn" data-tab="Timesheet System">
+    <i class="bi bi-clock"></i>
+    <span class="sidebar-text">Timesheet System</span>
+</a>
+
+<a class="tab-btn" data-tab="Leave Management System">
+    <i class="bi bi-calendar-x"></i>
+    <span class="sidebar-text">Leave Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Visitor Management System">
+    <i class="bi bi-person-badge"></i>
+    <span class="sidebar-text">Visitor Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Vendor Management System">
+    <i class="bi bi-truck"></i>
+    <span class="sidebar-text">Vendor Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Event Management System">
+    <i class="bi bi-calendar-event"></i>
+    <span class="sidebar-text">Event Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Request Management System">
+    <i class="bi bi-clipboard-check"></i>
+    <span class="sidebar-text">Request Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Inventory Management System">
+    <i class="bi bi-boxes"></i>
+    <span class="sidebar-text">Inventory Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Asset Management System">
+    <i class="bi bi-pc-display"></i>
+    <span class="sidebar-text">Asset Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Fleet Management System">
+    <i class="bi bi-truck"></i>
+    <span class="sidebar-text">Fleet Management</span>
+</a>
+
+<a class="tab-btn" data-tab="Financial Asset Module">
+    <i class="bi bi-graph-up"></i>
+    <span class="sidebar-text">Financial Asset</span>
+</a>
+
+<a class="tab-btn" data-tab="Expense Module">
+    <i class="bi bi-receipt"></i>
+    <span class="sidebar-text">Expense Module</span>
+</a>
+
+<a class="tab-btn" data-tab="Medical Module">
+    <i class="fa-solid fa-syringe"></i>
+    <span class="sidebar-text">Medical Module</span>
+</a>
+
+<a class="tab-btn" data-tab="Rehabilitation Module">
+    <i class="bi bi-hand-thumbs-up"></i>
+    <span class="sidebar-text">Rehabilitation</span>
+</a>
+
+<a class="tab-btn" data-tab="Adoption Module">
+    <i class="bi bi-people-fill"></i>
+    <span class="sidebar-text">Adoption Module</span>
+</a>
+
+<a class="tab-btn" data-tab="Trees Module">
+    <i class="bi bi-tree"></i>
+    <span class="sidebar-text">Trees Module</span>
+</a>
+
+<a class="tab-btn" data-tab="Seeds Module">
+    <i class="bi bi-flower1"></i>
+    <span class="sidebar-text">Seeds Module</span>
+</a>
 
 {% elif not user.is_superuser and allowed_modules %}
     <!-- Non-admin: show only allowed modules -->
@@ -2312,7 +2432,8 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+
+            <a href="{% url 'edit_access' user.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -2423,7 +2544,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_access' user.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -2826,7 +2947,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donor' donation.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -2928,7 +3049,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donor' donation.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -3360,7 +3481,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donation' donation.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -3451,7 +3572,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_user' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donation' donation.id %}" class="btn btn-sm p-1">
               <i class="bi bi-pencil-square"></i>
             </a>
 
@@ -3690,7 +3811,44 @@ width: 35%;
 </div>
 
 <!-- -----------Javascript-------------- -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
 
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function activateTab(tabId){
+        tabBtns.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.style.display = 'none');
+
+        document.querySelector('.tab-btn[data-tab="'+ tabId +'"]')?.classList.add('active');
+        document.getElementById(tabId).style.display = 'block';
+    }
+
+    // Check if user is returning from a form
+    const backFromForm = localStorage.getItem('backFromForm');
+
+    if(backFromForm){
+        const lastTab = localStorage.getItem('activeTab');
+        activateTab(lastTab);  
+        localStorage.removeItem('backFromForm'); 
+    } else {
+        // Normal visit, open saved tab or default dashboard
+        const saved = localStorage.getItem('activeTab') || 'default-user';
+        activateTab(saved);
+    }
+
+    // Save clicked tab
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function(){
+            const tabId = this.dataset.tab;
+            localStorage.setItem('activeTab', tabId);
+            activateTab(tabId);
+        });
+    });
+
+});
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Sidebar toggle functionality
