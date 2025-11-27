@@ -1,0 +1,300 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Donation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4faf4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .popup-card {
+            position: relative;
+            width: 90%;
+            max-width: 1100px;
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2);
+            animation: popup 0.4s ease;
+        }
+
+        @keyframes popup {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .title {
+            text-align: center;
+            font-size: 38px;
+            font-weight: bold;
+            color: #1e7a33;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: gray;
+            margin-bottom: 35px;
+        }
+
+        .section-label {
+            font-size: 22px;
+            color: green;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .line {
+            width: 100%;
+            height: 2px;
+            background: #d1e5d1;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 40px;
+            row-gap: 25px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            color:black;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 2px solid #cce4cc;
+            font-size: 16px;
+            background: #f8fff8;
+            transition: .3s ease;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            background: white;
+            border-color: #2f7d35;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: none;
+        }
+
+        .btn-area {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        button {
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 0 15px;
+        }
+
+        .btn-submit {
+            background: #21873b;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #17612a;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #565e64;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 22px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333;
+        }
+
+        .close-btn:hover {
+            color: red;
+        }
+
+        /* Full width for single column fields */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="popup-card">
+
+    <button class="close-btn" onclick="window.history.back()">✖</button>
+
+    <div class="title">Edit Donation</div>
+    <div class="subtitle">Please update the required details below</div>
+
+    <div class="section-label">Donation Details</div>
+    <div class="line"></div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <!-- Donor -->
+            <div class="form-group">
+                <label>Donor</label>
+                <select name="donor" required>
+                    <option value="">Select Donor</option>
+                    {% for donor in donors %}
+                        <option value="{{ donor.id }}" {% if donation.donor_id == donor.id %}selected{% endif %}>
+                            {{ donor.first_name }} {{ donor.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Donation Date -->
+            <div class="form-group">
+                <label>Donation Date</label>
+                <input type="date" name="donation_date" value="{{ donation.donation_date|date:'Y-m-d' }}">
+            </div>
+
+            <!-- Donation Category -->
+            <div class="form-group">
+                <label>Donation Category</label>
+                <select name="donation_category">
+                    {% for c in donation_categories %}
+                        <option value="{{ c.id }}" {% if donation.donation_category_id == c.id %}selected{% endif %}>
+                            {{ c }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Donation Mode -->
+            <div class="form-group">
+                <label>Donation Mode</label>
+                <select name="donation_mode">
+                    {% for m in donation_modes %}
+                        <option value="{{ m.id }}" {% if donation.donation_mode_id == m.id %}selected{% endif %}>
+                            {{ m }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select name="payment_method">
+                    {% for pm in payment_methods %}
+                        <option value="{{ pm.id }}" {% if donation.payment_method_id == pm.id %}selected{% endif %}>
+                            {{ pm }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="form-group">
+                <label>Payment Status</label>
+                <select name="payment_status">
+                    {% for ps in payment_statuses %}
+                        <option value="{{ ps.id }}" {% if donation.payment_status_id == ps.id %}selected{% endif %}>
+                            {{ ps }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Transaction ID -->
+            <div class="form-group">
+                <label>Transaction ID</label>
+                <input type="text" name="transaction_id" value="{{ donation.transaction_id }}">
+            </div>
+
+            <!-- Receipt ID -->
+            <div class="form-group">
+                <label>Receipt ID</label>
+                <input type="text" name="receipt_id" value="{{ donation.receipt_id }}">
+            </div>
+
+            <!-- Cheque Number -->
+            <div class="form-group">
+                <label>Cheque Number</label>
+                <input type="text" name="check_no" value="{{ donation.check_no }}">
+            </div>
+
+            <!-- Declared Amount -->
+            <div class="form-group">
+                <label>Declared Amount</label>
+                <input type="number" name="donation_amount_declared" value="{{ donation.donation_amount_declared }}" step="0.01">
+            </div>
+
+            <!-- Paid Amount -->
+            <div class="form-group">
+                <label>Paid Amount</label>
+                <input type="number" name="donation_amount_paid" value="{{ donation.donation_amount_paid }}" step="0.01">
+            </div>
+
+            <!-- Description -->
+            <div class="form-group full-width">
+                <label>Description</label>
+                <textarea name="description" rows="3">{{ donation.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="btn-area">
+            <button type="submit" class="btn-submit">✔ Update Donation</button>
+            <a href="{% url 'welcome' %}">
+                <button type="button" class="btn-back">← Back</button>
+            </a>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

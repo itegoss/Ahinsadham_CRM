@@ -16,7 +16,7 @@ urlpatterns = [
     path('check_module_access/<int:user_id>', views.check_module_access, name='check_module_access'),
     path('search/', views.search_users, name='search_users'),
     path('add_donor_volunteer/', views.add_donor_volunteer, name='add_donor_volunteer'),
-path('adddonation',views.adddonation,name='adddonation'),
+    path('adddonation',views.adddonation,name='adddonation'),
     path('donation-list/', views.donation_list, name='donation-list'),
     path('download-donor-report/', views.download_donor_report, name='download_donor_report'),
     path('edit_user/<int:id>/', views.edit_user, name='edit_user'),
@@ -62,6 +62,11 @@ path('search_id/', views.search_id, name='search_id'),
     path("search-lookup-type/", views.search_lookup_type, name="search_lookup_type"),
     path("search-lookup-table/", views.search_lookup_table, name="search_lookup_table"),
 
+
+    path("edit-access/<int:id>/", views.edit_usermoduleaccess, name="edit_access"),
+path('donor/edit/<int:donor_id>/', views.edit_donor, name='edit_donor'),
+# urls.py
+path("donation/edit/<int:id>/", views.edit_donation, name="edit_donation"),
 
 
 ]
