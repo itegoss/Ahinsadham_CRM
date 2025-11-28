@@ -1989,6 +1989,39 @@ def lookup_create(request):
 
 
 # ************* Edit Data Start *************
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import LookupType
+
+def edit_lookup_type(request, id):
+    lookup_type = get_object_or_404(LookupType, id=id)
+
+    if request.method == "POST":
+        lookup_type.type_name = request.POST.get('type_name')
+        lookup_type.updated_by = request.user
+        lookup_type.save()
+        return redirect('lookup_type_list')
+
+    return render(request, "edit_lookup_type.html", {"lookup_type": lookup_type})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Lookup, LookupType
+
+def edit_lookup(request, id):
+    lookup = get_object_or_404(Lookup, id=id)
+    types = LookupType.objects.all()
+
+    if request.method == "POST":
+        lookup.lookup_name = request.POST.get("lookup_name")
+        lookup.lookup_type_id = request.POST.get("lookup_type")
+        lookup.updated_by = request.user
+        lookup.save()
+        return redirect("lookup_list")
+
+    return render(request, "edit_lookup.html", {
+        "lookup": lookup,
+        "types": types
+    })
+
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
@@ -2148,4 +2181,4 @@ def delete_user(request, user_id):
     return redirect('welcome')
 
 
-# ************* delete Data Start *************
+# ************* delete Data end *************

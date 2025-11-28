@@ -1441,7 +1441,7 @@ td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn btn-sm p-1">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
@@ -1511,7 +1511,7 @@ td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup_type' lu.id %}" class="btn btn-sm p-1">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
@@ -1701,7 +1701,7 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup' l.id %}" class="btn btn-sm p-1">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
@@ -1773,7 +1773,7 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup' l.id %}" class="btn btn-sm p-1">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
@@ -2977,6 +2977,16 @@ width: 35%;
         <td>{{ donation.id_type }}</td>
         <td>{{ donation.id_number }}</td>
         <td>{{ donation.house_number }}</td>
+        <td>{{ donation.building_name }}</td>
+      <td>{{ donation.landmark }}</td>
+      <td>{{ donation.area }}</td>
+      <td>{{ donation.city }}</td>
+      <td>{{ donation.state }}</td>
+      <td>{{ donation.country }}</td>
+      <td>{{ donation.postal_code }}</td>
+      <td>{{ donation.native_place }}</td>
+      <td>{{ donation.native_postal_code }}</td>
+
       </tr>
       {% empty %}
       <tr>

@@ -67,6 +67,10 @@ path('search_id/', views.search_id, name='search_id'),
 path('donor/edit/<int:donor_id>/', views.edit_donor, name='edit_donor'),
 # urls.py
 path("donation/edit/<int:id>/", views.edit_donation, name="edit_donation"),
+    path('lookup-types/<int:id>/edit/', views.edit_lookup_type, name='edit_lookup_type'),
+    path("lookup/<int:id>/edit/", views.edit_lookup, name="edit_lookup"),
+
+
 
 
 ]
