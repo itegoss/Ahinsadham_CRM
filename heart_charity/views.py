@@ -699,7 +699,7 @@ def search_roles(request):
             Q(can_delete__icontains=query1) |
             Q(can_edit__icontains=query1) |
             Q(can_view__icontains=query1) |
-            Q(role__icontains=query1) |
+            Q(name__icontains=query1) |
             Q(description__icontains=query1)
         )
 
@@ -716,7 +716,7 @@ def search_roles(request):
 
         for role in roles:
             writer.writerow([
-                role.role,
+                role.name,
                 role.description,
                 role.can_access,
                 role.can_add,
@@ -806,7 +806,7 @@ def assign_role(request):
             user_role.role = role
             user_role.save()
 
-            print("✅ Saved:", user.username, "->", role.role)
+            print("✅ Saved:", user.username, "->", role.name)
         else:
             print("❌ Missing user_id or role_id")
 
@@ -818,83 +818,270 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 
-def search_donor_volunteer(request):
-    query2 = request.GET.get('q')  # Search term from input
+# def search_donor_volunteer(request):
+#     query2 = request.GET.get('q')  # Search term from input
 
-    # ✅ Base queryset
+#     # ✅ Base queryset
+#     donorvolunteer = DonorVolunteer.objects.all()
+
+#     # ✅ Apply search filter
+#     if query2:
+#         donorvolunteer = donorvolunteer.filter(
+#             Q(person_type__icontains=query2) |
+#             Q(first_name__icontains=query2) |
+#             Q(middle_name__icontains=query2) |
+#             Q(last_name__icontains=query2) |
+#             Q(gender__icontains=query2) |
+#             Q(date_of_birth__icontains=query2) |
+#             Q(email__icontains=query2) |
+#             Q(donor_box_id__icontains=query2) |
+#             Q(house_number__icontains=query2) |
+#             Q(landmark__icontains=query2) |
+#             Q(city__icontains=query2) |
+#             Q(state__icontains=query2) |
+#             Q(contact_number__icontains=query2)
+#         )
+
+#     # ✅ Pagination (1 record per page)
+#     paginator = Paginator(donorvolunteer, 1)
+#     page_number = request.GET.get('donor_page')
+#     page_obj = paginator.get_page(page_number)
+
+#     # ✅ Render template
+#     return render(
+#         request,
+#         'welcome.html',
+#         {
+#             'page_obj': page_obj,
+#             'query2': query2,
+#         }
+#     )
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from .models import DonorVolunteer, Lookup
+import csv
+
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.db.models import Q
+from .models import DonorVolunteer, Lookup
+import csv
+
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.db.models import Q
+from .models import DonorVolunteer
+import csv
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.db.models import Q
+from .models import DonorVolunteer
+import csv
+
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+import csv
+
+def search_donor_volunteer(request):
     donorvolunteer = DonorVolunteer.objects.all()
 
-    # ✅ Apply search filter
+    query2 = request.GET.get('q')
     if query2:
-        donorvolunteer = donorvolunteer.filter(
-            Q(person_type__icontains=query2) |
-            Q(first_name__icontains=query2) |
-            Q(middle_name__icontains=query2) |
-            Q(last_name__icontains=query2) |
-            Q(gender__icontains=query2) |
-            Q(date_of_birth__icontains=query2) |
-            Q(email__icontains=query2) |
-            Q(donor_box_id__icontains=query2) |
-            Q(house_number__icontains=query2) |
-            Q(landmark__icontains=query2) |
-            Q(city__icontains=query2) |
-            Q(state__icontains=query2) |
-            Q(contact_number__icontains=query2)
-        )
+        query2 = query2.strip()
+        if query2 != "":
+            donorvolunteer = donorvolunteer.filter(
+                Q(person_type__lookup_name__icontains=query2) |  # Fixed
+                Q(first_name__icontains=query2) |
+                Q(last_name__icontains=query2) |
+                Q(email__icontains=query2) |
+                Q(contact_number__icontains=query2)
+            )
 
-    # ✅ Pagination (1 record per page)
-    paginator = Paginator(donorvolunteer, 1)
-    page_number = request.GET.get('donor_page')
-    page_obj = paginator.get_page(page_number)
+    # ---- DOWNLOAD CSV ----
+    if request.GET.get('download') == '1':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="donor_volunteer.csv"'
 
-    # ✅ Render template
-    return render(
-        request,
-        'welcome.html',
-        {
-            'page_obj': page_obj,
-            'query2': query2,
-        }
-    )
+        writer = csv.writer(response)
+        writer.writerow([
+            'Person Type', 'First Name', 'Middle Name', 'Last Name', 
+            'Gender', 'DOB', 'Email', 'Contact Number', 'City', 'State'
+        ])
 
+        for dv in donorvolunteer:
+            writer.writerow([
+                dv.person_type.lookup_name if dv.person_type else '',
+                dv.first_name,
+                dv.middle_name,
+                dv.last_name,
+                dv.gender,
+                dv.date_of_birth,
+                dv.email,
+                dv.contact_number,
+                dv.city,
+                dv.state
+            ])
 
+        return response
+    # ----------------------
+
+    paginator = Paginator(donorvolunteer, 10)
+    donorvolunteer = paginator.get_page(request.GET.get('page'))
+
+    return render(request, "welcome.html", {
+        "donorvolunteer": donorvolunteer,
+        "query2": query2 if query2 else "",
+    })
 
 
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q
+import csv
+from .models import Donation
+
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+import csv
+from .models import Donation
+
+
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+import csv
+from .models import Donation
+
+
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+import csv
+from .models import Donation
+
+
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+import csv
+from .models import Donation
+
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+import csv
+
+
+
+
+
 def search_donation(request):
-    query3 = request.GET.get('q')  # Search query
     donations = Donation.objects.all()
+    query3 = request.GET.get('q', '').strip()
 
-    # ✅ Apply search filter if query is provided
     if query3:
-        donations = donations.filter(
+        # Annotate full_name
+        donations = donations.annotate(
+            full_name=Concat(
+                'donor__first_name',
+                Value(' '),
+                'donor__last_name'
+            )
+        ).filter(
+            Q(full_name__icontains=query3) |
             Q(donation_date__icontains=query3) |
-            Q(donation_amount__icontains=query3) |
-            Q(donation_mode__icontains=query3) |
-            Q(donation_category__icontains=query3) |
-            Q(payment_method__icontains=query3) |
+            Q(donation_amount_declared__icontains=query3) |
+            Q(donation_amount_paid__icontains=query3) |
             Q(transaction_id__icontains=query3) |
-            Q(payment_status__icontains=query3) |
-            Q(receipt_id__icontains=query3)
-        )
+            Q(payment_status__lookup_name__icontains=query3) |
+            Q(receipt_id__icontains=query3) |
+            Q(donation_mode__lookup_name__icontains=query3) |
+            Q(donation_category__lookup_name__icontains=query3) |
+            Q(payment_method__lookup_name__icontains=query3)
+        ).distinct()
 
-    # ✅ Pagination setup (1 record per page)
-    donation_paginator = Paginator(donations, 1)
-    page_number = request.GET.get('donation_page')
-    donation_page_obj = donation_paginator.get_page(page_number)
+    # ---- DOWNLOAD CSV ----
+    if request.GET.get('download') == '1':
+        filename = f"donations_{query3 if query3 else 'all'}.csv"
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    # ✅ Render with both search + pagination data
-    return render(
-        request,
-        'welcome.html',
-        {
-            'donation_page_obj': donation_page_obj,
-            'query3': query3,
-        }
-    )
+        writer = csv.writer(response)
+        writer.writerow([
+            'Donor Name',
+            'Donation Date',
+            'Amount Declared',
+            'Amount Paid',
+            'Mode',
+            'Category',
+            'Payment Method',
+            'Transaction ID',
+            'Status',
+            'Receipt No.'
+        ])
+
+        for d in donations:
+            donor_name = f"{d.donor.first_name} {d.donor.last_name}" if d.donor else ""
+            writer.writerow([
+                donor_name,
+                d.donation_date,
+                d.donation_amount_declared,
+                d.donation_amount_paid,
+                d.donation_mode.lookup_name if d.donation_mode else "",
+                d.donation_category.lookup_name if d.donation_category else "",
+                d.payment_method.lookup_name if d.payment_method else "",
+                d.transaction_id,
+                d.payment_status.lookup_name if d.payment_status else "",
+                d.receipt_id
+            ])
+        return response
+
+    # ---- PAGINATION ----
+    paginator = Paginator(donations, 10)
+    donation_page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(request, 'welcome.html', {
+        'donation_page_obj': donation_page_obj,
+        'query3': query3,
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #----------------Globle End Search--------------
 # -----------------Local search------------------------

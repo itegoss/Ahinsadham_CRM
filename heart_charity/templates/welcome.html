@@ -1005,7 +1005,7 @@ td {
 }
 
 .pagination-container {
-  margin-top: 10px;
+  margin-top: -20px;
   text-align: center;
 }
 
@@ -1271,13 +1271,6 @@ td {
         <p>You currently do not have admin access.</p>
     </div>
 </div>
-    <!-- {% if allowed_modules %}
-        {% for module_name in allowed_modules %}
-            <a data-tab="{{ module_name }}">{{ module_name }}</a>
-        {% endfor %}
-    {% else %}
-        <p class="text-danger">No modules assigned yet. Please contact admin.</p>
-    {% endif %} -->
 {% endif %}
     </div>
 
@@ -1308,9 +1301,9 @@ td {
       <h4 class="mb-0">Master Data</h4>
     </div>
 
-    <!-- ------------Lookup type table----------- -->
+<!-- ------------Lookup type table----------- -->
     <div class="card-body">
-      <h3>Category/Lookup Type</h3>
+      <h5 style="color:#1b5e20">Category/Lookup Type</h5>
       <!-- 🔍 Search Section -->
 <div class="search-container d-flex align-items-center">
 
@@ -1323,52 +1316,8 @@ td {
       class="form-control search-input me-2"
       placeholder="🔍 Search..."
       value="{{ lookup_query|default:'' }}">
-
-    <!-- Clear Button -->
-    {% if lookup_query %}
-      <a href="{% url 'search_lookup_type' %}" class="btn btn-outline-secondary me-2">
-        Clear
-      </a>
-    {% endif %}
-
-    <!-- Download Button -->
-    <!-- {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" class="btn btn-success">
-        Download CSV
-      </a>
-    {% endif %} -->
-
   </form>
 </div>
-
-
-<!-- <div class="download-container">
- <form method="GET" action="{% url 'download_filtered_users' %}" class="download-form">
-  <div class="download-group">
-    <label for="search">Search</label>
-    <input type="text" id="search" name="search" placeholder="Search...">
-  </div>
-
-  <div class="download-group">
-    <label for="start_date">Start Date</label>
-    <input type="date" id="start_date" name="start_date">
-  </div>
-
-  <div class="download-group">
-    <label for="end_date">End Date</label>
-    <input type="date" id="end_date" name="end_date">
-  </div>
-
-  <button type="submit" class="download-btn1">⬇️</button>
-</form>
-</div> -->
-<!-- {% if messages %}
-  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %} -->
 <style>
 /* 🌿 Modern underline input */
 .search-input {
@@ -1391,13 +1340,6 @@ td {
   border-radius: 8px;
 }
 </style>
-
- <!-- 📄 Search Results -->
-      {% if lookup_query %}
-        <h5>Showing results for: "<span ">{{ lookup_query }}</span>"</h5>
-        <hr>
-      {% endif %}
-
       <!-- 🧍‍♂️ User Table -->
 
       {% if lookup_page_obj %}
@@ -1468,7 +1410,7 @@ td {
   </form>
 
 </div>
-      {% elif query %}
+      {% elif lookup_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
@@ -1559,7 +1501,7 @@ table th, table td {
 <!-- ✅ LookupType Pagination Controls -->
 <div class="pagination-container text-center">
   
-  {% if lookup_types_page.has_previous %}
+  {% if lookup_page_obj.has_previous %}
       <a href="?lt_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
       <a href="?lt_page={{ lookup_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
@@ -1572,8 +1514,7 @@ table th, table td {
       name="lt_page"
       id="ltPageSelect"
       class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()"
-    >
+      onchange="this.form.submit()">
       {% for p in lookup_page_obj.paginator.page_range %}
         <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>
           {{ p }}
@@ -1584,7 +1525,7 @@ table th, table td {
     <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
   </form>
 
-  {% if lookup_types_page.has_next %}
+  {% if lookup_page_obj.has_next %}
       <a href="?lt_page={{ lookup_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
       <a href="?lt_page={{ lookup_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
@@ -1595,7 +1536,7 @@ table th, table td {
 <!-- ------------Lookup table----------- -->
 
    <div class="card-body">
-      <h3>Subcategory/Lookup Table</h3>
+      <h5 style="color:#1b5e20" >Subcategory/Lookup Table</h5>
       <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100" role="search">
@@ -1620,13 +1561,7 @@ table th, table td {
   </form>
 </div>
 
-<!-- {% if messages %}
-  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %} -->
+
 <style>
 /* 🌿 Modern underline input */
 .search-input {
@@ -1754,7 +1689,7 @@ table th, table td {
         <i class="fa-solid fa-plus"></i>
   </a>
  {% if lookup_table_obj.object_list %}
-      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color: black; text-decoration: none; vertical-align: middle;">
+      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
     <i class="bi bi-download"></i>
       </a>
     {% endif %}
@@ -1847,7 +1782,7 @@ table th, table td {
     <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
   </form>
 
-  {% if lookups_page.has_next %}
+  {% if lookup_table_obj.has_next %}
     <a href="?lu_page={{ lookup_table_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?lu_page={{ lookup_table_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
@@ -2011,31 +1946,30 @@ table th, table td {
           </td>
 
 <td>
-  <form method="POST" action="{% url 'assign_role' %}">
+<form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
 
-     <select name="role" required>
-        {% for r in role_names %}
-            <option value="{{ r }}">{{ r }}</option>
-        {% endfor %}
-    </select>
+       <select name="role_id" required class="form-select form-select-sm">
+    {% for r in roles %}
+        <option value="{{ r.id }}" {% if user.userrole and user.userrole.role_id == r.id %}selected{% endif %}>
+            {{ r.role_name }}
+        </option>
+    {% endfor %}
+</select>
 
-      <button 
-        type="submit"
-        class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
-        title="Save Role" name="save_user_role"
-        {% if not user.userrole or not user.userrole.role %}
-          disabled
-        {% endif %}
-      >
-        <i class="bi bi-floppy-fill"></i>💾
-      </button>
+
+        <button type="submit"
+                class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
+                title="Save Role" name="save_user_role">
+                💾
+        </button>
 
     </div>
-  </form>
+</form>
+
 
 <!-- <form method="POST">
     {% csrf_token %}
@@ -2106,7 +2040,7 @@ table th, table td {
         <tr>
         
       <td>
-<form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;>
+<form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
     <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
     <input type="hidden" name="download" value="1">
@@ -2153,33 +2087,30 @@ table th, table td {
           </td>
 
          <td>
-  
-
- <form method="POST" action="{% url 'assign_role' %}">
+          
+<form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
 
-     <select name="role" required>
-        {% for r in role_names %}
-            <option value="{{ r }}">{{ r }}</option>
-        {% endfor %}
-    </select>
+       <select name="role_id" required class="form-select form-select-sm" >
+    {% for r in roles %}
+        <option value="{{ r.id }}" {% if user.userrole and user.userrole.role_id == r.id %}selected{% endif %}>
+            {{ r.role_name }}
+        </option>
+    {% endfor %}
+</select>
 
-      <button 
-        type="submit"
-        class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
-        title="Save Role" name="save_user_role"
-        {% if not user.userrole or not user.userrole.role %}
-          disabled
-        {% endif %}
-      >
-        <i class="bi bi-floppy-fill"></i>💾
-      </button>
+
+        <button type="submit"
+                class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
+                title="Save Role" name="save_user_role">
+                💾 Save
+        </button>
 
     </div>
-  </form>
+</form>
 
 
 </td>
@@ -2922,14 +2853,26 @@ width: 35%;
       <!-- 🔍 Filter Row -->
       <tr>
       <td>
-  <a href="{% url 'add_donor_volunteer' %}" 
+<div class="d-flex justify-content-between">
+ <a href="{% url 'add_donor_volunteer' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  <button type="submit" name="download6" value="true" 
-          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-  </button>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="q" value="{{ query2|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+
+</div>
 </td>
 
    {% for i in "0123456789012345678901" %}
@@ -3035,14 +2978,26 @@ width: 35%;
       <!-- 🔍 Filter Row -->
       <tr>
       <td>
-  <a href="{% url 'add_donor_volunteer' %}" 
-        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+  <div class="d-flex justify-content-between">
+ <a href="{% url 'add_donor_volunteer' %}" 
+       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  <button type="submit" name="download7" value="true" 
-          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-  </button>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="q" value="{{ query2|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+
+</div>
 </td>
 {% for i in "0123456789012345678901" %}
         <td>
@@ -3372,8 +3327,7 @@ width: 35%;
       name="q" 
       class="form-control search-input me-2 shadow-none" 
       placeholder="🔍 Search..." 
-      value="{{ query3|default:'' }}"
-    >
+      value="{{ query3|default:'' }}">
     <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
     {% if query3 %}
       <a href="{% url 'search_donation' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
@@ -3385,34 +3339,6 @@ width: 35%;
         <h5>Showing results for: "<span ">{{ query3 }}</span>"</h5>
         <hr>
       {% endif %}
-<!-- <div class="download-container">
-
- <form method="GET" action="{% url 'download_filtered_donations' %}" class="download-form">
-  <div class="download-group">
-    <label for="search">Search</label>
-    <input type="text" id="search" name="search" placeholder="Search...">
-  </div>
-
-  <div class="download-group">
-    <label for="start_date">Start Date</label>
-    <input type="date" id="start_date" name="start_date">
-  </div>
-
-  <div class="download-group">
-    <label for="end_date">End Date</label>
-    <input type="date" id="end_date" name="end_date">
-  </div>
-
-  <button type="submit" class="download-btn1">⬇️</button>
-</form>
-</div> -->
-{% if messages %}
-  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
 
 <style>
 /* 🌿 Modern underline input */
@@ -3453,9 +3379,9 @@ width: 35%;
         <th>Mode</th>
         <th>Payment Method</th>
         <th>Transaction ID</th>
+        <th>payment_status</th>
         <th>Check number</th>
         <th>Place of donation</th>
-        <th>Status</th>
         <th>Description</th>
         <th>Receipt</th>
       </tr>
@@ -3465,14 +3391,24 @@ width: 35%;
       <tr>
 
       <td>
-  <a href="{% url 'adddonation' %}" 
+
+        <div class="d-flex justify-content-between">
+    <a href="{% url 'adddonation' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  <button type="submit" name="download8" value="true" 
-          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-  </button>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
+      <input type="hidden" name="q" value="{{ query3|default:'' }}">
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+
+</div>
 </td>
 
         {% for i in "1234567891234" %}
@@ -3508,13 +3444,18 @@ width: 35%;
         </td>
 
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-        <td>{{ donation.donation_amount }}</td>
+        <td>{{ donation.donor.city }}</td>
+        <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
         <td>{{ donation.category }}</td>
         <td>{{ donation.donation_mode }}</td>
         <td>{{ donation.payment_method }}</td>
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
+
+        <td>{{ donation.check_number }}</td>
+        <td>{{ donation.place_of_donation }}</td>
+        <td>{{ donation.description }}</td>
         <td>
           <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
 </td>
@@ -3542,9 +3483,9 @@ width: 35%;
         <th>Mode</th>
         <th>Payment Method</th>
         <th>Transaction ID</th>
+        <th>payment_status</th>
         <th>Check number</th>
         <th>Place of donation</th>
-        <th>Status</th>
         <th>Description</th>
         <th>Receipt</th>
       </tr>
@@ -3555,14 +3496,26 @@ width: 35%;
       <tr>
 
       <td>
-  <a href="{% url 'adddonation' %}" 
-        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+       
+        <div class="d-flex justify-content-between">
+    <a href="{% url 'adddonation' %}" 
+       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  <button type="submit" name="download9" value="true" 
-          class="btn p-0" style="font-size: 20px; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-  </button>
+
+    <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
+      <input type="hidden" name="q" value="{{ query3|default:'' }}">
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+
+</div>
+ 
+
 </td>
 
     
@@ -3599,13 +3552,17 @@ width: 35%;
         </td>
 
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-        <td>{{ donation.donation_amount }}</td>
+                <td>{{ donation.donor.city }}</td>
+        <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
         <td>{{ donation.category }}</td>
         <td>{{ donation.donation_mode }}</td>
         <td>{{ donation.payment_method }}</td>
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
+         <td>{{ donation.check_number }}</td>
+        <td>{{ donation.place_of_donation }}</td>
+        <td>{{ donation.description }}</td>
         <td>
           <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
 </td>
