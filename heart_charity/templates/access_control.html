@@ -75,15 +75,18 @@
                 {% endfor %}
             </div>
 
-            <!-- SUBMIT BUTTON -->
-            <!-- <div class="mt-4">
-                <button type="submit" class="btn btn-success btn-lg w-100 rounded-4">
-                    Save
-                </button>
-            </div> -->
+          {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
             <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Submit
+          <i class="bi bi-save"></i> Save
         </button>
 
         <a href="{% url 'welcome' %}?tab=Donation Module" class="btn btn-secondary px-5" style="border-radius: 8px;">

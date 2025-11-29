@@ -42,11 +42,6 @@
 
       <div class="row mb-3">
 
-        <!-- <div class="col-md-6">
-          <label class="form-label fw-semibold">Donation Amount (₹)</label>
-          <input type="number" step="0.01" name="donation_amount" class="form-control" required>
-        </div> -->
-
         <div class="col-md-6">
           <label class="form-label fw-semibold">Declared Amount (₹)</label>
           <input type="number" step="0.01" name="donation_amount_declared" class="form-control">
@@ -175,13 +170,21 @@
         </div>
 
       </div>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
 
       <!-- ========================= -->
       <!-- Submit Buttons -->
       <!-- ========================= -->
       <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Submit
+          <i class="bi bi-save"></i> Save
         </button>
 
         <a href="{% url 'welcome' %}?tab=Donation Module" class="btn btn-secondary px-5" style="border-radius: 8px;">
