@@ -11,13 +11,6 @@ class Module(models.Model):
     def __str__(self):
         return self.module_name
 
-# from django.db import models
-# from django.contrib.auth.models import User
-
-# class Module(models.Model):
-#     module_name = models.CharField(max_length=100)
-#     def __str__(self):
-#         return self.module_name
 
 from django.contrib.auth.models import User
 class UserModuleAccess(models.Model):
@@ -55,10 +48,66 @@ class UserRole(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.role.name if self.role else 'No Role'}"
 
+class DonationBox(models.Model):
+    donation_id = models.CharField(max_length=10, unique=True, editable=False)
+    
+    qr_code = models.ImageField(upload_to='qr_images/', blank=True, null=True)
+    
+    location = models.CharField(max_length=255)
 
+    # NEW FIELD: Key ID
+    key_id = models.CharField(max_length=50, null=True, blank=True)
 
+    # NEW FIELD: Box Size (radio button options)
+    BOX_SIZES = [
+        ('small', 'Small'),
+        ('medium', 'Medium'),
+        ('large', 'Large'),
+    ]
+    box_size = models.CharField(max_length=20, choices=BOX_SIZES, default='medium')
 
+    # Uploaded by & created by user
+    uploaded_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_boxes'
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_boxes'
+    )
 
+    status_choices = [
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+        ('return', 'Return')
+    ]
+    status = models.CharField(max_length=20, choices=status_choices, default='Active')
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)  # auto update time
+
+    def save(self, *args, **kwargs):
+        # Auto-generate donation_id if not set
+        if not self.donation_id:
+            last_box = DonationBox.objects.all().order_by('id').last()
+            if last_box:
+                last_id = int(last_box.donation_id.split('_')[1])
+                new_id = f"DO_{last_id + 1:04d}"
+            else:
+                new_id = "DO_0001"
+            self.donation_id = new_id
+
+        # Generate QR
+        if not self.qr_code:
+            qr_data = f"Donation ID: {self.donation_id}\nBox Name: {self.donation_box_name}\nLocation: {self.location}"
+            qr_img = qrcode.make(qr_data)
+            buffer = BytesIO()
+            qr_img.save(buffer, format='PNG')
+            self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.donation_box_name} ({self.donation_id})"
+    
 
 gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 
@@ -99,7 +148,7 @@ class DonorVolunteer(models.Model):
     email = models.EmailField(unique=True)
 
     # Donor Box ID
-    donor_box_id = models.CharField(max_length=50, blank=True, null=True)
+    donor_box = models.ForeignKey(DonationBox, on_delete=models.SET_NULL, null=True, blank=True)
 
     # Address
     house_number = models.CharField(max_length=50)
@@ -167,7 +216,6 @@ class DonorVolunteer(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-
 class LookupType(models.Model):
     type_name = models.CharField(max_length=100, unique=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_created')
@@ -209,16 +257,6 @@ class Lookup(models.Model):
     def __str__(self):
         return f"{self.lookup_name} ({self.lookup_type.type_name})"
 
-# models.py
-# from django.contrib.auth.models import User
-# from django.db import models
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     is_deleted = models.BooleanField(default=False)
-
-
-
 from .models import DonorVolunteer  # assuming same app (heart_charity)
 class DonationOwner(models.Model):
     PAYMENT_METHOD_CHOICES = [
@@ -253,50 +291,6 @@ class DonationOwner(models.Model):
 
     def __str__(self):
         return f"{self.owner_name.first_name} {self.owner_name.last_name} - ₹{self.amount} ({self.donation_box.donation_id})"
-
-
-
-
-
-class DonationBox(models.Model):
-    donation_id = models.CharField(max_length=10, unique=True, editable=False)
-    donation_box_name = models.CharField(max_length=100)
-    qr_code = models.ImageField(upload_to='qr_images/', blank=True, null=True)
-    location = models.CharField(max_length=255)
-    status_choices = [
-        ('Active', 'Active'),
-        ('Inactive', 'Inactive'),
-        ('Collected', 'Collected'),
-        ('Pending', 'Pending'),
-    ]
-    status = models.CharField(max_length=20, choices=status_choices, default='Active')
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        # Auto-generate donation_id if not set
-        if not self.donation_id:
-            last_box = DonationBox.objects.all().order_by('id').last()
-            if last_box:
-                last_id = int(last_box.donation_id.split('_')[1])
-                new_id = f"DO_{last_id + 1:04d}"
-            else:
-                new_id = "DO_0001"
-            self.donation_id = new_id
-
-        # Generate QR code containing donation details
-        qr_data = f"Donation ID: {self.donation_id}\nBox Name: {self.donation_box_name}\nLocation: {self.location}"
-        qr_img = qrcode.make(qr_data)
-        buffer = BytesIO()
-        qr_img.save(buffer, format='PNG')
-        self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
-
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.donation_box_name} ({self.donation_id})"
-
-
-
 
 from django.db import models
 
@@ -346,15 +340,6 @@ class Employee(models.Model):
         return f"{self.first_name} {self.middle_name or ''} {self.last_name}".strip()
 
 
-
-
-
-
-
-
-
-
-
 from django.utils import timezone
 from django.db import models
 from django.db.models.signals import pre_save
@@ -381,19 +366,11 @@ class Donation(models.Model):
         null=True,
         related_name='donation_categories'
     )
-
-    donation_mode = models.ForeignKey(
-        Lookup,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='donation_modes'
-    )
-
     payment_method = models.ForeignKey(
         Lookup,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='payment_methods'
+        related_name='donation_payment_methods'
     )
 
     payment_status = models.ForeignKey(
@@ -438,7 +415,6 @@ class Donation(models.Model):
     def __str__(self):
         return f"Donation {self.id}"
 
-
 # Auto-generate receipt ID
 @receiver(pre_save, sender=Donation)
 def generate_receipt_id(sender, instance, **kwargs):
@@ -456,3 +432,38 @@ def generate_receipt_id(sender, instance, **kwargs):
             new_number = 1
 
         instance.receipt_id = f"{prefix}-{year}-{new_number:04d}"
+
+
+class DonationPaymentBox(models.Model):
+    # Auto-generated ID
+    id = models.AutoField(primary_key=True)
+
+    # Foreign key to User as owner
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='donation_payments')
+
+    # Foreign key to DonationBox
+    donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
+
+    # Other fields
+    address = models.CharField(max_length=255, blank=True, null=True)
+    opened_by = models.CharField(max_length=100)
+    received_by = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.ForeignKey(
+        Lookup,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='payment_methods_box'
+    )
+    
+    date_time = models.DateTimeField(default=timezone.now)
+    i_witness = models.CharField(max_length=100, blank=True, null=True)
+
+    # Audit fields
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_donation_payments')
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.donation_box} - ₹{self.amount} by {self.owner}"

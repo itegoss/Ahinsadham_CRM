@@ -37,6 +37,14 @@
             {% endif %}
         </h2>
         <p class="text-center text-muted mb-4">Please fill in the required details below</p>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
 
         <!-- Section Title -->
         <div class="section-title mt-4">Lookup Type Details</div>
@@ -61,7 +69,7 @@
 
             <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Submit
+          <i class="bi bi-save"></i> Save
         </button>
 <a href="{% url 'welcome' %}?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
     ← Back
