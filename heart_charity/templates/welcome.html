@@ -3,18 +3,7 @@
 {% block content %}
 
 <style>
-    * {
-      
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f5f7fa;
-        color: #333;
-    }
+
     
     .dashboard-container {
         display: flex;
@@ -1383,15 +1372,17 @@ td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn btn-sm p-1">
+               
+              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_lookup_type' lt.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;
+"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -1453,15 +1444,15 @@ td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_lookup_type' lu.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup_type' lu.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_lookup_type' lu.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -1546,18 +1537,6 @@ table th, table td {
       class="form-control search-input me-2 shadow-none" 
       placeholder="🔍 Search..." 
       value="{{ sub_lookup_query|default:'' }}">
-    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
-    <!-- {% if sub_lookup_query %}
-      <a href="{% url 'search_lookup_table' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
-    {% endif %} -->
-
-
-     <!-- Download Button -->
-    <!-- {% if lookup_table_obj.object_list %}
-      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" class="btn btn-success">
-        Download CSV
-      </a>
-    {% endif %} -->
   </form>
 </div>
 
@@ -1595,8 +1574,6 @@ table th, table td {
 
       {% if lookup_table_obj %}
   <div class="table-responsive scrollable-table1">
-  <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -1636,15 +1613,15 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_lookup' l.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -1661,15 +1638,11 @@ table th, table td {
         {% endfor %}
       </tbody>
     </table>
-  </form>
-
 </div>
       {% elif query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
-  <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -1708,15 +1681,15 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_lookup' l.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -1734,9 +1707,7 @@ table th, table td {
         {% endfor %}
       </tbody>
     </table>
-  </form>
 </div>
-<!-- ✅ Scroll CSS -->
 <style>
 .scrollable-table {
   overflow-y: auto;
@@ -1816,26 +1787,6 @@ table th, table td {
     >
 </form>
 </div>
-<!-- <div class="download-container">
- <form method="GET" action="{% url 'download_filtered_users' %}" class="download-form">
-  <div class="download-group">
-    <label for="search">Search</label>
-    <input type="text" id="search" name="search" placeholder="Search...">
-  </div>
-
-  <div class="download-group">
-    <label for="start_date">Start Date</label>
-    <input type="date" id="start_date" name="start_date">
-  </div>
-
-  <div class="download-group">
-    <label for="end_date">End Date</label>
-    <input type="date" id="end_date" name="end_date">
-  </div>
-
-  <button type="submit" class="download-btn1">⬇️</button>
-</form>
-</div> -->
 {% if messages %}
   <ul style="color: red; text-align: center; list-style: none; padding: 0;">
     {% for message in messages %}
@@ -1893,7 +1844,6 @@ table th, table td {
           <th>Date of join</th>
         </tr>
       </thead>
-
       <tbody>
         <tr>
           <td> 
@@ -1925,41 +1875,39 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
               <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this user?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
-
-    <!-- 🔐 Access -->
-    <!-- <a href="{% url 'access_control' %}" class="btn btn-sm p-1">
-      <i class="bi bi-shield-lock"></i>
-    </a> -->
             </div>
           </td>
 
 <td>
-<form method="POST" action="{% url 'assign_role' %}">
+ <form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
 
-       <select name="role_id" required class="form-select form-select-sm">
-    {% for r in roles %}
-        <option value="{{ r.id }}" {% if user.userrole and user.userrole.role_id == r.id %}selected{% endif %}>
-            {{ r.role.name }}
+ <select name="role" required class="form-select text-dark" style="color:black !important;">
+    {% for clean_role in clean_roles %}
+        <option value="{{ clean_role }}"
+            {% if user.userrole and clean_role in user.userrole.role.role_name %}
+                selected
+            {% endif %}
+        >
+            {{ clean_role }}
         </option>
     {% endfor %}
 </select>
-
 
         <button type="submit"
                 class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
@@ -1968,24 +1916,7 @@ table th, table td {
         </button>
 
     </div>
-</form>
-
-
-<!-- <form method="POST">
-    {% csrf_token %}
-
-    <input type="hidden" name="user_id" value="{{ user.id }}">
-
-    <label>Select Role:</label>
-    <select name="role" required>
-        {% for r in role_names %}
-            <option value="{{ r }}">{{ r }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit" name="save_user_role">Assign Role</button>
-</form> -->
-
+</form> 
 </td>
 
           <td>{{ user.id }}</td>
@@ -2017,8 +1948,6 @@ table th, table td {
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
-  <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -2066,38 +1995,34 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn btn-sm p-1">
+              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
               <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this user?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
-
-    <!-- 🔐 Access -->
-    <!-- <a href="{% url 'access_control' %}" class="btn btn-sm p-1">
-      <i class="bi bi-shield-lock"></i>
-    </a> -->
             </div>
           </td>
-
          <td>
-          
-<form method="POST" action="{% url 'assign_role' %}">
+ <form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
-
-       <select name="role_id" required class="form-select form-select-sm" >
-    {% for r in roles %}
-        <option value="{{ r.id }}" {% if user.userrole and user.userrole.role_id == r.id %}selected{% endif %}>
-            {{ r.role_name }}
+<select name="role" required class="form-select text-dark" style="color:black !important;">
+    {% for clean_role in clean_roles %}
+        <option value="{{ clean_role }}"
+            {% if user.userrole and clean_role in user.userrole.role.role_name %}
+                selected
+            {% endif %}
+        >
+            {{ clean_role }}
         </option>
     {% endfor %}
 </select>
@@ -2105,14 +2030,10 @@ table th, table td {
 
         <button type="submit"
                 class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
-                title="Save Role" name="save_user_role">
-                💾 Save
+                title="Save Role" name="save_user_role">💾 Save
         </button>
-
     </div>
-</form>
-
-
+</form> 
 </td>
 <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
@@ -2126,7 +2047,6 @@ table th, table td {
               <span class="badge1">Inactive</span>
             {% endif %}
           </td>
-          <!-- <td>{{ user.is_superuser }}</td> -->
            <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
           <td>{{ user.date_joined }}</td>
         </tr>
@@ -2135,7 +2055,6 @@ table th, table td {
         {% endfor %}
       </tbody>
     </table>
-  </form>
 </div>
 <!-- ✅ Scroll CSS -->
 <style>
@@ -2235,31 +2154,6 @@ table th, table td {
     value="{{ query1|default:'' }}">
 </form>
 </div>
-
-
-
-
-
-<!-- <div class="download-container">
- <form method="GET" action="{% url 'download_filtered_user_access' %}" class="download-form">
-  <div class="download-group">
-    <label for="search">Search</label>
-    <input type="text" id="search" name="search" placeholder="Search by donor, category, transaction ID...">
-  </div>
-
-  <div class="download-group">
-    <label for="start_date">Start Date</label>
-    <input type="date" id="start_date" name="start_date">
-  </div>
-
-  <div class="download-group">
-    <label for="end_date">End Date</label>
-    <input type="date" id="end_date" name="end_date">
-  </div>
-
-  <button type="submit" class="download-btn1">⬇️</button>
-</form>
-</div> -->
 {% if messages %}
   <ul style="color: red; text-align: center; list-style: none; padding: 0;">
     {% for message in messages %}
@@ -2290,12 +2184,6 @@ width: 35%;
   border-radius: 8px;
 }
 </style>
-
-      <!-- 📄 Search Results -->
-      {% if query %}
-        <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
-        <hr>
-      {% endif %}
 
       <!-- 🧍‍♂️ User Table -->
       {% if roles_page_obj %}
@@ -2337,12 +2225,7 @@ width: 35%;
             <i class="bi bi-download"></i>
         </button>
     </form>
-
 </div>
-
-
-
-
 </td>
 
         {% for i in "1234567891"|make_list %}
@@ -2360,15 +2243,15 @@ width: 35%;
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
 
-            <a href="{% url 'edit_access' user.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_access' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_user_module_access' user.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this User module access?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>
@@ -2391,23 +2274,6 @@ width: 35%;
       {% endfor %}
     </tbody>
   </table>
-
-
-  <!-- ✅ Pagination -->
-  <!-- <div class="d-flex justify-content-center align-items-center mt-3 flex-wrap">
-    {% if roles_page_obj.has_previous %}
-      <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮ First</a>
-      <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀ Prev</a>
-    {% endif %}
-
-    <span class="fw-bold mb-2">Page {{ roles_page_obj.number }} of {{ roles_page_obj.paginator.num_pages }}</span>
-
-    {% if roles_page_obj.has_next %}
-      <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">Next ▶</a>
-      <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">Last ⏭</a>
-    {% endif %}
-  </div> -->
-
 </div>
       {% elif query %}
         <p class="text-danger mt-3">No users found for "<strong>{{ query }}</strong>".</p>
@@ -2471,15 +2337,15 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_access' user.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_access' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_user_module_access' user.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this User module access?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>
@@ -2506,36 +2372,6 @@ width: 35%;
 
       {% endif %}
     </div>
-<!-- ✅ Pagination -->
-<!-- <div class="d-flex justify-content-center align-items-center mt-3 flex-wrap">
-  {% if roles_page_obj.has_previous %}
-    <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-    <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
-  {% endif %}
-
-  <form method="get" class="d-inline-block mb-2">
-    <label for="pageSelect" class="fw-bold me-1">Page</label>
-    <select 
-      name="roles_page" 
-      id="pageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto" 
-      onchange="this.form.submit()"
-    >
-      {% for page_num in roles_page_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}>
-          {{ page_num }}
-        </option>
-      {% endfor %}
-    </select>
-    <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
-  </form>
-
-  {% if roles_page_obj.has_next %}
-    <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-    <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-  {% endif %}
-</div> -->
-
  <!-- ✅ Pagination Controls -->
 <div class="pagination-container text-center mt-3">
   {% if roles_page_obj.has_previous %}
@@ -2769,28 +2605,6 @@ width: 35%;
         <h5>Showing results for: "<span ">{{ query2 }}</span>"</h5>
         <hr>
       {% endif %}
-<!-- <div class="download-container">
-
- <form method="GET" action="{% url 'download_filtered_donor_volunteers' %}" class="download-form">
-  <div class="download-group">
-    <label for="search">Search</label>
-    <input type="text" id="search" name="search" placeholder="Search...">
-  </div>
-
-  <div class="download-group">
-    <label for="start_date">Start Date</label>
-    <input type="date" id="start_date" name="start_date">
-  </div>
-
-  <div class="download-group">
-    <label for="end_date">End Date</label>
-    <input type="date" id="end_date" name="end_date">
-  </div>
-
-  <button type="submit" class="download-btn1">⬇️</button>
-</form>
-</div> -->
-
 <style>
 /* 🌿 Modern underline input */
 .search-input {
@@ -2886,15 +2700,15 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_donor' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_donor_volunteer' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donor volunteer?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>
@@ -3010,15 +2824,15 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_donor' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_donor_volunteer' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donor volunteer?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>
@@ -3302,14 +3116,14 @@ width: 35%;
             <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn btn-sm p-1">
+              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
               <form method="POST" action="#" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -3378,15 +3192,15 @@ width: 35%;
             <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn btn-sm p-1">
+              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
               <form method="POST" action="#" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -3545,14 +3359,14 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn btn-sm p-1">
+              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
               <form method="POST" action="#" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation box?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -3611,14 +3425,14 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn btn-sm p-1">
+              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
               <form method="POST" action="#" class="d-inline m-0 p-0">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm p-1"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation box?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
@@ -3811,15 +3625,15 @@ table th, table td {
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_donation' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donation?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>
@@ -3919,15 +3733,15 @@ table th, table td {
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_donation' donation.id %}" class="btn btn-sm p-1">
+            <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user' donation.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm p-1"
-                onclick="return confirm('Are you sure you want to deactivate this user?')">
+              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donation?')">
                 <i class="bi bi-trash"></i>
               </button>
             </form>

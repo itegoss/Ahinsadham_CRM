@@ -7,6 +7,12 @@ from django.conf import settings  # make sure you import this
 
 class Module(models.Model):
     module_name = models.CharField(max_length=100, unique=True)
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='Module_created')
+    created_date = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return self.module_name
@@ -24,7 +30,9 @@ class UserModuleAccess(models.Model):
     can_edit = models.BooleanField(default=False)
     can_delete = models.BooleanField(default=False)
     can_view = models.BooleanField(default=False)
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_created')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_updated')
@@ -40,7 +48,9 @@ class UserModuleAccess(models.Model):
 class UserRole(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.ForeignKey(UserModuleAccess, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_users")
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_created')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_updated')
@@ -80,7 +90,9 @@ class DonationBox(models.Model):
         ('return', 'Return')
     ]
     status = models.CharField(max_length=20, choices=status_choices, default='Active')
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)  # auto update time
 
@@ -185,7 +197,9 @@ class DonorVolunteer(models.Model):
     updated_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="donor_updated_by"
     )
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -218,6 +232,9 @@ class DonorVolunteer(models.Model):
 
 class LookupType(models.Model):
     type_name = models.CharField(max_length=100, unique=True)
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_created')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_updated')
@@ -239,7 +256,9 @@ class Lookup(models.Model):
         on_delete=models.CASCADE,
         related_name="lookups"
     )
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="lookup_created"
     )
@@ -288,6 +307,17 @@ class DonationOwner(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_created_by"
+    )
+    updated_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_updated_by"
+    )
+
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.owner_name.first_name} {self.owner_name.last_name} - ₹{self.amount} ({self.donation_box.donation_id})"
@@ -411,7 +441,9 @@ class Donation(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)  # auto timestamp
     updated_at = models.DateTimeField(auto_now=True)      # auto update timestamp
-
+# Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     def __str__(self):
         return f"Donation {self.id}"
 
@@ -464,6 +496,9 @@ class DonationPaymentBox(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.donation_box} - ₹{self.amount} by {self.owner}"
