@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
@@ -220,7 +220,10 @@ def welcome_view(request):
     # ------------------------------------------------------------
     users = User.objects.all().order_by('id')
     donation_owners = DonationOwner.objects.all()
-    roles_qs = UserModuleAccess.objects.all().order_by("name")
+    
+    roles_qs = UserModuleAccess.objects.all().order_by("name").distinct()
+    clean_roles = [role.name.replace("—", "").replace("–", "").strip() for role in roles_qs]
+
     donations = Donation.objects.all().select_related('donor')
     donors = DonorVolunteer.objects.all()
 
@@ -285,9 +288,9 @@ def welcome_view(request):
         'permissions': permissions,   # <-- NEW LINE
 
         'donation_owners': donation_owners,
-        'roles': roles_qs,
+        'roles_qs': roles_qs,
         'role_names': role_names,
-
+        'clean_roles': clean_roles,
         'page_obj': page_obj,
         'donations': donations,
         'today': now().date(),
@@ -787,29 +790,36 @@ def manage_user_roles(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import UserModuleAccess, UserRole
-
 def assign_role(request):
     users = User.objects.all()
-    roles = UserModuleAccess.objects.all()
+
+    # Fetch UNIQUE role names only
+    roles = UserModuleAccess.objects.values_list('name', flat=True).distinct()
 
     if request.method == "POST":
         user_id = request.POST.get("user_id")
-        role_id = request.POST.get("role_id")
+        selected_role_name = request.POST.get("role")  # from <select name="role">
 
         print("🟡 POST DATA:", request.POST)
-        print(f"➡️ user_id={user_id}, role_id={role_id}")
+        print(f"➡️ user_id={user_id}, role={selected_role_name}")
 
-        if user_id and role_id:
+        if user_id and selected_role_name:
             user = User.objects.get(id=user_id)
-            role = UserModuleAccess.objects.get(id=role_id)
 
-            user_role, created = UserRole.objects.get_or_create(user=user)
-            user_role.role = role
-            user_role.save()
+            # Get the role object based on name
+            role = UserModuleAccess.objects.filter(name=selected_role_name).first()
 
-            print("✅ Saved:", user.username, "->", role.name)
+            if role:
+                user_role, created = UserRole.objects.get_or_create(user=user)
+                user_role.role = role
+                user_role.save()
+
+                print(f"✅ Saved: {user.username} → {role.name}")
+            else:
+                print("❌ Role not found!")
+
         else:
-            print("❌ Missing user_id or role_id")
+            print("❌ Missing user_id or role value!")
 
         return redirect('welcome')
 
@@ -2359,5 +2369,129 @@ def delete_user(request, user_id):
     user_to_delete.save()
     return redirect('welcome')
 
+def delete_lookup_type(request, lookup_type_id):
+    if request.method == "POST":
+        lt = get_object_or_404(LookupType, id=lookup_type_id)
+        lt.is_active = False
+        lt.save()
+        messages.success(request, f"{lt.type_name} deactivated.")
+    return redirect('welcome')
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import LookupType
+
+@login_required
+def delete_lookup_type(request, lookup_type_id):
+    if request.method == "POST":
+        lookup_type = get_object_or_404(LookupType, id=lookup_type_id)
+
+        # Soft delete logic
+        lookup_type.is_deleted = True
+        lookup_type.deleted_at = timezone.now()
+        lookup_type.updated_by = request.user
+        lookup_type.save()
+
+        messages.success(request, f"🗑 Lookup Type '{lookup_type.type_name}' deleted successfully.")
+
+        # Preserve pagination if available
+        page = request.GET.get("lt_page", 1)
+        return redirect(reverse("welcome") + f"?lt_page={page}")
+
+    return redirect("welcome")
+
+
+@login_required
+def delete_lookup(request, lookup_id):
+    if request.method == "POST":
+        lookup = get_object_or_404(Lookup, id=lookup_id)
+        lookup.is_deleted = True
+        lookup.deleted_at = timezone.now()
+        lookup.save()
+        messages.success(request, f"✅ Lookup '{lookup.lookup_name}' deactivated.")
+        page = request.GET.get("lu_page", 1)
+        return redirect(reverse("welcome") + f"?lu_page={page}")
+    return redirect("welcome")
+
+
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.urls import reverse
+
+@login_required
+def delete_user_module_access(request, access_id):
+    if request.method == "POST":
+        access = get_object_or_404(UserModuleAccess, id=access_id)
+
+        # Soft delete fields update
+        access.is_deleted = True
+        access.deleted_at = timezone.now()
+        access.updated_by = request.user
+        access.save()
+
+        messages.success(request, f"🗑️ Role '{access.name}' has been deleted successfully.")
+
+        # Preserve pagination page number if exists
+        page = request.GET.get("uma_page", 1)
+        return redirect(reverse("welcome") + f"?uma_page={page}")
+
+    return redirect("welcome")
+
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def delete_donor_volunteer(request, donor_id):
+    if request.method == "POST":
+        donor = get_object_or_404(DonorVolunteer, id=donor_id)
+
+        # Soft delete
+        donor.is_deleted = True
+        donor.deleted_at = timezone.now()
+        donor.updated_by = request.user
+        donor.save()
+
+        messages.success(request, f"🗑️ '{donor.first_name} {donor.last_name}' has been deleted successfully.")
+
+        # Maintain pagination position
+        page = request.GET.get("dv_page", 1)
+        return redirect(reverse("welcome") + f"?dv_page={page}")
+
+    return redirect("welcome")
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+from django.utils import timezone
+
+
+@login_required
+def delete_donation(request, donation_id):
+    if request.method == "POST":
+        donation = get_object_or_404(Donation, id=donation_id)
+
+        # Soft Delete Logic
+        donation.is_deleted = True
+        donation.deleted_at = timezone.now()
+        donation.updated_by = request.user
+        donation.save()
+
+        messages.success(request, f"🗑 Donation receipt '{donation.receipt_id}' deleted successfully.")
+
+        # Keep pagination position
+        page = request.GET.get("donation_page", 1)
+        return redirect(reverse("welcome") + f"?donation_page={page}")
+
+    return redirect("welcome")
 
 # ************* delete Data end *************

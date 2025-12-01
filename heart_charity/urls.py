@@ -71,6 +71,10 @@ path("donation/edit/<int:id>/", views.edit_donation, name="edit_donation"),
     path("lookup/<int:id>/edit/", views.edit_lookup, name="edit_lookup"),
 
 
-
+path('lookup-type/delete/<int:lookup_type_id>/', views.delete_lookup_type, name='delete_lookup_type'),
+path('lookup/delete/<int:lookup_id>/', views.delete_lookup, name='delete_lookup'),
+path("delete-user-access/<int:access_id>/", views.delete_user_module_access, name="delete_user_module_access"),
+path("delete-donor/<int:donor_id>/", views.delete_donor_volunteer, name="delete_donor_volunteer"),
+path("delete-donation/<int:donation_id>/", views.delete_donation, name="delete_donation"),
 
 ]
