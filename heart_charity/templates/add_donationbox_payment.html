@@ -150,7 +150,7 @@
   <p class="subtitle">Please fill in the required details below</p>
 
   <div class="expired-overlay" id="expiredOverlay">
-    <h3>⏳ Session Expired</h3>
+    <h3>Session Expired</h3>
     <p>Refresh the page and try again.</p>
   </div>
 
@@ -160,25 +160,41 @@
       <div class="section-title">Donation Box Details</div>
       <hr>
 
+      <!-- Owner -->
       <label>Donation Box Owner</label>
-      <select name="owner_name" required>
+      <select name="owner" required>
         <option value="">-- Select Owner --</option>
         {% for owner in owners %}
           <option value="{{ owner.id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
         {% endfor %}
       </select>
 
+      <!-- Donation Box -->
       <label>Donation Box</label>
       <select name="donation_box" required>
         <option value="">-- Select Donation Box --</option>
         {% for box in donation_boxes %}
-          <option value="{{ box.donation_id }}">{{ box.donation_name }} (ID: {{ box.donation_id }})</option>
+          <option value="{{ box.id }}">{{ box.donation_box_name }} (ID: {{ box.donation_id }})</option>
         {% endfor %}
       </select>
 
+      <!-- Address -->
+      <label>Address</label>
+      <input type="text" name="address" placeholder="Enter address">
+
+      <!-- Opened By -->
+      <label>Opened By</label>
+      <input type="text" name="opened_by" placeholder="Person who opened the box" required>
+
+      <!-- Received By -->
+      <label>Received By</label>
+      <input type="text" name="received_by" placeholder="Person who received the amount" required>
+
+      <!-- Amount -->
       <label>Amount (₹)</label>
       <input type="number" name="amount" step="0.01" required>
 
+      <!-- Payment Method -->
       <label>Payment Method</label>
       <select name="payment_method" required>
         <option value="">-- Select Method --</option>
@@ -187,8 +203,13 @@
         {% endfor %}
       </select>
 
+      <!-- Date & Time -->
       <label>Date & Time</label>
-      <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly>
+      <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time">
+
+      <!-- I Witness -->
+      <label>I Witness</label>
+      <input type="text" name="i_witness" placeholder="Witness Name">
 
       <div class="timer" id="timer">Form expires in: 60s</div>
 
@@ -217,6 +238,7 @@
     }
   }, 1000);
 </script>
+
 
 </body>
 </html>

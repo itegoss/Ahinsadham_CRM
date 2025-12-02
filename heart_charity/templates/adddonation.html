@@ -10,7 +10,14 @@
       <h3 class="fw-bold text-success">Add New Donation</h3>
       <p class="text-muted">Fill out the details to record a new donation</p>
     </div>
-
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
     <form method="POST" action="{% url 'adddonation' %}">
       {% csrf_token %}
 
@@ -58,11 +65,7 @@
           <label class="form-label fw-semibold">Donation Date</label>
           <input type="date" name="donation_date" value="{{ today }}" class="form-control" required>
         </div>
-
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
+    <div class="col-md-6">
           <label class="form-label fw-semibold">Donation Category</label>
           <select name="donation_category" class="form-select" required>
     <option value="">-- Select Category --</option>
@@ -73,6 +76,7 @@
 
         </div>
       </div>
+
       <!-- 📝 Additional Information -->
       <!-- ========================= -->
       <h5 class="text-success fw-bold mb-2">Additional Information</h5>
@@ -85,10 +89,7 @@
           <input type="text" name="place_of_donation" class="form-control">
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Check Number</label>
-          <input type="text" name="check_no" class="form-control">
-        </div>
+
 
       </div>
 
@@ -113,11 +114,7 @@
         </div>
       </div>
 
-      <!-- ========================= -->
-      <!-- 💵 Declared / Paid Amount -->
-      <!-- ========================= -->
-      <h5 class="text-success fw-bold mb-2">Declared & Paid Amount</h5>
-      <hr>
+    
 
    
 
@@ -127,7 +124,7 @@
 
       <div class="row mb-3">
 
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <label class="form-label fw-semibold">Donation Mode</label>
           <select name="donation_mode" class="form-select">
     <option value="">-- Select Mode --</option>
@@ -136,13 +133,24 @@
     {% endfor %}
 </select>
 
-        </div>
+        </div> -->
+      <div class="row mb-3">
 
         <div class="col-md-6">
           <label class="form-label fw-semibold">Payment Method</label>
           <select name="payment_method" class="form-select">
     <option value="">-- Select Method --</option>
     {% for item in payment_methods %}
+        <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+    {% endfor %}
+</select>
+
+        </div>
+         <div class="col-md-6">
+          <label class="form-label fw-semibold">Payment Status</label>
+          <select name="payment_status" class="form-select">
+    <option value="">-- Select Status --</option>
+    {% for item in payment_statuses %}
         <option value="{{ item.id }}">{{ item.lookup_name }}</option>
     {% endfor %}
 </select>
@@ -157,27 +165,14 @@
           <label class="form-label fw-semibold">Transaction ID</label>
           <input type="text" name="transaction_id" class="form-control">
         </div>
-
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Payment Status</label>
-          <select name="payment_status" class="form-select">
-    <option value="">-- Select Status --</option>
-    {% for item in payment_statuses %}
-        <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-    {% endfor %}
-</select>
-
+ <div class="col-md-6">
+          <label class="form-label fw-semibold">Check Number</label>
+          <input type="text" name="check_no" class="form-control">
         </div>
+       
 
       </div>
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    {% endfor %}
-{% endif %}
+
 
       <!-- ========================= -->
       <!-- Submit Buttons -->

@@ -1,195 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Donation Receipt</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-  /* 🌿 Global Styles */
-  body {
-    font-family: "Poppins", Arial, sans-serif;
-    background: #e9f7ee; /* light green background */
-    margin: 0;
-    padding: 0;
-  }
+<title>Donation Receipt</title>
 
-  h2 {
-    text-align: center;
-    color: #1e5631; /* dark green */
-    margin-bottom: 20px;
-  }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-  /* 🧾 Receipt Card */
-  .receipt-container {
-    background: #ffffff;
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: rgba(0,0,0,0.3);
+}
+
+.modal {
+    width: 430px;
+    background: white;
+    padding: 20px;
+    margin: 60px auto;
     border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    padding: 25px 35px;
-    margin: 40px auto;
-    max-width: 650px;
-    
-    /* Top border dark green */
-    border-top: 5px solid #1e5631;  
-    transition: transform 0.2s;
-  }
+    animation: fade .3s ease;
+    position: relative;
+}
 
-  .receipt-container:hover {
-    transform: translateY(-4px);
-  }
+@keyframes fade {
+    from {opacity: 0; transform: scale(.95);}
+    to {opacity: 1; transform: scale(1);}
+}
 
-  .receipt-container p {
+h2 {
+    text-align: center;
+    margin-top: 0;
+    font-size: 22px;
+    color: #0c6d34;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.table td {
+    padding: 8px 4px;
     font-size: 15px;
-    color: #2e5031; /* medium-dark green text */
-    margin: 6px 0;
-    line-height: 1.6;
-  }
+}
 
-  .receipt-container strong {
-    color: #1b4332; /* deep dark green */
-  }
+.line {
+    height: 2px;
+    width: 100%;
+    background: #c1edcb;
+    margin: 10px 0;
+}
 
-  /* 🎀 Header Area */
-  .header-section {
-    text-align: center;
-    margin-bottom: 20px;
-  }
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
 
-  .header-section h1 {
-    color: #1e5631; /* dark green heading */
-    font-size: 24px;
-    margin-bottom: 5px;
-  }
-
-  .header-section small {
-    color: #71a781; /* soft green-gray */
-  }
-
-  /* 🔘 Buttons */
-  .button-bar {
-    text-align: center;
-    margin-top: 25px;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 10px 18px;
-    margin: 6px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
+.btn {
+    background: #0c6d34;
+    color: white;
+    padding: 10px 16px;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-  }
+    font-size: 14px;
+    width: 32%;
+    transition: .3s;
+    text-align: center;
+}
 
-  /* Dark Green */
-  .btn-primary { 
-    background: #1e5631; /* dark green */
-    color: #fff;
-  }
-  .btn-primary:hover { 
-    background: #163f23; /* darker green on hover */
-  }
+.btn:hover { background: #084d26; }
 
-  /* Medium Green */
-  .btn-secondary { 
-    background: #4caf50; /* medium fresh green */
-    color: #fff;
-  }
-  .btn-secondary:hover { 
-    background: #3b8e41; 
-  }
-
-  /* Light Green Button */
-  .btn-light { 
-    background: #c8e6c9; /* very light green */
-    color: #1e5631;
-    border: 1px solid #a5d6a7;
-  }
-  .btn-light:hover {
-    background: #b4dcb8; 
-  }
-
-  /* 📱 Responsive Design */
-  @media (max-width: 700px) {
-    .receipt-container {
-      margin: 20px;
-      padding: 20px;
-    }
-    h2 {
-      font-size: 20px;
-    }
-    .btn {
-      padding: 8px 14px;
-      font-size: 14px;
-    }
-  }
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+}
 </style>
 </head>
 
 <body>
-  <div class="header-section">
-    <h1>Ahinsadham</h1>
-    <small>Registered NGO | Thank you for your generous donation ❤️</small>
-  </div>
 
-  <div id="receipt">
-    {% for donation in donations %}
-      <div class="receipt-container">
-        <h2>Donation Receipt</h2>
-        <p><strong>Receipt ID:</strong> {{ donation.receipt_id }}</p>
-        <p><strong>Donor:</strong> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</p>
-        <p><strong>Amount:</strong> ₹{{ donation.donation_amount }}</p>
-        <p><strong>Date:</strong> {{ donation.donation_date }}</p>
-        <p><strong>Category:</strong> {{ donation.donation_category }}</p>
-        <p><strong>Donation Mode:</strong> {{ donation.donation_mode }}</p>
-        <p><strong>Payment Method:</strong> {{ donation.payment_method }}</p>
-        <p><strong>Transaction ID:</strong> {{ donation.transaction_id|default:"-" }}</p>
-        <p><strong>Payment Status:</strong> {{ donation.payment_status }}</p>
-      </div>
-    {% empty %}
-      <p style="text-align:center; color:#777;">No donations found.</p>
-    {% endfor %}
-  </div>
+<div class="modal">
+    <span class="close-btn" onclick="window.history.back();">&times;</span>
 
-  <div class="button-bar">
-    <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
-    <button class="btn btn-secondary" onclick="shareReceipt()">Share Receipt</button>
-    <a href="/welcome/" class="btn btn-light">← Back</a>
-  </div>
+    <h2>Donation Receipt</h2>
 
-  <script>
-    // 🧾 Function to download the receipt as PDF
-    function downloadPDF() {
-      const element = document.getElementById('receipt');
-      const opt = {
-        margin: 0.5,
-        filename: 'donation_receipt.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
+    <div class="line"></div>
 
-    // 🔗 Share or copy link
-    function shareReceipt() {
-      const shareUrl = window.location.href;
-      const shareText = `Here’s my donation receipt from Ahinsadham: ${shareUrl}`;
-      if (navigator.share) {
+    <table class="table">
+        <tr><td><strong>Receipt ID:</strong></td><td>{{ donation.receipt_id }}</td></tr>
+        <tr><td><strong>Donor:</strong></td><td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td></tr>
+        <tr><td><strong>Date:</strong></td><td>{{ donation.donation_date }}</td></tr>
+        <tr><td><strong>Category:</strong></td><td>{{ donation.donation_category.lookup_name }}</td></tr>
+        <tr><td><strong>Payment Mode:</strong></td><td>{{ donation.payment_method.lookup_name }}</td></tr>
+        <tr><td><strong>Amount:</strong></td><td>₹{{ donation.donation_amount_paid }}</td></tr>
+        <tr><td><strong>Transaction ID:</strong></td><td>{{ donation.transaction_id|default:"-" }}</td></tr>
+    </table>
+
+    <div class="actions">
+        <button class="btn" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+
+        <a href="{% url 'download_receipt_pdf' donation.id %}" class="btn">
+            <i class="fa fa-download"></i> Download
+        </a>
+
+        <button class="btn" onclick="shareReceipt()">
+            <i class="fa fa-share"></i> Share
+        </button>
+    </div>
+</div>
+
+<script>
+function shareReceipt() {
+    if (navigator.share) {
         navigator.share({
-          title: 'My Donation Receipt',
-          text: shareText,
-          url: shareUrl
-        }).catch(err => console.log('Share cancelled or failed:', err));
-      } else {
-        navigator.clipboard.writeText(shareUrl).then(() => {
-          alert('Link copied to clipboard!');
-        }).catch(err => {
-          console.error('Failed to copy:', err);
+            title: "Donation Receipt",
+            text: "Here is your donation receipt.",
+            url: window.location.href
         });
-      }
+    } else {
+        alert("Sharing is not supported on this device.");
     }
-  </script>
+}
+</script>
+
 </body>
 </html>
