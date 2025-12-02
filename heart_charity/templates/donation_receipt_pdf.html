@@ -1,0 +1,9 @@
+<h2 style="text-align:center;">Donation Receipt</h2>
+<p><strong>Receipt ID:</strong> {{ donation.receipt_id }}</p>
+<p><strong>Donor:</strong> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</p>
+<p><strong>Date:</strong> {{ donation.donation_date }}</p>
+<p><strong>Category:</strong> {{ donation.donation_category.lookup_name }}</p>
+<p><strong>Payment Mode:</strong> {{ donation.payment_method.lookup_name }}</p>
+<p><strong>Amount Received:</strong> ₹{{ donation.donation_amount_paid }}</p>
+<p><strong>Transaction ID:</strong> {{ donation.transaction_id|default:"-" }}</p>
+<p>Thank you for your generous donation!</p>

@@ -1247,7 +1247,7 @@ td {
 {% elif not user.is_superuser and allowed_modules %}
     <!-- Non-admin: show only allowed modules -->
     {% for module_name in allowed_modules %}
-        <a data-tab="{{ module_name }}">{{ module_name }}</a>
+        <a class="tab-btn" data-tab="{{ module_name }}">{{ module_name }}</a>
     {% endfor %}
 
   
@@ -1331,10 +1331,8 @@ td {
 </style>
       <!-- 🧍‍♂️ User Table -->
 
-      {% if lookup_page_obj %}
+  {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
-  <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -1378,7 +1376,7 @@ td {
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_lookup_type' lt.id %}" class="d-inline m-0 p-0">
+<form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;
 "
@@ -1398,15 +1396,11 @@ td {
         {% endfor %}
       </tbody>
     </table>
-  </form>
-
 </div>
       {% elif lookup_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
-  <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -1439,17 +1433,17 @@ td {
           </td>
           {% endfor %}
         </tr> 
-   {% for lu in lookup_page_obj %}
+   {% for lt in lookup_page_obj %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="{% url 'edit_lookup_type' lu.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="{% url 'delete_lookup_type' lu.id %}" class="d-inline m-0 p-0">
+<form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
@@ -1468,7 +1462,6 @@ td {
         {% endfor %}
       </tbody>
     </table>
-  </form>
 </div>
 <!-- ✅ Scroll CSS -->
 <style>
@@ -3526,7 +3519,6 @@ table th, table td {
       class="form-control search-input me-2 shadow-none" 
       placeholder="🔍 Search..." 
       value="{{ query3|default:'' }}">
-    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
     {% if query3 %}
       <a href="{% url 'search_donation' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
     {% endif %}
@@ -3574,7 +3566,6 @@ table th, table td {
         <th>Amount</th>
         <th>Date</th>
         <th>Category</th>
-        <th>Mode</th>
         <th>Payment Method</th>
         <th>Transaction ID</th>
         <th>payment_status</th>
@@ -3609,7 +3600,7 @@ table th, table td {
 </div>
 </td>
 
-        {% for i in "1234567891234" %}
+        {% for i in "123456789123" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
@@ -3645,17 +3636,20 @@ table th, table td {
         <td>{{ donation.donor.city }}</td>
         <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
-        <td>{{ donation.category }}</td>
-        <td>{{ donation.donation_mode }}</td>
-        <td>{{ donation.payment_method }}</td>
+      <td>{{ donation.donation_category.lookup_name }}</td>
+        <td>{{ donation.payment_method.lookup_name }}</td>
+
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
 
-        <td>{{ donation.check_number }}</td>
+        <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
         <td>
-          <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
+     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
+    👁‍🗨
+</a>
+
 </td>
 
       </tr>
@@ -3678,7 +3672,6 @@ table th, table td {
         <th>Amount</th>
         <th>Date</th>
         <th>Category</th>
-        <th>Mode</th>
         <th>Payment Method</th>
         <th>Transaction ID</th>
         <th>payment_status</th>
@@ -3717,7 +3710,7 @@ table th, table td {
 </td>
 
     
-        {% for i in "1234567891234" %}
+        {% for i in "123456789123" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
@@ -3753,16 +3746,22 @@ table th, table td {
                 <td>{{ donation.donor.city }}</td>
         <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
-        <td>{{ donation.category }}</td>
-        <td>{{ donation.donation_mode }}</td>
+        <td>{{ donation.donation_category.lookup_name }}</td>
+        <td>{{ donation.payment_method.lookup_name }}</td>
+
         <td>{{ donation.payment_method }}</td>
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
-         <td>{{ donation.check_number }}</td>
+         <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
         <td>
-          <a href="{% url 'donation_receipt' donation.donor_id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a>
+         <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
+    👁‍🗨
+</a>
+
+
+          <!-- <a href="{% url 'donation_receipt' donation.id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a> -->
 </td>
 
       </tr>
