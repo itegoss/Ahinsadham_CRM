@@ -5,147 +5,57 @@
   <title>Add Donation Box Payment</title>
 
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #eef7ec;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #eef7ec; margin: 0; padding: 0;
+           display: flex; justify-content: center; align-items: center; min-height: 100vh; }
 
     .container {
-      width: 80%;
-      max-width: 900px;
-      background: #f6fff4;
-      padding: 35px;
-      border-radius: 18px;
+      width: 80%; max-width: 900px; background: #f6fff4; padding: 35px; border-radius: 18px;
       box-shadow: 0px 6px 20px rgba(0,0,0,0.08);
+      position: relative;
     }
 
-    h2 {
-      text-align: center;
-      font-size: 32px;
-      color: #1b6e3a;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
+    h2 { text-align: center; font-size: 32px; color: #1b6e3a; margin-bottom: 8px; font-weight: bold; }
+    .subtitle { text-align: center; font-size: 14px; color: #6b7576; margin-bottom: 25px; }
 
-    .subtitle {
-      text-align: center;
-      font-size: 14px;
-      color: #6b7576;
-      margin-bottom: 25px;
-    }
+    .section-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #166534; }
+    hr { height: 1px; background: #c8e6c9; border: none; margin-bottom: 20px; }
 
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #166534;
-    }
-
-    hr {
-      border: none;
-      height: 1px;
-      background: #c8e6c9;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      color: #444;
-    }
+    label { display: block; font-weight: 600; margin-top: 10px; margin-bottom: 5px; color: #444; }
 
     input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #9dcc9d;
-      background: #fff;
-      font-size: 15px;
-      outline: none;
-      transition: .2s;
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #9dcc9d;
+      background: #fff; font-size: 15px; outline: none; transition: .2s;
     }
 
-    input:focus, select:focus {
-      border-color: #1b6e3a;
-      box-shadow: 0px 0px 4px rgba(27,110,58,0.4);
-    }
+    input:focus, select:focus { border-color: #1b6e3a; box-shadow: 0px 0px 4px rgba(27,110,58,0.4); }
 
-    input[readonly] {
-      background: #f9f9f9;
-    }
+    input[readonly] { background: #f3f3f3; font-weight: 500; }
 
-    .btn-group {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 25px;
-    }
+    .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+    .btn { padding: 12px 35px; border-radius: 8px; font-size: 16px; cursor: pointer; border: none; transition: 0.3s; }
 
-    .btn {
-      padding: 12px 35px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      transition: 0.3s;
-    }
+    .btn-submit { background: #1b6e3a; color: white; }
+    .btn-submit:hover { background: #155a2d; }
 
-    .btn-submit {
-      background: #1b6e3a;
-      color: white;
-    }
+    .btn-back { background: #4b5563; color: white; }
+    .btn-back:hover { background: #374151; }
 
-    .btn-submit:hover {
-      background: #155a2d;
-    }
+    .timer { text-align: right; color: #ff3b3b; font-size: 14px; margin-top: 6px; }
 
-    .btn-back {
-      background: #4b5563;
-      color: white;
-    }
-
-    .btn-back:hover {
-      background: #374151;
-    }
-
-    .timer {
-      text-align: right;
-      color: #ff3b3b;
-      font-size: 14px;
-      margin-top: 6px;
-    }
-
-    /* Overlay message after expiry */
     .expired-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.9);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      border-radius: 18px;
+      position: absolute; inset: 0; background: rgba(255,255,255,0.9);
+      display: none; justify-content: center; align-items: center;
+      flex-direction: column; border-radius: 18px;
     }
 
-    .expired-overlay h3 {
-      color: red;
-      font-size: 22px;
-    }
+    .expired-overlay h3 { color: red; font-size: 22px; }
   </style>
 </head>
 
 <body>
 
 <div class="container">
-  
+
   <h2>Add Donation Box Payment</h2>
   <p class="subtitle">Please fill in the required details below</p>
 
@@ -160,56 +70,51 @@
       <div class="section-title">Donation Box Details</div>
       <hr>
 
-      <!-- Owner -->
-      <label>Donation Box Owner</label>
-      <select name="owner" required>
-        <option value="">-- Select Owner --</option>
-        {% for owner in owners %}
-          <option value="{{ owner.id }}">{{ owner.first_name }} {{ owner.last_name }}</option>
-        {% endfor %}
-      </select>
-
       <!-- Donation Box -->
-      <label>Donation Box</label>
-      <select name="donation_box" required>
-        <option value="">-- Select Donation Box --</option>
-        {% for box in donation_boxes %}
-          <option value="{{ box.id }}">{{ box.donation_box_name }} (ID: {{ box.donation_id }})</option>
-        {% endfor %}
-      </select>
+  <label>Donation Box</label>
+<select name="donation_box" id="donationBoxSelect" required class="form-select">
+    <option value="">-- Select Donation Box --</option>
+    {% for box in donation_boxes %}
+        <option value="{{ box.id }}">
+            {{ box.donation_box_name }} (ID: {{ box.donation_id }})
+        </option>
+    {% endfor %}
+</select>
 
-      <!-- Address -->
-      <label>Address</label>
-      <input type="text" name="address" placeholder="Enter address">
+<label>Donation Box Owner</label>
+<input type="text" id="boxOwner" name="owner_name" readonly placeholder="Auto-filled" class="form-control">
+
+<label>Address</label>
+<input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled" class="form-control">
 
       <!-- Opened By -->
       <label>Opened By</label>
-      <input type="text" name="opened_by" placeholder="Person who opened the box" required>
+      <input type="text" name="opened_by" required>
 
       <!-- Received By -->
       <label>Received By</label>
-      <input type="text" name="received_by" placeholder="Person who received the amount" required>
+      <input type="text" name="received_by" required>
 
       <!-- Amount -->
       <label>Amount (₹)</label>
       <input type="number" name="amount" step="0.01" required>
 
       <!-- Payment Method -->
-      <label>Payment Method</label>
+      <label class="fw-semibold">Payment Method</label>
       <select name="payment_method" required>
-        <option value="">-- Select Method --</option>
-        {% for key,val in payment_methods %}
-          <option value="{{ key }}">{{ val }}</option>
-        {% endfor %}
+          <option value="">-- Select Method --</option>
+          {% for item in payment_methods %}
+              <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+          {% endfor %}
       </select>
 
       <!-- Date & Time -->
       <label>Date & Time</label>
       <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time">
 
-      <!-- I Witness -->
+      <!-- Witness -->
       <label>I Witness</label>
-      <input type="text" name="i_witness" placeholder="Witness Name">
+      <input type="text" name="i_witness">
 
       <div class="timer" id="timer">Form expires in: 60s</div>
 
@@ -221,6 +126,38 @@
   </form>
 </div>
 
+<!-- --------------------------- -->
+<!-- AUTO-FILL SCRIPT -->
+<!-- --------------------------- -->
+<script>
+    // Load mapping from Django
+    const boxOwnerData = {{ box_owner_map|safe }};
+
+    // Get form elements
+    const boxSelect = document.getElementById("donationBoxSelect");
+    const ownerField = document.getElementById("boxOwner");
+    const addressField = document.getElementById("boxAddress");
+
+    boxSelect.addEventListener("change", function () {
+        const selectedId = parseInt(this.value);
+
+        // FIND related object by box_id
+        const info = boxOwnerData.find(item => item.box_id === selectedId);
+
+        if (info) {
+            ownerField.value = info.owner_name;
+            addressField.value = info.address;
+        } else {
+            ownerField.value = "";
+            addressField.value = "";
+        }
+    });
+</script>
+
+
+<!-- --------------------------- -->
+<!-- TIMER SCRIPT -->
+<!-- --------------------------- -->
 <script>
   let timeLeft = 60;
   const timerDisplay = document.getElementById("timer");
@@ -238,7 +175,6 @@
     }
   }, 1000);
 </script>
-
 
 </body>
 </html>

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h3 class="text-success">Edit Donation Box</h3>
+    <hr>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Key ID</label>
+            <input type="text" name="key_id" class="form-control" value="{{ box.key_id }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Box Size</label>
+            <select name="box_size" class="form-select" required>
+                {% for size in box_sizes %}
+                <option value="{{ size }}" {% if size == box.box_size %}selected{% endif %}>
+                    {{ size }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control" value="{{ box.location }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+                {% for status in status_choices %}
+                <option value="{{ status.0 }}" {% if status.0 == box.status %}selected{% endif %}>
+                    {{ status.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Upload QR Code (optional)</label>
+            <input type="file" name="qr_code" class="form-control">
+        </div>
+
+        {% if box.qr_code %}
+            <p>Current QR:</p>
+            <img src="{{ box.qr_code.url }}" width="120">
+        {% endif %}
+
+        <button type="submit" class="btn btn-success px-5">Save</button>
+        <a href="{% url 'welcome' %}" class="btn btn-secondary px-5">Back</a>
+
+    </form>
+</div>
+
+{% endblock %}

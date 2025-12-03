@@ -77,26 +77,6 @@
                         </select>
                     </div>
                 </div>
-              <div class="row g-3 mb-3">
-    <div class="col-md-6">
-        <label class="form-label">Person Type</label>
-
-        <div class="search-box">
-            <input type="text" id="personTypeSearch" class="form-control" placeholder="Search person type...">
-
-            <!-- Hidden actual select to submit in form -->
-            <select name="person_type" id="person_type" class="form-select d-none" required>
-                <option value="">Select</option>
-                {% for option in person_type_options %}
-                    <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-                {% endfor %}
-            </select>
-
-            <!-- The dropdown box -->
-            <div id="dropdown_person_type" class="dropdown"></div>
-        </div>
-    </div>
-</div>
 
 
                 <!-- ========================= PERSONAL DETAILS ========================= -->
@@ -179,11 +159,12 @@
                     <div class="col-md-4" id="donor_box_id_row" style="display:none;">
     <label class="form-label">Donor Box</label>
     <select name="donor_box" class="form-select">
-        <option value="">Select Donor Box</option>
-        {% for box in donation_boxes %}
-            <option value="{{ box.id }}">{{ box.donation_box_name }}</option>
-        {% endfor %}
-    </select>
+    <option value="">Select Donor Box</option>
+    {% for box in donation_boxes %}
+        <option value="{{ box.id }}">{{ box.donation_id }}</option>
+    {% endfor %}
+</select>
+
 </div>
 
                 </div>
