@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 import random
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .models import DonationBox, User 
+from .models import DonationBox, DonationPaymentBox, User 
 from heart_charity.models import LookupType   # ⬅️ ADD THIS
 
 
@@ -220,7 +220,6 @@ def welcome_view(request):
     # ------------------------------------------------------------
     users = User.objects.all().order_by('id')
     donation_owners = DonationOwner.objects.all()
-    
     roles_qs = UserModuleAccess.objects.all().order_by("name").distinct()
     clean_roles = [role.name.replace("—", "").replace("–", "").strip() for role in roles_qs]
 
@@ -230,6 +229,7 @@ def welcome_view(request):
     lookup_types = LookupType.objects.all().order_by("id")
     lookups = Lookup.objects.select_related("lookup_type").order_by("id")
     donation_boxes = DonationBox.objects.all()
+    donation_payment = DonationPaymentBox.objects.all().select_related("owner", "donation_box")
     # Pagination
     page_obj = Paginator(donors, 1).get_page(request.GET.get('donor_page'))
     donation_page_obj = Paginator(donations, 1).get_page(request.GET.get('donation_page'))
@@ -237,7 +237,8 @@ def welcome_view(request):
     roles_page_obj = Paginator(roles_qs, 10).get_page(request.GET.get('roles_page'))
     lookup_page_obj = Paginator(lookup_types, 1).get_page(request.GET.get("lt_page"))
     lookup_table_obj = Paginator(lookups, 1).get_page(request.GET.get("lu_page"))
-
+    payments_page_obj = Paginator(donation_payment, 1).get_page(request.GET.get("payments_page"))
+    box_page_obj = Paginator(donation_boxes, 1).get_page(request.GET.get("box_page"))
     # ------------------------------------------------------------
     # ASSIGN ROLE TO USER (ADMIN ONLY)
     # ------------------------------------------------------------
@@ -284,7 +285,7 @@ def welcome_view(request):
         'user': user,
         'username': user.username,
         'first_name': user.first_name,
-
+        'donation_payment':donation_payment,
         'permissions': permissions,   # <-- NEW LINE
 
         'donation_owners': donation_owners,
@@ -304,6 +305,8 @@ def welcome_view(request):
 
         'showall': users.exclude(is_superuser=True),
         'donation_boxes': donation_boxes,
+        'payments_page_obj': payments_page_obj,
+        'box_page_obj': box_page_obj,
     }
 
     # ------------------------------------------------------------
@@ -825,46 +828,6 @@ def assign_role(request):
 
     return render(request, "welcome.html", {"users": users, "roles": roles})
 
-# def search_donor_volunteer(request):
-#     query2 = request.GET.get('q')  # Search term from input
-
-#     # ✅ Base queryset
-#     donorvolunteer = DonorVolunteer.objects.all()
-
-#     # ✅ Apply search filter
-#     if query2:
-#         donorvolunteer = donorvolunteer.filter(
-#             Q(person_type__icontains=query2) |
-#             Q(first_name__icontains=query2) |
-#             Q(middle_name__icontains=query2) |
-#             Q(last_name__icontains=query2) |
-#             Q(gender__icontains=query2) |
-#             Q(date_of_birth__icontains=query2) |
-#             Q(email__icontains=query2) |
-#             Q(donor_box_id__icontains=query2) |
-#             Q(house_number__icontains=query2) |
-#             Q(landmark__icontains=query2) |
-#             Q(city__icontains=query2) |
-#             Q(state__icontains=query2) |
-#             Q(contact_number__icontains=query2)
-#         )
-
-#     # ✅ Pagination (1 record per page)
-#     paginator = Paginator(donorvolunteer, 1)
-#     page_number = request.GET.get('donor_page')
-#     page_obj = paginator.get_page(page_number)
-
-#     # ✅ Render template
-#     return render(
-#         request,
-#         'welcome.html',
-#         {
-#             'page_obj': page_obj,
-#             'query2': query2,
-#         }
-#     )
-
-
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -940,22 +903,6 @@ from django.db.models import Q, Value
 from django.db.models.functions import Concat
 import csv
 from .models import Donation
-
-
-from django.http import HttpResponse
-from django.core.paginator import Paginator
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
-import csv
-from .models import Donation
-
-
-from django.http import HttpResponse
-from django.core.paginator import Paginator
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
-import csv
-from .models import Donation
 def search_donation(request):
     donations = Donation.objects.all()
     query3 = request.GET.get('q', '').strip()
@@ -1021,6 +968,146 @@ def search_donation(request):
     return render(request, 'welcome.html', {
         'donation_page_obj': donation_page_obj,
         'query3': query3,
+    })
+
+
+
+from django.http import HttpResponse
+from django.db.models import Q
+from django.core.paginator import Paginator
+import csv
+
+@login_required
+def search_donation_payment(request):
+
+    payments_query = request.GET.get("payments_query", "").strip()
+
+    payments = DonationPaymentBox.objects.filter(is_deleted=False)
+
+    # Search filter
+    if payments_query:
+        payments = payments.filter(
+    Q(donation_box__donation_id__icontains=payments_query) |
+    Q(opened_by__icontains=payments_query) |
+    Q(received_by__icontains=payments_query) |
+    Q(payment_method__lookup_name__icontains=payments_query) |
+    Q(amount__icontains=payments_query)
+)
+
+
+    # CSV download
+    if request.GET.get("download") == "1":
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="donation_payments.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            "Donation Box",
+            "Donation ID",
+            "Owner",
+            "Opened By",
+            "Received By",
+            "Amount",
+            "Payment Method",
+            "Address",
+            "Date Time",
+            "Witness",
+        ])
+
+        for p in payments:
+            writer.writerow([
+                p.donation_box.donation_id if p.donation_box else "",
+                f"{p.owner.first_name} {p.owner.last_name}" if p.owner else "",
+                p.opened_by,
+                p.received_by,
+                p.amount,
+                p.payment_method.lookup_name if p.payment_method else "",
+                p.address,
+                p.date_time,
+                p.i_witness,
+            ])
+
+        return response
+
+    # Pagination (correct)
+    paginator = Paginator(payments, 1)  # 10 per page
+    page_number = request.GET.get("payments_page")
+    payments_page_obj = paginator.get_page(page_number)
+
+    return render(request, "welcome.html", {
+        "payments_page_obj": payments_page_obj,
+        "payments_query": payments_query,
+    })
+
+
+@login_required
+def search_donation_box(request):
+
+    box_query = request.GET.get("box_query", "").strip()
+    boxes = DonationBox.objects.filter(is_deleted=False).order_by("id")
+    if box_query:
+        filters = (
+            Q(donation_id__icontains=box_query) |
+            Q(location__icontains=box_query) |
+            Q(key_id__icontains=box_query) |
+            Q(box_size__icontains=box_query) |
+            Q(status__icontains=box_query)
+        )
+
+        # Allow numeric search for ID
+        if box_query.isdigit():
+            filters |= Q(id=int(box_query))
+
+        boxes = boxes.filter(filters)
+
+    # ---------------------------------------
+    # 📥 CSV DOWNLOAD
+    # ---------------------------------------
+    if request.GET.get("download") == "1":
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename=\"donation_boxes.csv\"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            "ID",
+            "Donation ID",
+            "Location",
+            "Key ID",
+            "Box Size",
+            "Uploaded By",
+            "Created By",
+            "Status",
+            "Created At",
+        ])
+
+        for b in boxes:
+            writer.writerow([
+                b.id,
+                b.donation_id,
+                b.location,
+                b.key_id or "",
+                b.box_size,
+                b.uploaded_by.username if b.uploaded_by else "",
+                b.created_by.username if b.created_by else "",
+                b.status,
+                b.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            ])
+
+        return response
+
+    # ---------------------------------------
+    # 📄 PAGINATION
+    # ---------------------------------------
+    paginator = Paginator(boxes, 1)  # 1 per page (you can change)
+    page_number = request.GET.get("box_page")
+    box_page_obj = paginator.get_page(page_number)
+
+    # ---------------------------------------
+    # 🔁 RENDER PAGE
+    # ---------------------------------------
+    return render(request, "welcome.html", {
+        "box_page_obj": box_page_obj,
+        "box_query": box_query,
     })
 
 #----------------Globle End Search--------------
@@ -1247,31 +1334,31 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Q
 from heart_charity.models import LookupType, Lookup, DonorVolunteer, UserModuleAccess, Module
-
-from django.shortcuts import render, redirect
-from .models import DonorVolunteer, Lookup
 from django.core.files.storage import default_storage
-
-from django.shortcuts import render, redirect
-from .models import Lookup, DonorVolunteer
-
 from django.shortcuts import render, redirect, get_object_or_404
 
 def add_donor_volunteer(request):
     # Get Lookup options
-    person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
-    id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
+    person_type_options = Lookup.objects.filter(
+        lookup_type__type_name__iexact='Person Type'
+    )
+    id_type_options = Lookup.objects.filter(
+        lookup_type__type_name__iexact='ID Type'
+    )
+
+    # Fetch Donation Boxes (so you can see box IDs)
+    donation_boxes = DonationBox.objects.filter(is_deleted=False).order_by('donation_id')
 
     # Get Donor-Box-Owner ID for template JS toggle safely
     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
-    donor_box_owner_id = donor_box_owner.id if donor_box_owner else None  # safe fallback
+    donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
 
     if request.method == 'POST':
         # Get Person Type instance
         person_type_id = request.POST.get('person_type')
-        person_type_instance = Lookup.objects.get(id=int(person_type_id)) if person_type_id else None
+        person_type_instance = Lookup.objects.get(id=person_type_id) if person_type_id else None
 
-        # Handle file uploads
+        # File uploads
         id_proof_image = request.FILES.get('id_proof_image')
         pan_card_image = request.FILES.get('pan_card_image')
 
@@ -1287,7 +1374,12 @@ def add_donor_volunteer(request):
             contact_number=request.POST.get('contact_number'),
             whatsapp_number=request.POST.get('whatsapp_number'),
             email=request.POST.get('email'),
-            donor_box_id=request.POST.get('donor_box_id') if person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner' else None,
+
+            # Assign box ONLY if person type = Donor-Box-Owner
+            donor_box_id=request.POST.get('donor_box') if (
+                person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner'
+            ) else None,
+
             house_number=request.POST.get('house_number'),
             building_name=request.POST.get('building_name'),
             landmark=request.POST.get('landmark'),
@@ -1302,52 +1394,33 @@ def add_donor_volunteer(request):
             pan_number=request.POST.get('pan_number'),
         )
 
-        # Save uploaded files if any
+        # Save attachments
         if id_proof_image:
             donor.id_proof_image.save(id_proof_image.name, id_proof_image)
         if pan_card_image:
             donor.pan_card_image.save(pan_card_image.name, pan_card_image)
 
-        return redirect('welcome')  # Redirect to your welcome page
+        return redirect('welcome')
 
     context = {
         'person_type_options': person_type_options,
         'id_type_options': id_type_options,
-        'donor_box_owner_id': donor_box_owner_id,  # Safe to pass to template
+        'donor_box_owner_id': donor_box_owner_id,
+        'donation_boxes': donation_boxes,  # <-- IMPORTANT LINE
     }
+
     return render(request, 'add_donor_volunteer.html', context)
+
+
 def donor_success(request):
     return render(request, "donor_success.html") 
 
 
-
-
-
-
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.utils.timezone import now
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import Module, Donation, DonationOwner, DonorVolunteer, UserModuleAccess
 from django.contrib.auth.models import User
-
-from django.shortcuts import render, redirect
 from django.utils import timezone
-from .models import Donation, DonorVolunteer, Lookup, LookupType
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
-from .models import DonorVolunteer, Donation, Lookup, LookupType
-from django.shortcuts import render, redirect
-from django.contrib import messages
 from django.utils.timezone import now
 from django.db import IntegrityError, transaction
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.db import IntegrityError, DatabaseError
-from django.utils.timezone import now
 
 def adddonation(request):
     donors = DonorVolunteer.objects.all()
@@ -1415,7 +1488,6 @@ from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from .models import Donation
 from django.http import HttpResponse
-from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 
 def donation_receipt(request, id):
@@ -1433,7 +1505,6 @@ def generate_receipt_pdf(request, id):
     return response
 
 
-from django.http import HttpResponse
 from datetime import date, timedelta
 from .models import DonorVolunteer
 from reportlab.pdfgen import canvas
@@ -1504,113 +1575,127 @@ def user_list(request):
 from .models import Donation, DonorVolunteer
 
 def donation_receipt_view(request, donor_id):
-    # Get the donor by their ID
     donor = get_object_or_404(DonorVolunteer, id=donor_id)
-
-    # Get all donations for that donor
     donations = Donation.objects.filter(donor__id=donor_id)
-
     return render(request, 'donation_receipt.html', {
         'donor': donor,
         'donations': donations
     })
 
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.utils.timezone import now
-from .models import DonorVolunteer, DonationBox, DonationOwner
-def add_donationbox_payment(request):
-    
-    # Filtering Only "Donor Box Owner" persons
-    owners = DonorVolunteer.objects.filter(person_type__lookup_name='Donor-Box-Owner')
+from django.utils import timezone
+from .models import DonationPaymentBox, DonationBox, Lookup, User, DonorVolunteer
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
-    donation_boxes = DonationBox.objects.all()
-    current_time = now()
+@login_required
+def add_donation_payment(request):
 
-    if request.method == 'POST':
-        owner_id = request.POST.get('owner_name')
-        donation_box_id = request.POST.get('donation_box')
-        amount = request.POST.get('amount')
-        payment_method = request.POST.get('payment_method')
+    donation_boxes = DonationBox.objects.filter(is_deleted=False)
 
-        # ---------------- Validation ----------------
-        if not owner_id or not donation_box_id or not amount or not payment_method:
-            messages.error(request, "⚠️ All fields are required.")
-            return redirect('add_donationbox_payment')
+    # Fetch payment methods
+    payment_methods = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Payment Method"
+    ).order_by("lookup_name")
 
-        try:
-            owner = DonorVolunteer.objects.get(id=owner_id)
-            donation_box = DonationBox.objects.get(donation_id=donation_box_id)
+    # ----- SIMPLE SOLUTION -----
+    # Get donor-volunteer linked to donation box
+    box_owner_map = []
 
-            # ---------------- Save Data ----------------
-            DonationOwner.objects.create(
-                owner_name=owner,
-                donation_box=donation_box,
-                amount=amount,
-                payment_method=payment_method,
-                created_at=current_time
-            )
+    donors = DonorVolunteer.objects.filter(is_deleted=False)
 
-            messages.success(request, "✅ Donation Box Payment Saved Successfully!")
-            return redirect('show_donationbox')  # redirect to list page
+    for d in donors:
+        if d.donor_box:   # only if donor is assigned a box
+            address = ", ".join(filter(None, [
+                d.house_number, d.building_name, d.area, d.city, d.state, d.postal_code
+            ]))
 
-        except DonorVolunteer.DoesNotExist:
-            messages.error(request, "❌ Selected Owner not found!")
+            box_owner_map.append({
+                "box_id": d.donor_box.id,
+                "owner_name": f"{d.first_name} {d.last_name}",
+                "address": address,
+            })
 
-        except DonationBox.DoesNotExist:
-            messages.error(request, "❌ Selected Donation Box not found!")
+    if request.method == "POST":
+        donation_box_id = request.POST.get("donation_box")
+        owner_name = request.POST.get("owner_name")  # from autofilled field
+        address = request.POST.get("address")
+        opened_by = request.POST.get("opened_by")
+        received_by = request.POST.get("received_by")
+        amount = request.POST.get("amount")
+        payment_method_id = request.POST.get("payment_method")
+        date_time = request.POST.get("date_time")
+        i_witness = request.POST.get("i_witness")
 
-        except Exception as e:
-            messages.error(request, f"❌ Unexpected Error: {e}")
-            print("Error:", e)
+        payment_method = get_object_or_404(Lookup, id=payment_method_id)
+        donation_box = get_object_or_404(DonationBox, id=donation_box_id)
 
+        DonationPaymentBox.objects.create(
+            owner=request.user,        # SIMPLE: payment owner = logged-in user
+            donation_box=donation_box,
+            address=address,
+            opened_by=opened_by,
+            received_by=received_by,
+            amount=amount,
+            payment_method=payment_method,
+            date_time=date_time,
+            i_witness=i_witness,
+            created_by=request.user,
+            updated_by=request.user,
+        )
 
-    # ---------------- Page Load Context ----------------
+        messages.success(request, "Donation Payment Added Successfully!")
+        return redirect("welcome")
+
     context = {
-        'owners': owners,
-        'donation_boxes': donation_boxes,
-        'payment_methods': DonationOwner.PAYMENT_METHOD_CHOICES,
-        'current_time': current_time,
+        "donation_boxes": donation_boxes,
+        "payment_methods": payment_methods,
+        "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
+        "current_time": timezone.now(),
     }
 
-    return render(request, 'add_donationbox_payment.html', context)
+    return render(request, "add_donationbox_payment.html", context)
 
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.utils.timezone import now
 from .models import DonationBox
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-from django.contrib import messages
-from .models import DonationBox
 
-@login_required(login_url='login')   # <-- forces login
+@login_required
 def add_donation_box(request):
+
     if request.method == "POST":
-        try:
-            box = DonationBox(
-                donation_box_name=request.POST.get("donation_box_name"),
-                box_size=request.POST.get("box_size"),
-                key_id=request.POST.get("key_id"),
-                location=request.POST.get("location"),
-                status=request.POST.get("status"),
-                qr_code=request.FILES.get("qr_code"),
-                uploaded_by=request.user   # <-- FIX
-            )
-            box.save()
-            messages.success(request, "Donation Box added successfully!")
-            return redirect("welcome")
 
-        except Exception as e:
-            messages.error(request, f"Error: {e}")
-            return redirect("add_donation_box")
+        key_id = request.POST.get("key_id")
+        box_size = request.POST.get("box_size")     # small / medium / large
+        location = request.POST.get("location")
+        status = request.POST.get("status")
+        qr_code = request.FILES.get("qr_code")      # optional
 
-    return render(request, "add_donation_box.html")
+        # Create Donation Box object
+        box = DonationBox(
+            key_id=key_id,
+            box_size=box_size,
+            location=location,
+            status=status,
+            qr_code=qr_code if qr_code else None,
+            uploaded_by=request.user,
+            created_by=request.user,
+            created_at=timezone.now(),
+        )
 
+        box.save()  # Auto-generates donation_id + QR if missing
 
-from django.contrib import messages
+        messages.success(request, "Donation Box Added Successfully!")
+        return redirect("welcome")   # Change if needed
+
+    context = {
+        "status_choices": DonationBox.status_choices,
+    }
+    return render(request, "add_donation_box.html", context)
+
 from .models import Employee
 
 def add_employee(request):
@@ -1691,9 +1776,7 @@ def donationbox_list(request):
 
 from django.http import HttpResponse
 from django.db.models import Q
-from django.contrib import messages
 from django.shortcuts import redirect
-from openpyxl import Workbook
 from .models import Donation
 
 def download_filtered_donations(request):
@@ -1762,13 +1845,8 @@ def download_filtered_donations(request):
     workbook.save(response)
     return response
 
-
-
-from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Q
 from django.http import HttpResponse
-from openpyxl import Workbook
 from datetime import datetime
 
 def download_filtered_users(request):
@@ -1841,12 +1919,8 @@ def download_filtered_users(request):
 
 
 from django.shortcuts import redirect
-from django.contrib import messages
-from django.db.models import Q
 from django.http import HttpResponse
-from openpyxl import Workbook
 from .models import UserModuleAccess  # Make sure this import is correct
-
 
 def download_filtered_user_access(request):
     start_date = request.GET.get('start_date')
@@ -1925,16 +1999,10 @@ def download_filtered_user_access(request):
     workbook.save(response)
     return response
 
-
-
 from django.shortcuts import redirect
-from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponse
-from openpyxl import Workbook
 from .models import DonorVolunteer  # ✅ import your model
-
-
 def download_filtered_donor_volunteers(request):
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
@@ -2018,23 +2086,12 @@ def download_filtered_donor_volunteers(request):
 
 from django.shortcuts import render
 from .models import UserRole
-
 def user_access_list(request):
     user_roles = UserRole.objects.select_related('user', 'role__module').all()
     return render(request, 'user_access_list.html', {'user_roles': user_roles})
 
 
 from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import Donation  # Example model
-
-
-
-
-
-
-from django.core.paginator import Paginator
-from django.shortcuts import render
 from .models import Donation
 
 def donation_list(request):
@@ -2051,21 +2108,61 @@ def donation_list(request):
 
 from heart_charity.models import LookupType   # ⬅️ ADD THIS
 
+# def lookup_type_create(request):
+#     if request.method == "POST":
+#         type_name = request.POST.get("type_name").strip()
+
+#         # --- Check if already exists ---
+#         if LookupType.objects.filter(type_name__iexact=type_name).exists():
+#             messages.error(
+#                 request,
+#                 f"Lookup Type '{type_name}' already exists. Please enter a different name."
+#             )
+#             return render(request, "lookup_type_form.html", {
+#                 "lookup_type": None
+#             })
+
+#         # --- Create new lookup type ---
+#         lookup_type = LookupType(
+#             type_name=type_name,
+#             created_by=request.user,
+#             updated_by=request.user,
+#         )
+#         lookup_type.save()
+
+#         messages.success(request, "Lookup Type added successfully!")
+#         return render(request, "lookup_type_form.html", {
+#             "lookup_type": None
+#         })
+
+#     return render(request, "lookup_type_form.html", {
+#         "lookup_type": None
+#     })
+
 def lookup_type_create(request):
     if request.method == "POST":
         type_name = request.POST.get("type_name").strip()
 
-        # --- Check if already exists ---
-        if LookupType.objects.filter(type_name__iexact=type_name).exists():
+        # --- CASE 1: Active record exists → prevent duplicate ---
+        if LookupType.objects.filter(type_name__iexact=type_name, is_deleted=False).exists():
             messages.error(
                 request,
-                f"Lookup Type '{type_name}' already exists. Please enter a different name."
+                f"Lookup Type '{type_name}' already exists!"
             )
-            return render(request, "lookup_type_form.html", {
-                "lookup_type": None
-            })
+            return render(request, "lookup_type_form.html", {"lookup_type": None})
 
-        # --- Create new lookup type ---
+        # --- CASE 2: Soft-deleted record exists → restore it instead of creating new ---
+        deleted_record = LookupType.objects.filter(type_name__iexact=type_name, is_deleted=True).first()
+        if deleted_record:
+            deleted_record.is_deleted = False
+            deleted_record.deleted_at = None
+            deleted_record.updated_by = request.user
+            deleted_record.save()
+
+            messages.success(request, f"Lookup Type '{type_name}' restored successfully!")
+            return render(request, "lookup_type_form.html", {"lookup_type": None})
+
+        # --- CASE 3: No record exists → create a new one ---
         lookup_type = LookupType(
             type_name=type_name,
             created_by=request.user,
@@ -2074,14 +2171,9 @@ def lookup_type_create(request):
         lookup_type.save()
 
         messages.success(request, "Lookup Type added successfully!")
-        return render(request, "lookup_type_form.html", {
-            "lookup_type": None
-        })
+        return render(request, "lookup_type_form.html", {"lookup_type": None})
 
-    return render(request, "lookup_type_form.html", {
-        "lookup_type": None
-    })
-
+    return render(request, "lookup_type_form.html", {"lookup_type": None})
 
 def lookup_create(request):
     lookup_types = LookupType.objects.all()
@@ -2125,11 +2217,6 @@ def lookup_create(request):
         "lookup_types": lookup_types,
         "lookup": None
     })
-
-
-
-
-
 
 
 # ************* Edit Data Start *************
@@ -2184,10 +2271,6 @@ def edit_user(request, id):
 
     return render(request, 'edit_user.html', {'edit_user': user_obj})
 
-
-
-
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import UserModuleAccess
 
@@ -2209,16 +2292,6 @@ def edit_usermoduleaccess(request, id):
 
     return render(request, "edit_usermoduleaccess.html", {"access": record})
 
-
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import DonorVolunteer, Lookup
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import DonorVolunteer, Lookup
-
-from django.shortcuts import render, get_object_or_404, redirect
 from .models import DonorVolunteer, Lookup
 def edit_donor(request, donor_id):
     donor = get_object_or_404(DonorVolunteer, id=donor_id)
@@ -2262,9 +2335,6 @@ def edit_donor(request, donor_id):
     })
 
 
-
-# views.py
-from django.shortcuts import render, get_object_or_404, redirect
 from .models import Donation, Lookup, DonorVolunteer
 from django.contrib.auth.decorators import login_required
 
@@ -2309,6 +2379,56 @@ def edit_donation(request, id):
         "donation_modes": donation_modes,
         "payment_methods": payment_methods,
         "payment_statuses": payment_statuses,
+    })
+
+
+
+
+def edit_box_payment(request, id):
+    payment = get_object_or_404(DonationPaymentBox, id=id)
+
+    if request.method == 'POST':
+        payment.address = request.POST.get('address')
+        payment.amount = request.POST.get('amount')
+        payment.i_witness = request.POST.get('i_witness')
+        payment.updated_by = request.user
+        payment.save()
+
+        messages.success(request, "Payment updated successfully!")
+        return redirect('welcome')   # Or your payment list page
+
+    return render(request, 'BoxPayment.html', {
+        'payment': payment
+    })
+
+
+
+# donationbox eidt view------------------------------
+
+
+
+def edit_donation_box(request, id):
+    box = get_object_or_404(DonationBox, id=id)
+
+    if request.method == 'POST':
+        box.key_id = request.POST.get('key_id')
+        box.box_size = request.POST.get('box_size')
+        box.location = request.POST.get('location')
+        box.status = request.POST.get('status')
+
+        # QR Code update
+        qr_file = request.FILES.get('qr_code')
+        if qr_file:
+            box.qr_code = qr_file
+
+        box.save()
+        messages.success(request, "Donation Box updated successfully!")
+        return redirect('welcome')
+
+    return render(request, 'DonationBoxedit.html', {
+        'box': box,
+        'status_choices': DonationBox.status_choices,
+        'box_sizes': DonationBox.BOX_SIZES
     })
 
 
@@ -2439,4 +2559,85 @@ def delete_donation(request, donation_id):
 
     return redirect("welcome")
 
+
+
+# DONATIONEDELETE VIEW------------------------------
+
+
+def delete_box_payment(request, id):
+    if request.method == "POST":
+        payment = get_object_or_404(DonationPaymentBox, id=id)
+        
+        # If soft delete:
+        # payment.is_active = False
+        # payment.save()
+
+        # Hard delete:
+        payment.delete()
+
+        messages.success(request, "Donation Box Payment deleted successfully!")
+        return redirect('welcome')
+
+
+
+def delete_donation_box(request, id):
+    if request.method == "POST":
+        box = get_object_or_404(DonationBox, id=id)
+        box.is_active = False    # ⭐ soft delete
+        box.save()
+
+        messages.success(request, "Donation box deleted successfully!")
+        return redirect('welcome')
 # ************* delete Data end *************
+
+
+
+
+def edit_box_payment(request, id):
+    payment = get_object_or_404(DonationPaymentBox, id=id)
+
+    if request.method == 'POST':
+        payment.address = request.POST.get('address')
+        payment.amount = request.POST.get('amount')
+        payment.i_witness = request.POST.get('i_witness')
+        payment.updated_by = request.user
+        payment.save()
+
+        messages.success(request, "Payment updated successfully!")
+        return redirect('welcome')   # Or your payment list page
+
+    return render(request, 'BoxPayment.html', {
+        'payment': payment
+    })
+
+
+
+# donationbox eidt view------------------------------
+
+
+
+def edit_donation_box(request, id):
+    box = get_object_or_404(DonationBox, id=id)
+
+    if request.method == 'POST':
+        box.key_id = request.POST.get('key_id')
+        box.box_size = request.POST.get('box_size')
+        box.location = request.POST.get('location')
+        box.status = request.POST.get('status')
+
+        # QR Code update
+        qr_file = request.FILES.get('qr_code')
+        if qr_file:
+            box.qr_code = qr_file
+
+        box.save()
+        messages.success(request, "Donation Box updated successfully!")
+        return redirect('welcome')
+
+    return render(request, 'DonationBoxedit.html', {
+        'box': box,
+        'status_choices': DonationBox.status_choices,
+        'box_sizes': DonationBox.BOX_SIZES
+    })
+
+

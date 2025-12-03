@@ -3025,21 +3025,21 @@ width: 35%;
       <h4 class="mb-0">Donation box (Daan Peti) & ACH Module</h4>
     </div>
 
-<!-- ------------Lookup type table----------- -->
+<!-- ------------Donation Owner Module----------- -->
     <div class="card-body">
       <h5 style="color:#1b5e20">Donation Owner Module</h5>
       <!-- 🔍 Search Section -->
 <div class="search-container d-flex align-items-center">
 
-  <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
+  <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
 
     <!-- Search Input -->
     <input 
       type="text" 
-      name="lookup_query"
+      name="payments_query"
       class="form-control search-input me-2"
       placeholder="🔍 Search..."
-      value="{{ lookup_query|default:'' }}">
+      value="{{ payments_query|default:'' }}">
   </form>
 </div>
 <style>
@@ -3066,7 +3066,7 @@ width: 35%;
 </style>
       <!-- 🧍‍♂️ User Table -->
 
-      {% if lookup_page_obj %}
+      {% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
  
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -3085,15 +3085,24 @@ width: 35%;
       <tbody>
         <tr>
   <td>
-  <a href="/add_donationbox_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+              <div class="d-inline-flex align-items-center gap-1">
+
+  <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %}
+        <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+              </div>
 </td>
           {% for i in "123456"|make_list %}
           <td>
@@ -3104,16 +3113,16 @@ width: 35%;
           {% endfor %}
         </tr>
         
-        {% for owner in donation_owners %}
+        {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
-              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+              <!-- 📝 Edit edit_box_payment -->
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
-              <form method="POST" action="#" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
@@ -3123,7 +3132,7 @@ width: 35%;
             </div>
           </td>
           <td>{{ owner.id }}</td>
-          <td>{{ owner.owner_name.first_name }} {{ owner.owner_name.last_name }}</td>
+<td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
           <td>
             {% if owner.donation_box %}
               {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
@@ -3141,7 +3150,7 @@ width: 35%;
     </table>
 
 </div>
-      {% elif lookup_query %}
+      {% elif payments_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
@@ -3162,14 +3171,24 @@ width: 35%;
         <tr>
         
       <td>
-  <a href="/add_donationbox_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+                  <div class="d-inline-flex align-items-center gap-1">
+  <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color: black; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %}
+
+        <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+                  </div>
 </td>
           {% for i in "123456"|make_list %}
           <td>
@@ -3180,17 +3199,17 @@ width: 35%;
           {% endfor %}
         </tr> 
        
-        {% for owner in donation_owners %}
+        {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
 
               <!-- 🗑️ Delete -->
-              <form method="POST" action="#" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
@@ -3200,9 +3219,7 @@ width: 35%;
             </div>
           </td>
           <td>{{ owner.id }}</td>
-
-          <!-- Owner Full Name -->
-          <td>{{ owner.owner_name.first_name }} {{ owner.owner_name.last_name }}</td>
+<td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
           <td>
             {% if owner.donation_box %}
               {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
@@ -3237,54 +3254,64 @@ table th, table td {
       {% endif %}
     </div>
     
-<!-- ✅ LookupType Pagination Controls -->
+<!-- ✅ Donation Payment Pagination Controls -->
 <div class="pagination-container text-center">
-  
-  {% if lookup_page_obj.has_previous %}
-      <a href="?lt_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-      <a href="?lt_page={{ lookup_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+
+  {% if payments_page_obj.has_previous %}
+      <a href="?payments_page=1&payments_query={{ payments_query }}" 
+         class="btn btn-outline-primary btn-sm me-2">⏮</a>
+
+      <a href="?payments_page={{ payments_page_obj.previous_page_number }}&payments_query={{ payments_query }}" 
+         class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
 
   <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
-    <label for="ltPageSelect" class="fw-bold me-1">Page</label>
+
+    <input type="hidden" name="payments_query" value="{{ payments_query }}"/>
+
+    <label for="dpPageSelect" class="fw-bold me-1">Page</label>
 
     <select 
-      name="lt_page"
-      id="ltPageSelect"
+      name="payments_page"
+      id="dpPageSelect"
       class="form-select form-select-sm d-inline-block w-auto"
       onchange="this.form.submit()">
-      {% for p in lookup_page_obj.paginator.page_range %}
-        <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>
+
+      {% for p in payments_page_obj.paginator.page_range %}
+        <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}>
           {{ p }}
         </option>
       {% endfor %}
     </select>
 
-    <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
+    <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
   </form>
 
-  {% if lookup_page_obj.has_next %}
-      <a href="?lt_page={{ lookup_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-      <a href="?lt_page={{ lookup_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% if payments_page_obj.has_next %}
+      <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}" 
+         class="btn btn-outline-primary btn-sm ms-2">▶</a>
+
+      <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}" 
+         class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
 
 </div>
 
 
-<!-- ------------Lookup table----------- -->
+<!-- ------------Donation Box----------- -->
 
    <div class="card-body">
       <h5 style="color:#1b5e20" >Donation Box</h5>
       <!-- 🔍 Search Section -->
     <div class="search-container">
-  <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100" role="search">
+  <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100" role="search">
     <input 
       type="text" 
-      name="sub_lookup_query" 
+      name="box_query" 
       class="form-control search-input me-2 shadow-none" 
       placeholder="🔍 Search..." 
-      value="{{ sub_lookup_query|default:'' }}">
+      value="{{ box_query|default:'' }}">
   </form>
 </div>
 <style>
@@ -3311,16 +3338,17 @@ table th, table td {
 </style>
       <!-- 🧍‍♂️ User Table -->
 
-    {% if donation_boxes %}
+    {% if box_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>ID</th>
-          <th>Donation Box Name</th>
           <th>Donation ID</th>
+          <th>Key ID</th>
+          <th>Box Size</th>
           <th>Location</th>
+          <th>OR Code</th>
           <th>Created At</th>
         </tr>
       </thead>
@@ -3328,15 +3356,23 @@ table th, table td {
       <tbody>
            <tr>
   <td>
+            <div class="d-inline-flex align-items-center gap-1">
   <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %}
+          <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+  </div>
 </td>
           {% for i in "12345"|make_list %}
           <td>
@@ -3352,11 +3388,11 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+              <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
-              <form method="POST" action="#" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this donation box?')">
@@ -3365,10 +3401,17 @@ table th, table td {
               </form>
             </div>
           </td>
-          <td>{{ box.id }}</td>
-          <td>{{ box.donation_box_name }}</td>
           <td>{{ box.donation_id }}</td>
+          <td>{{ box.key_id }}</td>
+          <td>{{ box.box_size }}</td>
           <td>{{ box.location }}</td>
+          <td>
+    {% if box.qr_code %}
+      <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
         </tr>
         {% endfor %}
@@ -3383,10 +3426,11 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>ID</th>
-          <th>Donation Box Name</th>
           <th>Donation ID</th>
+          <th>Key ID</th>
+          <th>Box Size</th>
           <th>Location</th>
+          <th>OR Code</th>
           <th>Created At</th>
         </tr>
       </thead>
@@ -3394,15 +3438,23 @@ table th, table td {
       <tbody>
            <tr>
   <td>
+            <div class="d-inline-flex align-items-center gap-1">
   <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %}
+          <!-- ⬇ Download Button (Black Icon Only) -->
+    <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
+      <!-- Maintain search value -->
+    <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
+
+    <!-- Trigger CSV download -->
+    <input type="hidden" name="download" value="1">
+
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
+        <i class="bi bi-download"></i>
+    </button>
+    </form>
+  </div>
 </td>
           {% for i in "12345"|make_list %}
           <td>
@@ -3418,11 +3470,11 @@ table th, table td {
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               <!-- 📝 Edit -->
-              <a href="#" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+              <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <!-- 🗑️ Delete -->
-              <form method="POST" action="#" class="d-inline m-0 p-0">
+              <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this donation box?')">
@@ -3431,10 +3483,17 @@ table th, table td {
               </form>
             </div>
           </td>
-          <td>{{ box.id }}</td>
-          <td>{{ box.donation_box_name }}</td>
-          <td>{{ box.donation_id }}</td>
+         <td>{{ box.donation_id }}</td>
+          <td>{{ box.key_id }}</td>
+          <td>{{ box.box_size }}</td>
           <td>{{ box.location }}</td>
+          <td>
+    {% if box.qr_code %}
+      <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
         </tr>
         {% endfor %}
@@ -3462,37 +3521,47 @@ table th, table td {
 <!-- ✅ Lookups Pagination Controls -->
 <div class="pagination-container text-center">
 
-  {% if lookup_table_obj.has_previous %}
-      <a href="?lu_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-      <a href="?lu_page={{ lookup_table_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% if box_page_obj.has_previous %}
+      <a href="?box_page=1&box_query={{ box_query }}" 
+         class="btn btn-outline-primary btn-sm me-2">⏮</a>
+
+      <a href="?box_page={{ box_page_obj.previous_page_number }}&box_query={{ box_query }}" 
+         class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
 
-  <!-- Page Info + Dropdown -->
+  <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
-    <label for="lookupPageSelect" class="fw-bold me-1">Page</label>
+
+    <input type="hidden" name="box_query" value="{{ box_query }}"/>
+
+    <label for="boxPageSelect" class="fw-bold me-1">Page</label>
 
     <select 
-      name="lu_page" 
-      id="lookupPageSelect" 
+      name="box_page"
+      id="boxPageSelect"
       class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()"
-    >
-      {% for page_num in lookup_table_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}>
-          {{ page_num }}
+      onchange="this.form.submit()">
+
+      {% for p in box_page_obj.paginator.page_range %}
+        <option value="{{ p }}" {% if p == box_page_obj.number %}selected{% endif %}>
+          {{ p }}
         </option>
       {% endfor %}
     </select>
 
-    <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
+    <span class="fw-bold">of {{ box_page_obj.paginator.num_pages }}</span>
   </form>
 
-  {% if lookup_table_obj.has_next %}
-    <a href="?lu_page={{ lookup_table_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-    <a href="?lu_page={{ lookup_table_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% if box_page_obj.has_next %}
+      <a href="?box_page={{ box_page_obj.next_page_number }}&box_query={{ box_query }}" 
+         class="btn btn-outline-primary btn-sm ms-2">▶</a>
+
+      <a href="?box_page={{ box_page_obj.paginator.num_pages }}&box_query={{ box_query }}" 
+         class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
 
 </div>
+
 
 </div>
 </div>

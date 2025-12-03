@@ -23,7 +23,6 @@ urlpatterns = [
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
 path("donation/receipt/<int:id>/", views.donation_receipt, name="donation_receipt"),
 path("donation/receipt/pdf/<int:id>/", views.generate_receipt_pdf, name="download_receipt_pdf"),
-    path('add_donationbox_payment/', views.add_donationbox_payment, name='add_donationbox_payment'),
     path('add_donation_box/', views.add_donation_box, name='add_donation_box'),
     path('add-employee/', views.add_employee, name='add-employee'),
     path('all_donations/', views.all_donations, name='all_donations'),  # ✅ Add this
@@ -77,5 +76,14 @@ path('lookup/delete/<int:lookup_id>/', views.delete_lookup, name='delete_lookup'
 path("delete-user-access/<int:access_id>/", views.delete_user_module_access, name="delete_user_module_access"),
 path("delete-donor/<int:donor_id>/", views.delete_donor_volunteer, name="delete_donor_volunteer"),
 path("delete-donation/<int:donation_id>/", views.delete_donation, name="delete_donation"),
+path('add_donation_payment/', views.add_donation_payment, name='add_donation_payment'),
 
+path('search_donation_payment/', views.search_donation_payment, name='search_donation_payment'),
+path('search_donation_box/', views.search_donation_box, name='search_donation_box'),
+
+path('edit-box-payment/<int:id>/', views.edit_box_payment, name='edit_box_payment'),
+    path('edit-donation-box/<int:id>/', views.edit_donation_box, name='edit_donation_box'),
+    path('delete-box-payment/<int:id>/', views.delete_box_payment, name='delete_box_payment'),
+    path('delete-donation-box/<int:id>/', views.delete_donation_box, name='delete_donation_box'),
 ]
+
