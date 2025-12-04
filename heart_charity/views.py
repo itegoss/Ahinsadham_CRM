@@ -54,24 +54,15 @@ def access_control(request):
     modules = Module.objects.all()
     mode = request.GET.get("mode", "add")
     role_id = request.GET.get("role_id")
-
     role_instance = None
-
-    # ---- EDIT MODE (load data) ----
     if mode == "edit" and role_id:
         role_instance = UserModuleAccess.objects.filter(id=role_id).first()
-
     if request.method == "POST":
         role_name = request.POST.get("role_name").strip()
         role_description = request.POST.get("roleDescription").strip()
-
-        # --- If Editing Existing Role ---
         if mode == "edit" and role_instance:
             UserModuleAccess.objects.filter(name=role_instance.name).delete()
-
-        # ---- Save Role + Permissions per Module ---
         selected_modules = request.POST.getlist("modules")
-
         for module_id in selected_modules:
             module = get_object_or_404(Module, id=module_id)
 
@@ -90,8 +81,6 @@ def access_control(request):
 
         messages.success(request, "Role & permissions saved successfully!")
         return redirect("welcome")
-
-    # ---- Return Context to Template ----
     context = {
         "modules": modules,
         "mode": mode,
@@ -100,63 +89,14 @@ def access_control(request):
 
     return render(request, "access_control.html", context)
 
-
-
-
-
-from django.shortcuts import render, get_object_or_404
-from .models import UserModuleAccess, Module, User
-from django.utils.timezone import now
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
-from django.shortcuts import render, redirect
-
-from django.db.models import Q
-from django.contrib import messages
-from heart_charity.models import DonorVolunteer, Donation, DonationOwner, Module, UserModuleAccess
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.db.models import Q
-from django.utils.timezone import now
-
-from .models import Module, UserModuleAccess, DonorVolunteer  # adjust import path if needed
-
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.db.models import Q
-from django.utils.timezone import now
-
-from .models import Module, UserModuleAccess, DonorVolunteer, Donation  # adjust import paths
-
-
+# User = get_user_model()
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils.timezone import now
-from .models import DonationOwner, DonorVolunteer, Donation, UserModuleAccess, UserRole
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.timezone import now
-from django.db.models import Q
 from django.contrib import messages
 from .models import User, UserRole, UserModuleAccess, DonationOwner, DonorVolunteer, Donation
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models import Q
-from django.utils.timezone import now
-from django.contrib.auth.models import User
-from .models import DonationOwner, DonorVolunteer, Donation, UserRole, UserModuleAccess, Module
-
 
 from django.shortcuts import render
 from .models import LookupType, Lookup
@@ -174,46 +114,26 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.utils.timezone import now
-
 from .models import (
     User, DonorVolunteer, Donation, DonationOwner,
     UserModuleAccess, UserRole, LookupType, Lookup, Module
 )
-
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.utils.timezone import now
-
-from .models import (
-    User, DonorVolunteer, Donation, DonationOwner,
-    UserModuleAccess, UserRole, LookupType, Lookup, Module
-)
-
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.utils.timezone import now
-
-from .models import (
-    User, DonorVolunteer, Donation, DonationOwner,
-    UserModuleAccess, UserRole, LookupType, Lookup, Module
-)
-
 from .helpers import get_user_permissions
-
-
-
 @login_required
 def welcome_view(request):
     user = request.user
-
     # ------------------------------------------------------------
     # FETCH PERMISSIONS  (NEW)
     # ------------------------------------------------------------
     permissions = get_user_permissions(user)
+    if user.is_superuser:
+            class SuperPerm:
+                can_add = True
+                can_edit = True
+                can_delete = True
+                can_view = True
+                can_access = True
+            permissions = SuperPerm()
 
     # ------------------------------------------------------------
     # FETCH DATA
@@ -388,9 +308,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import random
 from django.core.mail import send_mail
-
-
-
 def request_password_reset(req):
     if req.method == "GET":
         return render(req, "request_password_reset.html")
@@ -431,11 +348,9 @@ def reset_password(req, uname):
             context["errmsg"] = str(e)
             return render(req, "reset_password.html", context)
 
-
 def logout_view(req):
     logout(req)
     return redirect("home")
-
 
 def admin_dashboard(request):
     users = []
@@ -460,14 +375,9 @@ def admin_dashboard(request):
     
     return render(request, "admin_dashboard.html", context)
 
-
-
-
 def user_dashboard(req):
     causes = Cause.objects.all()
     return render(req, 'user_dashboard.html', {"causes": causes})  
-
-
 otp_storage = {}
 
 def send_otp(request):
@@ -517,30 +427,31 @@ import csv
 from django.http import HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
-
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.http import HttpResponse
-import csv
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.http import HttpResponse
-import csv
-
 def search_lookup_type(request):
     lookup_query = request.GET.get('lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')  # keep active tab info
 
     lookup_types = LookupType.objects.all().order_by('id')
 
-    # 🔍 SEARCH FILTER
+    # 🔍 UPDATED SEARCH FILTER (Full Field Search)
     if lookup_query:
-        # Only filter by type_name or ID if numeric
-        filters = Q(type_name__icontains=lookup_query)
+        filters = (
+            Q(type_name__icontains=lookup_query) |
+            Q(created_by__username__icontains=lookup_query) |
+            Q(updated_by__username__icontains=lookup_query) |
+            Q(created_date__icontains=lookup_query) |
+            Q(updated_date__icontains=lookup_query) |
+            Q(deleted_at__icontains=lookup_query)
+        )
+
+        # Boolean search ("true/false/yes/no")
+        if lookup_query.lower() in ["true", "false", "yes", "no"]:
+            filters |= Q(is_deleted=(lookup_query.lower() in ["true", "yes"]))
+
+        # Numeric → search by ID
         if lookup_query.isdigit():
             filters |= Q(id=int(lookup_query))
+
         lookup_types = lookup_types.filter(filters)
 
     # 🟢 DOWNLOAD SEARCHED DATA
@@ -550,14 +461,14 @@ def search_lookup_type(request):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(['ID', 'Type Name', 'Created By', 'Created Date'])
+        writer.writerow(['ID', 'Type Name', 'Created By', 'Created Date','Updated By','Updated Date','Deleted At','Is Deleted'])
 
         for lookup in lookup_types:
-            writer.writerow([lookup.id, lookup.type_name, lookup.created_by, lookup.created_date])
+            writer.writerow([lookup.id, lookup.type_name, lookup.created_by, lookup.created_date,lookup.updated_by,lookup.updated_date,lookup.deleted_at,lookup.is_deleted])
 
         return response
 
-    # ✅ Pagination — 1 record per page
+    # ✅ Pagination
     paginator = Paginator(lookup_types, 1)
     page_number = request.GET.get("lt_page")
     lookup_types_page = paginator.get_page(page_number)
@@ -569,22 +480,58 @@ def search_lookup_type(request):
     })
 
 
-
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')
 
     lookups = Lookup.objects.select_related("lookup_type").all().order_by('id')
 
-    # 🔍 SEARCH FILTER (same pattern as search_lookup_type)
+    # 🔍 UPDATED FULL SEARCH FILTER
     if sub_lookup_query:
+
+        # Month mapping for searching "Dec", "December", etc.
+        month_map = {
+            "jan": 1, "january": 1,
+            "feb": 2, "february": 2,
+            "mar": 3, "march": 3,
+            "apr": 4, "april": 4,
+            "may": 5,
+            "jun": 6, "june": 6,
+            "jul": 7, "july": 7,
+            "aug": 8, "august": 8,
+            "sep": 9, "sept": 9, "september": 9,
+            "oct": 10, "october": 10,
+            "nov": 11, "november": 11,
+            "dec": 12, "december": 12,
+        }
+
         filters = (
             Q(lookup_name__icontains=sub_lookup_query) |
-            Q(lookup_type__type_name__icontains=sub_lookup_query)
+            Q(lookup_type__type_name__icontains=sub_lookup_query) |
+            Q(created_by__username__icontains=sub_lookup_query) |
+            Q(updated_by__username__icontains=sub_lookup_query) |
+            Q(created_date__icontains=sub_lookup_query) |
+            Q(updated_date__icontains=sub_lookup_query) |
+            Q(deleted_at__icontains=sub_lookup_query)
         )
 
+        # Numeric → ID support
         if sub_lookup_query.isdigit():
             filters |= Q(id=int(sub_lookup_query))
+
+        # Boolean search
+        if sub_lookup_query.lower() in ["true", "false", "yes", "no"]:
+            filters |= Q(is_deleted=(sub_lookup_query.lower() in ["true", "yes"]))
+
+        # Month search (Dec, January, etc.)
+        q_lower = sub_lookup_query.lower()
+        if q_lower in month_map:
+            month = month_map[q_lower]
+            filters |= (
+                Q(created_date__month=month) |
+                Q(updated_date__month=month) |
+                Q(deleted_at__month=month)
+            )
 
         lookups = lookups.filter(filters)
 
@@ -595,7 +542,7 @@ def search_lookup_table(request):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(["ID", "Lookup Name", "Lookup Type", "Created By", "Created Date"])
+        writer.writerow(["ID", "Lookup Name", "Lookup Type", "Created By", "Created Date", "Updated By", "Updated Date", "Deleted At", "Is Deleted"])
 
         for l in lookups:
             writer.writerow([
@@ -603,7 +550,11 @@ def search_lookup_table(request):
                 l.lookup_name,
                 l.lookup_type.type_name if l.lookup_type else "",
                 l.created_by.username if l.created_by else "",
-                l.created_date.strftime("%d-%m-%Y %H:%M"),
+                l.created_date,
+                l.updated_by.username if l.updated_by else "",
+                l.updated_date,
+                l.deleted_at,
+                l.is_deleted,
             ])
 
         return response
@@ -618,11 +569,6 @@ def search_lookup_table(request):
         "active_tab": active_tab,
     })
 
-
-
-
-
-from .models import User, Module, UserModuleAccess
 from .models import User, Module, UserModuleAccess
 from django.db.models import Q
 from django.shortcuts import render
@@ -630,12 +576,6 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .models import UserModuleAccess  # if you need roles
-
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from django.contrib.auth.models import User
-from django.db.models import Q
-from .models import UserModuleAccess
 
 def search_users(request):
     query = request.GET.get("user_query", "")
@@ -687,11 +627,6 @@ from django.core.paginator import Paginator
 from .models import UserModuleAccess
 import csv
 
-import csv
-from django.http import HttpResponse
-from django.core.paginator import Paginator
-from django.db.models import Q
-
 def search_roles(request):
     query1 = request.GET.get('query1', '').strip()
 
@@ -699,16 +634,69 @@ def search_roles(request):
 
     roles = UserModuleAccess.objects.all().order_by('id')
 
+    # 🔍 UPDATED FULL SEARCH LOGIC (Everything else unchanged)
     if query1:
-        roles = roles.filter(
-            Q(can_access__icontains=query1) |
-            Q(can_add__icontains=query1) |
-            Q(can_delete__icontains=query1) |
-            Q(can_edit__icontains=query1) |
-            Q(can_view__icontains=query1) |
+
+        # Month name search support
+        month_map = {
+            "jan": 1, "january": 1,
+            "feb": 2, "february": 2,
+            "mar": 3, "march": 3,
+            "apr": 4, "april": 4,
+            "may": 5,
+            "jun": 6, "june": 6,
+            "jul": 7, "july": 7,
+            "aug": 8, "august": 8,
+            "sep": 9, "sept": 9, "september": 9,
+            "oct": 10, "october": 10,
+            "nov": 11, "november": 11,
+            "dec": 12, "december": 12,
+        }
+
+        filters = (
             Q(name__icontains=query1) |
-            Q(description__icontains=query1)
+            Q(description__icontains=query1) |
+            Q(module__module_name__icontains=query1) |
+            Q(created_by__username__icontains=query1) |
+            Q(updated_by__username__icontains=query1) |
+            Q(created_date__icontains=query1) |
+            Q(updated_date__icontains=query1) |
+            Q(deleted_at__icontains=query1)
         )
+
+        # Numeric search → ID / module ID
+        if query1.isdigit():
+            filters |= (
+                Q(id=int(query1)) |
+                Q(module_id=int(query1))
+            )
+
+        # Boolean fields: can_access, can_add, etc.
+        truthy = ["true", "yes", "enable", "enabled"]
+        falsy = ["false", "no", "disable", "disabled"]
+        qlow = query1.lower()
+
+        if qlow in truthy or qlow in falsy:
+            val = qlow in truthy
+            filters |= (
+                Q(can_access=val) |
+                Q(can_add=val) |
+                Q(can_edit=val) |
+                Q(can_delete=val) |
+                Q(can_view=val) |
+                Q(is_deleted=val)
+            )
+
+        # Month name search ("Dec", "January", etc.)
+        if qlow in month_map:
+            month_num = month_map[qlow]
+            filters |= (
+                Q(created_date__month=month_num) |
+                Q(updated_date__month=month_num) |
+                Q(deleted_at__month=month_num)
+            )
+
+        roles = roles.filter(filters)
 
     # Download CSV
     if request.GET.get('download') == '1':
@@ -719,7 +707,7 @@ def search_roles(request):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(['Role', 'Description', 'Can Access', 'Can Add', 'Can Edit', 'Can Delete', 'Can View'])
+        writer.writerow(['Role', 'Description', 'Can Access', 'Can Add', 'Can Edit', 'Can Delete', 'Can View', 'Created By', 'Created Date', 'Updated By', 'Updated Date', 'Deleted At', 'Is Deleted'])
 
         for role in roles:
             writer.writerow([
@@ -729,7 +717,13 @@ def search_roles(request):
                 role.can_add,
                 role.can_edit,
                 role.can_delete,
-                getattr(role, 'can_view', ''),
+                role.can_view,
+                role.created_by,
+                role.created_date,
+                role.updated_by,
+                role.updated_date,
+                role.deleted_at,
+                role.is_deleted,
             ])
 
         return response
@@ -749,12 +743,7 @@ def search_roles(request):
     })
 
 
-
-
-# at the top of views.py
 from .models import LookupType
-
-
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -834,32 +823,138 @@ from django.http import HttpResponse
 from django.db.models import Q
 from .models import DonorVolunteer
 import csv
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from django.http import HttpResponse
-from django.db.models import Q
-from .models import DonorVolunteer
-import csv
 
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.http import HttpResponse
-import csv
+from datetime import datetime, date
 
 def search_donor_volunteer(request):
-    donorvolunteer = DonorVolunteer.objects.all()
+    donorvolunteer = DonorVolunteer.objects.select_related(
+        "person_type", "id_type", "donor_box",
+        "created_by", "updated_by"
+    ).all()
 
     query2 = request.GET.get('q')
     if query2:
         query2 = query2.strip()
         if query2 != "":
-            donorvolunteer = donorvolunteer.filter(
-                Q(person_type__lookup_name__icontains=query2) |  # Fixed
+
+            # ---- Month mapping ----
+            month_map = {
+                "jan": 1, "january": 1,
+                "feb": 2, "february": 2,
+                "mar": 3, "march": 3,
+                "apr": 4, "april": 4,
+                "may": 5,
+                "jun": 6, "june": 6,
+                "jul": 7, "july": 7,
+                "aug": 8, "august": 8,
+                "sep": 9, "sept": 9, "september": 9,
+                "oct": 10, "october": 10,
+                "nov": 11, "november": 11,
+                "dec": 12, "december": 12,
+            }
+
+            qlow = query2.lower()
+
+            # base text filters
+            filters = (
+                Q(person_type__lookup_name__icontains=query2) |
                 Q(first_name__icontains=query2) |
+                Q(middle_name__icontains=query2) |
                 Q(last_name__icontains=query2) |
+                Q(gender__icontains=query2) |
+                Q(blood_group__icontains=query2) |
                 Q(email__icontains=query2) |
-                Q(contact_number__icontains=query2)
+                Q(contact_number__icontains=query2) |
+                Q(whatsapp_number__icontains=query2) |
+
+                # donor box
+                Q(donor_box__donation_id__icontains=query2) |
+                Q(donor_box__key_id__icontains=query2) |
+                Q(donor_box__location__icontains=query2) |
+
+                # address
+                Q(house_number__icontains=query2) |
+                Q(building_name__icontains=query2) |
+                Q(landmark__icontains=query2) |
+                Q(area__icontains=query2) |
+                Q(city__icontains=query2) |
+                Q(state__icontains=query2) |
+                Q(country__icontains=query2) |
+                Q(postal_code__icontains=query2) |
+                Q(native_place__icontains=query2) |
+                Q(native_postal_code__icontains=query2) |
+
+                # ID / PAN
+                Q(id_type__lookup_name__icontains=query2) |
+                Q(id_number__icontains=query2) |
+                Q(pan_number__icontains=query2) |
+
+                # user fields
+                Q(created_by__username__icontains=query2) |
+                Q(updated_by__username__icontains=query2)
             )
+
+            # numeric search (id, age)
+            if query2.isdigit():
+                try:
+                    num = int(query2)
+                    filters |= (
+                        Q(id=num) |
+                        Q(age=num)
+                    )
+                except ValueError:
+                    pass
+
+            # boolean search: true/false/yes/no/active/inactive
+            truthy = {"true", "yes", "active", "1"}
+            falsy = {"false", "no", "inactive", "0"}
+            if qlow in truthy or qlow in falsy:
+                # map meaning: "active"/"true"/"yes" -> is_deleted = False
+                if qlow in truthy:
+                    filters |= Q(is_deleted=False)
+                else:
+                    filters |= Q(is_deleted=True)
+
+            # month name search (Dec, December, etc.)
+            if qlow in month_map:
+                month_num = month_map[qlow]
+                filters |= (
+                    Q(date_of_birth__month=month_num) |
+                    Q(created_at__month=month_num) |
+                    Q(updated_at__month=month_num) |
+                    Q(deleted_at__month=month_num)
+                )
+
+            # year/day/time search attempts: if query looks like year or dd-mm-yyyy or yyyy-mm-dd
+            # try YYYY or DD-MM-YYYY or YYYY-MM-DD
+            try:
+                if len(query2) == 4 and query2.isdigit():
+                    # year only
+                    y = int(query2)
+                    filters |= (
+                        Q(date_of_birth__year=y) |
+                        Q(created_at__year=y) |
+                        Q(updated_at__year=y) |
+                        Q(deleted_at__year=y)
+                    )
+                # try common date formats
+                for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y"):
+                    try:
+                        parsed = datetime.strptime(query2, fmt).date()
+                        filters |= (
+                            Q(date_of_birth=parsed) |
+                            Q(created_at__date=parsed) |
+                            Q(updated_at__date=parsed) |
+                            Q(deleted_at__date=parsed)
+                        )
+                        break
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+            # apply filters and make results distinct & ordered
+            donorvolunteer = donorvolunteer.filter(filters).distinct().order_by("id")
 
     # ---- DOWNLOAD CSV ----
     if request.GET.get('download') == '1':
@@ -869,7 +964,10 @@ def search_donor_volunteer(request):
         writer = csv.writer(response)
         writer.writerow([
             'Person Type', 'First Name', 'Middle Name', 'Last Name', 
-            'Gender', 'DOB', 'Email', 'Contact Number', 'City', 'State'
+            'Gender', 'DOB', 'Email', 'Contact Number','Blood Group','WhatsApp Number','Donor Box', 'House Number', 'Building Name',
+            'Landmark', 'Area', 'City', 'State', 'Country','Postal Code', 'Native Place', 'Native Postal Code', 'ID Type', 'ID Number', 
+            'PAN Number', 'Age', 'Created By', 'Created At', 'Updated By', 'Updated At', 'Deleted At', 'Is Deleted',   
+        
         ])
 
         for dv in donorvolunteer:
@@ -882,18 +980,39 @@ def search_donor_volunteer(request):
                 dv.date_of_birth,
                 dv.email,
                 dv.contact_number,
+                dv.blood_group,
+                dv.whatsapp_number,
+                dv.donor_box.donation_id if dv.donor_box else '',
+                dv.house_number,
+                dv.building_name,
+                dv.landmark,
+                dv.area,
                 dv.city,
-                dv.state
+                dv.state,
+                dv.country,
+                dv.postal_code,
+                dv.native_place,
+                dv.native_postal_code,
+                dv.id_type.lookup_name if dv.id_type else '',
+                dv.id_number,
+                dv.pan_number,
+                dv.age,
+                dv.created_by.username if dv.created_by else '',
+                dv.created_at,
+                dv.updated_by.username if dv.updated_by else '',
+                dv.updated_at,
+                dv.deleted_at,
+                dv.is_deleted,
+
             ])
 
         return response
-    # ----------------------
 
-    paginator = Paginator(donorvolunteer, 10)
-    donorvolunteer = paginator.get_page(request.GET.get('page'))
+    paginator = Paginator(donorvolunteer, 1)
+    page_obj = paginator.get_page(request.GET.get('donor_page'))
 
     return render(request, "welcome.html", {
-        "donorvolunteer": donorvolunteer,
+        "page_obj": page_obj,
         "query2": query2 if query2 else "",
     })
 
@@ -935,6 +1054,7 @@ def search_donation(request):
 
         writer = csv.writer(response)
         writer.writerow([
+            'ID',
             'Donor Name',
             'Donation Date',
             'Amount Declared',
@@ -943,6 +1063,13 @@ def search_donation(request):
             'Payment Method',
             'Transaction ID',
             'Status',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'is_deleted',
+
             'Receipt No.'
         ])
 
@@ -957,12 +1084,18 @@ def search_donation(request):
                 d.payment_method.lookup_name if d.payment_method else "",
                 d.transaction_id,
                 d.payment_status.lookup_name if d.payment_status else "",
+                d.created_by.username if d.created_by else '',
+                d.updated_by.username if d.updated_by else '',
+                d.created_at,
+                d.updated_at,
+                d.deleted_at,
+                d.is_deleted,
                 d.receipt_id
             ])
         return response
 
     # ---- PAGINATION ----
-    paginator = Paginator(donations, 10)
+    paginator = Paginator(donations, 1)
     donation_page_obj = paginator.get_page(request.GET.get('page'))
 
     return render(request, 'welcome.html', {
@@ -984,16 +1117,106 @@ def search_donation_payment(request):
 
     payments = DonationPaymentBox.objects.filter(is_deleted=False)
 
-    # Search filter
+    # ----------------------------------------------------
+    # 🔍 UPDATED SEARCH FILTER — ALL FIELDS SEARCHABLE
+    # ----------------------------------------------------
     if payments_query:
-        payments = payments.filter(
-    Q(donation_box__donation_id__icontains=payments_query) |
-    Q(opened_by__icontains=payments_query) |
-    Q(received_by__icontains=payments_query) |
-    Q(payment_method__lookup_name__icontains=payments_query) |
-    Q(amount__icontains=payments_query)
-)
+        q = payments_query.lower()
 
+        # Month name mapping
+        month_map = {
+            "jan": 1, "january": 1,
+            "feb": 2, "february": 2,
+            "mar": 3, "march": 3,
+            "apr": 4, "april": 4,
+            "may": 5,
+            "jun": 6, "june": 6,
+            "jul": 7, "july": 7,
+            "aug": 8, "august": 8,
+            "sep": 9, "sept": 9, "september": 9,
+            "oct": 10, "october": 10,
+            "nov": 11, "november": 11,
+            "dec": 12, "december": 12,
+        }
+
+        filters = (
+
+            # 🔹 Donation Box fields
+            Q(donation_box__donation_id__icontains=payments_query) |
+            Q(donation_box__key_id__icontains=payments_query) |
+            Q(donation_box__location__icontains=payments_query) |
+            Q(donation_box__box_size__icontains=payments_query) |
+            Q(donation_box__status__icontains=payments_query) |
+
+            # 🔹 Regular fields
+            Q(opened_by__icontains=payments_query) |
+            Q(received_by__icontains=payments_query) |
+            Q(address__icontains=payments_query) |
+            Q(i_witness__icontains=payments_query) |
+
+            # 🔹 Lookup (payment method)
+            Q(payment_method__lookup_name__icontains=payments_query) |
+
+            # 🔹 Users
+            Q(owner__username__icontains=payments_query) |
+            Q(created_by__username__icontains=payments_query) |
+            Q(updated_by__username__icontains=payments_query)
+        )
+
+        # Numeric search → amount or ID
+        if payments_query.replace('.', '', 1).isdigit():
+            filters |= (
+                Q(amount__icontains=payments_query) |
+                Q(id=int(float(payments_query)))
+            )
+
+        # Boolean search
+        active_values = {"true", "yes", "active", "1"}
+        inactive_values = {"false", "no", "inactive", "0"}
+
+        if q in active_values:
+            filters |= Q(is_deleted=False)
+        elif q in inactive_values:
+            filters |= Q(is_deleted=True)
+
+        # Year search (e.g., "2025")
+        if len(payments_query) == 4 and payments_query.isdigit():
+            y = int(payments_query)
+            filters |= (
+                Q(date_time__year=y) |
+                Q(created_at__year=y) |
+                Q(updated_at__year=y) |
+                Q(deleted_at__year=y)
+            )
+
+        # Month search (Dec, December)
+        if q in month_map:
+            m = month_map[q]
+            filters |= (
+                Q(date_time__month=m) |
+                Q(created_at__month=m) |
+                Q(updated_at__month=m) |
+                Q(deleted_at__month=m)
+            )
+
+        # Full-date search
+        for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y"):
+            try:
+                parsed = datetime.strptime(payments_query, fmt).date()
+                filters |= (
+                    Q(date_time__date=parsed) |
+                    Q(created_at__date=parsed) |
+                    Q(updated_at__date=parsed) |
+                    Q(deleted_at__date=parsed)
+                )
+                break
+            except:
+                pass
+
+        payments = payments.filter(filters).distinct().order_by("id")
+    # ----------------------------------------------------
+    # 🔍 END ADVANCED SEARCH
+    # ----------------------------------------------------
 
     # CSV download
     if request.GET.get("download") == "1":
@@ -1010,8 +1233,14 @@ def search_donation_payment(request):
             "Amount",
             "Payment Method",
             "Address",
-            "Date Time",
             "Witness",
+            "Created By",
+            "Created At",
+            "Updated By",
+            "Updated At",
+            "Deleted At",
+            "Is Deleted",
+
         ])
 
         for p in payments:
@@ -1023,14 +1252,19 @@ def search_donation_payment(request):
                 p.amount,
                 p.payment_method.lookup_name if p.payment_method else "",
                 p.address,
-                p.date_time,
                 p.i_witness,
+                p.created_by.username if p.created_by else "",
+                p.created_at,
+                p.updated_by.username if p.updated_by else "",
+                p.updated_at,
+                p.deleted_at,
+                p.is_deleted,
             ])
 
         return response
 
     # Pagination (correct)
-    paginator = Paginator(payments, 1)  # 10 per page
+    paginator = Paginator(payments, 1)
     page_number = request.GET.get("payments_page")
     payments_page_obj = paginator.get_page(page_number)
 
@@ -1045,27 +1279,95 @@ def search_donation_box(request):
 
     box_query = request.GET.get("box_query", "").strip()
     boxes = DonationBox.objects.filter(is_deleted=False).order_by("id")
+
+    # ----------------------------------------------------
+    # 🔍 UPDATED ADVANCED SEARCH LOGIC (Full-field search)
+    # ----------------------------------------------------
     if box_query:
+        qlow = box_query.lower()
+
+        # Month map
+        month_map = {
+            "jan": 1, "january": 1,
+            "feb": 2, "february": 2,
+            "mar": 3, "march": 3,
+            "apr": 4, "april": 4,
+            "may": 5,
+            "jun": 6, "june": 6,
+            "jul": 7, "july": 7,
+            "aug": 8, "august": 8,
+            "sep": 9, "sept": 9, "september": 9,
+            "oct": 10, "october": 10,
+            "nov": 11, "november": 11,
+            "dec": 12, "december": 12,
+        }
+
+        # Base fields
         filters = (
             Q(donation_id__icontains=box_query) |
             Q(location__icontains=box_query) |
             Q(key_id__icontains=box_query) |
             Q(box_size__icontains=box_query) |
-            Q(status__icontains=box_query)
+            Q(status__icontains=box_query) |
+            Q(uploaded_by__username__icontains=box_query) |
+            Q(created_by__username__icontains=box_query)
         )
 
-        # Allow numeric search for ID
+        # Numeric search
         if box_query.isdigit():
             filters |= Q(id=int(box_query))
 
-        boxes = boxes.filter(filters)
+        # Boolean search
+        truthy = {"true", "yes", "active", "1"}
+        falsy = {"false", "no", "inactive", "0"}
+
+        if qlow in truthy:
+            filters |= Q(is_deleted=False)
+        elif qlow in falsy:
+            filters |= Q(is_deleted=True)
+
+        # Year search
+        if len(box_query) == 4 and box_query.isdigit():
+            y = int(box_query)
+            filters |= (
+                Q(created_at__year=y) |
+                Q(updated_at__year=y) |
+                Q(deleted_at__year=y)
+            )
+
+        # Month search (Dec, December)
+        if qlow in month_map:
+            m = month_map[qlow]
+            filters |= (
+                Q(created_at__month=m) |
+                Q(updated_at__month=m) |
+                Q(deleted_at__month=m)
+            )
+
+        # Full date search (DD-MM-YYYY, YYYY-MM-DD)
+        for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y"):
+            try:
+                parsed = datetime.strptime(box_query, fmt).date()
+                filters |= (
+                    Q(created_at__date=parsed) |
+                    Q(updated_at__date=parsed) |
+                    Q(deleted_at__date=parsed)
+                )
+                break
+            except:
+                pass
+
+        boxes = boxes.filter(filters).distinct().order_by("id")
+    # ----------------------------------------------------
+    # 🔍 END UPDATED LOGIC
+    # ----------------------------------------------------
 
     # ---------------------------------------
     # 📥 CSV DOWNLOAD
     # ---------------------------------------
     if request.GET.get("download") == "1":
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename=\"donation_boxes.csv\"'
+        response["Content-Disposition"] = 'attachment; filename="donation_boxes.csv"'
 
         writer = csv.writer(response)
         writer.writerow([
@@ -1074,10 +1376,14 @@ def search_donation_box(request):
             "Location",
             "Key ID",
             "Box Size",
-            "Uploaded By",
+               "Status",
+             "Created At",
             "Created By",
-            "Status",
-            "Created At",
+            "Uploaded By",   
+            "Updated At",
+            "Deleted At",
+            "Is Deleted",
+
         ])
 
         for b in boxes:
@@ -1087,10 +1393,13 @@ def search_donation_box(request):
                 b.location,
                 b.key_id or "",
                 b.box_size,
-                b.uploaded_by.username if b.uploaded_by else "",
+                 b.status,
+                b.created_at,
                 b.created_by.username if b.created_by else "",
-                b.status,
-                b.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                b.uploaded_by.username if b.uploaded_by else "",
+                b.updated_at,
+                b.deleted_at,
+                b.is_deleted,
             ])
 
         return response
@@ -1098,7 +1407,7 @@ def search_donation_box(request):
     # ---------------------------------------
     # 📄 PAGINATION
     # ---------------------------------------
-    paginator = Paginator(boxes, 1)  # 1 per page (you can change)
+    paginator = Paginator(boxes, 1)
     page_number = request.GET.get("box_page")
     box_page_obj = paginator.get_page(page_number)
 

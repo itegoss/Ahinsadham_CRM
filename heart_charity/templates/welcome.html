@@ -1249,11 +1249,7 @@ td {
     {% for module_name in allowed_modules %}
         <a class="tab-btn" data-tab="{{ module_name }}">{{ module_name }}</a>
     {% endfor %}
-
-  
-
 {% else %}
-
 <div class="welcome-wrapper">
     <div class="welcome-card">
         <h3>Welcome, {{ user.username }}!</h3>
@@ -1261,7 +1257,7 @@ td {
     </div>
 </div>
 {% endif %}
-    </div>
+</div>
 
 <!-- =============Main Content========== -->
     <div class="content">
@@ -1297,8 +1293,6 @@ td {
 <div class="search-container d-flex align-items-center">
 
   <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
-
-    <!-- Search Input -->
     <input 
       type="text" 
       name="lookup_query"
@@ -1330,7 +1324,6 @@ td {
 }
 </style>
       <!-- 🧍‍♂️ User Table -->
-
   {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -1341,13 +1334,36 @@ td {
                 <th>Type Name</th>
                 <th>Created By</th>
                 <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Updated Date</th>
+                <th>is Deleted</th>
+                <th>Deleted at</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
   <td>
-  <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+    <div class="d-flex justify-content-between">
+{% if permissions.can_add %}
+ <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+{% endif %}  
+
+{% if permissions.can_add %}
+<form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+{% endif %}    
+</div>
+  <!-- <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
   
@@ -1355,7 +1371,7 @@ td {
       <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
     <i class="bi bi-download"></i>
       </a>
-    {% endif %}
+    {% endif %} -->
 </td>
           {% for i in "1234"|make_list %}
           <td>
@@ -1369,13 +1385,12 @@ td {
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
-               
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-
-              <!-- 🗑️ Delete -->
+              {% endif %}
+              {% if permissions.can_delete %} 
 <form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;
@@ -1384,12 +1399,17 @@ td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
                 <td>{{ lt.formatted_id }}</td>
                 <td>{{ lt.type_name }}</td>
                 <td>{{ lt.created_by }}</td>
-                <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
+                <td>{{ lt.updated_by }}</td>
+                <td>{{ lt.updated_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ lt.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ lt.is_deleted }}</td>
+                <td>{{ lt.deleted_at|date:"d M Y, h:i A" }}</
         </tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
@@ -1409,21 +1429,34 @@ td {
                 <th>Type Name</th>
                 <th>Created By</th>
                 <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Updated Date</th>
+                <th>is Deleted</th>
+                <th>Deleted at</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
-        
-      <td>
-  <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+  <td>
+   <div class="d-flex justify-content-between">
+ {% if permissions.can_add %}
+ <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color: black; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %}
+{% endif %}
+{% if permissions.can_add %}
+<form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+{% endif %}    
+</div>
 </td>
           {% for i in "1234"|make_list %}
           <td>
@@ -1437,25 +1470,30 @@ td {
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-
-              <!-- 🗑️ Delete -->
-<form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
+              {% endif %}
+              {% if permissions.can_delete %}
+              <form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
                 <td>{{ lt.formatted_id }}</td>
                 <td>{{ lt.type_name }}</td>
                 <td>{{ lt.created_by }}</td>
                 <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
+                <td>{{ lt.updated_by }}</td>
+                <td>{{ lt.updated_date|date:"d-m-Y H:i" }}</td>
+                <td>{{ lt.is_deleted }}</td>
+                <td>{{ lt.deleted_at|date:"d-m-Y H:i" }}</td>
         </tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
@@ -1562,37 +1600,57 @@ table th, table td {
         <h5>Showing results for: "<span ">{{ sub_lookup_query }}</span>"</h5>
         <hr>
       {% endif %}
-
       <!-- 🧍‍♂️ User Table -->
-
       {% if lookup_table_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
-                     <th>Actions</th>
+            <th>Actions</th>
            <th>ID</th>
                 <th>Lookup Name</th>
                 <th>Lookup Type</th>
                 <th>Created By</th>
                 <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Updated Date</th>
+                <th>Deleted At</th>
+                <th>Is Deleted</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
 <td>
-  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+      <div class="d-flex justify-content-between">
+        {% if permissions.can_add %}
+ <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+{% endif %}
+{% if permissions.can_add %}
+    <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+    {% endif %}
+</div>
+  <!-- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
  {% if lookup_table_obj.object_list %}
       <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
     <i class="bi bi-download"></i>
       </a>
-    {% endif %}
+    {% endif %} -->
 </td>
 
-          {% for i in "1234"|make_list %}
+          {% for i in "123456789"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
@@ -1605,12 +1663,13 @@ table th, table td {
             <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
+              {% endif %}
 
-              <!-- 🗑️ Delete -->
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -1618,16 +1677,21 @@ table th, table td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
                 <td>{{ l.formatted_id }}</td>
                 <td>{{ l.lookup_name }}</td>
                 <td>{{ l.lookup_type.type_name }}</td>
                 <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d-m-Y H:i" }}</td>
+                <td>{{ l.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.updated_by }}</td>
+                <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.is_deleted }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="12">No users found.</td></tr>
+        <tr><td colspan="12">No Lookups found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -1644,24 +1708,45 @@ table th, table td {
                 <th>Lookup Type</th>
                 <th>Created By</th>
                 <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Updated Date</th>
+                <th>Deleted At</th>
+                <th>Is Deleted</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
-        
 <td>
-  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+    <div class="d-flex justify-content-between">
+      {% if permissions.can_add %}
+ <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i>
+  </a>
+      {% endif %}
+{% if permissions.can_add %}
+    <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
+        <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
+        <input type="hidden" name="download" value="1">
+
+        <button type="submit" 
+                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
+            <i class="bi bi-download"></i>
+        </button>
+    </form>
+    {% endif %}
+</div>
+  <!-- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
  {% if lookup_table_obj.object_list %}
       <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
     <i class="bi bi-download"></i>
       </a>
-    {% endif %}
+    {% endif %} -->
 </td>
 
-          {% for i in "1234"|make_list %}
+          {% for i in "123456789"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
@@ -1673,12 +1758,13 @@ table th, table td {
 {% for l in lookup_table_obj %}            <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
+              {% endif %}
 
-              <!-- 🗑️ Delete -->
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -1686,6 +1772,7 @@ table th, table td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
                 <td>{{ forloop.counter }}</td>
@@ -1693,10 +1780,14 @@ table th, table td {
                 <td>{{ l.lookup_name }}</td>
                 <td>{{ l.lookup_type.type_name }}</td>
                 <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d-m-Y H:i" }}</td>
+                <td>{{ l.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.updated_by }}</td>
+                <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.is_deleted }}</td>
                 </tr>
         {% empty %}
-        <tr><td colspan="12">No users found.</td></tr>
+        <tr><td colspan="12">No Lookups found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -2195,6 +2286,12 @@ width: 35%;
         <th>Delete</th>
         <th>Edit</th>
         <th>View</th>
+        <th>created_by</th>
+        <th>created_at</th>
+        <th>updated_by</th>
+        <th>updated_at</th>
+        <th>is_deleted</th>
+        <th>deleted_at</th>
       </tr>
     </thead>
     <tbody>
@@ -2261,6 +2358,12 @@ width: 35%;
         <td>{{ user.can_delete }}</td>
         <td>{{ user.can_edit }}</td>
           <td>{{ user.can_view }}</td>
+          <td>{{ user.created_by }}</td>
+          <td>{{ user.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ user.updated_by }}</td>
+          <td>{{ user.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ user.is_deleted }}</td>
+          <td>{{ user.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2286,6 +2389,12 @@ width: 35%;
         <th>Delete</th>
         <th>Edit</th>
         <th>View</th>
+        <th>Created By</th>
+        <th>Created At</th>
+        <th>Updated By</th>
+        <th>Updated At</th>
+        <th>Is Deleted</th>
+        <th>Deleted At</th>
       </tr>
     </thead>
     <tbody>
@@ -2355,6 +2464,12 @@ width: 35%;
         <td>{{ user.can_delete }}</td>
         <td>{{ user.can_edit }}</td>
           <td>{{ user.can_view }}</td>
+          <td>{{ user.created_by }}</td>
+          <td>{{ user.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ user.updated_by }}</td>
+          <td>{{ user.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ user.is_deleted }}</td>
+          <td>{{ user.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2566,7 +2681,6 @@ width: 35%;
 
 <!-- ----------- Donor/Volunteer Management System ------------------ -->
 
-
 <div class="tab-content" id="Donor/Volunteer Management System">
  <div class="card border-0">
     
@@ -2649,6 +2763,12 @@ width: 35%;
         <th>Postal Code</th>
         <th>Native Place</th>
         <th>Native Postal Code</th>
+        <th>created_by</th>
+        <th>created_at</th>
+        <th>updated_by</th>
+        <th>updated_at</th>
+        <th>deleted_at</th>
+        <th>is_deleted</th>
       </tr>
     </thead>
 
@@ -2657,24 +2777,21 @@ width: 35%;
       <tr>
       <td>
 <div class="d-flex justify-content-between">
+  {% if permissions.can_add %}
  <a href="{% url 'add_donor_volunteer' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+  {% endif %}
+  {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="q" value="{{ query2|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
-
+  {% endif %}
 </div>
 </td>
 
@@ -2692,12 +2809,13 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
-            <!-- 📝 Edit -->
+           {% if permissions.can_edit %}
             <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
+            {% endif %}
 
-            <!-- 🗑️ Delete -->
+            {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donor_volunteer' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -2705,11 +2823,9 @@ width: 35%;
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
-          
+            {% endif %}
           </div>
         </td>
-
         <td>{{ donation.id }}</td>
         <td>{{ donation.person_type }}</td>
         <td>{{ donation.first_name }}</td>
@@ -2732,7 +2848,12 @@ width: 35%;
       <td>{{ donation.postal_code }}</td>
       <td>{{ donation.native_place }}</td>
       <td>{{ donation.native_postal_code }}</td>
-
+      <td>{{ donation.created_by }}</td>
+      <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.updated_by }}</td>
+      <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.is_deleted }}</td>
       </tr>
       {% empty %}
       <tr>
@@ -2774,6 +2895,12 @@ width: 35%;
         <th>Postal Code</th>
         <th>Native Place</th>
         <th>Native Postal Code</th>
+        <th>Created By</th>
+        <th>Created At</th>
+        <th>Updated By</th>
+        <th>Updated At</th>
+        <th>Deleted At</th>
+        <th>Is Deleted</th>
       </tr>
     </thead>
 
@@ -2782,24 +2909,21 @@ width: 35%;
       <tr>
       <td>
   <div class="d-flex justify-content-between">
+    {% if permissions.can_add %}
  <a href="{% url 'add_donor_volunteer' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="q" value="{{ query2|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
-
+    {% endif %}
 </div>
 </td>
 {% for i in "0123456789012345678901" %}
@@ -2816,12 +2940,13 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
-            <!-- 📝 Edit -->
+            {% if permissions.can_edit %}
             <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
+            {% endif %}
 
-            <!-- 🗑️ Delete -->
+            {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donor_volunteer' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -2829,11 +2954,9 @@ width: 35%;
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
-          
+            {% endif %}
           </div>
         </td>
-
         <td>{{ donation.id }}</td>
         <td>{{ donation.person_type }}</td>
         <td>{{ donation.first_name }}</td>
@@ -2847,6 +2970,21 @@ width: 35%;
         <td>{{ donation.id_type }}</td>
         <td>{{ donation.id_number }}</td>
         <td>{{ donation.house_number }}</td>
+        <td>{{ donation.building_name }}</td>
+      <td>{{ donation.landmark }}</td>
+      <td>{{ donation.area }}</td>
+      <td>{{ donation.city }}</td>
+      <td>{{ donation.state }}</td>
+      <td>{{ donation.country }}</td>
+      <td>{{ donation.postal_code }}</td>
+      <td>{{ donation.native_place }}</td>
+      <td>{{ donation.native_postal_code }}</td>
+      <td>{{ donation.created_by }}</td>
+      <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.updated_by }}</td>
+      <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.is_deleted }}</td>
       </tr>
       {% empty %}
       <tr>
@@ -3032,8 +3170,6 @@ width: 35%;
 <div class="search-container d-flex align-items-center">
 
   <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
-
-    <!-- Search Input -->
     <input 
       type="text" 
       name="payments_query"
@@ -3065,7 +3201,6 @@ width: 35%;
 }
 </style>
       <!-- 🧍‍♂️ User Table -->
-
       {% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
  
@@ -3078,19 +3213,28 @@ width: 35%;
           <th>Donation Box</th>
           <th>Amount</th>
           <th>Payment Method</th>
-          <th>Date</th>
+          <th>Opened by</th>
+          <th>Received by</th>
+          <th>I Witness</th>
+          <th>created_by</th>
+          <th>created_at</th>
+          <th>updated_by</th>
+          <th>updated_at</th>
+          <th>delete at</th>
+          <th>is_deleted</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
   <td>
-              <div class="d-inline-flex align-items-center gap-1">
-
+<div class="d-inline-flex align-items-center gap-1">
+{% if permissions.can_add %}
   <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-        <!-- ⬇ Download Button (Black Icon Only) -->
+  {% endif %}
+  {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
       <!-- Maintain search value -->
     <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
@@ -3102,7 +3246,8 @@ width: 35%;
         <i class="bi bi-download"></i>
     </button>
     </form>
-              </div>
+    {% endif %}
+    </div>
 </td>
           {% for i in "123456"|make_list %}
           <td>
@@ -3117,11 +3262,12 @@ width: 35%;
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit edit_box_payment -->
+{% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <!-- 🗑️ Delete -->
+              {% endif %}
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3129,6 +3275,7 @@ width: 35%;
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3142,8 +3289,18 @@ width: 35%;
           </td>
           <td>₹{{ owner.amount }}</td>
           <td>{{ owner.payment_method }}</td>
+          <td>{{ owner.opened_by }}</td>
+          <td>{{ owner.received_by }}</td>
+          <td>{{ owner.i_witness }}</td>
+          <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.updated_by }}</td>
+          <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.is_deleted }}</td>
         </tr>
+        {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
         {% endfor %}
 
       </tbody>
@@ -3157,13 +3314,21 @@ width: 35%;
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
-               <th>Actions</th>
+              <th>Actions</th>
                <th>ID</th>
           <th>Owner Name</th>
           <th>Donation Box</th>
           <th>Amount</th>
           <th>Payment Method</th>
-          <th>Date</th>
+          <th>Opened by</th>
+          <th>Received by</th>
+          <th>I Witness</th>
+          <th>created_by</th>
+          <th>created_at</th>
+          <th>updated_by</th>
+          <th>updated_at</th>
+          <th>delete at</th>
+          <th>is_deleted</th>
         </tr>
       </thead>
 
@@ -3171,12 +3336,13 @@ width: 35%;
         <tr>
         
       <td>
-                  <div class="d-inline-flex align-items-center gap-1">
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if permissions.can_add %}
   <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-
-        <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
       <!-- Maintain search value -->
     <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
@@ -3188,7 +3354,8 @@ width: 35%;
         <i class="bi bi-download"></i>
     </button>
     </form>
-                  </div>
+    {% endif %}
+  </div>
 </td>
           {% for i in "123456"|make_list %}
           <td>
@@ -3203,12 +3370,13 @@ width: 35%;
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+             {% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
+              {% endif %}
 
-              <!-- 🗑️ Delete -->
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3216,6 +3384,7 @@ width: 35%;
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3229,8 +3398,18 @@ width: 35%;
           </td>
           <td>₹{{ owner.amount }}</td>
           <td>{{ owner.payment_method }}</td>
+          <td>{{ owner.opened_by }}</td>
+          <td>{{ owner.received_by }}</td>
+          <td>{{ owner.i_witness }}</td>
+          <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.updated_by }}</td>
+          <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.is_deleted }}</td>
         </tr>
+        {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -3251,8 +3430,8 @@ table th, table td {
   z-index: 5;
 }
 </style>
-      {% endif %}
-    </div>
+{% endif %}
+</div>
     
 <!-- ✅ Donation Payment Pagination Controls -->
 <div class="pagination-container text-center">
@@ -3298,7 +3477,6 @@ table th, table td {
 
 </div>
 
-
 <!-- ------------Donation Box----------- -->
 
    <div class="card-body">
@@ -3336,8 +3514,6 @@ table th, table td {
   border-radius: 8px;
 }
 </style>
-      <!-- 🧍‍♂️ User Table -->
-
     {% if box_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -3345,33 +3521,37 @@ table th, table td {
         <tr>
           <th>Actions</th>
           <th>Donation ID</th>
+            <th>OR Code</th>
           <th>Key ID</th>
           <th>Box Size</th>
           <th>Location</th>
-          <th>OR Code</th>
+          <th>Status</th>
+          <th>Created By</th>
           <th>Created At</th>
+          <th>Updated At</th>
+          <th>Updated By</th>
+          <th>Deleted At</th>
+          <th>Is Deleted</th>
         </tr>
       </thead>
-
       <tbody>
-           <tr>
+  <tr>
   <td>
-            <div class="d-inline-flex align-items-center gap-1">
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if permissions.can_add %}
   <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-          <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
+    {% endif %}
   </div>
 </td>
           {% for i in "12345"|make_list %}
@@ -3383,15 +3563,16 @@ table th, table td {
           {% endfor %}
         </tr>
         
-        {% for box in donation_boxes %}
+        {% for box in box_page_obj  %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <!-- 🗑️ Delete -->
+              {% endif %}
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3399,27 +3580,36 @@ table th, table td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
           <td>{{ box.donation_id }}</td>
-          <td>{{ box.key_id }}</td>
-          <td>{{ box.box_size }}</td>
-          <td>{{ box.location }}</td>
-          <td>
+                 <td>
     {% if box.qr_code %}
       <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
     {% else %}
       No QR
     {% endif %}
   </td>
+          <td>{{ box.key_id }}</td>
+          <td>{{ box.box_size }}</td>
+          <td>{{ box.location }}</td>
+          <td>{{ box.status }}</td>
+          <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_by }}</td>
+          <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.is_deleted }}</td>
         </tr>
+        {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donation boxes found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
 </div>
-      {% elif query %}
-        <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
+      {% elif box_query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ box_query }}</strong>".</p>
       {% else %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -3427,33 +3617,38 @@ table th, table td {
         <tr>
           <th>Actions</th>
           <th>Donation ID</th>
+            <th>OR Code</th>
           <th>Key ID</th>
           <th>Box Size</th>
           <th>Location</th>
-          <th>OR Code</th>
+          <th>Status</th>
+          <th>Created By</th>
           <th>Created At</th>
+          <th>Updated At</th>
+          <th>Updated By</th>
+          <th>Deleted At</th>
+          <th>Is Deleted</th>
         </tr>
       </thead>
 
       <tbody>
            <tr>
   <td>
-            <div class="d-inline-flex align-items-center gap-1">
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if permissions.can_add %}
   <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-          <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
+    {% endif %}
   </div>
 </td>
           {% for i in "12345"|make_list %}
@@ -3465,15 +3660,16 @@ table th, table td {
           {% endfor %}
         </tr>
         
-        {% for box in donation_boxes %}
+        {% for box in box_page_obj %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
+              {% if permissions.can_edit %}
               <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <!-- 🗑️ Delete -->
+              {% endif %}
+              {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3482,20 +3678,29 @@ table th, table td {
                 </button>
               </form>
             </div>
+              {% endif %}
           </td>
          <td>{{ box.donation_id }}</td>
-          <td>{{ box.key_id }}</td>
-          <td>{{ box.box_size }}</td>
-          <td>{{ box.location }}</td>
-          <td>
+    <td>
     {% if box.qr_code %}
       <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
     {% else %}
       No QR
     {% endif %}
   </td>
+          <td>{{ box.key_id }}</td>
+          <td>{{ box.box_size }}</td>
+          <td>{{ box.location }}</td>
+          <td>{{ box.status }}</td>
+          <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_by }}</td>
+          <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.is_deleted }}</td>
         </tr>
+        {% empty %}
+      <tr><td colspan="15" class="text-muted py-4">No donation boxes found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -3566,9 +3771,6 @@ table th, table td {
 </div>
 </div>
 
-
-
-
 <!-- --------------START:  DONATION MODULE---------- -->
 <div class="tab-content" id="Donation Module">
   <div class="card border-0">
@@ -3579,7 +3781,6 @@ table th, table td {
     </div>
 
     <div class="card-body">
-      <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100" role="search">
     <input 
@@ -3621,9 +3822,6 @@ table th, table td {
   border-radius: 8px;
 }
 </style>
-
- 
-
       {% if donation_page_obj %}
         <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
@@ -3632,7 +3830,8 @@ table th, table td {
         <th>Action</th>
         <th>Donor</th>
         <th>Address</th>
-        <th>Amount</th>
+        <th>Amount declared</th>
+        <th>Amount Paid</th>
         <th>Date</th>
         <th>Category</th>
         <th>Payment Method</th>
@@ -3641,34 +3840,35 @@ table th, table td {
         <th>Check number</th>
         <th>Place of donation</th>
         <th>Description</th>
-        <th>Receipt</th>
+        <th>created_by</th>
+        <th>created_date</th>
+        <th>updated_by</th>
+        <th>updated_date</th>
+        <th>deleted_at</th>
+        <th>is_deleted</th>
       </tr>
     </thead>
     <tbody>
-      <!-- 🔍 Search Row -->
       <tr>
-
       <td>
-
         <div class="d-flex justify-content-between">
+          {% if permissions.can_add %}
     <a href="{% url 'adddonation' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
       <input type="hidden" name="q" value="{{ query3|default:'' }}">
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
-
+    {% endif %}
 </div>
 </td>
-
         {% for i in "123456789123" %}
         <td>
           <div class="download-group">
@@ -3678,18 +3878,17 @@ table th, table td {
         {% endfor %}
         <td>.</td>
       </tr>
-
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
-            <!-- 📝 Edit -->
+{% if permissions.can_edit %}
             <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
-
-            <!-- 🗑️ Delete -->
+{% endif %}
+            {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3697,30 +3896,30 @@ table th, table td {
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
+            {% endif %}
+     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
+    👁‍🗨
+</a>
           </div>
         </td>
-
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
         <td>{{ donation.donor.city }}</td>
+        <td>{{ donation.donation_amount_declared }}</td>
         <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
       <td>{{ donation.donation_category.lookup_name }}</td>
         <td>{{ donation.payment_method.lookup_name }}</td>
-
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
-
         <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
-        <td>
-     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
-    👁‍🗨
-</a>
-
-</td>
-
+<td>{{ donation.created_by }}</td>
+        <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.updated_by }}</td>
+        <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.is_deleted }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
@@ -3736,9 +3935,11 @@ table th, table td {
     <thead>
       <tr>
         <th>Action</th>
+        <th>ID</th>
         <th>Donor</th>
         <th>Address</th>
-        <th>Amount</th>
+        <th>Amount declared</th>
+        <th>Amount Paid</th>
         <th>Date</th>
         <th>Category</th>
         <th>Payment Method</th>
@@ -3747,38 +3948,36 @@ table th, table td {
         <th>Check number</th>
         <th>Place of donation</th>
         <th>Description</th>
-        <th>Receipt</th>
+        <th>created_by</th>
+        <th>created_date</th>
+        <th>updated_by</th>
+        <th>updated_date</th>
+        <th>deleted_at</th>
+        <th>is_deleted</th>
       </tr>
     </thead>
 
     <tbody>
-      <!-- 🔍 Search Row -->
       <tr>
-
       <td>
-       
         <div class="d-flex justify-content-between">
+          {% if permissions.can_add %}
     <a href="{% url 'adddonation' %}" 
        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
         <i class="fa-solid fa-plus"></i>
   </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+    {% endif %}
+    {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
       <input type="hidden" name="q" value="{{ query3|default:'' }}">
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
         <i class="bi bi-download"></i>
     </button>
     </form>
-
+    {% endif %}
 </div>
- 
-
 </td>
-
-    
         {% for i in "123456789123" %}
         <td>
           <div class="download-group">
@@ -3788,18 +3987,17 @@ table th, table td {
         {% endfor %}
         <td>.</td>
       </tr>
-
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
-            <!-- 📝 Edit -->
+            {% if permissions.can_edit %}
             <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
-
-            <!-- 🗑️ Delete -->
+{% endif %}
+            {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
@@ -3807,32 +4005,31 @@ table th, table td {
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
+            {% endif %}
+            {% if permissions.can_delete %}
+         <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+{% endif %}
           </div>
         </td>
-
+        <td>{{ donation.id }}</td>
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-                <td>{{ donation.donor.city }}</td>
+        <td>{{ donation.donor.city }}</td>
         <td>{{ donation.donation_amount_paid }}</td>
         <td>{{ donation.donation_date }}</td>
         <td>{{ donation.donation_category.lookup_name }}</td>
         <td>{{ donation.payment_method.lookup_name }}</td>
-
         <td>{{ donation.payment_method }}</td>
         <td>{{ donation.transaction_id }}</td>
         <td>{{ donation.payment_status }}</td>
          <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
-        <td>
-         <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
-    👁‍🗨
-</a>
-
-
-          <!-- <a href="{% url 'donation_receipt' donation.id %}"  style="font-size: 20px; " target="_blank">👁‍🗨</a> -->
-</td>
-
+        <td>{{ donation.created_by }}</td>
+        <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.updated_by }}</td>
+        <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.is_deleted }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
@@ -3841,7 +4038,6 @@ table th, table td {
   </table>
 </div>
 </div>
-
 <!-- ✅ Scrollbar + Style -->
 <style>
 .table-responsive::-webkit-scrollbar {
@@ -3862,11 +4058,8 @@ table th, table td {
   vertical-align: middle;
 }
 </style>
-
       {% endif %}
     </div>
-
-
     <div class="pagination-container text-center mt-3">
   {% if donation_page_obj.has_previous %}
       <a href="?donation_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
