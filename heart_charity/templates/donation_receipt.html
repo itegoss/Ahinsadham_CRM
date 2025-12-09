@@ -1,60 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Donation Receipt</title>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <title>Donation Receipt</title>
 
 <style>
 body {
     font-family: Arial, sans-serif;
-    background: rgba(0,0,0,0.3);
+    margin: 20px;
+    background: #f7f7f7;
 }
 
-.modal {
-    width: 430px;
-    background: white;
+.receipt-container {
+    border: 2px solid #333;
     padding: 20px;
-    margin: 60px auto;
-    border-radius: 14px;
-    animation: fade .3s ease;
-    position: relative;
+    background: white;
+    max-width: 900px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
 }
 
-@keyframes fade {
-    from {opacity: 0; transform: scale(.95);}
-    to {opacity: 1; transform: scale(1);}
-}
-
-h2 {
+/* HEADER */
+.header-table {
+    width: 100%;
     text-align: center;
-    margin-top: 0;
-    font-size: 22px;
-    color: #0c6d34;
+    line-height: 22px;
+    margin-bottom: 15px;
 }
 
-.table {
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.subtitle {
+    font-size: 15px;
+    margin-top: -5px;
+}
+
+/* SECTION TITLE */
+.section-title {
+    background: #e6e6e6;
+    padding: 6px 8px;
+    border-left: 4px solid #0c6d34;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 18px;
+}
+
+/* TABLES */
+.info-table, .donation-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
-.table td {
-    padding: 8px 4px;
-    font-size: 15px;
+.info-table td, .donation-table td {
+    border: 1px solid #444;
+    padding: 8px 10px;
+    vertical-align: top;
 }
 
-.line {
-    height: 2px;
-    width: 100%;
-    background: #c1edcb;
-    margin: 10px 0;
+/* Amount Right Align */
+.amount {
+    text-align: right;
+    font-weight: bold;
 }
 
-.actions {
-    display: flex;
-    justify-content: space-between;
+/* Footer */
+.footer-text {
+    text-align: center;
+    font-weight: bold;
     margin-top: 20px;
+    font-size: 16px;
+}
+
+.signature {
+    float: right;
+    margin-top: 40px;
+    text-align: center;
+}
+
+/* Buttons */
+.buttons {
+    text-align: center;
+    margin-top: 25px;
 }
 
 .btn {
@@ -62,56 +93,123 @@ h2 {
     color: white;
     padding: 10px 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
+    margin: 5px;
+    text-decoration: none;
     font-size: 14px;
-    width: 32%;
-    transition: .3s;
-    text-align: center;
 }
 
-.btn:hover { background: #084d26; }
-
-.close-btn {
-    position: absolute;
-    top: 12px;
-    right: 15px;
-    cursor: pointer;
-    font-size: 18px;
+.btn:hover {
+    background: #095528;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<div class="modal">
-    <span class="close-btn" onclick="window.history.back();">&times;</span>
+<div class="receipt-container" id="receipt">
 
-    <h2>Donation Receipt</h2>
-
-    <div class="line"></div>
-
-    <table class="table">
-        <tr><td><strong>Receipt ID:</strong></td><td>{{ donation.receipt_id }}</td></tr>
-        <tr><td><strong>Donor:</strong></td><td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td></tr>
-        <tr><td><strong>Date:</strong></td><td>{{ donation.donation_date }}</td></tr>
-        <tr><td><strong>Category:</strong></td><td>{{ donation.donation_category.lookup_name }}</td></tr>
-        <tr><td><strong>Payment Mode:</strong></td><td>{{ donation.payment_method.lookup_name }}</td></tr>
-        <tr><td><strong>Amount:</strong></td><td>₹{{ donation.donation_amount_paid }}</td></tr>
-        <tr><td><strong>Transaction ID:</strong></td><td>{{ donation.transaction_id|default:"-" }}</td></tr>
+    <!-- HEADER -->
+    <table class="header-table">
+        <tr><td class="title">BHAGWAN MAHAVIR PASHU RAKSHA KENDRA</td></tr>
+        <tr><td class="subtitle">Organised by : Sheth Shri Lalji Velji Shah</td></tr>
+        <tr><td>Inspired by : Shri Jadavji Ravji Gangar</td></tr>
+        <tr><td><b>'Anchorwala Ahinsadham'</b></td></tr>
     </table>
 
-    <div class="actions">
-        <button class="btn" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+    <!-- Institution Section -->
+    <table class="info-table">
+        <tr>
+            <td>
+                <b>INSTITUTION:</b><br>
+                Pragpur Road junction, Taluka Mundra - Kutch, Gujarat 370415<br>
+                Mob: 076098 88555
+            </td>
+            <td>
+                <b>MUMBAI OFFICE:</b><br>
+                5, Gurukrupa Apartment, Kasturba Cross Road No.1, Borivali (E), Mumbai 400066<br>
+                Mob: 97264 75556 / 97264 85555
+            </td>
+            <td><b>Date:</b> {{ donation.donation_date }}</td>
+        </tr>
 
-        <a href="{% url 'download_receipt_pdf' donation.id %}" class="btn">
-            <i class="fa fa-download"></i> Download
-        </a>
+        <tr>
+            <td colspan="3"><b>Receipt No:</b> {{ donation.receipt_id }}</td>
+        </tr>
+    </table>
 
-        <button class="btn" onclick="shareReceipt()">
-            <i class="fa fa-share"></i> Share
-        </button>
+    <!-- DONOR DETAILS -->
+    <div class="section-title">Donor Details</div>
+
+    <table class="info-table">
+        <tr>
+            <td><b>Name:</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+            <td><b>Mobile:</b> {{ donation.donor.mobile_no }}</td>
+        </tr>
+
+        <tr>
+            <td><b>Address:</b> {{ donation.donor.address }}</td>
+            <td><b>Area:</b> {{ donation.place_of_donation }}</td>
+        </tr>
+
+        <tr>
+            <td><b>PAN No:</b> {{ donation.donor.pan_no }}</td>
+            <td><b>Aadhaar No:</b> {{ donation.donor.aadhaar_no }}</td>
+        </tr>
+
+        <tr>
+            <td><b>Reference Name:</b> {{ donation.reference_name|default:"-" }}</td>
+            <td><b>Received By:</b> {{ donation.donation_received_by|default:"-" }}</td>
+        </tr>
+
+        <tr>
+            <td><b>Cheque No:</b> {{ donation.check_no|default:"-" }}</td>
+            <td><b>Transaction ID:</b> {{ donation.transaction_id|default:"-" }}</td>
+        </tr>
+    </table>
+
+    <!-- DONATION DETAILS -->
+    <div class="section-title">Details of Donation</div>
+
+    <table class="donation-table">
+        <tr>
+            <td><b>Particulars</b></td>
+            <td><b>Amount</b></td>
+        </tr>
+
+        <tr>
+            <td>{{ donation.donation_category.lookup_name }}</td>
+            <td class="amount">₹{{ donation.donation_amount_paid }}</td>
+        </tr>
+
+        <tr>
+            <td><b>TOTAL</b></td>
+            <td class="amount">₹{{ donation.donation_amount_paid }}</td>
+        </tr>
+    </table>
+
+    <p><b>Payment Mode:</b> {{ donation.payment_method.lookup_name }}</p>
+    <p><b>Payment Status:</b> {{ donation.payment_status.lookup_name }}</p>
+
+    <p class="footer-text">Thank you for your valuable Donation</p>
+
+    <div class="signature">
+        <p>Trustee</p>
+        <br><br>
     </div>
+
+</div>
+
+<!-- BUTTONS -->
+<div class="buttons">
+    <button class="btn" onclick="window.print()">Print</button>
+
+    <a class="btn" href="{% url 'download_receipt_pdf' donation.id %}">
+        Download PDF
+    </a>
+
+    <button class="btn" onclick="shareReceipt()">Share</button>
 </div>
 
 <script>
@@ -119,11 +217,11 @@ function shareReceipt() {
     if (navigator.share) {
         navigator.share({
             title: "Donation Receipt",
-            text: "Here is your donation receipt.",
+            text: "Here is your donation receipt",
             url: window.location.href
         });
     } else {
-        alert("Sharing is not supported on this device.");
+        alert("Sharing not supported on this device.");
     }
 }
 </script>

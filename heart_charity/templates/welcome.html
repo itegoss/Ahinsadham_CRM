@@ -1261,6 +1261,161 @@ td {
 
 <!-- =============Main Content========== -->
     <div class="content">
+<style>
+/* --- Desktop Layout --- */
+.hero-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #e8f4ff;
+    padding: 50px 60px;
+    border-radius: 12px;
+    gap: 40px;
+}
+
+/* LEFT */
+.hero-content {
+    flex: 1.2;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.hero-description {
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 580px;
+    color: #4b5563;
+}
+
+/* RIGHT IMAGE */
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+
+
+/* --- Responsive Tablet (768px–1024px) --- */
+@media (max-width: 1024px) {
+    .hero-banner {
+        padding: 40px;
+        gap: 25px;
+    }
+
+    .hero-title {
+        font-size: 40px;
+    }
+
+    .hero-image img {
+        max-width: 380px;
+    }
+}
+
+
+
+/* --- Mobile Responsive (< 768px) --- */
+@media (max-width: 768px) {
+    .hero-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 35px 20px;
+    }
+
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-description {
+        max-width: 100%;
+        font-size: 16px;
+    }
+
+    .hero-image img {
+        max-width: 90%;
+        margin-top: 20px;
+    }
+}
+
+
+
+/* Small phones (< 480px) */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 28px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .hero-image img {
+        max-width: 100%;
+    }
+}
+
+/* Apply header styles only on mobile/tablet screens */
+@media (max-width: 768px) {
+
+    .mobile-header {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;                   /* FIXED HEIGHT */
+          background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
+        color: white;
+        display: flex;
+        align-items: center;            /* Vertical center */
+        justify-content: space-between;
+        padding: 0 15px;
+        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+    }
+
+    .mobile-header h1 {
+        font-size: 20px;                /* Fixed Title Size */
+        margin: 0;
+        font-weight: 600;
+        white-space: nowrap;            /* Prevent text wrapping */
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        font-size: 26px;                /* Fixed icon size */
+        color: white;
+    }
+}
+
+/* Hide mobile header on desktop */
+@media (min-width: 769px) {
+    .mobile-header {
+        display: none;
+    }
+}
+
+
+</style>
+
+
  <div class="tab-content active" id="default-user">
   <!-- Hero Banner -->
   <div class="hero-banner">
@@ -1275,7 +1430,9 @@ td {
     <div class="hero-image">
    <img src="{% static 'images/home.png' %}" alt="Dashboard Illustration">
     </div>
-  </div></div>
+  </div>
+
+</div>
 
 <!-- ----------- MDM (Master Data)------------------ -->
  <div class="tab-content"  id="mdm">
@@ -1330,19 +1487,41 @@ td {
       <thead class="sticky-top">
         <tr>
               <th>Actions</th>
-              <th>ID</th>
-                <th>Type Name</th>
-                <th>Created By</th>
-                <th>Created Date</th>
-                <th>Updated By</th>
-                <th>Updated Date</th>
-                <th>is Deleted</th>
-                <th>Deleted at</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Type Name<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Created By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Created By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Created Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Updated By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Updated Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="8">is Deleted<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted at<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr>
+        <style>
+.column-search {
+    width: 150px;
+    padding: 4px 0;
+    border: none !important;
+    border-bottom: 2px solid #28a745 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+}
+.column-search:focus {
+    border-bottom: 2px solid #28a745 !important;
+}
+.column-search::placeholder {
+    color: #6c757d !important;
+}
+</style>
+        <tr class="column-search-row">
   <td>
     <div class="d-flex justify-content-between">
 {% if permissions.can_add %}
@@ -1363,23 +1542,24 @@ td {
     </form>
 {% endif %}    
 </div>
-  <!-- <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
-  
-  {% if lookup_page_obj.object_list %}
-      <a href="?lookup_query={{ lookup_query }}&download=1" style="font-size: 24px; color:black ; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %} -->
 </td>
-          {% for i in "1234"|make_list %}
+          <!-- {% for i in "1234"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+
         </tr>
 {% for lt in lookup_page_obj %}
         <tr>
@@ -1424,20 +1604,42 @@ td {
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
-               <th>Actions</th>
-              <th>ID</th>
-                <th>Type Name</th>
-                <th>Created By</th>
-                <th>Created Date</th>
-                <th>Updated By</th>
-                <th>Updated Date</th>
-                <th>is Deleted</th>
-                <th>Deleted at</th>
+                <th>Actions</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Type Name<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Created By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Created By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Created Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Updated By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Updated Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="8">is Deleted<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted at<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr>
+        <style>
+.column-search {
+    width: 150px;
+    padding: 4px 0;
+    border: none !important;
+    border-bottom: 2px solid #28a745 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+}
+.column-search:focus {
+    border-bottom: 2px solid #28a745 !important;
+}
+.column-search::placeholder {
+    color: #6c757d !important;
+}
+</style>
+<tr class="column-search-row">
   <td>
    <div class="d-flex justify-content-between">
  {% if permissions.can_add %}
@@ -1458,14 +1660,23 @@ td {
 {% endif %}    
 </div>
 </td>
-          {% for i in "1234"|make_list %}
+          <!-- {% for i in "1234"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
-        </tr> 
+          {% endfor %} -->
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+</tr> 
    {% for lt in lookup_page_obj %}
         <tr>
           <td>
@@ -1607,20 +1818,20 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
             <th>Actions</th>
-           <th>ID</th>
-                <th>Lookup Name</th>
-                <th>Lookup Type</th>
-                <th>Created By</th>
-                <th>Created Date</th>
-                <th>Updated By</th>
-                <th>Updated Date</th>
-                <th>Deleted At</th>
-                <th>Is Deleted</th>
+            <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="2">Lookup Name <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="3">Lookup Type <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="4">Created By <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="5">Created Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="6">Updated By <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="7">Updated Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="8">Deleted At <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="9">Is Deleted <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr>
+        <tr class="column-search-row">
 <td>
       <div class="d-flex justify-content-between">
         {% if permissions.can_add %}
@@ -1640,23 +1851,24 @@ table th, table td {
     </form>
     {% endif %}
 </div>
-  <!-- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
- {% if lookup_table_obj.object_list %}
-      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %} -->
 </td>
 
-          {% for i in "123456789"|make_list %}
+          <!-- {% for i in "123456789"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
 
 {% for l in lookup_table_obj %}
@@ -1702,21 +1914,21 @@ table th, table td {
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
-        <tr>
-           <th>ID</th>
-                <th>Lookup Name</th>
-                <th>Lookup Type</th>
-                <th>Created By</th>
-                <th>Created Date</th>
-                <th>Updated By</th>
-                <th>Updated Date</th>
-                <th>Deleted At</th>
-                <th>Is Deleted</th>
+                     <tr>
+            <th>Actions</th>
+            <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="2">Lookup Name <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="3">Lookup Type <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="4">Created By <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="5">Created Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="6">Updated By <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="7">Updated Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="8">Deleted At <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="9">Is Deleted <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
-        <tr>
+        <tr class="column-search-row">
 <td>
     <div class="d-flex justify-content-between">
       {% if permissions.can_add %}
@@ -1745,14 +1957,23 @@ table th, table td {
       </a>
     {% endif %} -->
 </td>
-
+ <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+<!-- 
           {% for i in "123456789"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
         </tr>
 
 {% for l in lookup_table_obj %}            <tr>
@@ -1916,20 +2137,20 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>Role</th>
-          <th>ID</th>
-          <th>Username</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Email</th>
-          <th>Is Active</th>
-          <th>Is Superuser</th>
-          <!-- <th>Last Login</th> -->
-          <th>Date of join</th>
+                    <th class="sortable" data-col="2">Role <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="3">Username <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="4">First Name <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="5">Last Name <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="6">Email <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="7">Is Active <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
       <tbody>
-        <tr>
+        
+        <tr class="column-search-row">
           <td> 
 <form method="GET" action="{% url 'search_users' %}"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
@@ -1941,17 +2162,23 @@ table th, table td {
         <i class="bi bi-download"></i>
     </button>
 </form>
-
-
-       
 </td>
-          {% for i in "123456789"|make_list %}
+          <!-- {% for i in "123456789"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
 
         {% for user in user_page_obj %}
@@ -1975,24 +2202,24 @@ table th, table td {
           </td>
 
 <td>
+ 
+
  <form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
 
- <select name="role" required class="form-select text-dark" style="color:black !important;">
+  <select name="role" required class="form-select text-dark" style="color:black !important;">
     {% for clean_role in clean_roles %}
         <option value="{{ clean_role }}"
             {% if user.userrole and clean_role in user.userrole.role.role_name %}
                 selected
-            {% endif %}
-        >
+            {% endif %}>
             {{ clean_role }}
         </option>
     {% endfor %}
 </select>
-
         <button type="submit"
                 class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
                 title="Save Role" name="save_user_role">
@@ -2002,7 +2229,6 @@ table th, table td {
     </div>
 </form> 
 </td>
-
           <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
           <td>{{ user.first_name }}</td>
@@ -2036,21 +2262,19 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>Role</th>
-          <th>ID</th>
-          <th>Username</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Email</th>
-          <th>Is Active</th>
-          <th>Is Superuser</th>
-          <!-- <th>Last Login</th> -->
-          <th>Date of joined</th>
+          <th class="sortable" data-col="2">Role <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="3">Username <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="4">First Name <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="5">Last Name <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="6">Email <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="7">Is Active <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
-        <tr>
+        <tr class="column-search-row">
         
       <td>
 <form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;">
@@ -2062,16 +2286,16 @@ table th, table td {
         <i class="bi bi-download"></i>
     </button>
 </form>
-
-
 </td>
-          {% for i in "123456789"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %}
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
 
         {% for user in user_page_obj %}
@@ -2082,7 +2306,6 @@ table th, table td {
               <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
               </a>
-
               <!-- 🗑️ Delete -->
               <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
@@ -2099,13 +2322,12 @@ table th, table td {
     <input type="hidden" name="user_id" value="{{ user.id }}">
 
     <div class="d-flex align-items-center justify-content-center gap-1">
-<select name="role" required class="form-select text-dark" style="color:black !important;">
+       <select name="role" required class="form-select text-dark" style="color:black !important;">
     {% for clean_role in clean_roles %}
         <option value="{{ clean_role }}"
             {% if user.userrole and clean_role in user.userrole.role.role_name %}
                 selected
-            {% endif %}
-        >
+            {% endif %}>
             {{ clean_role }}
         </option>
     {% endfor %}
@@ -2276,26 +2498,26 @@ width: 35%;
     <thead>
       <tr>
         <th>Actions</th>
-        <th>ID</th>
-        <th>Module id</th>
-        <th>Module Name</th>
-        <th>Description</th>
-        <th>Role</th>
-        <th>Access</th>
-        <th>Add</th>
-        <th>Delete</th>
-        <th>Edit</th>
-        <th>View</th>
-        <th>created_by</th>
-        <th>created_at</th>
-        <th>updated_by</th>
-        <th>updated_at</th>
-        <th>is_deleted</th>
-        <th>deleted_at</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Module id <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Module Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Description <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Role <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Access <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Add <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Delete <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Edit <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">View <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">created_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">created_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">updated_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">deleted_at <span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
 
@@ -2317,28 +2539,44 @@ width: 35%;
     </form>
 </div>
 </td>
-
+<!-- 
         {% for i in "1234567891"|make_list %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
           </div>
         </td>
-        {% endfor %}
+        {% endfor %} -->
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
       </tr>
 
-      {% for user in roles_page_obj %}
+      {% for access in roles_page_obj %}
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
 
-            <a href="{% url 'edit_access' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user_module_access' user.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                 onclick="return confirm('Are you sure you want to deactivate this User module access?')">
@@ -2348,22 +2586,22 @@ width: 35%;
 
           </div>
         </td>
-        <td>{{ user.id }}</td>
-        <td>{{ user.module_id }}</td>
-<td>{{ user.module.module_name }}</td>
-        <td>{{ user.description }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.can_access }}</td>
-        <td>{{ user.can_add }}</td>
-        <td>{{ user.can_delete }}</td>
-        <td>{{ user.can_edit }}</td>
-          <td>{{ user.can_view }}</td>
-          <td>{{ user.created_by }}</td>
-          <td>{{ user.created_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ user.updated_by }}</td>
-          <td>{{ user.updated_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ user.is_deleted }}</td>
-          <td>{{ user.deleted_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ access.id }}</td>
+        <td>{{ access.module_id }}</td>
+<td>{{ access.module.module_name }}</td>
+        <td>{{ access.description }}</td>
+        <td>{{ access.name }}</td>
+        <td>{{ access.can_access }}</td>
+        <td>{{ access.can_add }}</td>
+        <td>{{ access.can_delete }}</td>
+        <td>{{ access.can_edit }}</td>
+          <td>{{ access.can_view }}</td>
+          <td>{{ access.created_by }}</td>
+          <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.updated_by }}</td>
+          <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.is_deleted }}</td>
+          <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2379,29 +2617,28 @@ width: 35%;
     <thead>
       <tr>
         <th>Actions</th>
-        <th>ID</th>
-        <th>Module id</th>
-        <th>Module Name</th>
-        <th>Description</th>
-        <th>Role</th>
-        <th>Access</th>
-        <th>Add</th>
-        <th>Delete</th>
-        <th>Edit</th>
-        <th>View</th>
-        <th>Created By</th>
-        <th>Created At</th>
-        <th>Updated By</th>
-        <th>Updated At</th>
-        <th>Is Deleted</th>
-        <th>Deleted At</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Module id <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Module Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Description <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Role <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Access <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Add <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Delete <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Edit <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">View <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">created_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">created_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">updated_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">deleted_at <span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
-
     <!-- ➕ Add Button (Green Icon Only) -->
     <a href="{% url 'access_control' %}" 
        style="font-size: 24px; color: #16a34a; text-decoration: none;">
@@ -2425,26 +2662,42 @@ width: 35%;
 
 </td>
 
-        {% for i in "1234567891"|make_list %}
+        <!-- {% for i in "1234567891"|make_list %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
           </div>
         </td>
-        {% endfor %}
+        {% endfor %} -->
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
       </tr>
 
-      {% for user in roles_page_obj %}
+      {% for access in roles_page_obj %}
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-            <a href="{% url 'edit_access' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
 
             <!-- 🗑️ Delete -->
-            <form method="POST" action="{% url 'delete_user_module_access' user.id %}" class="d-inline m-0 p-0">
+            <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                 onclick="return confirm('Are you sure you want to deactivate this User module access?')">
@@ -2454,22 +2707,22 @@ width: 35%;
 
           </div>
         </td>
-        <td>{{ user.id }}</td>
-        <td>{{ user.module_id }}</td>
-<td>{{ user.module.module_name }}</td>
-        <td>{{ user.description }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.can_access }}</td>
-        <td>{{ user.can_add }}</td>
-        <td>{{ user.can_delete }}</td>
-        <td>{{ user.can_edit }}</td>
-          <td>{{ user.can_view }}</td>
-          <td>{{ user.created_by }}</td>
-          <td>{{ user.created_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ user.updated_by }}</td>
-          <td>{{ user.updated_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ user.is_deleted }}</td>
-          <td>{{ user.deleted_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ access.id }}</td>
+        <td>{{ access.module_id }}</td>
+<td>{{ access.module.module_name }}</td>
+        <td>{{ access.description }}</td>
+        <td>{{ access.name }}</td>
+        <td>{{ access.can_access }}</td>
+        <td>{{ access.can_add }}</td>
+        <td>{{ access.can_delete }}</td>
+        <td>{{ access.can_edit }}</td>
+          <td>{{ access.can_view }}</td>
+          <td>{{ access.created_by }}</td>
+          <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.updated_by }}</td>
+          <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.is_deleted }}</td>
+          <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2741,40 +2994,38 @@ width: 35%;
     <thead>
     <tr>
         <th>Action</th>
-        <th>ID</th>
-        <th>Person Type</th>
-        <th>First Name</th>
-        <th>Middle Name</th>
-        <th>Last Name</th>
-        <th>Gender</th>
-        <th>DOB</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>Donor Box ID</th>
-        <th>ID Type</th>
-        <th>ID Number</th>
-        <th>House Number</th>
-        <th>Building Name</th>
-        <th>Landmark</th>
-        <th>Area</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Country</th>
-        <th>Postal Code</th>
-        <th>Native Place</th>
-        <th>Native Postal Code</th>
-        <th>created_by</th>
-        <th>created_at</th>
-        <th>updated_by</th>
-        <th>updated_at</th>
-        <th>deleted_at</th>
-        <th>is_deleted</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Middle Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Last Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Gender <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">DOB <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Contact <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Email <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Donor Box ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">ID Type <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">ID Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">House Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Building Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">Landmark <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Area <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">City <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">State <span class="sort-icon ">⬍</span></th>
+        <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="23">created_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="24">created_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="25">updated_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="26">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="27">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
-
     <tbody>
-      <!-- 🔍 Filter Row -->
-      <tr>
+      <tr class="column-search-row">
       <td>
 <div class="d-flex justify-content-between">
   {% if permissions.can_add %}
@@ -2795,13 +3046,41 @@ width: 35%;
 </div>
 </td>
 
-   {% for i in "0123456789012345678901" %}
+   <!-- {% for i in "0123456789012345678901" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
           </div>
         </td>
-        {% endfor %}
+        {% endfor %} -->
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="25" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
       </tr>
 
       <!-- 🧾 Paginated Data -->
@@ -2873,40 +3152,39 @@ width: 35%;
     <thead>
       <tr>
         <th>Action</th>
-        <th>ID</th>
-        <th>Person Type</th>
-        <th>First Name</th>
-        <th>Middle Name</th>
-        <th>Last Name</th>
-        <th>Gender</th>
-        <th>DOB</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>Donor Box ID</th>
-        <th>ID Type</th>
-        <th>ID Number</th>
-        <th>House Number</th>
-        <th>Building Name</th>
-        <th>Landmark</th>
-        <th>Area</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Country</th>
-        <th>Postal Code</th>
-        <th>Native Place</th>
-        <th>Native Postal Code</th>
-        <th>Created By</th>
-        <th>Created At</th>
-        <th>Updated By</th>
-        <th>Updated At</th>
-        <th>Deleted At</th>
-        <th>Is Deleted</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Middle Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Last Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Gender <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">DOB <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Contact <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Email <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Donor Box ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">ID Type <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">ID Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">House Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Building Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">Landmark <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Area <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">City <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">State <span class="sort-icon ">⬍</span></th>
+        <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="23">created_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="24">created_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="25">updated_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="26">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="27">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
-
     <tbody>
       <!-- 🔍 Filter Row -->
-      <tr>
+      <tr class="column-search-row">
       <td>
   <div class="d-flex justify-content-between">
     {% if permissions.can_add %}
@@ -2926,13 +3204,41 @@ width: 35%;
     {% endif %}
 </div>
 </td>
-{% for i in "0123456789012345678901" %}
+<!-- {% for i in "0123456789012345678901" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
           </div>
         </td>
-        {% endfor %}
+        {% endfor %} -->
+        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="25" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
       </tr>
 
       <!-- 🧾 Paginated Data -->
@@ -3155,12 +3461,13 @@ width: 35%;
 </div>
 
 <!-- ---------Donation box module-------- -->
+
+
  <div class="tab-content"  id="Donation box (Daan Peti) & ACH Module">
   <div class="card border-0">
-
     <!-- 🌈 Navbar-style Header -->
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">Donation box (Daan Peti) & ACH Module</h4>
+      <h4 class="mb-0">Donation box (Daan Peti)</h4>
     </div>
 
 <!-- ------------Donation Owner Module----------- -->
@@ -3208,25 +3515,25 @@ width: 35%;
       <thead class="sticky-top">
         <tr>
               <th>Actions</th>
-               <th>ID</th>
-          <th>Owner Name</th>
-          <th>Donation Box</th>
-          <th>Amount</th>
-          <th>Payment Method</th>
-          <th>Opened by</th>
-          <th>Received by</th>
-          <th>I Witness</th>
-          <th>created_by</th>
-          <th>created_at</th>
-          <th>updated_by</th>
-          <th>updated_at</th>
-          <th>delete at</th>
-          <th>is_deleted</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">created_by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="10">created_at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">updated_by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">updated_at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="13">delete at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr>
+        <tr class="column-search-row">
   <td>
 <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_add %}
@@ -3249,13 +3556,27 @@ width: 35%;
     {% endif %}
     </div>
 </td>
-          {% for i in "123456"|make_list %}
+          <!-- {% for i in "123456"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+                  <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
         </tr>
         
         {% for owner in payments_page_obj.object_list %}
@@ -3276,6 +3597,9 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
+<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
+ 👁&zwj;🗨
+</a>
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3315,26 +3639,24 @@ width: 35%;
       <thead class="sticky-top">
         <tr>
               <th>Actions</th>
-               <th>ID</th>
-          <th>Owner Name</th>
-          <th>Donation Box</th>
-          <th>Amount</th>
-          <th>Payment Method</th>
-          <th>Opened by</th>
-          <th>Received by</th>
-          <th>I Witness</th>
-          <th>created_by</th>
-          <th>created_at</th>
-          <th>updated_by</th>
-          <th>updated_at</th>
-          <th>delete at</th>
-          <th>is_deleted</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">created_by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="10">created_at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">updated_by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">updated_at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="13">delete at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
-        <tr>
-        
+        <tr class="column-search-row">  
       <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3357,13 +3679,27 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-          {% for i in "123456"|make_list %}
+          <!-- {% for i in "123456"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
         </tr> 
        
         {% for owner in payments_page_obj.object_list %}
@@ -3385,6 +3721,9 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
+<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
+ 👁&zwj;🗨
+</a>
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3435,7 +3774,6 @@ table th, table td {
     
 <!-- ✅ Donation Payment Pagination Controls -->
 <div class="pagination-container text-center">
-
   {% if payments_page_obj.has_previous %}
       <a href="?payments_page=1&payments_query={{ payments_query }}" 
          class="btn btn-outline-primary btn-sm me-2">⏮</a>
@@ -3445,7 +3783,7 @@ table th, table td {
   {% endif %}
 
   <!-- Page Dropdown -->
-  <form method="get" class="d-inline-block">
+  <form method="get" class="d-inline-block pagination-form">
 
     <input type="hidden" name="payments_query" value="{{ payments_query }}"/>
 
@@ -3466,7 +3804,6 @@ table th, table td {
 
     <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if payments_page_obj.has_next %}
       <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}" 
          class="btn btn-outline-primary btn-sm ms-2">▶</a>
@@ -3474,7 +3811,6 @@ table th, table td {
       <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}" 
          class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
-
 </div>
 
 <!-- ------------Donation Box----------- -->
@@ -3520,22 +3856,22 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>Donation ID</th>
-            <th>OR Code</th>
-          <th>Key ID</th>
-          <th>Box Size</th>
-          <th>Location</th>
-          <th>Status</th>
-          <th>Created By</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Updated By</th>
-          <th>Deleted At</th>
-          <th>Is Deleted</th>
+                  <th class="sortable" data-col="1">Donation ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Created At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Updated At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
       <tbody>
-  <tr>
+  <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3554,13 +3890,25 @@ table th, table td {
     {% endif %}
   </div>
 </td>
-          {% for i in "12345"|make_list %}
+          <!-- {% for i in "12345"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+                  <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
         </tr>
         
         {% for box in box_page_obj  %}
@@ -3616,23 +3964,23 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-          <th>Donation ID</th>
-            <th>OR Code</th>
-          <th>Key ID</th>
-          <th>Box Size</th>
-          <th>Location</th>
-          <th>Status</th>
-          <th>Created By</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Updated By</th>
-          <th>Deleted At</th>
-          <th>Is Deleted</th>
+                  <th class="sortable" data-col="1">Donation ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Created At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Updated At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
 
       <tbody>
-           <tr>
+           <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3651,13 +3999,25 @@ table th, table td {
     {% endif %}
   </div>
 </td>
-          {% for i in "12345"|make_list %}
+          <!-- {% for i in "12345"|make_list %}
           <td>
             <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
             </div>
           </td>
-          {% endfor %}
+          {% endfor %} -->
+           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
         </tr>
         
         {% for box in box_page_obj %}
@@ -3677,8 +4037,9 @@ table th, table td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
-            </div>
               {% endif %}
+              
+            </div>
           </td>
          <td>{{ box.donation_id }}</td>
     <td>
@@ -3828,28 +4189,29 @@ table th, table td {
     <thead>
       <tr>
         <th>Action</th>
-        <th>Donor</th>
-        <th>Address</th>
-        <th>Amount declared</th>
-        <th>Amount Paid</th>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Payment Method</th>
-        <th>Transaction ID</th>
-        <th>payment_status</th>
-        <th>Check number</th>
-        <th>Place of donation</th>
-        <th>Description</th>
-        <th>created_by</th>
-        <th>created_date</th>
-        <th>updated_by</th>
-        <th>updated_date</th>
-        <th>deleted_at</th>
-        <th>is_deleted</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Amount Paid<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Date<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Category<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Payment Method<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Transaction ID<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">payment_status<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">created_by<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="15">created_date<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">updated_by<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">updated_date<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="18">deleted_at<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr class="column-search-row">
       <td>
         <div class="d-flex justify-content-between">
           {% if permissions.can_add %}
@@ -3869,14 +4231,33 @@ table th, table td {
     {% endif %}
 </div>
 </td>
-        {% for i in "123456789123" %}
+        <!-- {% for i in "123456789123" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
           </div>
         </td>
         {% endfor %}
-        <td>.</td>
+        <td>.</td> -->
+        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="5" type="text " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
@@ -3933,32 +4314,32 @@ table th, table td {
   <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead>
-      <tr>
+    <tr>
         <th>Action</th>
-        <th>ID</th>
-        <th>Donor</th>
-        <th>Address</th>
-        <th>Amount declared</th>
-        <th>Amount Paid</th>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Payment Method</th>
-        <th>Transaction ID</th>
-        <th>payment_status</th>
-        <th>Check number</th>
-        <th>Place of donation</th>
-        <th>Description</th>
-        <th>created_by</th>
-        <th>created_date</th>
-        <th>updated_by</th>
-        <th>updated_date</th>
-        <th>deleted_at</th>
-        <th>is_deleted</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Amount Paid<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Date<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Category<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Payment Method<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Transaction ID<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">payment_status<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">created_by<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="15">created_date<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">updated_by<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">updated_date<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="18">deleted_at<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
 
     <tbody>
-      <tr>
+      <tr class="column-search-row">
       <td>
         <div class="d-flex justify-content-between">
           {% if permissions.can_add %}
@@ -3978,14 +4359,33 @@ table th, table td {
     {% endif %}
 </div>
 </td>
-        {% for i in "123456789123" %}
+        <!-- {% for i in "123456789123" %}
         <td>
           <div class="download-group">
               <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
           </div>
         </td>
         {% endfor %}
-        <td>.</td>
+        <td>.</td> -->
+        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="5" type="text " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="18" type="text  " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
@@ -4091,8 +4491,7 @@ table th, table td {
     <a href="?donation_page={{ donation_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
 </div>
-
-  </div>
+</div>
 <style>
 .download-container {
   /* background: #f9fafb; */
@@ -4237,6 +4636,94 @@ table th, table td {
 </div>
 
 <!-- -----------Javascript-------------- -->
+ <script>
+// UNIVERSAL SORTING SCRIPT (WORKS FOR ALL TABLES)
+document.querySelectorAll("th.sortable").forEach(header => {
+
+    header.addEventListener("click", function () {
+
+        let table = header.closest("table");
+        let tbody = table.querySelector("tbody");
+
+        if (!tbody) return; // safety check
+
+        let rows = Array.from(tbody.querySelectorAll("tr:not(.column-search-row)"));
+
+        let colIndex = parseInt(header.dataset.col);
+
+        // get icon inside header
+        let sortIcon = header.querySelector(".sort-icon");
+
+        // toggle sorting order
+        let ascending = sortIcon.dataset.order !== "asc";
+
+        rows.sort((a, b) => {
+
+            if (!a.children[colIndex] || !b.children[colIndex]) return 0;
+
+            let A = a.children[colIndex].innerText.trim();
+            let B = b.children[colIndex].innerText.trim();
+
+            // Number sorting
+            if (!isNaN(A) && !isNaN(B)) {
+                return ascending ? A - B : B - A;
+            }
+
+            // Date sorting
+            if (!isNaN(Date.parse(A)) && !isNaN(Date.parse(B))) {
+                return ascending
+                    ? new Date(A) - new Date(B)
+                    : new Date(B) - new Date(A);
+            }
+
+            // String sorting
+            return ascending ? A.localeCompare(B) : B.localeCompare(A);
+        });
+
+        // append sorted rows back
+        rows.forEach(row => tbody.appendChild(row));
+
+        // reset ALL other table icons
+        table.querySelectorAll(".sort-icon").forEach(icon => {
+            icon.innerText = "⬍";
+            icon.dataset.order = "";
+        });
+
+        // set this header's icon
+        sortIcon.innerText = ascending ? "⬆" : "⬇";
+        sortIcon.dataset.order = ascending ? "asc" : "desc";
+    });
+});
+</script>
+<script>
+let timer;
+
+document.addEventListener("input", function (event) {
+    if (!event.target.classList.contains("column-search")) return;
+
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+        let input = event.target;
+        let col = input.dataset.col;
+        let filter = input.value.toLowerCase();
+
+        let table = input.closest("table");
+        let rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            if (row.classList.contains("column-search-row")) return;
+
+            let cell = row.cells[col];
+            if (!cell) return;
+
+            let text = cell.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    }, 120); // delay for smoothness
+});
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
 

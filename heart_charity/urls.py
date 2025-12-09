@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import generate_receipt_pdf 
 urlpatterns = [
     path("", views.home, name="home"),
 
@@ -23,6 +23,12 @@ urlpatterns = [
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
 path("donation/receipt/<int:id>/", views.donation_receipt, name="donation_receipt"),
 path("donation/receipt/pdf/<int:id>/", views.generate_receipt_pdf, name="download_receipt_pdf"),
+path(
+    "donation-payment/receipt/<int:id>/pdf/",
+    views.donation_payment_receipt_pdf,
+    name="donation_payment_receipt_pdf"
+),
+
     path('add_donation_box/', views.add_donation_box, name='add_donation_box'),
     path('add-employee/', views.add_employee, name='add-employee'),
     path('all_donations/', views.all_donations, name='all_donations'),  # ✅ Add this
@@ -35,6 +41,7 @@ path("donation/receipt/pdf/<int:id>/", views.generate_receipt_pdf, name="downloa
     path('search_donation/', views.search_donation, name='search_donation'),
     path('manage_user_roles/', views.manage_user_roles, name='manage_user_roles'),
     path('assign_role/', views.assign_role, name='assign_role'),
+    
 
 
 

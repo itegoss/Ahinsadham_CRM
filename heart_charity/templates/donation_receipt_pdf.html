@@ -1,9 +1,151 @@
-<h2 style="text-align:center;">Donation Receipt</h2>
-<p><strong>Receipt ID:</strong> {{ donation.receipt_id }}</p>
-<p><strong>Donor:</strong> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</p>
-<p><strong>Date:</strong> {{ donation.donation_date }}</p>
-<p><strong>Category:</strong> {{ donation.donation_category.lookup_name }}</p>
-<p><strong>Payment Mode:</strong> {{ donation.payment_method.lookup_name }}</p>
-<p><strong>Amount Received:</strong> ₹{{ donation.donation_amount_paid }}</p>
-<p><strong>Transaction ID:</strong> {{ donation.transaction_id|default:"-" }}</p>
-<p>Thank you for your generous donation!</p>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+
+body {
+    font-family: DejaVu Sans, Arial, sans-serif;
+    font-size: 13px;
+}
+
+/* LIGHT BORDERS (pisa-safe) */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table td, .table th {
+    border: 0.8px solid #555;
+    padding: 4px 6px;
+    line-height: 1.2;
+}
+
+/* Heading */
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.sub {
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Section heading */
+.section-head {
+    background: #e6e6e6;
+    border-left: 3px solid #0c6d34;
+    padding: 4px 6px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.amount {
+    text-align: right;
+    font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<table class="table">
+    <tr>
+        <td colspan="3" class="title">
+            BHAGWAN MAHAVIR PASHU RAKSHA KENDRA
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" class="sub">
+            Organised by : Sheth Shri Lalji Velji Shah <br>
+            Inspired by : Shri Jadavji Ravji Gangar <br>
+            <b>'Anchorwala Ahinsadham'</b>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <b>INSTITUTION:</b><br>
+            Pragpur Road junction, Taluka Mundra - Kutch, Gujarat 370415 <br>
+            Mob: 076098 88555
+        </td>
+        <td>
+            <b>MUMBAI OFFICE:</b><br>
+            5, Gurukrupa Apartment, Kasturba Cross Road No.1, Borivali (E), Mumbai 400066 <br>
+            Mob: 97264 75556 / 97264 85555
+        </td>
+        <td>
+            <b>Date:</b> {{ donation.donation_date }}
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3">
+            <b>Receipt No:</b> {{ donation.receipt_id }}
+        </td>
+    </tr>
+</table>
+
+<!-- DONOR DETAILS -->
+<div class="section-head">Donor Details</div>
+
+<table class="table">
+    <tr>
+        <td><b>Name:</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+        <td><b>Mobile:</b> {{ donation.donor.mobile_no }}</td>
+    </tr>
+    <tr>
+        <td><b>Address:</b> {{ donation.donor.address }}</td>
+        <td><b>Area:</b> {{ donation.place_of_donation }}</td>
+    </tr>
+    <tr>
+        <td><b>PAN No:</b> {{ donation.donor.pan_no }}</td>
+        <td><b>Aadhaar No:</b> {{ donation.donor.aadhaar_no }}</td>
+    </tr>
+    <tr>
+        <td><b>Reference Name:</b> {{ donation.reference_name|default:"-" }}</td>
+        <td><b>Received By:</b> {{ donation.donation_received_by|default:"-" }}</td>
+    </tr>
+    <tr>
+        <td><b>Cheque No:</b> {{ donation.check_no|default:"-" }}</td>
+        <td><b>Transaction ID:</b> {{ donation.transaction_id|default:"-" }}</td>
+    </tr>
+</table>
+
+<!-- DONATION DETAILS -->
+<div class="section-head">Details of Donation</div>
+
+<table class="table">
+    <tr>
+        <th>Particulars</th>
+        <th>Amount</th>
+    </tr>
+    <tr>
+        <td>{{ donation.donation_category.lookup_name }}</td>
+        <td class="amount">₹{{ donation.donation_amount_paid }}</td>
+    </tr>
+    <tr>
+        <td><b>TOTAL</b></td>
+        <td class="amount">₹{{ donation.donation_amount_paid }}</td>
+    </tr>
+</table>
+
+<p><b>Payment Mode:</b> {{ donation.payment_method.lookup_name }}</p>
+<p><b>Payment Status:</b> {{ donation.payment_status.lookup_name }}</p>
+<p style="text-align:right; margin-top:30px;">
+    <b>Trustee</b>
+</p>
+
+
+<p style="text-align:center; font-weight:bold; margin-top:20px;">
+    Thank you for your valuable Donation
+</p>
+
+
+
+</body>
+</html>

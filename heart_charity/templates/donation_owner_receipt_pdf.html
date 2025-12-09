@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+<style>
+    body {
+        font-family: DejaVu Sans, Arial, sans-serif;
+        font-size: 12px;
+        color: #000;
+        margin: 0;
+        padding: 10px;
+    }
+
+    .wrapper {
+        border: 1px solid #777;
+        padding: 14px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        padding: 4px 6px;
+        line-height: 1.25;
+        vertical-align: middle;
+    }
+
+    .bordered td, .bordered th {
+        border: 1px solid #aaa;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        padding-bottom: 2px;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 12px;
+        margin-top: -4px;
+    }
+
+    .section-header {
+        background: #e6e6e6;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 4px 6px;
+        margin-top: 12px;
+        margin-bottom: 6px;
+    }
+
+    .right { text-align: right; }
+    .center { text-align: center; }
+    .bold { font-weight: bold; }
+
+    hr {
+        border: none;
+        border-top: 1px solid #aaa;
+        margin: 8px 0;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="title">
+        BHAGWAN MAHAVIR PASHU RAKSHA KENDRA
+    </div>
+    <div class="subtitle">
+        “Anchorwala Ahimsadham”
+    </div>
+
+    <!-- TOP INFORMATION -->
+    <table>
+        <tr>
+            <td>
+                <b>Donation Box ID:</b> {{ payment.donation_box.donation_id }}<br>
+                <b>Opened By:</b> {{ payment.opened_by }}<br>
+                <b>Received By:</b> {{ payment.received_by }}
+            </td>
+
+            <td class="right">
+                <b>Receipt No:</b> {{ payment.id }}<br>
+                <b>Date:</b> {{ payment.created_at|date:"d-M-Y" }}
+            </td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <!-- DONOR DETAILS SECTION -->
+    <div class="section-header">Donor Details</div>
+
+    <table class="bordered">
+        <tr>
+            <td><b>Owner Name:</b> {{ payment.owner.first_name }} {{ payment.owner.last_name }}</td>
+            <td><b>Witness:</b> {{ payment.i_witness|default:"-" }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><b>Address:</b> {{ payment.address|default:"-" }}</td>
+        </tr>
+
+        <tr>
+            <td><b>Payment Method:</b> {{ payment.payment_method.lookup_name }}</td>
+            <td><b>Amount:</b> ₹ {{ payment.amount }}</td>
+        </tr>
+    </table>
+
+    <!-- DONATION DETAILS SECTION -->
+    <div class="section-header">Donation Summary</div>
+
+    <table class="bordered">
+        <tr>
+            <th>Description</th>
+            <th class="right">Amount (₹)</th>
+        </tr>
+
+        <tr>
+            <td>Donation Box Collection</td>
+            <td class="right">{{ payment.amount }}</td>
+        </tr>
+
+        <tr>
+            <td class="bold">Total</td>
+            <td class="right bold">{{ payment.amount }}</td>
+        </tr>
+    </table>
+
+    <br>
+
+    <b>Amount in Words:</b> INR {{ payment.amount }} Only<br>
+    <b>Mode of Receipt:</b> {{ payment.payment_method.lookup_name }}
+
+    <br><br><br>
+
+    <div class="right bold" style="font-size: 14px;">Trustee</div>
+
+    <br><br>
+
+    <p class="center bold" style="font-size: 14px;">
+        Thank you for your valuable donation
+    </p>
+
+</div>
+
+</body>
+</html>

@@ -469,14 +469,8 @@ def generate_receipt_id(sender, instance, **kwargs):
 class DonationPaymentBox(models.Model):
     # Auto-generated ID
     id = models.AutoField(primary_key=True)
-
-    # Foreign key to User as owner
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='donation_payments')
-
-    # Foreign key to DonationBox
     donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
-
-    # Other fields
     address = models.CharField(max_length=255, blank=True, null=True)
     opened_by = models.CharField(max_length=100)
     received_by = models.CharField(max_length=100)
@@ -490,13 +484,10 @@ class DonationPaymentBox(models.Model):
     
     date_time = models.DateTimeField(default=timezone.now)
     i_witness = models.CharField(max_length=100, blank=True, null=True)
-
-    # Audit fields
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_donation_payments')
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    # Soft Delete Fields
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
