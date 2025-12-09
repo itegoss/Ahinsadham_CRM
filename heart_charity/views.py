@@ -48,46 +48,55 @@ from .models import UserModuleAccess, Module
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Module, UserModuleAccess, UserRole
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Module, UserModuleAccess, UserRole
 
 def access_control(request):
-
     modules = Module.objects.all()
-    mode = request.GET.get("mode", "add")
-    role_id = request.GET.get("role_id")
-    role_instance = None
-    if mode == "edit" and role_id:
-        role_instance = UserModuleAccess.objects.filter(id=role_id).first()
+
     if request.method == "POST":
-        role_name = request.POST.get("role_name").strip()
-        role_description = request.POST.get("roleDescription").strip()
-        if mode == "edit" and role_instance:
-            UserModuleAccess.objects.filter(name=role_instance.name).delete()
-        selected_modules = request.POST.getlist("modules")
-        for module_id in selected_modules:
-            module = get_object_or_404(Module, id=module_id)
 
-            UserModuleAccess.objects.create(
-                module=module,
-                name=role_name,
-                description=role_description,
-                can_access=True,
-                can_add=f"permissions_{module_id}_add" in request.POST,
-                can_edit=f"permissions_{module_id}_edit" in request.POST,
-                can_delete=f"permissions_{module_id}_delete" in request.POST,
-                can_view=f"permissions_{module_id}_view" in request.POST,
-                created_by=request.user,
-                updated_by=request.user,
-            )
+        role_name = request.POST.get("role_name")
+        role_desc = request.POST.get("roleDescription")
+        module_id = request.POST.get("selected_module")
 
-        messages.success(request, "Role & permissions saved successfully!")
-        return redirect("welcome")
-    context = {
+        can_access = bool(request.POST.get("access_permission"))
+        can_add = bool(request.POST.get("add_permission"))
+        can_edit = bool(request.POST.get("edit_permission"))
+        can_delete = bool(request.POST.get("delete_permission"))
+        can_view = bool(request.POST.get("view_permission"))
+
+        if not role_name:
+            messages.error(request, "Role name is required.")
+            return redirect("access_control")
+
+        if not module_id:
+            messages.error(request, "Select a module.")
+            return redirect("access_control")
+
+        module = Module.objects.get(id=module_id)
+
+        # SAVE ROLE INSIDE USERMODULEACCESS
+        role_obj, created = UserModuleAccess.objects.get_or_create(
+            name=role_name,
+            module=module
+        )
+
+        role_obj.description = role_desc
+        role_obj.can_access = can_access
+        role_obj.can_add = can_add
+        role_obj.can_edit = can_edit
+        role_obj.can_delete = can_delete
+        role_obj.can_view = can_view
+        role_obj.save()
+
+        messages.success(request, "Role & Permissions saved successfully!")
+        return redirect("access_control")
+
+    return render(request, "access_control.html", {
         "modules": modules,
-        "mode": mode,
-        "role_instance": role_instance,
-    }
-
-    return render(request, "access_control.html", context)
+    })
 
 # User = get_user_model()
 from django.shortcuts import render, redirect
@@ -134,14 +143,16 @@ def welcome_view(request):
                 can_view = True
                 can_access = True
             permissions = SuperPerm()
-
     # ------------------------------------------------------------
     # FETCH DATA
     # ------------------------------------------------------------
     users = User.objects.all().order_by('id')
     donation_owners = DonationOwner.objects.all()
-    roles_qs = UserModuleAccess.objects.all().order_by("name").distinct()
-    clean_roles = [role.name.replace("—", "").replace("–", "").strip() for role in roles_qs]
+    # roles_qs = UserModuleAccess.objects.all().order_by("name").distinct()
+    # clean_roles = [role.name.replace("—", "").replace("–", "").strip() for role in roles_qs]
+    roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
+    clean_roles = sorted(set(roles_qss))
+    roles_qs = UserModuleAccess.objects.all()
 
     donations = Donation.objects.all().select_related('donor')
     donors = DonorVolunteer.objects.all()
@@ -197,7 +208,6 @@ def welcome_view(request):
 
     # Unique role names
     role_names = roles_qs.values_list("name", flat=True).distinct()
-
     # ------------------------------------------------------------
     # CONTEXT (COMMON)
     # ------------------------------------------------------------
@@ -207,9 +217,8 @@ def welcome_view(request):
         'first_name': user.first_name,
         'donation_payment':donation_payment,
         'permissions': permissions,   # <-- NEW LINE
-
         'donation_owners': donation_owners,
-        'roles_qs': roles_qs,
+        'roles_qss': roles_qss,
         'role_names': role_names,
         'clean_roles': clean_roles,
         'page_obj': page_obj,
@@ -222,7 +231,6 @@ def welcome_view(request):
         'lookups': lookups,
         'lookup_page_obj': lookup_page_obj,
         'lookup_table_obj': lookup_table_obj,
-
         'showall': users.exclude(is_superuser=True),
         'donation_boxes': donation_boxes,
         'payments_page_obj': payments_page_obj,
@@ -1646,6 +1654,79 @@ from heart_charity.models import LookupType, Lookup, DonorVolunteer, UserModuleA
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
 
+# def add_donor_volunteer(request):
+#     # Get Lookup options
+#     person_type_options = Lookup.objects.filter(
+#         lookup_type__type_name__iexact='Person Type'
+#     )
+#     id_type_options = Lookup.objects.filter(
+#         lookup_type__type_name__iexact='ID Type'
+#     )
+
+#     # Fetch Donation Boxes (so you can see box IDs)
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False).order_by('donation_id')
+
+#     # Get Donor-Box-Owner ID for template JS toggle safely
+#     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
+#     donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
+
+#     if request.method == 'POST':
+#         # Get Person Type instance
+#         person_type_id = request.POST.get('person_type')
+#         person_type_instance = Lookup.objects.get(id=person_type_id) if person_type_id else None
+
+#         # File uploads
+#         id_proof_image = request.FILES.get('id_proof_image')
+#         pan_card_image = request.FILES.get('pan_card_image')
+
+#         donor = DonorVolunteer.objects.create(
+#             person_type=person_type_instance,
+#             first_name=request.POST.get('first_name'),
+#             middle_name=request.POST.get('middle_name'),
+#             last_name=request.POST.get('last_name'),
+#             gender=request.POST.get('gender'),
+#             date_of_birth=request.POST.get('date_of_birth'),
+#             age=request.POST.get('age') or None,
+#             blood_group=request.POST.get('blood_group'),
+#             contact_number=request.POST.get('contact_number'),
+#             whatsapp_number=request.POST.get('whatsapp_number'),
+#             email=request.POST.get('email'),
+
+#             # Assign box ONLY if person type = Donor-Box-Owner
+#             donor_box_id=request.POST.get('donor_box') if (
+#                 person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner'
+#             ) else None,
+
+#             house_number=request.POST.get('house_number'),
+#             building_name=request.POST.get('building_name'),
+#             landmark=request.POST.get('landmark'),
+#             area=request.POST.get('area'),
+#             city=request.POST.get('city'),
+#             state=request.POST.get('state'),
+#             country=request.POST.get('country'),
+#             postal_code=request.POST.get('postal_code'),
+#             native_place=request.POST.get('native_place'),
+#             native_postal_code=request.POST.get('native_postal_code'),
+#             id_number=request.POST.get('id_number'),
+#             pan_number=request.POST.get('pan_number'),
+#         )
+
+#         # Save attachments
+#         if id_proof_image:
+#             donor.id_proof_image.save(id_proof_image.name, id_proof_image)
+#         if pan_card_image:
+#             donor.pan_card_image.save(pan_card_image.name, pan_card_image)
+
+#         return redirect('welcome')
+
+#     context = {
+#         'person_type_options': person_type_options,
+#         'id_type_options': id_type_options,
+#         'donor_box_owner_id': donor_box_owner_id,
+#         'donation_boxes': donation_boxes,  # <-- IMPORTANT LINE
+#     }
+
+#     return render(request, 'add_donor_volunteer.html', context)
 def add_donor_volunteer(request):
     # Get Lookup options
     person_type_options = Lookup.objects.filter(
@@ -1655,10 +1736,13 @@ def add_donor_volunteer(request):
         lookup_type__type_name__iexact='ID Type'
     )
 
-    # Fetch Donation Boxes (so you can see box IDs)
+    # Fetch Donation Boxes
     donation_boxes = DonationBox.objects.filter(is_deleted=False).order_by('donation_id')
 
-    # Get Donor-Box-Owner ID for template JS toggle safely
+    # Fetch all donors for "Referred By" dropdown  ⭐ NEW
+    all_donors = DonorVolunteer.objects.filter(is_deleted=False)
+
+    # Donor-Box-Owner ID for JS toggle
     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
     donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
 
@@ -1666,6 +1750,10 @@ def add_donor_volunteer(request):
         # Get Person Type instance
         person_type_id = request.POST.get('person_type')
         person_type_instance = Lookup.objects.get(id=person_type_id) if person_type_id else None
+
+        # ⭐ NEW – Fetch referred_by ID and object
+        referred_by_id = request.POST.get("referred_by")
+        referred_by_obj = DonorVolunteer.objects.get(id=referred_by_id) if referred_by_id else None
 
         # File uploads
         id_proof_image = request.FILES.get('id_proof_image')
@@ -1688,6 +1776,9 @@ def add_donor_volunteer(request):
             donor_box_id=request.POST.get('donor_box') if (
                 person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner'
             ) else None,
+
+            # ⭐ NEW – Save referred_by object
+            referred_by=referred_by_obj,
 
             house_number=request.POST.get('house_number'),
             building_name=request.POST.get('building_name'),
@@ -1715,7 +1806,10 @@ def add_donor_volunteer(request):
         'person_type_options': person_type_options,
         'id_type_options': id_type_options,
         'donor_box_owner_id': donor_box_owner_id,
-        'donation_boxes': donation_boxes,  # <-- IMPORTANT LINE
+        'donation_boxes': donation_boxes,
+        
+        # ⭐ NEW – Send donors for dropdown
+        'all_donors': all_donors,
     }
 
     return render(request, 'add_donor_volunteer.html', context)
@@ -1803,6 +1897,9 @@ def donation_receipt(request, id):
     donation = Donation.objects.get(id=id)
     return render(request, "donation_receipt.html", {"donation": donation})
 
+
+
+
 def generate_receipt_pdf(request, id):
     donation = Donation.objects.get(id=id)
     html = render_to_string("donation_receipt_pdf.html", {"donation": donation})
@@ -1810,9 +1907,49 @@ def generate_receipt_pdf(request, id):
     response = HttpResponse(content_type="application/pdf")
     response['Content-Disposition'] = f'attachment; filename="Receipt_{donation.receipt_id}.pdf"'
 
-    pisa.CreatePDF(html, dest=response)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse("PDF generation error")
+
     return response
 
+
+
+
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from xhtml2pdf import pisa
+from .models import DonationOwner
+
+# heart_charity/views.py
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from xhtml2pdf import pisa
+
+from .models import DonationOwner
+
+
+def donation_payment_receipt_pdf(request, id):
+    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+
+    html = render_to_string("donation_owner_receipt_pdf.html", {
+        "payment": payment
+    })
+
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = f'attachment; filename="donation_payment_{payment.id}.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse("Error generating PDF", status=500)
+
+    return response
 
 from datetime import date, timedelta
 from .models import DonorVolunteer
@@ -1900,26 +2037,143 @@ from .models import DonationPaymentBox, DonationBox, Lookup, User, DonorVoluntee
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
+from django.core.mail import send_mail
+from django.utils import timezone
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
+
+# @login_required
+# def add_donation_payment(request):
+
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False)
+
+#     payment_methods = Lookup.objects.filter(
+#         lookup_type__type_name__iexact="Payment Method"
+#     ).order_by("lookup_name")
+
+#     # Build donor → donation box details mapping
+#     box_owner_map = []
+#     donors = DonorVolunteer.objects.filter(is_deleted=False)
+
+#     for d in donors:
+#         if d.donor_box:
+#             address = ", ".join(filter(None, [
+#                 d.house_number, d.building_name, d.area,
+#                 d.city, d.state, d.postal_code
+#             ]))
+
+#             box_owner_map.append({
+#                 "box_id": d.donor_box.id,
+#                 "owner_name": f"{d.first_name} {d.last_name}",
+#                 "address": address,
+#             })
+
+#     # -----------------------------
+#     #         FORM SUBMISSION
+#     # -----------------------------
+#     if request.method == "POST":
+
+#         donation_box_id = request.POST.get("donation_box")
+#         owner_name = request.POST.get("owner_name")
+#         address = request.POST.get("address")
+#         opened_by = request.POST.get("opened_by")
+#         received_by = request.POST.get("received_by")
+#         amount = request.POST.get("amount")
+#         payment_method_id = request.POST.get("payment_method")
+#         date_time = request.POST.get("date_time")
+#         i_witness = request.POST.get("i_witness")
+
+#         donation_box = get_object_or_404(DonationBox, id=donation_box_id)
+#         payment_method = get_object_or_404(Lookup, id=payment_method_id)
+
+#         # -----------------------------
+#         # SAVE the payment
+#         # -----------------------------
+#         DonationPaymentBox.objects.create(
+#             owner=request.user,
+#             donation_box=donation_box,
+#             address=address,
+#             opened_by=opened_by,
+#             received_by=received_by,
+#             amount=amount,
+#             payment_method=payment_method,
+#             date_time=date_time,
+#             i_witness=i_witness,
+#             created_by=request.user,
+#             updated_by=request.user,
+#         )
+
+#         # -----------------------------
+#         # SEND EMAIL NOTIFICATION
+#         # -----------------------------
+#         subject = "New Donation Box Payment Received"
+
+#         message = (
+#             f"A new donation box payment has been recorded.\n\n"
+#             f"Donation Box: (ID: {donation_box.donation_id})\n"
+#             f"Owner Name: {owner_name}\n"
+#             f"Address: {address}\n"
+#             f"Opened By: {opened_by}\n"
+#             f"Received By: {received_by}\n"
+#             f"Amount: ₹{amount}\n"
+#             f"Payment Method: {payment_method.lookup_name}\n"
+#             f"Date & Time: {date_time}\n"
+#             f"Witness: {i_witness}\n\n"
+#             f"Submitted By User: {request.user.username}\n"
+#         )
+
+#         # Change this email to your admin email
+#         recipient_list = ["sangalevarsha04@gmail.com"]
+
+#         send_mail(
+#             subject,
+#             message,
+#             None,              # from email (uses DEFAULT_FROM_EMAIL)
+#             recipient_list,
+#             fail_silently=False,
+#         )
+
+#         messages.success(request, "Donation Payment Added & Email Sent Successfully!")
+#         return redirect("welcome")
+
+#     # -----------------------------
+#     # PAGE LOAD
+#     # -----------------------------
+#     context = {
+#         "donation_boxes": donation_boxes,
+#         "payment_methods": payment_methods,
+#         "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
+#         "current_time": timezone.now(),
+#     }
+
+#     return render(request, "add_donationbox_payment.html", context)
 @login_required
 def add_donation_payment(request):
 
     donation_boxes = DonationBox.objects.filter(is_deleted=False)
 
-    # Fetch payment methods
     payment_methods = Lookup.objects.filter(
         lookup_type__type_name__iexact="Payment Method"
     ).order_by("lookup_name")
 
-    # ----- SIMPLE SOLUTION -----
-    # Get donor-volunteer linked to donation box
-    box_owner_map = []
+    # -----------------------------
+    # Donor list for dropdowns (NEW)
+    # -----------------------------
+    donor_volunteers = DonorVolunteer.objects.filter(is_deleted=False)
 
+    # Build donor → donation box details mapping
+    box_owner_map = []
     donors = DonorVolunteer.objects.filter(is_deleted=False)
 
     for d in donors:
-        if d.donor_box:   # only if donor is assigned a box
+        if d.donor_box:
             address = ", ".join(filter(None, [
-                d.house_number, d.building_name, d.area, d.city, d.state, d.postal_code
+                d.house_number, d.building_name, d.area,
+                d.city, d.state, d.postal_code
             ]))
 
             box_owner_map.append({
@@ -1928,26 +2182,43 @@ def add_donation_payment(request):
                 "address": address,
             })
 
+    # -----------------------------
+    #         FORM SUBMISSION
+    # -----------------------------
     if request.method == "POST":
+
         donation_box_id = request.POST.get("donation_box")
-        owner_name = request.POST.get("owner_name")  # from autofilled field
+        owner_name = request.POST.get("owner_name")
         address = request.POST.get("address")
-        opened_by = request.POST.get("opened_by")
-        received_by = request.POST.get("received_by")
+
+        # ⭐ NEW — retrieve FK IDs instead of plain text
+        opened_by_id = request.POST.get("opened_by")
+        received_by_id = request.POST.get("received_by")
+
         amount = request.POST.get("amount")
         payment_method_id = request.POST.get("payment_method")
         date_time = request.POST.get("date_time")
         i_witness = request.POST.get("i_witness")
 
-        payment_method = get_object_or_404(Lookup, id=payment_method_id)
         donation_box = get_object_or_404(DonationBox, id=donation_box_id)
+        payment_method = get_object_or_404(Lookup, id=payment_method_id)
 
+        # ⭐ NEW — convert FK IDs to actual objects
+        opened_by = DonorVolunteer.objects.get(id=opened_by_id) if opened_by_id else None
+        received_by = DonorVolunteer.objects.get(id=received_by_id) if received_by_id else None
+
+        # -----------------------------
+        # SAVE the payment
+        # -----------------------------
         DonationPaymentBox.objects.create(
-            owner=request.user,        # SIMPLE: payment owner = logged-in user
+            owner=request.user,
             donation_box=donation_box,
             address=address,
+
+            # ⭐ UPDATED to store FK objects
             opened_by=opened_by,
             received_by=received_by,
+
             amount=amount,
             payment_method=payment_method,
             date_time=date_time,
@@ -1956,18 +2227,50 @@ def add_donation_payment(request):
             updated_by=request.user,
         )
 
-        messages.success(request, "Donation Payment Added Successfully!")
+        # -----------------------------
+        # SEND EMAIL NOTIFICATION
+        # -----------------------------
+        subject = "New Donation Box Payment Received"
+
+        message = (
+            f"A new donation box payment has been recorded.\n\n"
+            f"Donation Box: (ID: {donation_box.donation_id})\n"
+            f"Owner Name: {owner_name}\n"
+            f"Address: {address}\n"
+            f"Opened By: {opened_by}\n"
+            f"Received By: {received_by}\n"
+            f"Amount: ₹{amount}\n"
+            f"Payment Method: {payment_method.lookup_name}\n"
+            f"Date & Time: {date_time}\n"
+            f"Witness: {i_witness}\n\n"
+            f"Submitted By User: {request.user.username}\n"
+        )
+
+        recipient_list = ["sangalevarsha04@gmail.com"]
+
+        send_mail(
+            subject,
+            message,
+            None,
+            recipient_list,
+            fail_silently=False,
+        )
+
+        messages.success(request, "Donation Payment Added & Email Sent Successfully!")
         return redirect("welcome")
 
+    # -----------------------------
+    # PAGE LOAD
+    # -----------------------------
     context = {
         "donation_boxes": donation_boxes,
         "payment_methods": payment_methods,
+        "donor_volunteers": donor_volunteers,  # ⭐ Added
         "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
         "current_time": timezone.now(),
     }
 
     return render(request, "add_donationbox_payment.html", context)
-
 
 from .models import DonationBox
 from django.contrib.auth.decorators import login_required

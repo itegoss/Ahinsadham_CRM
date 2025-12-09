@@ -40,6 +40,7 @@
 .dropdown div:hover {
     background: #f1f1f1;
 }
+  
 
 </style>
 
@@ -58,26 +59,76 @@
     {% endfor %}
 {% endif %}
         <div class="card-body">
-
             <form method="POST" action="{% url 'add_donor_volunteer' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- ========================= PERSON TYPE ========================= -->
                 <h5 class="text-success fw-bold mb-2">Person Type</h5>
                 <hr>
+<!-- <div class="row g-3 mb-3 align-items-end">
+
+    <!-- Person Type 
+    <div class="col-md-6">
+        <label class="form-label fw-semibold">Person Type</label>
+        <select name="person_type" id="person_type" class="form-select" required>
+            <option value="">-- Select or Type to Search --</option>
+            {% for option in person_type_options %}
+            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Referred By
+    <div class="col-md-6">
+        <label class="form-label fw-semibold">Referred By</label>
+        <select name="referred_by" class="form-select">
+            <option value="">-- Select Person --</option>
+            {% for person in all_donors %}
+            <option value="{{ person.id }}">
+                {{ person.first_name }} {{ person.last_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div> -->
+
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Person Type</label>
                         <select name="person_type" id="person_type" class="form-select" required>
                             <option value="">Select</option>
-                            {% for option in person_type_options %}
-
-                                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-                            {% endfor %}
+                             {% for option in person_type_options %}
+                            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                        {% endfor %}
                         </select>
                     </div>
+
+                       <div class="col-md-6">
+                        <label class="form-label">Referred By</label>
+                       <select name="referred_by" class="form-select">
+        <option value="">-- Select Person --</option>
+        {% for person in all_donors %}
+            <option value="{{ person.id }}">
+                {{ person.first_name }} {{ person.last_name }}
+            </option>
+        {% endfor %}
+    </select>
+                    </div>
+
+
                 </div>
 
+<!-- 
+                       <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                       <select name="person_type" id="person_type" class="form-select" required>
+                        <option value="">Select</option>
+                        {% for option in person_type_options %}
+                            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div> -->
 
                 <!-- ========================= PERSONAL DETAILS ========================= -->
                 <h5 class="text-success fw-bold mb-2">Personal Details</h5>
@@ -116,8 +167,7 @@
 
                     <div class="col-md-4">
                         <label class="form-label">Age</label>
-                        <input type="number" name="age" id="age" class="form-control" readonly>
-                    </div>
+                            <input type="number" name="age" id="age" class="form-control" readonly>                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Blood Group</label>
@@ -156,7 +206,7 @@
                     </div>
 
                     <!-- Donor Box ID -->
-                    <div class="col-md-4" id="donor_box_id_row" style="display:none;">
+                    <div class="col-md-4" id="donor_box_id_row1">
     <label class="form-label">Donor Box</label>
     <select name="donor_box" class="form-select">
     <option value="">Select Donor Box</option>
@@ -275,6 +325,18 @@
     </div>
 </div>
 <script>
+    $(document).ready(function() {
+        $('#person_type').select2({
+            placeholder: "Select or Type to Search",
+            allowClear: true
+        });
+    });
+</script>
+
+<script>
+
+
+    
 const searchInput = document.getElementById("personTypeSearch");
 const dropdown = document.getElementById("dropdown_person_type");
 const hiddenSelect = document.getElementById("person_type");

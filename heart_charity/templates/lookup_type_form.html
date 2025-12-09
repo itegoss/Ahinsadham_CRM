@@ -3,6 +3,65 @@
 
 {% block content %}
 <style>
+  
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 35px;
+    }
+
+    .action-btn {
+        padding: 12px 40px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: .3s ease;
+        display: inline-block;
+    }
+
+    .save-btn {
+        background: #0f7b34;
+        color: white;
+    }
+    .save-btn:hover {
+        background: #0c622a;
+        transform: translateY(-2px);
+    }
+
+    .back-btn {
+        background: #6b6f75;
+        color: white;
+    }
+    .back-btn:hover {
+        background: #4b4f54;
+        transform: translateY(-2px);
+    }
+
+     /* MOBILE FIX */
+    @media (max-width: 755px) {
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+            gap: 15px;
+        }
+        .action-btn {
+            width: 80%;
+            text-align: center;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .row { flex-direction: column; }
+        .col-6 { width: 100%; }
+        .container-box { padding: 30px; }
+    }
+
     .main-bg {
         border-radius: 20px;
         padding: 30px;
@@ -67,17 +126,25 @@
             </div>
 
 
-            <div class="text-center mt-4">
+            <!-- <div class="text-center mt-4">
         <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
           <i class="bi bi-save"></i> Save
         </button>
 <a href="{% url 'welcome' %}?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
     ← Back
 </a>
+</div> -->
 
 
+   <div class="action-buttons">
+        <button type="submit" class="action-btn save-btn">
+            ✔ Save
+        </button>
 
-      </div>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
+            ← Back
+        </a>
+    </div>
         </form>
 
     </div>
