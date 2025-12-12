@@ -150,6 +150,31 @@
         .close-btn:hover {
             color: red;
         }
+
+
+        .styled-select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 2px solid #cce4cc;
+    background: #f8fff8;
+    font-size: 16px;
+    color: #333;
+    appearance: none;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.styled-select:focus {
+    background: white;
+    border-color: #2f7d35;
+    outline: none;
+}
+
+.styled-select:hover {
+    border-color: #2f7d35;
+}
+
     </style>
 </head>
 
@@ -158,6 +183,14 @@
 <div class="overlay"></div>
 
 <div class="popup-card">
+    {% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
 
     <button class="close-btn" onclick="window.history.back()">✖</button>
 
@@ -167,41 +200,69 @@
     <div class="section-label">User Details</div>
     <div class="line"></div>
 
-    <form method="POST">
-        {% csrf_token %}
+  <form method="POST">
+    {% csrf_token %}
 
-        <div class="form-grid">
+    <div class="form-grid">
 
-            <div class="form-group">
-                <label>First Name</label>
-              <input type="text" name="first_name" value="{{ edit_user.first_name }}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" name="last_name" value="{{ user.last_name }}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" value="{{ user.username }}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ user.email }}" required>
-            </div>
-
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" value="{{ edit_user.first_name }}" required>
         </div>
 
-        <div class="btn-area">
-            <button class="btn-submit" type="submit">✔ Update</button>
-            <a href="{% url 'welcome' %}">
-                <button type="button" class="btn-back">← Back</button>
-            </a>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ edit_user.last_name }}" required>
         </div>
 
-    </form>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" value="{{ edit_user.username }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ edit_user.email }}" required>
+        </div>
+
+        <div class="form-group">
+    <label>Role</label>
+    <select name="role" required class="styled-select">
+        <option value="">-- Select Role --</option>
+
+        {% for r in roles %}
+            <option value="{{ r.id }}"
+                {% if user_role.role and user_role.role.id == r.id %}selected{% endif %}>
+                {{ r.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+        <!-- <div class="form-group">
+            <label>Role</label>
+            <select name="role" required>
+                <option value="">-- Select Role --</option>
+
+                {% for r in roles %}
+                    <option value="{{ r.id }}"
+                        {% if user_role.role and user_role.role.id == r.id %}selected{% endif %}>
+                        {{ r.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div> -->
+
+    </div>
+
+    <div class="btn-area">
+        <button class="btn-submit" type="submit">✔ Update</button>
+        <a href="{% url 'welcome' %}">
+            <button type="button" class="btn-back">← Back</button>
+        </a>
+    </div>
+</form>
+
 
 </div>
 

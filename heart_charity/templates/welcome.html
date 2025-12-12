@@ -2201,7 +2201,7 @@ table th, table td {
             </div>
           </td>
 
-<td>
+<!-- <td>
  
 
  <form method="POST" action="{% url 'assign_role' %}">
@@ -2228,6 +2228,13 @@ table th, table td {
 
     </div>
 </form> 
+</td> -->
+<td>
+{% if user.userrole and user.userrole.role %}
+        {{ user.userrole.role.name }}
+    {% else %}
+        No Role
+    {% endif %}
 </td>
           <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
@@ -2316,7 +2323,9 @@ table th, table td {
               </form>
             </div>
           </td>
-         <td>
+         <!-- <td>
+
+
  <form method="POST" action="{% url 'assign_role' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
@@ -2340,6 +2349,13 @@ table th, table td {
         </button>
     </div>
 </form> 
+</td> -->
+
+<td>{% if user.userrole and user.userrole.role %}
+        {{ user.userrole.role.name }}
+    {% else %}
+        No Role
+    {% endif %}
 </td>
 <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
@@ -2770,139 +2786,6 @@ width: 35%;
 
 <!-- -----------Employee Management System------------------ -->
 
-<div class="tab-content" id="Employee Management System">
-            <div class="content-header">
-                     <a href="{% url 'donation-list' %}" class="btn btn-primary next">Show Employees</a></div>
-            
-<div class="form-container">
-                <!-- <div class="form-header">
-                    <h2>Add New Employee</h2>
-                </div> -->
-                
-<form id="multiStepForm" method="POST" action="{% url 'add-employee' %}">
-    {% csrf_token %}               
-         <!-- Step 1: Personal Details -->
-                    <div class="form-step active" id="step1">
-                        <h5>Personal Details</h5>
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" name="firstName" required>
-                        </div>
-                          <div class="form-group">
-                            <label>Middle Name</label>
-                            <input type="text" name="middleName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" name="lastName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" name="phone" required>
-                        </div>
-                        <div class="button-group">
-                            <div></div>
-                            <button type="button" class="btn btn-primary next">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Contact Information -->
-                    <div class="form-step" id="step2">
-                        <h5>Contact Information</h5>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" name="address" required>
-                        </div>
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" name="city" required>
-                        </div>
-                        <div class="form-group">
-                            <label>State</label>
-                            <input type="text" name="state" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Postal Code</label>
-                            <input type="text" name="postalCode" required>
-                        </div>
-                        <div class="button-group">
-                            <button type="button" class="btn btn-secondary prev">Previous</button>
-                            <button type="button" class="btn btn-primary next">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Job Details -->
-                    <div class="form-step" id="step3">
-                        <h5>Job Details</h5>
-                        <div class="form-group">
-                            <label>Department</label>
-                            <select name="department" required>
-                                <option value="">Select Department</option>
-                                <option value="hr">Human Resources</option>
-                                <option value="finance">Finance</option>
-                                <option value="it">Information Technology</option>
-                                <option value="marketing">Marketing</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Designation</label>
-                            <input type="text" name="designation" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Employee Type</label>
-                            <select name="employeeType" required>
-                                <option value="">Select Type</option>
-                                <option value="permanent">Permanent</option>
-                                <option value="contract">Contract</option>
-                                <option value="intern">Intern</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Joining Date</label>
-                            <input type="date" name="joiningDate" required>
-                        </div>
-                        <div class="button-group">
-                            <button type="button" class="btn btn-secondary prev">Previous</button>
-                            <button type="button" class="btn btn-primary next">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Bank Details -->
-                    <div class="form-step" id="step4">
-                        <h5>Bank Details</h5>
-                        <div class="form-group">
-                            <label>Bank Name</label>
-                            <input type="text" name="bankName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Account Number</label>
-                            <input type="text" name="accountNumber" required>
-                        </div>
-                        <div class="form-group">
-                            <label>IFSC Code</label>
-                            <input type="text" name="ifscCode" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Account Type</label>
-                            <select name="accountType" required>
-                                <option value="">Select Account Type</option>
-                                <option value="savings">Savings</option>
-                                <option value="current">Current</option>
-                                <option value="salary">Salary</option>
-                            </select>
-                        </div>
-                        <div class="button-group">
-                            <button type="button" class="btn btn-secondary prev">Previous</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </div>
-                </form>
-</div>
-</div>
 
 <!-- ----------- Timesheet System------------------ -->
 
@@ -3600,6 +3483,24 @@ width: 35%;
 <a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
  👁&zwj;🗨
 </a>
+<!-- NEW VERIFICATION ICON -->
+   {% if owner and owner.id %}
+    {% if owner.verified %}
+        <i class="fa-solid fa-circle-check"
+           style="font-size: 18px; color:#16a34a;"
+           title="Verified by Admin"></i>
+    {% else %}
+        <a href="{% url 'verify_payment' owner.id %}"
+           onclick="return confirm('Verify this donation?')">
+            <i class="fa-regular fa-circle-check"
+               style="font-size: 18px; color:#555;"
+               title="Click to Verify"></i>
+        </a>
+    {% endif %}
+{% else %}
+    <span class="text-muted" title="No payment found">—</span>
+{% endif %}
+
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3724,6 +3625,24 @@ width: 35%;
 <a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
  👁&zwj;🗨
 </a>
+
+{% if pay and pay.id %}
+    {% if pay.verified %}
+        <i class="fa-solid fa-circle-check"
+           style="font-size: 18px; color:#16a34a;"
+           title="Verified by Admin"></i>
+    {% else %}
+        <a href="{% url 'verify_payment' pay.id %}"
+           onclick="return confirm('Verify this donation?')">
+            <i class="fa-regular fa-circle-check"
+               style="font-size: 18px; color:#555;"
+               title="Click to Verify"></i>
+        </a>
+    {% endif %}
+{% else %}
+    <span class="text-muted" title="No payment found">—</span>
+{% endif %}
+
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -4281,6 +4200,20 @@ table th, table td {
      <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
     👁‍🗨
 </a>
+
+<!-- NEW VERIFICATION ICON -->
+    {% if donation.verified %}
+        <i class="fa-solid fa-circle-check"
+           style="font-size: 18px; color:#16a34a;"
+           title="Verified by Admin"></i>
+    {% else %}
+        <a href="{% url 'verify_donation' donation.id %}"
+           onclick="return confirm('Verify this donation?')">
+            <i class="fa-regular fa-circle-check"
+               style="font-size: 18px; color:#555;"
+               title="Click to Verify"></i>
+        </a>
+    {% endif %}
           </div>
         </td>
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
@@ -4408,7 +4341,22 @@ table th, table td {
             {% endif %}
             {% if permissions.can_delete %}
          <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+
+         <!-- NEW VERIFICATION ICON -->
+    {% if donation.verified %}
+        <i class="fa-solid fa-circle-check"
+           style="font-size: 18px; color:#16a34a;"
+           title="Verified by Admin"></i>
+    {% else %}
+        <a href="{% url 'verify_donation' donation.id %}"
+           onclick="return confirm('Verify this donation?')">
+            <i class="fa-regular fa-circle-check"
+               style="font-size: 18px; color:#555;"
+               title="Click to Verify"></i>
+        </a>
+    {% endif %}
 {% endif %}
+
           </div>
         </td>
         <td>{{ donation.id }}</td>
