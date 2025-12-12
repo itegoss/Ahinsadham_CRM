@@ -1727,92 +1727,222 @@ from django.shortcuts import render, redirect, get_object_or_404
 #     }
 
 #     return render(request, 'add_donor_volunteer.html', context)
+# def add_donor_volunteer(request):
+#     # Get Lookup options
+#     person_type_options = Lookup.objects.filter(
+#         lookup_type__type_name__iexact='Person Type'
+#     )
+#     id_type_options = Lookup.objects.filter(
+#         lookup_type__type_name__iexact='ID Type'
+#     )
+
+#     # Fetch Donation Boxes
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False).order_by('donation_id')
+
+#     # Fetch all donors for "Referred By" dropdown  ⭐ NEW
+#     all_donors = DonorVolunteer.objects.filter(is_deleted=False)
+
+#     # Donor-Box-Owner ID for JS toggle
+#     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
+#     donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
+
+#     if request.method == 'POST':
+#         # Get Person Type instance
+#         person_type_id = request.POST.get('person_type')
+#         person_type_instance = Lookup.objects.get(id=person_type_id) if person_type_id else None
+
+#         # ⭐ NEW – Fetch referred_by ID and object
+#         referred_by_id = request.POST.get("referred_by")
+#         referred_by_obj = DonorVolunteer.objects.get(id=referred_by_id) if referred_by_id else None
+
+#         # File uploads
+#         id_proof_image = request.FILES.get('id_proof_image')
+#         pan_card_image = request.FILES.get('pan_card_image')
+
+#         donor = DonorVolunteer.objects.create(
+#             person_type=person_type_instance,
+#             first_name=request.POST.get('first_name'),
+#             middle_name=request.POST.get('middle_name'),
+#             last_name=request.POST.get('last_name'),
+#             gender=request.POST.get('gender'),
+#             date_of_birth=request.POST.get('date_of_birth'),
+#             age=request.POST.get('age') or None,
+#             blood_group=request.POST.get('blood_group'),
+#             contact_number=request.POST.get('contact_number'),
+#             whatsapp_number=request.POST.get('whatsapp_number'),
+#             email=request.POST.get('email'),
+
+#             # Assign box ONLY if person type = Donor-Box-Owner
+#             donor_box_id=request.POST.get('donor_box') if (
+#                 person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner'
+#             ) else None,
+
+#             # ⭐ NEW – Save referred_by object
+#             referred_by=referred_by_obj,
+
+#             house_number=request.POST.get('house_number'),
+#             building_name=request.POST.get('building_name'),
+#             landmark=request.POST.get('landmark'),
+#             area=request.POST.get('area'),
+#             city=request.POST.get('city'),
+#             state=request.POST.get('state'),
+#             country=request.POST.get('country'),
+#             postal_code=request.POST.get('postal_code'),
+#             native_place=request.POST.get('native_place'),
+#             native_postal_code=request.POST.get('native_postal_code'),
+#             id_number=request.POST.get('id_number'),
+#             pan_number=request.POST.get('pan_number'),
+#         )
+
+#         # Save attachments
+#         if id_proof_image:
+#             donor.id_proof_image.save(id_proof_image.name, id_proof_image)
+#         if pan_card_image:
+#             donor.pan_card_image.save(pan_card_image.name, pan_card_image)
+
+#         return redirect('welcome')
+
+#     context = {
+#         'person_type_options': person_type_options,
+#         'id_type_options': id_type_options,
+#         'donor_box_owner_id': donor_box_owner_id,
+#         'donation_boxes': donation_boxes,
+        
+#         # ⭐ NEW – Send donors for dropdown
+#         'all_donors': all_donors,
+#     }
+
+#     return render(request, 'add_donor_volunteer.html', context)
 def add_donor_volunteer(request):
-    # Get Lookup options
-    person_type_options = Lookup.objects.filter(
-        lookup_type__type_name__iexact='Person Type'
-    )
-    id_type_options = Lookup.objects.filter(
-        lookup_type__type_name__iexact='ID Type'
-    )
 
-    # Fetch Donation Boxes
-    donation_boxes = DonationBox.objects.filter(is_deleted=False).order_by('donation_id')
+    # ---- LOOKUPS ----
+    person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
+    id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
 
-    # Fetch all donors for "Referred By" dropdown  ⭐ NEW
+    occupation_types = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Type")
+    occupation_natures = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Nature")
+
+    departments = Lookup.objects.filter(lookup_type__type_name__iexact="Department")
+    positions = Lookup.objects.filter(lookup_type__type_name__iexact="Position")
+    designations = Lookup.objects.filter(lookup_type__type_name__iexact="Designation")
+
+    org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
+    business_types = Lookup.objects.filter(lookup_type__type_name__iexact="Business Type")
+
+    donation_boxes = DonationBox.objects.filter(is_deleted=False)
     all_donors = DonorVolunteer.objects.filter(is_deleted=False)
 
-    # Donor-Box-Owner ID for JS toggle
     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
     donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
 
-    if request.method == 'POST':
-        # Get Person Type instance
-        person_type_id = request.POST.get('person_type')
-        person_type_instance = Lookup.objects.get(id=person_type_id) if person_type_id else None
+    # --- Helper functions ---
+    def get_lookup(field):
+        value = request.POST.get(field)
+        return Lookup.objects.get(id=value) if value and value.isdigit() else None
 
-        # ⭐ NEW – Fetch referred_by ID and object
-        referred_by_id = request.POST.get("referred_by")
-        referred_by_obj = DonorVolunteer.objects.get(id=referred_by_id) if referred_by_id else None
+    def get_donor(field):
+        value = request.POST.get(field)
+        return DonorVolunteer.objects.get(id=value) if value and value.isdigit() else None
 
-        # File uploads
-        id_proof_image = request.FILES.get('id_proof_image')
-        pan_card_image = request.FILES.get('pan_card_image')
+    if request.method == "POST":
 
         donor = DonorVolunteer.objects.create(
-            person_type=person_type_instance,
-            first_name=request.POST.get('first_name'),
-            middle_name=request.POST.get('middle_name'),
-            last_name=request.POST.get('last_name'),
-            gender=request.POST.get('gender'),
-            date_of_birth=request.POST.get('date_of_birth'),
-            age=request.POST.get('age') or None,
-            blood_group=request.POST.get('blood_group'),
-            contact_number=request.POST.get('contact_number'),
-            whatsapp_number=request.POST.get('whatsapp_number'),
-            email=request.POST.get('email'),
+            # Person info
+            person_type=get_lookup("person_type"),
+            referred_by=get_donor("referred_by"),
 
-            # Assign box ONLY if person type = Donor-Box-Owner
-            donor_box_id=request.POST.get('donor_box') if (
-                person_type_instance and person_type_instance.lookup_name == 'Donor-Box-Owner'
+            salutation=request.POST.get("salutation"),
+            first_name=request.POST.get("first_name"),
+            middle_name=request.POST.get("middle_name"),
+            last_name=request.POST.get("last_name"),
+            gender=request.POST.get("gender"),
+            date_of_birth=request.POST.get("date_of_birth"),
+            age=request.POST.get("age") or None,
+            blood_group=request.POST.get("blood_group"),
+            contact_number=request.POST.get("contact_number"),
+            whatsapp_number=request.POST.get("whatsapp_number"),
+            email=request.POST.get("email"),
+
+            # Donor Box
+            donor_box_id=request.POST.get("donor_box") if (
+                get_lookup("person_type") and get_lookup("person_type").lookup_name == "Donor-Box-Owner"
             ) else None,
 
-            # ⭐ NEW – Save referred_by object
-            referred_by=referred_by_obj,
+            # Address
+            house_number=request.POST.get("house_number"),
+            building_name=request.POST.get("building_name"),
+            landmark=request.POST.get("landmark"),
+            area=request.POST.get("area"),
+            city=request.POST.get("city"),
+            state=request.POST.get("state"),
+            country=request.POST.get("country"),
+            postal_code=request.POST.get("postal_code"),
+            native_place=request.POST.get("native_place"),
+            native_postal_code=request.POST.get("native_postal_code"),
 
-            house_number=request.POST.get('house_number'),
-            building_name=request.POST.get('building_name'),
-            landmark=request.POST.get('landmark'),
-            area=request.POST.get('area'),
-            city=request.POST.get('city'),
-            state=request.POST.get('state'),
-            country=request.POST.get('country'),
-            postal_code=request.POST.get('postal_code'),
-            native_place=request.POST.get('native_place'),
-            native_postal_code=request.POST.get('native_postal_code'),
-            id_number=request.POST.get('id_number'),
-            pan_number=request.POST.get('pan_number'),
+            # Occupation FK
+            occupation_type=get_lookup("occupation_type"),
+            occupation_nature=get_lookup("occupation_nature"),
+
+            # Department / Position / Designation FK
+            department=get_lookup("department"),
+            position=get_lookup("position"),
+            designation=get_lookup("designation"),
+
+            # DOA
+            doa=request.POST.get("doa"),
+            years_to_marriage=request.POST.get("years_to_marriage") or None,
+
+            # Business
+            business_salutation=request.POST.get("business_salutation"),
+            business_name=request.POST.get("business_name"),
+            business_type=get_lookup("business_type"),
+            business_nature=get_lookup("business_nature"),
+
+            # Organization
+            org_name=request.POST.get("org_name"),
+            org_type=get_lookup("org_type"),
+
+            # ❗ FIXED line here:
+            nature_of_service=get_lookup("nature_of_service"),
+
+            # ID / PAN
+            id_type=get_lookup("id_type"),
+            id_number=request.POST.get("id_number"),
+            pan_number=request.POST.get("pan_number"),
+
+            created_by=request.user,
+            updated_by=request.user,
         )
 
-        # Save attachments
-        if id_proof_image:
-            donor.id_proof_image.save(id_proof_image.name, id_proof_image)
-        if pan_card_image:
-            donor.pan_card_image.save(pan_card_image.name, pan_card_image)
+        # FILE HANDLING
+        if request.FILES.get("id_proof_image"):
+            donor.id_proof_image.save(request.FILES["id_proof_image"].name, request.FILES["id_proof_image"])
 
-        return redirect('welcome')
+        if request.FILES.get("pan_card_image"):
+            donor.pan_card_image.save(request.FILES["pan_card_image"].name, request.FILES["pan_card_image"])
 
-    context = {
-        'person_type_options': person_type_options,
-        'id_type_options': id_type_options,
-        'donor_box_owner_id': donor_box_owner_id,
-        'donation_boxes': donation_boxes,
-        
-        # ⭐ NEW – Send donors for dropdown
-        'all_donors': all_donors,
-    }
+        return redirect("welcome")
 
-    return render(request, 'add_donor_volunteer.html', context)
+    return render(request, "add_donor_volunteer.html", {
+        "person_type_options": person_type_options,
+        "id_type_options": id_type_options,
+        "donation_boxes": donation_boxes,
+        "all_donors": all_donors,
+
+        "occupation_types": occupation_types,
+        "occupation_natures": occupation_natures,
+        "departments": departments,
+        "positions": positions,
+        "designations": designations,
+
+        "org_types": org_types,
+        "business_types": business_types,
+
+        "donor_box_owner_id": donor_box_owner_id,
+    })
+
+
 
 
 def donor_success(request):
@@ -1823,7 +1953,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from django.utils.timezone import now
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, transaction, DatabaseError
 
 def adddonation(request):
     donors = DonorVolunteer.objects.all()
@@ -1844,7 +1974,8 @@ def adddonation(request):
     if request.method == "POST":
         try:
             Donation.objects.create(
-                donor_id=request.POST.get("donor"),
+                donor_id=request.POST.get("person_type"),
+
                 donation_amount_declared=request.POST.get("donation_amount_declared") or 0,
                 donation_amount_paid=request.POST.get("donation_amount_paid") or 0,
                 donation_date=request.POST.get("donation_date"),
@@ -1879,6 +2010,9 @@ def adddonation(request):
         "payment_statuses": payment_statuses,
         "today": today
     })
+
+
+
 
 def donation_list(request):
     donations = Donation.objects.all().select_related('donor')
@@ -2307,41 +2441,6 @@ def add_donation_box(request):
         "status_choices": DonationBox.status_choices,
     }
     return render(request, "add_donation_box.html", context)
-
-from .models import Employee
-
-def add_employee(request):
-    if request.method == "POST":
-        try:
-            # 🧩 Collect form data
-            Employee.objects.create(
-                first_name=request.POST.get('firstName'),
-                middle_name=request.POST.get('middleName'),
-                last_name=request.POST.get('lastName'),
-                email=request.POST.get('email'),
-                phone=request.POST.get('phone'),
-                address=request.POST.get('address'),
-                city=request.POST.get('city'),
-                state=request.POST.get('state'),
-                postal_code=request.POST.get('postalCode'),
-                department=request.POST.get('department'),
-                designation=request.POST.get('designation'),
-                employee_type=request.POST.get('employeeType'),
-                joining_date=request.POST.get('joiningDate'),
-                bank_name=request.POST.get('bankName'),
-                account_number=request.POST.get('accountNumber'),
-                ifsc_code=request.POST.get('ifscCode'),
-                account_type=request.POST.get('accountType'),
-            )
-
-            messages.success(request, "✅ Employee added successfully!")
-            return redirect('employee-list')  # Redirect to your employee list view
-
-        except Exception as e:
-            messages.error(request, f"❌ Error: {e}")
-            return redirect('add-employee')
-
-    return render(request, 'welcome.html')  # Your form page template
 
 
 def all_donations(request):
@@ -2868,20 +2967,49 @@ def edit_lookup(request, id):
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-
 def edit_user(request, id):
     user_obj = get_object_or_404(User, id=id)
 
+    # ⭐ Get or create UserRole entry for this user
+    user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
+
+    # ⭐ All available roles
+    roles = UserModuleAccess.objects.all()
+
     if request.method == 'POST':
-        user_obj.first_name = request.POST.get('first_name')
-        user_obj.last_name = request.POST.get('last_name')
-        user_obj.username = request.POST.get('username')
-        user_obj.email = request.POST.get('email')
         
+        # ===== ⭐ Username duplicate check =====
+        new_username = request.POST.get('username')
+        if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
+            messages.error(request, "Username already exists! Please choose a different one.")
+            return redirect(request.path)
+
+        # ===== ⭐ Update user basic info =====
+        user_obj.first_name = request.POST.get('first_name')
+        user_obj.last_name  = request.POST.get('last_name')
+        user_obj.username   = new_username
+        user_obj.email      = request.POST.get('email')
+
+        # ===== ⭐ Save selected role =====
+        role_id = request.POST.get('role')
+        if role_id:
+            selected_role = UserModuleAccess.objects.get(id=role_id)
+            user_role_obj.role = selected_role
+            user_role_obj.save()
+
+        # Save User
         user_obj.save()
+
+        messages.success(request, "User updated successfully!")
         return redirect('welcome')
 
-    return render(request, 'edit_user.html', {'edit_user': user_obj})
+    return render(request, 'edit_user.html', {
+        'edit_user': user_obj,
+        'roles': roles,
+        'user_role': user_role_obj,
+    })
+
+
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import UserModuleAccess
@@ -3253,3 +3381,33 @@ def edit_donation_box(request, id):
     })
 
 
+
+
+@login_required
+def verify_donation(request, donation_id):
+    donation = get_object_or_404(Donation, id=donation_id)
+    donation.verified = True
+    donation.verified_by = request.user
+    donation.verified_at = timezone.now()
+    donation.save()
+
+    messages.success(request, "Donation has been verified successfully!")
+    return redirect("welcome")
+
+
+
+@login_required
+def verify_payment(request, payment_id):
+    try:
+        payment = get_object_or_404(DonationPaymentBox, id=payment_id)
+        payment.verified = True
+        payment.verified_by = request.user
+        payment.verified_at = now()
+        payment.save()
+
+        messages.success(request, "Payment has been verified successfully!")
+
+    except Exception as e:
+        messages.error(request, f"Error verifying payment: {str(e)}")
+
+    return redirect("welcome")

@@ -5,227 +5,162 @@
 
 <style>
     .card { background: #f2fff4 !important; border-radius: 12px; }
-    .card-header { border-radius: 12px 12px 0 0 !important; color: #fff; text-align: center; }
-    .form-control, .form-select { border-radius: 8px; border: 1px solid #b5d7b8; transition: 0.2s; }
-    .form-control:focus, .form-select:focus { box-shadow: 0 0 6px rgba(13, 122, 52, 0.3); }
-    .form-label { font-weight: 600; }
-    .btn-success { background: #0d7a34; border: none; border-radius: 8px; transition: 0.3s; font-size: 17px; }
-    .btn-success:hover { background: #0a5a27; transform: translateY(-2px); box-shadow: 0px 4px 10px rgba(13, 122, 52, 0.3); }
-    hr { border-top: 2px solid #b5d7b8; margin: 6px 0 15px 0; }
-    h5.section-title { color: #0d7a34; font-weight: 400; }
-
-
-    .search-box {
-    position: relative;
-    width: 100%;
-}
-
-.dropdown {
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    border: 1px solid #888;
-    background: #fff;
-    display: none;
-    max-height: 180px;
-    overflow-y: auto;
-    z-index: 999;
-}
-
-.dropdown div {
-    padding: 8px;
-    cursor: pointer;
-}
-
-.dropdown div:hover {
-    background: #f1f1f1;
-}
-  
-
+    .form-control, .form-select { border-radius: 8px; }
+    h3.fw-bold { color: #0d7a34; }
+    h5.section-title { color: #0d7a34; font-weight: 600; }
+    hr { border-top: 2px solid #bae6c6; }
 </style>
 
 <div class="container mt-4 mb-5">
-    <div class="card shadow-lg border-0">
-        <div class="text-center mb-4">
-      <h3 class="fw-bold text-success">Add Donor/Volunteer</h3>
-      <p class="text-muted">Fill out the details to record a new donation</p>
-    </div>
-              {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="card shadow-lg">
+        <div class="text-center mb-4 pt-3">
+            <h3 class="fw-bold">Add Donor / Volunteer</h3>
+            <p class="text-muted">Fill out details to create a donor/volunteer record</p>
         </div>
-    {% endfor %}
-{% endif %}
-        <div class="card-body">
-            <form method="POST" action="{% url 'add_donor_volunteer' %}" enctype="multipart/form-data">
+
+        <div class="card-body px-4">
+
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- ========================= PERSON TYPE ========================= -->
-                <h5 class="text-success fw-bold mb-2">Person Type</h5>
+                <!-- ===================================== PERSON TYPE ===================================== -->
+                <h5 class="section-title">Person Type</h5>
                 <hr>
-<!-- <div class="row g-3 mb-3 align-items-end">
-
-    <!-- Person Type 
-    <div class="col-md-6">
-        <label class="form-label fw-semibold">Person Type</label>
-        <select name="person_type" id="person_type" class="form-select" required>
-            <option value="">-- Select or Type to Search --</option>
-            {% for option in person_type_options %}
-            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Referred By
-    <div class="col-md-6">
-        <label class="form-label fw-semibold">Referred By</label>
-        <select name="referred_by" class="form-select">
-            <option value="">-- Select Person --</option>
-            {% for person in all_donors %}
-            <option value="{{ person.id }}">
-                {{ person.first_name }} {{ person.last_name }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-</div> -->
 
                 <div class="row g-3 mb-3">
+
                     <div class="col-md-6">
                         <label class="form-label">Person Type</label>
-                        <select name="person_type" id="person_type" class="form-select" required>
+                        <select name="person_type" id="person_type" class="form-select">
                             <option value="">Select</option>
-                             {% for option in person_type_options %}
-                            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-                        {% endfor %}
+                            {% for option in person_type_options %}
+                                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
-                       <div class="col-md-6">
+                    <div class="col-md-6">
                         <label class="form-label">Referred By</label>
-                       <select name="referred_by" class="form-select">
-        <option value="">-- Select Person --</option>
-        {% for person in all_donors %}
-            <option value="{{ person.id }}">
-                {{ person.first_name }} {{ person.last_name }}
-            </option>
-        {% endfor %}
-    </select>
+                        <select name="referred_by" id="referred_by" class="form-select select2-search">
+                            <option value="">-- Select Person --</option>
+                            {% for person in all_donors %}
+                                <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-
 
                 </div>
 
-<!-- 
-                       <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                       <select name="person_type" id="person_type" class="form-select" required>
-                        <option value="">Select</option>
-                        {% for option in person_type_options %}
-                            <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-                        {% endfor %}
-                    </select>
-                    </div>
-                </div> -->
-
-                <!-- ========================= PERSONAL DETAILS ========================= -->
-                <h5 class="text-success fw-bold mb-2">Personal Details</h5>
+                <!-- ===================================== PERSONAL DETAILS ===================================== -->
+                <h5 class="section-title">Personal Details</h5>
                 <hr>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
+
+                    <div class="col-md-3">
+                        <label class="form-label">Salutation</label>
+                        <select name="salutation" class="form-select">
+                            <option value="">Select</option>
+                            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
+                            <option>Shri</option><option>Smt.</option><option>Kumari</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
                         <label class="form-label">First Name</label>
                         <input type="text" name="first_name" class="form-control" required>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Middle Name</label>
                         <input type="text" name="middle_name" class="form-control">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Last Name</label>
                         <input type="text" name="last_name" class="form-control" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Gender</label>
-                        <select name="gender" class="form-select" required>
+                        <select name="gender" class="form-select">
                             <option value="">Select</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
+                            <option>Male</option><option>Female</option><option>Other</option>
                         </select>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Date of Birth</label>
-                        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required>
+                        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Age</label>
-                            <input type="number" name="age" id="age" class="form-control" readonly>                     </div>
+                        <input type="number" name="age" id="age" class="form-control" readonly>
+                    </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Blood Group</label>
-                        <select name="blood_group" class="form-select" required>
+                        <select name="blood_group" class="form-select">
                             <option value="">Select</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
+                            {% for bg,val in blood_groups %}
+                                <option value="{{ bg }}">{{ bg }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
                     <div class="col-md-4">
-                <label class="form-label">Contact Number</label>
-                <div class="input-group">
-                    <span class="input-group-text">+91</span>
-                    <input type="text" name="contact_number" class="form-control" required>
-                </div>
-            </div>
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control">
+                    </div>
 
                     <div class="col-md-4">
                         <label class="form-label">WhatsApp Number</label>
-                         <div class="input-group">
-                    <span class="input-group-text">+91</span>
-                    <input type="text" name="whatsapp_number" class="form-control" required>
-                </div>
+                        <input type="text" name="whatsapp_number" class="form-control">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <input type="email" name="email" class="form-control">
                     </div>
 
-                    <!-- Donor Box ID -->
-                    <div class="col-md-4" id="donor_box_id_row1">
-    <label class="form-label">Donor Box</label>
-    <select name="donor_box" class="form-select">
-    <option value="">Select Donor Box</option>
-    {% for box in donation_boxes %}
-        <option value="{{ box.id }}">{{ box.donation_id }}</option>
-    {% endfor %}
-</select>
-
-</div>
+                    <!-- Donor Box -->
+                    <div class="col-md-4" id="donor_box_row" style="display:none;">
+                        <label class="form-label">Donor Box</label>
+                        <select name="donor_box" class="form-select">
+                            <option value="">Select Donor Box</option>
+                            {% for box in donation_boxes %}
+                                <option value="{{ box.id }}">{{ box.donation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
                 </div>
 
-                <!-- ========================= ADDRESS DETAILS ========================= -->
-                <h5 class="text-success fw-bold mb-2">Address Details</h5>
+                <!-- ANNIVERSARY -->
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Date of Anniversary</label>
+                        <input type="date" name="doa" id="doa_input" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Years to Marriage</label>
+                        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
+                    </div>
+
+                </div>
+
+                <!-- ===================================== ADDRESS DETAILS ===================================== -->
+                <h5 class="section-title">Address Details</h5>
                 <hr>
-                <div class="row g-3 mb-3">
+
+                <div class="row g-3 mb-4">
+
                     <div class="col-md-4">
                         <label class="form-label">House Number</label>
-                        <input type="text" name="house_number" class="form-control" required>
+                        <input type="text" name="house_number" class="form-control">
                     </div>
 
                     <div class="col-md-4">
@@ -245,12 +180,12 @@
 
                     <div class="col-md-4">
                         <label class="form-label">City</label>
-                        <input type="text" name="city" class="form-control" required>
+                        <input type="text" name="city" class="form-control">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">State</label>
-                        <input type="text" name="state" class="form-control" required>
+                        <input type="text" name="state" class="form-control">
                     </div>
 
                     <div class="col-md-4">
@@ -260,144 +195,222 @@
 
                     <div class="col-md-4">
                         <label class="form-label">Postal Code</label>
-                        <input type="text" name="postal_code" class="form-control" required>
+                        <input type="text" name="postal_code" class="form-control">
                     </div>
 
-                    <!-- Native Place last -->
-                    <div class="col-md-4">
-                        <label class="form-label">Native Place</label>
-                        <input type="text" name="native_place" class="form-control">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Native Postal Code</label>
-                        <input type="text" name="native_postal_code" class="form-control">
-                    </div>
                 </div>
 
-                <!-- ========================= ID & PAN DETAILS ========================= -->
-                <h5 class="text-success fw-bold mb-2">ID & PAN Details</h5>
+                <!-- ===================================== OCCUPATION ===================================== -->
+                <h5 class="section-title">Occupation Details</h5>
                 <hr>
-                <div class="row g-3 mb-3">
-    <div class="col-md-6">
-        <label class="form-label">ID Type</label>
-        <select name="id_type" id="id_type" class="form-select" required>
-            <option value="">Select</option>
 
-            {% for option in id_type_options %}
-                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
+                <div class="row g-3 mb-4">
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label class="form-label">Occupation Type</label>
+                        <select name="occupation_type" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in occupation_types %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Occupation Nature</label>
+                        <select name="occupation_nature" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in occupation_natures %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- ===================================== DEPARTMENT ===================================== -->
+                <h5 class="section-title">Department Details</h5>
+                <hr>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in departments %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Position</label>
+                        <select name="position" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in positions %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Designation</label>
+                        <select name="designation" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in designations %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- ===================================== BUSINESS ===================================== -->
+                <h5 class="section-title">Business Details</h5>
+                <hr>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Business Name</label>
+                        <input type="text" name="business_name" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Business Type</label>
+                        <select name="business_type" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in business_types %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Business Nature</label>
+                        <select name="business_nature" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in business_types %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- ===================================== ORGANIZATION ===================================== -->
+                <h5 class="section-title">Organization Details</h5>
+                <hr>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Organization Name</label>
+                        <input type="text" name="org_name" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Organization Type</label>
+                        <select name="org_type" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in org_types %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Nature of Service</label>
+                        <input type="text" name="nature_of_service" class="form-control">
+                    </div>
+
+                </div>
+
+                <!-- ===================================== ID & PAN ===================================== -->
+                <h5 class="section-title">ID & PAN Details</h5>
+                <hr>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label">ID Type</label>
+                        <select name="id_type" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in id_type_options %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
                         <label class="form-label">ID Number</label>
                         <input type="text" name="id_number" class="form-control">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">ID Proof Image</label>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Upload ID Proof</label>
                         <input type="file" name="id_proof_image" class="form-control">
                     </div>
-                    <div class="col-md-6">
+
+                    <div class="col-md-4">
                         <label class="form-label">PAN Number</label>
                         <input type="text" name="pan_number" class="form-control">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">PAN Card Image</label>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Upload PAN Card</label>
                         <input type="file" name="pan_card_image" class="form-control">
                     </div>
+
                 </div>
-      
 
- <div class="text-center mt-4">
-        <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Save
-        </button>
+                <!-- SUBMIT -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-success px-4">Save</button>
+                    <a href="{% url 'welcome' %}" class="btn btn-secondary px-4">Cancel</a>
+                </div>
 
-        <a href="{% url 'welcome' %}?tab=Donation Module" class="btn btn-secondary px-5" style="border-radius: 8px;">
-  ← Back
-</a>
-      </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- ================= AGE AUTO CALCULATION ================= -->
 <script>
-    $(document).ready(function() {
-        $('#person_type').select2({
-            placeholder: "Select or Type to Search",
-            allowClear: true
-        });
-    });
-</script>
-
-<script>
-
-
-    
-const searchInput = document.getElementById("personTypeSearch");
-const dropdown = document.getElementById("dropdown_person_type");
-const hiddenSelect = document.getElementById("person_type");
-
-// Create array from Django FK data
-const items = {{ person_type_options_json | safe }};
-
-searchInput.addEventListener("input", function () {
-    const value = this.value.toLowerCase();
-
-    dropdown.innerHTML = "";
-
-    if (!value) {
-        dropdown.style.display = "none";
-        return;
+document.getElementById("date_of_birth").addEventListener("change", function () {
+    let dob = new Date(this.value);
+    if (!isNaN(dob)) {
+        let diff = Date.now() - dob.getTime();
+        let age = new Date(diff).getUTCFullYear() - 1970;
+        document.getElementById("age").value = age;
     }
-
-    const filtered = items.filter(item => item.name.toLowerCase().includes(value));
-
-    filtered.forEach(item => {
-        const div = document.createElement("div");
-        div.textContent = item.name;
-
-        div.onclick = () => {
-            searchInput.value = item.name;
-            hiddenSelect.value = item.id;   // set selected ID for form submit
-            dropdown.style.display = "none";
-        };
-
-        dropdown.appendChild(div);
-    });
-
-    dropdown.style.display = filtered.length ? "block" : "none";
 });
 </script>
 
+<!-- ================= YEARS TO MARRIAGE AUTO CALCULATION ================= -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const personType = document.getElementById("person_type");
-    const donorBoxRow = document.getElementById("donor_box_id_row");
-    const donorBoxOwnerId = "{{ donor_box_owner_id }}"; // Pass this from view
-    if(personType && donorBoxRow) {
-        donorBoxRow.style.display = "none";
-        personType.addEventListener("change", function() {
-            donorBoxRow.style.display = (this.value === donorBoxOwnerId) ? "block" : "none";
-        });
-    }
+document.getElementById("doa_input").addEventListener("change", function () {
+    let doa = new Date(this.value);
+    let today = new Date();
 
-    const dobInput = document.getElementById("date_of_birth");
-    const ageInput = document.getElementById("age");
-    if(dobInput && ageInput) {
-        dobInput.addEventListener("change", function() {
-            const dob = new Date(this.value);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const m = today.getMonth() - dob.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
-            ageInput.value = age;
-        });
+    if (!isNaN(doa)) {
+        let years = doa.getFullYear() - today.getFullYear();
+        document.getElementById("years_to_marriage").value = years >= 0 ? years : 0;
     }
 });
+</script>
+
+<!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
+<script>
+let donorBoxOwnerID = "{{ donor_box_owner_id }}";
+let personType = document.getElementById("person_type");
+let donorBoxRow = document.getElementById("donor_box_row");
+
+function updateDonorBox() {
+    donorBoxRow.style.display = (personType.value === donorBoxOwnerID) ? "block" : "none";
+}
+personType.addEventListener("change", updateDonorBox);
 </script>
 
 {% endblock %}

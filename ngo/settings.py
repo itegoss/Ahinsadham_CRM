@@ -16,8 +16,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "heart_charity",         # your app
-    "social_django",         # social auth
+    "social_django",  
+    'heart_charity.apps.HeartCharityConfig',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +57,7 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ahin',
+        'NAME': 'ahinsa1',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',

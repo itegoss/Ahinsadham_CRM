@@ -89,7 +89,8 @@
 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Person Type</label>
-                        <select name="person_type" id="person_type" class="form-select" required>
+                       <select name="donor" id="donor" class="form-select" required>
+
                             <option value="">-- Select Donor --</option>
             {% for donor in donors %}
             <option value="{{ donor.id }}">

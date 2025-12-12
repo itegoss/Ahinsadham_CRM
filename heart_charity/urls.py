@@ -30,7 +30,6 @@ path(
 ),
 
     path('add_donation_box/', views.add_donation_box, name='add_donation_box'),
-    path('add-employee/', views.add_employee, name='add-employee'),
     path('all_donations/', views.all_donations, name='all_donations'),  # ✅ Add this
     path('donation-boxes/', views.donationbox_list, name='donationbox_list'),
     path('download_filtered_donations/', views.download_filtered_donations, name='download_filtered_donations'),
@@ -92,5 +91,7 @@ path('edit-box-payment/<int:id>/', views.edit_box_payment, name='edit_box_paymen
     path('edit-donation-box/<int:id>/', views.edit_donation_box, name='edit_donation_box'),
     path('delete-box-payment/<int:id>/', views.delete_box_payment, name='delete_box_payment'),
     path('delete-donation-box/<int:id>/', views.delete_donation_box, name='delete_donation_box'),
+    path("donation/verify/<int:donation_id>/", views.verify_donation, name="verify_donation"),
+    path("payment/verify/<int:payment_id>/", views.verify_payment, name="verify_payment"),
 ]
 
