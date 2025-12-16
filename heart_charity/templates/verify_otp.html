@@ -1,9 +1,0 @@
-<h2>Enter OTP sent to {{ phone }}</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="text" name="otp" placeholder="Enter OTP">
-    <button type="submit">Verify</button>
-</form>
-{% if otp_err %}
-<p style="color:red">{{ otp_err }}</p>
-{% endif %}

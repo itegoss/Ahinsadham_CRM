@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Select Donation Box{% endblock %}
+
+{% block content %}
+
+<style>
+    .card {
+        max-width: 520px;
+        margin: auto;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    .toggle-btns .btn {
+        width: 50%;
+    }
+    #qrSection, #manualSection {
+        display: none;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card p-4">
+        <h4 class="text-center fw-bold mb-4">Select Donation Box</h4>
+
+        <!-- Toggle Buttons -->
+        <div class="btn-group toggle-btns mb-4">
+            <button type="button" class="btn btn-outline-success" onclick="showQR()">
+                📷 Scan QR Code
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="showManual()">
+                ⌨️ Enter Box ID
+            </button>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- QR Scan Section -->
+            <div id="qrSection">
+                <label class="form-label fw-semibold">Scan Donation Box QR</label>
+                <video id="qr-video" width="100%" height="220" class="border rounded"></video>
+
+                <input type="hidden" name="donation_box_id" id="qrResult">
+
+                <p class="text-muted mt-2 text-center">
+                    Point the camera at the QR code
+                </p>
+            </div>
+
+            <!-- Manual Entry Section -->
+            <div id="manualSection">
+                <label class="form-label fw-semibold">Donation Box ID</label>
+                <input type="text"
+                       name="donation_box_id"
+                       class="form-control"
+                       placeholder="e.g. DO_0001">
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-success w-100 mt-4">
+                Continue
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- QR Scanner Script -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+    function showQR() {
+        document.getElementById("qrSection").style.display = "block";
+        document.getElementById("manualSection").style.display = "none";
+        startQR();
+    }
+
+    function showManual() {
+        document.getElementById("manualSection").style.display = "block";
+        document.getElementById("qrSection").style.display = "none";
+    }
+
+    function startQR() {
+        const html5QrCode = new Html5Qrcode("qr-video");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
+            qrCodeMessage => {
+                document.getElementById("qrResult").value = qrCodeMessage;
+                html5QrCode.stop();
+                alert("QR scanned successfully!");
+            }
+        );
+    }
+</script>
+
+{% endblock %}

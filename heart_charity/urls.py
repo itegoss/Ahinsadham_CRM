@@ -8,8 +8,6 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("request_password_reset/", views.request_password_reset, name="request_password_reset"),
     path("reset_password/<uname>/", views.reset_password, name="reset_password"),
-    path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
-    path("user-dashboard/", views.user_dashboard, name="user_dashboard"),
     path('welcome/', views.welcome_view, name='welcome'),
     path('send-otp/', views.send_otp, name='send_otp'),
     path('access_control/', views.access_control, name='access_control'),
@@ -86,6 +84,7 @@ path('add_donation_payment/', views.add_donation_payment, name='add_donation_pay
 
 path('search_donation_payment/', views.search_donation_payment, name='search_donation_payment'),
 path('search_donation_box/', views.search_donation_box, name='search_donation_box'),
+path("select-donation-box/", views.select_donation_box, name="select_donation_box"),
 
 path('edit-box-payment/<int:id>/', views.edit_box_payment, name='edit_box_payment'),
     path('edit-donation-box/<int:id>/', views.edit_donation_box, name='edit_donation_box'),

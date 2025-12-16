@@ -1,168 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Add Donation Box Payment</title>
-
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #eef7ec; margin: 0; padding: 0;
-           display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-
-    .container {
-      width: 80%; max-width: 900px; background: #f6fff4; padding: 35px; border-radius: 18px;
-      box-shadow: 0px 6px 20px rgba(0,0,0,0.08);
-      position: relative;
-    }
-
-    h2 { text-align: center; font-size: 32px; color: #1b6e3a; margin-bottom: 8px; font-weight: bold; }
-    .subtitle { text-align: center; font-size: 14px; color: #6b7576; margin-bottom: 25px; }
-
-    .section-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #166534; }
-    hr { height: 1px; background: #c8e6c9; border: none; margin-bottom: 20px; }
-
-    label { display: block; font-weight: 600; margin-top: 10px; margin-bottom: 5px; color: #444; }
-
-    input, select {
-      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #9dcc9d;
-      background: #fff; font-size: 15px; outline: none; transition: .2s;
-    }
-
-    input:focus, select:focus { border-color: #1b6e3a; box-shadow: 0px 0px 4px rgba(27,110,58,0.4); }
-
-    input[readonly] { background: #f3f3f3; font-weight: 500; }
-
-    .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
-    .btn { padding: 12px 35px; border-radius: 8px; font-size: 16px; cursor: pointer; border: none; transition: 0.3s; }
-
-    .btn-submit { background: #1b6e3a; color: white; }
-    .btn-submit:hover { background: #155a2d; }
-
-    .btn-back { background: #4b5563; color: white; }
-    .btn-back:hover { background: #374151; }
-
-    .timer { text-align: right; color: #ff3b3b; font-size: 14px; margin-top: 6px; }
-
-    .expired-overlay {
-      position: absolute; inset: 0; background: rgba(255,255,255,0.9);
-      display: none; justify-content: center; align-items: center;
-      flex-direction: column; border-radius: 18px;
-    }
-
-    .expired-overlay h3 { color: red; font-size: 22px; }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <h2>Add Donation Box Payment</h2>
-  <p class="subtitle">Please fill in the required details below</p>
-
-  <div class="expired-overlay" id="expiredOverlay">
-    <h3>Session Expired</h3>
-    <p>Refresh the page and try again.</p>
-  </div>
-
-  <form id="donationForm" method="POST">
-      {% csrf_token %}
-
-      <div class="section-title">Donation Box Details</div>
-      <hr>
-
-  <label>Donation Box</label>
-<select name="donation_box" id="donationBoxSelect" required class="form-select">
-    <option value="">-- Select Donation Box --</option>
-    {% for box in donation_boxes %}
-        <option value="{{ box.id }}">
-            {{ box.donation_box_name }} (ID: {{ box.donation_id }})
-        </option>
-    {% endfor %}
-</select>
-
-<label>Donation Box Owner</label>
-<input type="text" id="boxOwner" name="owner_name" readonly placeholder="Auto-filled" class="form-control">
-
-<label>Address</label>
-<input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled" class="form-control">
-
-      <label>Opened By</label>
-      <input type="text" name="opened_by" required>
-
-      <label>Received By</label>
-      <input type="text" name="received_by" required>
-
-      <label>Amount (₹)</label>
-      <input type="number" name="amount" step="0.01" required>
-
-      <label class="fw-semibold">Payment Method</label>
-      <select name="payment_method" required>
-          <option value="">-- Select Method --</option>
-          {% for item in payment_methods %}
-              <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-          {% endfor %}
-      </select>
-
-      <label>Date & Time</label>
-      <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time">
-
-      <label>I Witness</label>
-      <input type="text" name="i_witness">
-
-      <div class="timer" id="timer">Form expires in: 60s</div>
-
-      <div class="btn-group">
-        <button type="submit" class="btn btn-submit">✓ Save</button>
-        <button type="button" onclick="history.back()" class="btn btn-back">← Back</button>
-      </div>
-
-  </form>
-</div>
-
-<script>
-    const boxOwnerData = {{ box_owner_map|safe }};
-
-    const boxSelect = document.getElementById("donationBoxSelect");
-    const ownerField = document.getElementById("boxOwner");
-    const addressField = document.getElementById("boxAddress");
-
-    boxSelect.addEventListener("change", function () {
-        const selectedId = parseInt(this.value);
-
-        const info = boxOwnerData.find(item => item.box_id === selectedId);
-
-        if (info) {
-            ownerField.value = info.owner_name;
-            addressField.value = info.address;
-        } else {
-            ownerField.value = "";
-            addressField.value = "";
-        }
-    });
-</script>
-
-
-<script>
-  let timeLeft = 60;
-  const timerDisplay = document.getElementById("timer");
-  const form = document.getElementById("donationForm");
-  const overlay = document.getElementById("expiredOverlay");
-
-  const countdown = setInterval(() => {
-    timeLeft--;
-    timerDisplay.innerHTML = `Form expires in: ${timeLeft}s`;
-
-    if (timeLeft <= 0) {
-      clearInterval(countdown);
-      form.querySelectorAll("input, select, button").forEach(f => f.disabled = true);
-      overlay.style.display = "flex";
-    }
-  }, 1000);
-</script>
-
-</body>
-</html> -->
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -378,12 +213,6 @@
 
       <label>Address</label>
       <input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled">
-
-      <!-- <label>Opened By</label>
-      <input type="text" name="opened_by" required>
-
-      <label>Received By</label>
-      <input type="text" name="received_by" required> -->
       <label>Opened By</label>
 <select name="opened_by" class="form-select" required>
     <option value="">-- Select Person --</option>
@@ -392,13 +221,13 @@
     {% endfor %}
 </select>
 
-<label>Received By</label>
+<!-- <label>Received By</label>
 <select name="received_by" class="form-select" required>
     <option value="">-- Select Person --</option>
     {% for person in donor_volunteers %}
         <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
     {% endfor %}
-</select>
+</select> -->
 
 
       <label>Amount (₹)</label>
@@ -447,7 +276,7 @@
 
 <!-- TIMER SCRIPT -->
 <script>
-  let timeLeft = 60;
+  let timeLeft = 180;
   const timerDisplay = document.getElementById("timer");
   const form = document.getElementById("donationForm");
   const overlay = document.getElementById("expiredOverlay");

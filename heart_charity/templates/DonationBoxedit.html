@@ -2,59 +2,175 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <h3 class="text-success">Edit Donation Box</h3>
-    <hr>
+<style>
+    body {
+        background: linear-gradient(135deg, #e9f7ef, #f4fff8);
+    }
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+    .popup-overlay {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        <div class="mb-3">
-            <label class="form-label">Key ID</label>
-            <input type="text" name="key_id" class="form-control" value="{{ box.key_id }}" required>
+    .popup-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 35px 40px;
+        width: 100%;
+        max-width: 850px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+        position: relative;
+    }
+
+    .popup-title {
+        font-size: 36px;
+        font-weight: 800;
+        color: #15803d;
+    }
+
+    .popup-subtitle {
+        color: #6b7280;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #166534;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        padding: 12px;
+        background: #f7fff9;
+        border: 1px solid #c7e7d4;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+        border-color: #22c55e;
+    }
+
+    .btn-success {
+        background: #15803d;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 40px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .btn-secondary {
+        border-radius: 14px;
+        padding: 12px 40px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        font-size: 28px;
+        text-decoration: none;
+        color: #374151;
+    }
+
+    .qr-preview img {
+        border-radius: 10px;
+        border: 1px solid #d1fae5;
+        padding: 6px;
+        background: #f0fdf4;
+    }
+</style>
+
+<div class="popup-overlay">
+    <div class="popup-card">
+
+        <!-- Close -->
+        <a href="{% url 'welcome' %}" class="close-btn">&times;</a>
+
+        <!-- Header -->
+        <div class="mb-4">
+            <div class="popup-title">Edit Donation Box</div>
+            <div class="popup-subtitle">Please update the required details below</div>
+            <hr>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Box Size</label>
-            <select name="box_size" class="form-select" required>
-                {% for size in box_sizes %}
-                <option value="{{ size }}" {% if size == box.box_size %}selected{% endif %}>
-                    {{ size }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Location</label>
-            <input type="text" name="location" class="form-control" value="{{ box.location }}" required>
-        </div>
+            <div class="section-title">Donation Box Details</div>
 
-        <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-select">
-                {% for status in status_choices %}
-                <option value="{{ status.0 }}" {% if status.0 == box.status %}selected{% endif %}>
-                    {{ status.1 }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label">Key ID</label>
+                    <input type="text" name="key_id" class="form-control" value="{{ box.key_id }}" required>
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Upload QR Code (optional)</label>
-            <input type="file" name="qr_code" class="form-control">
-        </div>
+                <div class="col-md-6">
+                    <label class="form-label">Box Size</label>
+                    <select name="box_size" class="form-select" required>
+                        {% for size in box_sizes %}
+                        <option value="{{ size }}" {% if size == box.box_size %}selected{% endif %}>
+                            {{ size }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        {% if box.qr_code %}
-            <p>Current QR:</p>
-            <img src="{{ box.qr_code.url }}" width="120">
-        {% endif %}
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" value="{{ box.location }}" required>
+                </div>
 
-        <button type="submit" class="btn btn-success px-5">Save</button>
-        <a href="{% url 'welcome' %}" class="btn btn-secondary px-5">Back</a>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        {% for status in status_choices %}
+                        <option value="{{ status.0 }}" {% if status.0 == box.status %}selected{% endif %}>
+                            {{ status.1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    </form>
+                <div class="col-md-6">
+                    <label class="form-label">Upload QR Code (optional)</label>
+                    <input type="file" name="qr_code" class="form-control">
+                </div>
+
+                {% if box.qr_code %}
+                <div class="col-md-6 qr-preview">
+                    <label class="form-label">Current QR</label><br>
+                    <img src="{{ box.qr_code.url }}" width="130">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-success me-3">
+                    ✔ Update
+                </button>
+                <a href="{% url 'welcome' %}" class="btn btn-secondary">
+                    ← Back
+                </a>
+            </div>
+
+        </form>
+    </div>
 </div>
 
 {% endblock %}
