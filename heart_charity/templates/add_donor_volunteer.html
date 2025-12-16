@@ -2,6 +2,53 @@
 {% block title %}Add Donor / Volunteer{% endblock %}
 
 {% block content %}
+<style>
+/* ================= ZIG-ZAG LAYOUT FIX ================= */
+
+/* Restore Bootstrap grid behavior */
+.row {
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+[class*="col-"] {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+/* Ensure fields flow left-right properly */
+@media (min-width: 768px) {
+    .col-md-3 {  float: left; }
+    .col-md-4 {  float: left; }
+    .col-md-6 { width: 50%; float: left; }
+}
+
+/* Clear floats after each row */
+.row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Inputs full width */
+.form-control,
+.form-select {
+    width: 100%;
+}
+
+/* JS visibility must win */
+#department[style*="display: none"],
+#business[style*="display: none"],
+#designation[style*="display: none"],
+#occupation[style*="display: none"],
+#address[style*="display: none"],
+#idproof[style*="display: none"],
+#donor_box_row[style*="display: none"],
+#org[style*="display: none"] {
+    display: none !important;
+}
+</style>
+
 
 <style>
     .card { background: #f2fff4 !important; border-radius: 12px; }
@@ -27,7 +74,7 @@
                 <h5 class="section-title">Person Type</h5>
                 <hr>
 
-                <div class="row g-3 mb-3">
+                <div class="row g-3 mb-3" id="persontype">
 
                     <div class="col-md-6">
                         <label class="form-label">Person Type</label>
@@ -54,158 +101,155 @@
                 <!-- ===================================== PERSONAL DETAILS ===================================== -->
                 <h5 class="section-title">Personal Details</h5>
                 <hr>
+<div class="row g-3 mb-4" id="personaldetails">
+    <div class="col-md-3">
+        <label class="form-label">Salutation</label>
+        <select name="salutation" class="form-select">
+            <option value="">Select</option>
+            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
+            <option>Shri</option><option>Smt.</option><option>Kumari</option>
+        </select>
+    </div>
 
-                <div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">First Name</label>
+        <input type="text" name="first_name" class="form-control" required>
+    </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">Salutation</label>
-                        <select name="salutation" class="form-select">
-                            <option value="">Select</option>
-                            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
-                            <option>Shri</option><option>Smt.</option><option>Kumari</option>
-                        </select>
-                    </div>
+    <div class="col-md-3">
+        <label class="form-label">Middle Name</label>
+        <input type="text" name="middle_name" class="form-control">
+    </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">First Name</label>
-                        <input type="text" name="first_name" class="form-control" required>
-                    </div>
+    <div class="col-md-3">
+        <label class="form-label">Last Name</label>
+        <input type="text" name="last_name" class="form-control" required>
+    </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">Middle Name</label>
-                        <input type="text" name="middle_name" class="form-control">
-                    </div>
+</div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">Last Name</label>
-                        <input type="text" name="last_name" class="form-control" required>
-                    </div>
+<!-- ROW 2 : Gender + Blood Group + Email -->
+<div class="row g-3 mb-4">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Gender</label>
-                        <select name="gender" class="form-select">
-                            <option value="">Select</option>
-                            <option>Male</option><option>Female</option><option>Other</option>
-                        </select>
-                    </div>
+    <div class="col-md-4">
+        <label class="form-label">Gender</label>
+        <select name="gender" class="form-select">
+            <option value="">Select</option>
+            <option>Male</option><option>Female</option><option>Other</option>
+        </select>
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Date of Birth</label>
-                        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
-                    </div>
+    <div class="col-md-4">
+        <label class="form-label">Blood Group</label>
+        <select name="blood_group" class="form-select text-dark">
+            <option value="">Select</option>
+            {% for bg, val in blood_groups %}
+                <option value="{{ bg }}">{{ bg }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Age</label>
-                        <input type="number" name="age" id="age" class="form-control" readonly>
-                    </div>
+    <div class="col-md-4">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control">
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Blood Group</label>
-                        <select name="blood_group" class="form-select">
-                            <option value="">Select</option>
-                            {% for bg,val in blood_groups %}
-                                <option value="{{ bg }}">{{ bg }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+</div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Contact Number</label>
-                        <input type="text" name="contact_number" class="form-control">
-                    </div>
+<!-- ROW 3 -->
+<div class="row g-3 mb-4">
 
-                    <div class="col-md-4">
-                        <label class="form-label">WhatsApp Number</label>
-                        <input type="text" name="whatsapp_number" class="form-control">
-                    </div>
+    <div class="col-md-3">
+        <label class="form-label">Contact Number</label>
+        <input type="text" name="contact_number" class="form-control">
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control">
-                    </div>
+    <div class="col-md-3">
+        <label class="form-label">WhatsApp Number</label>
+        <input type="text" name="whatsapp_number" class="form-control">
+    </div>
+<div class="col-md-3" id="donor_box_row2">
+    <label class="form-label">Donor Box</label>
 
-                    <!-- Donor Box -->
-                    <div class="col-md-4" id="donor_box_row" style="display:none;">
-                        <label class="form-label">Donor Box</label>
-                        <select name="donor_box" class="form-select">
-                            <option value="">Select Donor Box</option>
-                            {% for box in donation_boxes %}
-                                <option value="{{ box.id }}">{{ box.donation_id }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+    <select name="donor_box"
+            
+            class="form-select">
+        <option value="">Select Donor Box</option>
+        {% for box in donation_boxes %}
+            <option value="{{ box.id }}">
+                {{ box.donation_id }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
 
-                </div>
 
-                <!-- ANNIVERSARY -->
-                <div class="row g-3 mb-4">
+</div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Date of Anniversary</label>
-                        <input type="date" name="doa" id="doa_input" class="form-control">
-                    </div>
+<!-- ANNIVERSARY -->
+<div class="row g-3 mb-4" id="doa">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Years to Marriage</label>
-                        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
-                    </div>
+    <div class="col-md-3">
+        <label class="form-label">Date of Anniversary</label>
+        <input type="date" name="doa" id="doa_input" class="form-control">
+    </div>
 
-                </div>
+    <div class="col-md-3">
+        <label class="form-label">Years to Marriage</label>
+        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
+    </div>
+<div class="col-md-3">
+        <label class="form-label">Date of Birth</label>
+        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
+    </div>
 
+    <div class="col-md-3">
+        <label class="form-label">Age</label>
+        <input type="number" name="age" id="age" class="form-control" readonly>
+    </div>
+
+</div>
                 <!-- ===================================== ADDRESS DETAILS ===================================== -->
                 <h5 class="section-title">Address Details</h5>
                 <hr>
-
-                <div class="row g-3 mb-4">
-
+                <div class="row g-3 mb-4" id="address">
                     <div class="col-md-4">
                         <label class="form-label">House Number</label>
                         <input type="text" name="house_number" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Building Name</label>
                         <input type="text" name="building_name" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Landmark</label>
                         <input type="text" name="landmark" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Area</label>
                         <input type="text" name="area" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">City</label>
                         <input type="text" name="city" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">State</label>
                         <input type="text" name="state" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Country</label>
                         <input type="text" name="country" value="India" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Postal Code</label>
                         <input type="text" name="postal_code" class="form-control">
                     </div>
-
                 </div>
-
                 <!-- ===================================== OCCUPATION ===================================== -->
                 <h5 class="section-title">Occupation Details</h5>
                 <hr>
-
-                <div class="row g-3 mb-4">
-
+                <div class="row g-3 mb-4" id="occupation">
                     <div class="col-md-4">
                         <label class="form-label">Occupation Type</label>
                         <select name="occupation_type" class="form-select">
@@ -215,7 +259,6 @@
                             {% endfor %}
                         </select>
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Occupation Nature</label>
                         <select name="occupation_nature" class="form-select">
@@ -225,15 +268,11 @@
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
-
                 <!-- ===================================== DEPARTMENT ===================================== -->
                 <h5 class="section-title">Department Details</h5>
                 <hr>
-
-                <div class="row g-3 mb-4">
-
+                <div class="row g-3 mb-4" id="department">
                     <div class="col-md-4">
                         <label class="form-label">Department</label>
                         <select name="department" class="form-select">
@@ -243,7 +282,6 @@
                             {% endfor %}
                         </select>
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Position</label>
                         <select name="position" class="form-select">
@@ -253,7 +291,8 @@
                             {% endfor %}
                         </select>
                     </div>
-
+                </div>
+                  <div class="row g-3 mb-4" id="designation">
                     <div class="col-md-4">
                         <label class="form-label">Designation</label>
                         <select name="designation" class="form-select">
@@ -263,14 +302,28 @@
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
-
                 <!-- ===================================== BUSINESS ===================================== -->
-                <h5 class="section-title">Business Details</h5>
+                <h5 class="section-title">Business Details/Organization Details</h5>
                 <hr>
+                     <div class="row g-3" id="business-sal">
+                        <div class="col-md-4 hidden-by-default business-field org-field">
+                            <label class="form-label">Business/Org Salutation</label>
+                            <select name="business_salutation" class="form-select">
+                                <option value="">-- Select Salutation --</option>
+                                <option value="Mr.">Mr.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Dr.">Dr.</option>
+                                <option value="Prof.">Prof.</option>
+                                <option value="CEO">CEO</option>
+                                <option value="Director">Director</option>
+                            </select>
+                        </div>
+                        </div>
+                        <hr>
 
-                <div class="row g-3 mb-4">
+                <div class="row g-3 mb-4" id="business">
 
                     <div class="col-md-4">
                         <label class="form-label">Business Name</label>
@@ -300,10 +353,9 @@
                 </div>
 
                 <!-- ===================================== ORGANIZATION ===================================== -->
-                <h5 class="section-title">Organization Details</h5>
                 <hr>
 
-                <div class="row g-3 mb-4">
+                <div class="row g-3 mb-4" id="org">
 
                     <div class="col-md-4">
                         <label class="form-label">Organization Name</label>
@@ -330,46 +382,65 @@
                 <!-- ===================================== ID & PAN ===================================== -->
                 <h5 class="section-title">ID & PAN Details</h5>
                 <hr>
+                              <div class="row g-3 mb-3" id="idproof">
 
-                <div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label">ID Type</label>
+        <select name="id_type" class="form-select">
+            <option value="">Select</option>
+            {% for item in id_type_options %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">ID Type</label>
-                        <select name="id_type" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in id_type_options %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+</div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">ID Number</label>
-                        <input type="text" name="id_number" class="form-control">
-                    </div>
+<!-- NEXT LINE -->
+<div class="row g-3 mb-3">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Upload ID Proof</label>
-                        <input type="file" name="id_proof_image" class="form-control">
-                    </div>
+    <div class="col-md-4">
+        <label class="form-label">ID Number</label>
+        <input type="text" name="id_number" class="form-control">
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">PAN Number</label>
-                        <input type="text" name="pan_number" class="form-control">
-                    </div>
+    <div class="col-md-4">
+        <label class="form-label">Upload ID Proof</label>
+        <input type="file" name="id_proof_image" class="form-control">
+    </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Upload PAN Card</label>
-                        <input type="file" name="pan_card_image" class="form-control">
-                    </div>
+</div>
 
-                </div>
+<!-- NEXT LINE -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <label class="form-label">PAN Number</label>
+        <input type="text" name="pan_number" class="form-control">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Upload PAN Card</label>
+        <input type="file" name="pan_card_image" class="form-control">
+    </div>
+
+</div>
+
 
                 <!-- SUBMIT -->
-                <div class="text-center mt-4">
+                <!-- <div class="text-center mt-4">
                     <button class="btn btn-success px-4">Save</button>
                     <a href="{% url 'welcome' %}" class="btn btn-secondary px-4">Cancel</a>
-                </div>
+                </div> -->
+                <div class="action-buttons">
+        <button type="submit" class="action-btn save-btn">
+            ✔ Save
+        </button>
+
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
+            ← Back
+        </a>
+    </div>
 
             </form>
         </div>
@@ -390,27 +461,144 @@ document.getElementById("date_of_birth").addEventListener("change", function () 
 
 <!-- ================= YEARS TO MARRIAGE AUTO CALCULATION ================= -->
 <script>
-document.getElementById("doa_input").addEventListener("change", function () {
-    let doa = new Date(this.value);
-    let today = new Date();
+document.addEventListener("DOMContentLoaded", function () {
 
-    if (!isNaN(doa)) {
-        let years = doa.getFullYear() - today.getFullYear();
-        document.getElementById("years_to_marriage").value = years >= 0 ? years : 0;
-    }
+    const doaInput = document.getElementById("doa_input");
+    const yearsField = document.getElementById("years_to_marriage");
+
+    doaInput.addEventListener("change", function () {
+
+        if (!this.value) {
+            yearsField.value = "";
+            return;
+        }
+
+        const doa = new Date(this.value);
+        const today = new Date();
+
+        let years = today.getFullYear() - doa.getFullYear();
+
+        // Adjust if anniversary hasn't occurred yet this year
+        const hasHadAnniversaryThisYear =
+            today.getMonth() > doa.getMonth() ||
+            (today.getMonth() === doa.getMonth() && today.getDate() >= doa.getDate());
+
+        if (!hasHadAnniversaryThisYear) {
+            years--;
+        }
+
+        yearsField.value = years >= 0 ? years : 0;
+    });
+
 });
 </script>
 
-<!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
-<script>
-let donorBoxOwnerID = "{{ donor_box_owner_id }}";
-let personType = document.getElementById("person_type");
-let donorBoxRow = document.getElementById("donor_box_row");
 
-function updateDonorBox() {
-    donorBoxRow.style.display = (personType.value === donorBoxOwnerID) ? "block" : "none";
-}
-personType.addEventListener("change", updateDonorBox);
+<!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const personType = document.getElementById("person_type");
+
+    // Base sections (always visible)
+    const baseSections = [
+        "persontype",
+        "personaldetails",
+        "idproof",
+        "address",
+        "occupation",
+        "designation"
+    ];
+
+    // Conditional sections
+    const department = document.getElementById("department");
+    const position = document.getElementById("position") || document.getElementById("department");
+    const business = document.getElementById("business");
+    const donorBox = document.getElementById("donor_box_row");
+    const org = document.getElementById("org");
+
+    function hideAllConditional() {
+        if (department) department.style.display = "none";
+        if (position) position.style.display = "none";
+        if (business) business.style.display = "none";
+        if (donorBox) donorBox.style.display = "none";
+        if (org) org.style.display = "none";   // 👈 always hidden by default
+    }
+
+    function showBaseSections() {
+        baseSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "block";
+        });
+    }
+
+    function updateVisibility() {
+        const selectedText = personType.options[personType.selectedIndex]?.text.trim();
+
+        // Always show base
+        showBaseSections();
+
+        // Hide all conditional first
+        hideAllConditional();
+
+        if (!selectedText) return;
+
+        if (selectedText === "Employee") {
+            if (department) department.style.display = "block";
+        }
+        else if (selectedText === "Committee Member") {
+            if (position) position.style.display = "block";
+        }
+        else if (selectedText === "Business") {
+            if (business) business.style.display = "block";
+        }
+        else if (selectedText === "Organization") {
+            if (org) org.style.display = "block";   // ✅ ONLY Organization
+        }
+        else if (selectedText === "Donation Box Owner") {
+            if (business) business.style.display = "block";
+            if (donorBox) donorBox.style.display = "block";
+        }
+        // Donor / Volunteer → only base fields visible
+    }
+
+    // Init on page load
+    updateVisibility();
+
+    // Change listener
+    personType.addEventListener("change", updateVisibility);
+
+});
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const personType = document.getElementById("person_type");
+    const businessSal = document.getElementById("business-sal");
+
+    function updateBusinessSalutation() {
+        const selectedText =
+            personType.options[personType.selectedIndex]?.text.trim();
+
+        // Hide by default
+        businessSal.style.display = "none";
+
+        // Show ONLY for Business OR Organization
+        if (selectedText === "Business" || selectedText === "Organization") {
+            businessSal.style.display = "block";
+        }
+    }
+
+    // Init on load
+    updateBusinessSalutation();
+
+    // On change
+    personType.addEventListener("change", updateBusinessSalutation);
+
+});
+</script>
+
 
 {% endblock %}

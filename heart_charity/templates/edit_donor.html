@@ -1,174 +1,532 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Donor / Volunteer</title>
-    <style>
-        body { margin:0; padding:0; font-family:Arial,sans-serif; background:#f4faf4; display:flex; justify-content:center; align-items:center; min-height:100vh;}
-        .overlay { position:fixed; width:100%; height:100%; background:rgba(0,0,0,0.15); backdrop-filter:blur(4px);}
-        .popup-card { position:relative; width:90%; max-width:1200px; background:white; padding:50px 40px; border-radius:20px; box-shadow:0px 15px 40px rgba(0,0,0,0.2);}
-        .title { text-align:center; font-size:38px; font-weight:bold; color:#1e7a33; margin-bottom:6px; }
-        .subtitle { text-align:center; font-size:18px; color:gray; margin-bottom:35px; }
-        .section-label { font-size:22px; color:green; font-weight:bold; margin-bottom:8px;}
-        .line { width:100%; height:2px; background:#d1e5d1; margin-bottom:30px; }
-        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:25px 40px;}
-        .form-group label { font-weight:600; color:#333; display:block; margin-bottom:5px; }
-        .form-group input, .form-group textarea, .form-group select { color:black;width:100%; padding:14px; border-radius:10px; border:2px solid #cce4cc; font-size:16px; background:#f8fff8; }
-        textarea { min-height:100px; resize:none; }
-        input:focus, textarea:focus, select:focus { border-color:#21873b; background:white; outline:none; }
-        .btn-area { text-align:center; margin-top:40px; }
-        button { padding:14px 40px; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; border:none; margin:0 10px; }
-        .btn-submit { background:#21873b; color:white; }
-        .btn-submit:hover { background:#17612a; }
-        .btn-back { background:#6c757d; color:white; }
-        .btn-back:hover { background:#565e64;}
-        .close-btn { position:absolute; top:18px; right:18px; font-size:22px; background:none; border:none; cursor:pointer; }
-        .close-btn:hover { color:red; }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Edit Donor / Volunteer{% endblock %}
 
-<div class="overlay"></div>
+{% block content %}
 
-<div class="popup-card">
+<style>
+.card { background: #f2fff4 !important; border-radius: 12px; }
+.form-control, .form-select { border-radius: 8px; }
+h3.fw-bold, h5.section-title { color: #0d7a34; }
+hr { border-top: 2px solid #bae6c6; }
+</style>
 
-    <button class="close-btn" onclick="window.history.back()">✖</button>
+<div class="container mt-4 mb-5">
+<div class="card shadow-lg">
 
-    <div class="title">Edit Donor / Volunteer</div>
-    <div class="subtitle">Modify details below</div>
-
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <!-- Personal Details -->
-        <div class="section-label">Personal Details</div>
-        <div class="line"></div>
-        <div class="form-grid">
-            
-            <div class="form-group">
-                <label>Person Type</label>
-                <!-- Person Type -->
-
-                <select name="person_type">
-                    {% for pt in person_types %}
-                        <option value="{{ pt.id }}" {% if donor.person_type.id == pt.id %}selected{% endif %}>{{ pt }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>First Name</label>
-                <input type="text" name="first_name" value="{{ donor.first_name }}">
-            </div>
-            <div class="form-group">
-                <label>Middle Name</label>
-                <input type="text" name="middle_name" value="{{ donor.middle_name }}">
-            </div>
-            <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" name="last_name" value="{{ donor.last_name }}">
-            </div>
-            <div class="form-group">
-                <label>Gender</label>
-                <input type="text" name="gender" value="{{ donor.gender }}">
-            </div>
-            <div class="form-group">
-                <label>Date of Birth</label>
-                <input type="date" name="date_of_birth" value="{{ donor.date_of_birth|date:'Y-m-d' }}">
-            </div>
-            <div class="form-group">
-                <label>Blood Group</label>
-                <select name="blood_group">
-                    {% for bg, bg_label in donor.BLOOD_GROUP_CHOICES %}
-                        <option value="{{ bg }}" {% if donor.blood_group == bg %}selected{% endif %}>{{ bg_label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Contact Number</label>
-                <input type="text" name="contact_number" value="{{ donor.contact_number }}">
-            </div>
-            <div class="form-group">
-                <label>WhatsApp Number</label>
-                <input type="text" name="whatsapp_number" value="{{ donor.whatsapp_number }}">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ donor.email }}">
-            </div>
-            <div class="form-group">
-                <label>Donor Box ID</label>
-                <input type="text" name="donor_box_id" value="{{ donor.donor_box_id }}">
-            </div>
-        </div>
-
-        <!-- Address -->
-        <div class="section-label">Address</div>
-        <div class="line"></div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>House Number</label>
-                <input type="text" name="house_number" value="{{ donor.house_number }}">
-            </div>
-            <div class="form-group">
-                <label>Building Name</label>
-                <input type="text" name="building_name" value="{{ donor.building_name }}">
-            </div>
-            <div class="form-group">
-                <label>Landmark</label>
-                <input type="text" name="landmark" value="{{ donor.landmark }}">
-            </div>
-            <div class="form-group">
-                <label>Area</label>
-                <input type="text" name="area" value="{{ donor.area }}">
-            </div>
-            <div class="form-group">
-                <label>City</label>
-                <input type="text" name="city" value="{{ donor.city }}">
-            </div>
-            <div class="form-group">
-                <label>State</label>
-                <input type="text" name="state" value="{{ donor.state }}">
-            </div>
-            <div class="form-group">
-                <label>Country</label>
-                <input type="text" name="country" value="{{ donor.country }}">
-            </div>
-            <div class="form-group">
-                <label>Postal Code</label>
-                <input type="text" name="postal_code" value="{{ donor.postal_code }}">
-            </div>
-        </div>
-
-        <!-- ID & PAN -->
-        <div class="section-label">ID & PAN</div>
-        <div class="line"></div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>ID Type</label>
-                <select name="id_type">
-                    {% for idt in id_types %}
-                        <option value="{{ idt.id }}" {% if donor.id_type.id == idt.id %}selected{% endif %}>{{ idt }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>ID Number</label>
-                <input type="text" name="id_number" value="{{ donor.id_number }}">
-            </div>
-            <div class="form-group">
-                <label>PAN Number</label>
-                <input type="text" name="pan_number" value="{{ donor.pan_number }}">
-            </div>
-        </div>
-
-        <div class="btn-area">
-            <button class="btn-submit" type="submit">✔ Update</button>
-            <button type="button" class="btn-back" onclick="window.history.back()">← Back</button>
-        </div>
-
-    </form>
+<div class="text-center mb-4 pt-3">
+    <h3 class="fw-bold">Edit Donor / Volunteer</h3>
+    <p class="text-muted">Update donor / volunteer details</p>
 </div>
 
-</body>
-</html>
+<div class="card-body px-4">
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- ================= PERSON TYPE ================= -->
+<h5 class="section-title">Person Type</h5>
+<hr>
+
+<div class="row g-3 mb-3" id="persontype">
+   <div class="col-md-6">
+                        <label class="form-label">Person Type</label>
+                        <select name="person_type" id="person_type" class="form-select">
+                            <option value="">Select</option>
+                            {% for option in person_type_options %}
+                                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+
+<div class="col-md-6">
+<label class="form-label">Referred By</label>
+<select name="referred_by" class="form-select">
+<option value="">-- Select Person --</option>
+{% for d in donors %}
+<option value="{{ d.id }}"
+{% if donor.referred_by_id == d.id %}selected{% endif %}>
+{{ d.first_name }} {{ d.last_name }}
+</option>
+{% endfor %}
+</select>
+</div>
+
+</div>
+
+<!-- ================= PERSONAL DETAILS ================= -->
+<h5 class="section-title">Personal Details</h5>
+<hr>
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-3">
+<label>Salutation</label>
+<input name="salutation" class="form-control" value="{{ donor.salutation }}">
+</div>
+
+<div class="col-md-3">
+<label>First Name</label>
+<input name="first_name" class="form-control" value="{{ donor.first_name }}">
+</div>
+
+<div class="col-md-3">
+<label>Middle Name</label>
+<input name="middle_name" class="form-control" value="{{ donor.middle_name }}">
+</div>
+
+<div class="col-md-3">
+<label>Last Name</label>
+<input name="last_name" class="form-control" value="{{ donor.last_name }}">
+</div>
+
+<div class="col-md-3">
+<label>Gender</label>
+<select name="gender" class="form-select">
+<option value="">Select</option>
+<option {% if donor.gender == "Male" %}selected{% endif %}>Male</option>
+<option {% if donor.gender == "Female" %}selected{% endif %}>Female</option>
+<option {% if donor.gender == "Other" %}selected{% endif %}>Other</option>
+</select>
+</div>
+
+<div class="col-md-3">
+<label>Date of Birth</label>
+<input type="date" name="date_of_birth" class="form-control"
+value="{{ donor.date_of_birth|date:'Y-m-d' }}">
+</div>
+
+<div class="col-md-3">
+<label>Age</label>
+<input name="age" class="form-control" value="{{ donor.age }}">
+</div>
+
+<div class="col-md-3">
+<label>Blood Group</label>
+<select name="blood_group" class="form-select">
+<option value="">Select</option>
+{% for bg,val in blood_groups %}
+<option value="{{ bg }}"
+{% if donor.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="col-md-3">
+<label>Contact Number</label>
+<input name="contact_number" class="form-control" value="{{ donor.contact_number }}">
+</div>
+
+<div class="col-md-3">
+<label>WhatsApp Number</label>
+<input name="whatsapp_number" class="form-control" value="{{ donor.whatsapp_number }}">
+</div>
+
+<div class="col-md-3">
+<label>Email</label>
+<input name="email" class="form-control" value="{{ donor.email }}">
+</div>
+
+<div class="col-md-3" id="donor_box_row2">
+    <label class="form-label">Donor Box</label>
+
+    <select name="donor_box"
+            
+            class="form-select">
+        <option value="">Select Donor Box</option>
+        {% for box in donation_boxes %}
+            <option value="{{ box.id }}">
+                {{ box.donation_id }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+
+
+<div class="col-md-3">
+<label>Date of Anniversary</label>
+<input type="date" name="doa" class="form-control"
+value="{{ donor.doa|date:'Y-m-d' }}">
+</div>
+
+<div class="col-md-3">
+<label>Years to Marriage</label>
+<input name="years_to_marriage" class="form-control"
+value="{{ donor.years_to_marriage }}">
+</div>
+
+</div>
+
+<h5 class="section-title">Address Details</h5>
+<hr>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <label class="form-label">House Number</label>
+        <input type="text" name="house_number" class="form-control"
+               value="{{ donor.house_number }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Building Name</label>
+        <input type="text" name="building_name" class="form-control"
+               value="{{ donor.building_name }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Landmark</label>
+        <input type="text" name="landmark" class="form-control"
+               value="{{ donor.landmark }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Area</label>
+        <input type="text" name="area" class="form-control"
+               value="{{ donor.area }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">City</label>
+        <input type="text" name="city" class="form-control"
+               value="{{ donor.city }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">State</label>
+        <input type="text" name="state" class="form-control"
+               value="{{ donor.state }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Country</label>
+        <input type="text" name="country" class="form-control"
+               value="{{ donor.country }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Postal Code</label>
+        <input type="text" name="postal_code" class="form-control"
+               value="{{ donor.postal_code }}">
+    </div>
+
+</div>
+
+
+<h5 class="section-title">Occupation & Business</h5>
+<hr>
+<div class="row g-3" id="business-sal">
+                        <div class="col-md-4 hidden-by-default business-field org-field">
+                            <label class="form-label">Business/Org Salutation</label>
+                            <select name="business_salutation" class="form-select">
+                                <option value="">-- Select Salutation --</option>
+                                <option value="Mr.">Mr.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Dr.">Dr.</option>
+                                <option value="Prof.">Prof.</option>
+                                <option value="CEO">CEO</option>
+                                <option value="Director">Director</option>
+                            </select>
+                        </div>
+                        </div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label">Occupation Type</label>
+        <select name="occupation_type" class="form-select">
+            <option value="">Select</option>
+            {% for o in occupation_types %}
+                <option value="{{ o.id }}"
+                {% if donor.occupation_type_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Occupation Nature</label>
+        <select name="occupation_nature" class="form-select">
+            <option value="">Select</option>
+            {% for o in occupation_natures %}
+                <option value="{{ o.id }}"
+                {% if donor.occupation_nature_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+            <option value="">Select</option>
+            {% for o in departments %}
+                <option value="{{ o.id }}"
+                {% if donor.department_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Position</label>
+        <select name="position" class="form-select">
+            <option value="">Select</option>
+            {% for o in positions %}
+                <option value="{{ o.id }}"
+                {% if donor.position_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Designation</label>
+        <select name="designation" class="form-select">
+            <option value="">Select</option>
+            {% for o in designations %}
+                <option value="{{ o.id }}"
+                {% if donor.designation_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Business Type</label>
+        <select name="business_type" class="form-select">
+            <option value="">Select</option>
+            {% for o in business_types %}
+                <option value="{{ o.id }}"
+                {% if donor.business_type_id == o.id %}selected{% endif %}>
+                    {{ o.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Business Name</label>
+        <input type="text" name="business_name" class="form-control"
+               value="{{ donor.business_name }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Organization Name</label>
+        <input type="text" name="org_name" class="form-control"
+               value="{{ donor.org_name }}">
+    </div>
+
+</div>
+<h5 class="section-title">ID & PAN Details</h5>
+<hr>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <label class="form-label">ID Type</label>
+        <select name="id_type" class="form-select">
+            <option value="">Select</option>
+            {% for idt in id_types %}
+                <option value="{{ idt.id }}"
+                {% if donor.id_type_id == idt.id %}selected{% endif %}>
+                    {{ idt.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label">ID Number</label>
+        <input type="text" name="id_number" class="form-control"
+               value="{{ donor.id_number }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Upload ID Proof</label>
+        <input type="file" name="id_proof_image" class="form-control">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">PAN Number</label>
+        <input type="text" name="pan_number" class="form-control"
+               value="{{ donor.pan_number }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Upload PAN Card</label>
+        <input type="file" name="pan_card_image" class="form-control">
+    </div>
+
+</div>
+
+<div class="text-center mt-4">
+<button class="btn btn-success px-4">✔ Update</button>
+<a href="{% url 'welcome' %}" class="btn btn-secondary px-4">← Back</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+
+<!-- ================= AGE AUTO CALCULATION ================= -->
+<script>
+document.getElementById("date_of_birth").addEventListener("change", function () {
+    let dob = new Date(this.value);
+    if (!isNaN(dob)) {
+        let diff = Date.now() - dob.getTime();
+        let age = new Date(diff).getUTCFullYear() - 1970;
+        document.getElementById("age").value = age;
+    }
+});
+</script>
+
+<!-- ================= YEARS TO MARRIAGE AUTO CALCULATION ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const doaInput = document.getElementById("doa_input");
+    const yearsField = document.getElementById("years_to_marriage");
+
+    doaInput.addEventListener("change", function () {
+
+        if (!this.value) {
+            yearsField.value = "";
+            return;
+        }
+
+        const doa = new Date(this.value);
+        const today = new Date();
+
+        let years = today.getFullYear() - doa.getFullYear();
+
+        // Adjust if anniversary hasn't occurred yet this year
+        const hasHadAnniversaryThisYear =
+            today.getMonth() > doa.getMonth() ||
+            (today.getMonth() === doa.getMonth() && today.getDate() >= doa.getDate());
+
+        if (!hasHadAnniversaryThisYear) {
+            years--;
+        }
+
+        yearsField.value = years >= 0 ? years : 0;
+    });
+
+});
+</script>
+
+
+<!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const personType = document.getElementById("person_type");
+
+    // Base sections (always visible)
+    const baseSections = [
+        "persontype",
+        "personaldetails",
+        "idproof",
+        "address",
+        "occupation",
+        "designation"
+    ];
+
+    // Conditional sections
+    const department = document.getElementById("department");
+    const position = document.getElementById("position") || document.getElementById("department");
+    const business = document.getElementById("business");
+    const donorBox = document.getElementById("donor_box_row");
+    const org = document.getElementById("org");
+
+    function hideAllConditional() {
+        if (department) department.style.display = "none";
+        if (position) position.style.display = "none";
+        if (business) business.style.display = "none";
+        if (donorBox) donorBox.style.display = "none";
+        if (org) org.style.display = "none";   // 👈 always hidden by default
+    }
+
+    function showBaseSections() {
+        baseSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "block";
+        });
+    }
+
+    function updateVisibility() {
+        const selectedText = personType.options[personType.selectedIndex]?.text.trim();
+
+        // Always show base
+        showBaseSections();
+
+        // Hide all conditional first
+        hideAllConditional();
+
+        if (!selectedText) return;
+
+        if (selectedText === "Employee") {
+            if (department) department.style.display = "block";
+        }
+        else if (selectedText === "Committee Member") {
+            if (position) position.style.display = "block";
+        }
+        else if (selectedText === "Business") {
+            if (business) business.style.display = "block";
+        }
+        else if (selectedText === "Organization") {
+            if (org) org.style.display = "block";   // ✅ ONLY Organization
+        }
+        else if (selectedText === "Donation Box Owner") {
+            if (business) business.style.display = "block";
+            if (donorBox) donorBox.style.display = "block";
+        }
+        // Donor / Volunteer → only base fields visible
+    }
+
+    // Init on page load
+    updateVisibility();
+
+    // Change listener
+    personType.addEventListener("change", updateVisibility);
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const personType = document.getElementById("person_type");
+    const businessSal = document.getElementById("business-sal");
+
+    function updateBusinessSalutation() {
+        const selectedText =
+            personType.options[personType.selectedIndex]?.text.trim();
+
+        // Hide by default
+        businessSal.style.display = "none";
+
+        // Show ONLY for Business OR Organization
+        if (selectedText === "Business" || selectedText === "Organization") {
+            businessSal.style.display = "block";
+        }
+    }
+
+    // Init on load
+    updateBusinessSalutation();
+
+    // On change
+    personType.addEventListener("change", updateBusinessSalutation);
+
+});
+</script>
+
+
+{% endblock %}

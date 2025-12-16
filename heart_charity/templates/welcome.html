@@ -3,13 +3,10 @@
 {% block content %}
 
 <style>
-
-    
-    .dashboard-container {
+.dashboard-container {
         display: flex;
         min-height: 100vh;
-    }
-    
+    } 
     /* Mobile Header */
     .mobile-header {
         display: none;
@@ -20,11 +17,9 @@
         align-items: center;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    
-    .mobile-header h1 {
+      .mobile-header h1 {
         font-size: 1.2rem;
     }
-    
     .menu-toggle {
         background: none;
         border: none;
@@ -32,7 +27,6 @@
         font-size: 1.5rem;
         cursor: pointer;
     }
-    
     /* Sidebar */
 .sidebar {
   width: 250px;
@@ -45,13 +39,11 @@
   position: sticky;
   top: 0;
 }
-    
     .sidebar-header {
         padding: 20px;
         text-align: center;
         border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    
+    }  
     .sidebar-toggle {
         position: absolute;
         right: -15px;
@@ -67,11 +59,9 @@
         cursor: pointer;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    
     .sidebar.collapsed {
         width: 70px;
     }
-    
     .sidebar.collapsed .sidebar-text {
         display: none;
     }
@@ -85,47 +75,33 @@
         transition: all 0.2s;
         border-left: 3px solid transparent;
     }
-    
     .sidebar a:hover, .sidebar a.active {
         background: rgba(255,255,255,0.1);
         color: white;
         border-left: 3px solid white;
     }
-    
     .sidebar i {
         margin-right: 10px;
         font-size: 1.2rem;
     }
-    
     .sidebar.collapsed i {
         margin-right: 0;
         font-size: 1.4rem;
     }
-    
     /* Main Content */
     .content {
         flex: 1;
         padding: 20px;
         overflow: auto;
     }
-    
-    /* .content-header {
-        margin-bottom: 20px;
-    } */
-    
     .content-header h1 {
         color: #184d61;
         font-size: 1.8rem;
         margin-bottom: 5px;
     }
-    
     .content-header p {
         color: #666;
     }
-    
-    /* Search Bar */
-   
-    
     .search-input {
         width: 100%;
         padding: 12px 45px 12px 15px;
@@ -150,17 +126,14 @@
         transform: translateY(-50%);
         color: #666;
     }
-    
     /* Tab Content */
     .tab-content {
         display: none;
         animation: fadeIn 0.3s ease-in-out;
     }
-    
     .tab-content.active {
         display: block;
     }
-    
      .hero-banner {
     display: flex;
     align-items: center;
@@ -171,30 +144,25 @@
     box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     margin-bottom: 50px;
   }
-
   .hero-content {
     max-width: 50%;
   }
-
   .hero-title {
     font-size: 2.6rem;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 12px;
   }
-
   .hero-subtitle {
     font-size: 1.2rem;
     color: #334155;
     margin-bottom: 16px;
   }
-
   .hero-description {
     color: #475569;
     line-height: 1.6;
     margin-bottom: 24px;
   }
-
   .hero-button {
     background-color: #0284c7;
     color: white;
@@ -204,21 +172,15 @@
     font-weight: 600;
     transition: background 0.25s ease;
   }
-
-  
-
   .hero-image {
     width: 45%;
     text-align: right;
   }
-
   .hero-image img {
     max-width: 100%;
     border-radius: 16px;
   }
-
-  
-    /* Form Styles */
+  /* Form Styles */
     .form-container {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
         padding: 25px;
@@ -227,24 +189,20 @@
         max-width: 800px;
         margin: 0 auto;
     }
-    
-    .form-header {
+     .form-header {
         text-align: center;
         margin-bottom: 25px;
-    }
-    
+    } 
     .form-header h2 {
         color: #184d61;
         margin-bottom: 5px;
     }
-    
     .progress-bar {
         display: flex;
         justify-content: space-between;
         margin-bottom: 30px;
         position: relative;
     }
-    
     .progress-bar::before {
         content: '';
         position: absolute;
@@ -255,13 +213,11 @@
         background: #e0e0e0;
         z-index: 0;
     }
-    
-    .progress-step {
+     .progress-step {
         position: relative;
         z-index: 1;
         text-align: center;
     }
-    
     .progress-step-circle {
         width: 30px;
         height: 30px;
@@ -275,43 +231,35 @@
         font-weight: 600;
         font-size: 0.8rem;
     }
-    
     .progress-step.active .progress-step-circle {
         background: #184d61;
         color: white;
     }
-    
     .progress-step-label {
         font-size: 0.7rem;
         color: #666;
     }
-    
     .form-step {
         display: none;
     }
-    
     .form-step.active {
         display: block;
         animation: fadeIn 0.3s ease-in-out;
     }
-    
     .form-step h5 {
         color: #184d61;
         margin-bottom: 20px;
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
-    
     .form-group {
         margin-bottom: 15px;
     }
-    
     .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: 500;
     }
-    
     .form-group input, .form-group select, .form-group textarea {
         width: 100%;
         padding: 10px;
@@ -319,12 +267,10 @@
         border-radius: 5px;
         font-size: 1rem;
     }
-    
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         border-color: #184d61;
         outline: none;
     }
-    
     .form-group .checkbox-group {
         display: flex;
         align-items: center;
@@ -333,16 +279,13 @@
     .form-group .checkbox-group input {
         width: auto;
     }
-
  /* Align buttons (like View Donations) to the right inside their container */
 .button-group {
   display: flex;
   justify-content: flex-end;  /* pushes button to right */
   margin-bottom: 15px;
   padding-right: 10px;
-}
-
-    
+}  
  .btn {
   padding: 10px 20px;
   border: none;
@@ -350,9 +293,7 @@
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s;
-}
-
-    
+} 
     .btn-primary {
         background: #184d61;
         color: white;
@@ -370,33 +311,28 @@
     .btn-secondary:hover {
         background: #5a6268;
     }
-    
     /* Placeholder Content */
     .placeholder-content {
         text-align: center;
         padding: 50px 20px;
         color: #666;
     }
-    
     .placeholder-content i {
         font-size: 3rem;
         margin-bottom: 15px;
         color: #ccc;
     }
-    
     /* Animations */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    
     /* Responsive Design */
     @media (max-width: 768px) {
         .mobile-header {
             display: flex;
             height:70%;
-        }
-        
+        }   
         .sidebar {
             position: fixed;
             left: -250px;
@@ -405,62 +341,46 @@
             transition: left 0.3s ease;
                 top: 76px
         }
-        
         .sidebar.active {
             left: 0;
         }
-        
         .sidebar.collapsed {
             width: 250px;
         }
-        
         .sidebar.collapsed .sidebar-text {
             display: inline;
         }
-        
         .sidebar-toggle {
             display: none;
         }
-        
         .content {
             margin-left: 0;
         }
-        
         .hero-title {
             font-size: 1.5rem;
         }
-        
         .feature-cards {
             grid-template-columns: 1fr;
         }
-        
         .form-container {
             padding: 20px 15px;
         }
-        
         .progress-step-label {
             font-size: 0.6rem;
         }
-        
         .button-group {
             flex-direction: column;
             gap: 10px;
         }
-        
         .btn {
             width: 100%;
-        }
-          
+        }  
     .dashboard-container {
         display: grid;
         min-height: 100vh;
     }
-    
     }
-
-
-    /* 
-    user table  */
+/*  user table  */
      table {
       width: 90%;
       margin: 30px auto;
@@ -474,7 +394,6 @@
       padding: 14px 15px;
       border-bottom: 1px solid #eee;
     }
-
     tr:hover {
       background: #f1f3ff;
     }
@@ -487,13 +406,8 @@ td a.btn {
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
-  /* color: #fff; */
   transition: all 0.25s ease;
-  /* box-shadow: 0 2px 6px rgba(0,0,0,0.1); */
 }
-
-
-
 /* Align top button to right */
 .button-group.top-right {
   display: flex;
@@ -501,7 +415,6 @@ td a.btn {
   margin-bottom: 15px;
   padding-right: 15px;
 }
-
 /* View Donations button styling */
 #viewDonationsBtn {
   background-color: #17a2b8;
@@ -515,81 +428,37 @@ td a.btn {
   transition: all 0.3s ease;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
-
 #viewDonationsBtn:hover {
   background-color: #138496;
   transform: translateY(-2px);
 }
-
 #viewDonationsBtn:active {
   transform: translateY(0);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
-
 .table-responsive{
   margin-top: -1% !important;
 }
-
 .card{
     --bs-card-bg: none !important;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 h1 {
     text-align: center;
     color: #1b5e20;
     margin-bottom: 30px;
   }
-
   h3 {
     color: #1b5e20;
     margin-bottom: 15px;
   }
-
   /* 📄 Report Form Styling */
   form {
     border-radius: 10px;
-   
   }
-
   form label {
     font-weight: 600;
     color: #333;
   }
-
   form select {
     color: black;
     background-color: unset;
@@ -600,7 +469,6 @@ h1 {
     margin-top: 8px;
     margin-bottom: 15px;
   }
-
   form button {
     color: #fff;
     padding: 10px 20px;
@@ -609,9 +477,6 @@ h1 {
     cursor: pointer;
     font-weight: 600;
   }
-
-  
-
   /* 📊 Table Styling */
   table {
     width: 100%;
@@ -621,7 +486,6 @@ h1 {
     overflow: hidden;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   }
-
   th, td {
     padding: 12px 15px;
   }
@@ -860,16 +724,12 @@ td {
     .form-group .checkbox-group input {
         width: auto;
     }
-
- /* Align buttons (like View Donations) to the right inside their container */
 .button-group {
   display: flex;
   justify-content: flex-end;  /* pushes button to right */
   margin-bottom: 15px;
   padding-right: 10px;
-}
-
-    
+}  
  .btn {
   padding: 10px 20px;
   border: none;
@@ -878,26 +738,20 @@ td {
   font-size: 1rem;
   transition: all 0.2s;
 }
-
-    
     .btn-primary {
         background: #184d61;
         color: white;
     }
-    
     .btn-primary:hover {
         background: #0d3342;
     }
-    
     .btn-secondary {
         background: #6c757d;
         color: white;
     }
-    
     .btn-secondary:hover {
         background: #5a6268;
     }
-    
     /* Placeholder Content */
     .placeholder-content {
         text-align: center;
@@ -915,10 +769,7 @@ td {
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-   
-
-  
+    } 
 .download-form {
   display: flex;
   flex-wrap: wrap;
@@ -930,7 +781,6 @@ td {
   display: flex;
   flex-direction: column;
 }
-
 .download-group label {
   font-weight: 600;
   color: #374151;
@@ -950,11 +800,9 @@ td {
   background-color: transparent;
   transition: border-color 0.3s ease;
 }
-
 .download-group input:focus {
   border-bottom-color: #0f5132; 
 }
-
 /* 🌿 Button style */
 .download-btn {
   color: white;
@@ -966,12 +814,6 @@ td {
   align-self: flex-end;
   margin-top: 25px;
 }
-
-
-    
-
-/* ✅ Scrollable table wrapper */
-
 /* Make the table wrapper scrollable */
 .table-scroll-wrapper {
   width: 100%;
@@ -980,7 +822,6 @@ td {
   border: 1px solid #ddd;
   scroll-behavior: smooth;
 }
-
 /* Keep table wide so scrollbars stay visible */
 .table-scroll-wrapper table {
   min-width: max-content;
@@ -992,14 +833,10 @@ td {
   white-space: nowrap;
   vertical-align: middle;
 }
-
 .pagination-container {
   margin-top: -20px;
   text-align: center;
 }
-
-
-
 .card{
     --bs-card-bg: none !important;
 }
@@ -1013,117 +850,12 @@ td {
             <i class="bi bi-list"></i>
         </button>
     </div>
-
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-toggle" id="sidebarToggle">
             <i class="bi bi-chevron-left" id="toggleIcon"></i>
         </div>
 
 {% if user.is_superuser %}
-    <!-- show all modules -->
-<!--      
-        <a class="active" data-tab="default-user">
-        <i class="bi bi-bar-chart-line"></i>
-            <span class="sidebar-text">Dashboard</span>
-        </a>
-        <a class="mdm" data-tab="mdm">
-            <i class="bi bi-table"></i>
-            <span class="sidebar-text">MDM</span>
-        </a>
-        <a class="user" data-tab="user">
-            <i class="bi bi-person"></i>
-            <span class="sidebar-text">User</span>
-        </a>
-        <a class="user" data-tab="roles">
-            <i class="bi bi-shield-lock"></i>
-            <span class="sidebar-text">Roles</span>
-        </a>
-         
-   
-        <a data-tab="Donor/Volunteer Management System">
-            <i class="bi bi-heart"></i>
-            <span class="sidebar-text">Donor/Volunteer</span>
-        </a>
-         <a data-tab="Donation Module">
-            <i class="bi bi-cash-coin"></i>
-            <span class="sidebar-text">Donation Module</span>
-        </a>
-         <a data-tab="Donation box (Daan Peti) & ACH Module">
-            <i class="bi bi-box"></i>
-            <span class="sidebar-text">Donation Box</span>
-        </a>
-        <a data-tab="Employee Management System">
-            <i class="bi bi-people"></i>
-            <span class="sidebar-text">Employee Management System</span>
-        </a>
-        <a data-tab="Timesheet System">
-            <i class="bi bi-clock"></i>
-            <span class="sidebar-text">Timesheet System</span>
-        </a>
-        <a data-tab="Leave Management System">
-            <i class="bi bi-calendar-x"></i>
-            <span class="sidebar-text">Leave Management</span>
-        </a>
-        
-        <a data-tab="Visitor Management System">
-            <i class="bi bi-person-badge"></i>
-            <span class="sidebar-text">Visitor Management</span>
-        </a>
-        <a data-tab="Vendor Management System">
-            <i class="bi bi-truck"></i>
-            <span class="sidebar-text">Vendor Management</span>
-        </a>
-        <a data-tab="Event Management System">
-            <i class="bi bi-calendar-event"></i>
-            <span class="sidebar-text">Event Management</span>
-        </a>
-        <a data-tab="Request Management System">
-            <i class="bi bi-clipboard-check"></i>
-            <span class="sidebar-text">Request Management</span>
-        </a>
-        <a data-tab="Inventory Management System">
-            <i class="bi bi-boxes"></i>
-            <span class="sidebar-text">Inventory Management</span>
-        </a>
-        <a data-tab="Asset Management System">
-            <i class="bi bi-pc-display"></i>
-            <span class="sidebar-text">Asset Management</span>
-        </a>
-        <a data-tab="Fleet Management System">
-            <i class="bi bi-truck"></i>
-            <span class="sidebar-text">Fleet Management</span>
-        </a>
-       
-       
-        <a data-tab="Financial Asset Module">
-            <i class="bi bi-graph-up"></i>
-            <span class="sidebar-text">Financial Asset</span>
-        </a>
-        <a data-tab="Expense Module">
-            <i class="bi bi-receipt"></i>
-            <span class="sidebar-text">Expense Module</span>
-        </a>
-        <a data-tab="Medical Module">
-<i class="fa-solid fa-syringe"></i>
-            <span class="sidebar-text">Medical Module</span>
-        </a>
-        <a data-tab="Rehabilitation Module">
-<i class="bi bi-hand-thumbs-up"></i>
-            <span class="sidebar-text">Rehabilitation</span>
-        </a>
-        <a data-tab="Adoption Module">
-            <i class="bi bi-people-fill"></i>
-            <span class="sidebar-text">Adoption Module</span>
-        </a>
-        <a data-tab="Trees Module">
-            <i class="bi bi-tree"></i>
-            <span class="sidebar-text">Trees Module</span>
-        </a>
-        <a data-tab="Seeds Module">
-            <i class="bi bi-flower1"></i>
-            <span class="sidebar-text">Seeds Module</span>
-        </a> -->
 <a class="tab-btn active" data-tab="default-user">
     <i class="bi bi-bar-chart-line"></i>
     <span class="sidebar-text">Dashboard</span>
@@ -1277,43 +1009,35 @@ td {
 .hero-content {
     flex: 1.2;
 }
-
 .hero-title {
     font-size: 48px;
     font-weight: 800;
     color: #1e3a8a;
     margin-bottom: 15px;
 }
-
 .hero-subtitle {
     font-size: 20px;
     font-weight: 500;
     margin-bottom: 20px;
 }
-
 .hero-description {
     font-size: 17px;
     line-height: 1.7;
     max-width: 580px;
     color: #4b5563;
 }
-
 /* RIGHT IMAGE */
 .hero-image {
     flex: 1;
     display: flex;
     justify-content: center;
 }
-
 .hero-image img {
     width: 100%;
     max-width: 480px;
     border-radius: 20px;
     object-fit: cover;
 }
-
-
-
 /* --- Responsive Tablet (768px–1024px) --- */
 @media (max-width: 1024px) {
     .hero-banner {
@@ -1329,9 +1053,6 @@ td {
         max-width: 380px;
     }
 }
-
-
-
 /* --- Mobile Responsive (< 768px) --- */
 @media (max-width: 768px) {
     .hero-banner {
@@ -1355,8 +1076,6 @@ td {
     }
 }
 
-
-
 /* Small phones (< 480px) */
 @media (max-width: 480px) {
     .hero-title {
@@ -1371,10 +1090,8 @@ td {
         max-width: 100%;
     }
 }
-
 /* Apply header styles only on mobile/tablet screens */
 @media (max-width: 768px) {
-
     .mobile-header {
         top: 0;
         left: 0;
@@ -1389,14 +1106,12 @@ td {
         box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
         z-index: 9999;
     }
-
     .mobile-header h1 {
         font-size: 20px;                /* Fixed Title Size */
         margin: 0;
         font-weight: 600;
         white-space: nowrap;            /* Prevent text wrapping */
     }
-
     .menu-toggle {
         background: none;
         border: none;
@@ -1404,18 +1119,12 @@ td {
         color: white;
     }
 }
-
-/* Hide mobile header on desktop */
 @media (min-width: 769px) {
     .mobile-header {
         display: none;
     }
 }
-
-
 </style>
-
-
  <div class="tab-content active" id="default-user">
   <!-- Hero Banner -->
   <div class="hero-banner">
@@ -1425,37 +1134,25 @@ td {
       <p class="hero-description">
         From managing your profile to customizing your settings, your dashboard gives you quick access to everything you need to stay in control and productive.
       </p>
-      <!-- <a href="#" class="hero-button">Explore Now</a> -->
     </div>
     <div class="hero-image">
    <img src="{% static 'images/home.png' %}" alt="Dashboard Illustration">
     </div>
   </div>
-
 </div>
 
 <!-- ----------- MDM (Master Data)------------------ -->
  <div class="tab-content"  id="mdm">
   <div class="card border-0">
-
-    <!-- 🌈 Navbar-style Header -->
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Master Data</h4>
     </div>
-
 <!-- ------------Lookup type table----------- -->
     <div class="card-body">
       <h5 style="color:#1b5e20">Category/Lookup Type</h5>
-      <!-- 🔍 Search Section -->
 <div class="search-container d-flex align-items-center">
-
   <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
-    <input 
-      type="text" 
-      name="lookup_query"
-      class="form-control search-input me-2"
-      placeholder="🔍 Search..."
-      value="{{ lookup_query|default:'' }}">
+    <input type="text"name="lookup_query"class="form-control search-input me-2"placeholder="🔍 Search..."value="{{ lookup_query|default:'' }}">
   </form>
 </div>
 <style>
@@ -1480,7 +1177,6 @@ td {
   border-radius: 8px;
 }
 </style>
-      <!-- 🧍‍♂️ User Table -->
   {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -1490,19 +1186,18 @@ td {
               <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="2">Type Name<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="3">Created By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="4">Created By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="5">Created Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Created On<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="6">Updated By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="7">Updated Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Updated On<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="8">is Deleted<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Deleted at<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
         <style>
 .column-search {
-    width: 150px;
+    width: 120px;
     padding: 4px 0;
     border: none !important;
     border-bottom: 2px solid #28a745 !important;
@@ -1525,31 +1220,17 @@ td {
   <td>
     <div class="d-flex justify-content-between">
 {% if permissions.can_add %}
- <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+ <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}  
-
 {% if permissions.can_add %}
 <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
-        </button>
+        <button type="submit"style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i class="bi bi-download"></i></button>
     </form>
 {% endif %}    
 </div>
 </td>
-          <!-- {% for i in "1234"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
     <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -1558,38 +1239,71 @@ td {
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-
+        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
 {% for lt in lookup_page_obj %}
         <tr>
-          <td>
+          <!-- <td>
             <div class="d-inline-flex align-items-center gap-1">
               {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+                <i class="bi bi-pencil-square"></i></a>
               {% endif %}
               {% if permissions.can_delete %} 
 <form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;
-"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+"onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')"><i class="bi bi-trash"></i></button>
               </form>
               {% endif %}
             </div>
-          </td>
+          </td> -->
+          <td>
+  <div class="d-inline-flex align-items-center gap-1">
+
+    {% if not lt.is_deleted %}
+      {% if permissions.can_edit %}
+        <a href="{% url 'edit_lookup_type' lt.id %}"
+           class="btn-sm p-1"
+           style="font-size: 15px; color:black; text-decoration: none;">
+          <i class="bi bi-pencil-square"></i>
+        </a>
+      {% endif %}
+
+      {% if permissions.can_delete %}
+        <form action="{% url 'delete_lookup_type' lt.id %}"
+              method="POST"
+              class="d-inline m-0 p-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="btn-sm p-1"
+                  style="font-size: 15px; color:black; background-color: transparent;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      {% endif %}
+    {% else %}
+      <span class="badge bg-secondary">Deactivated</span>
+    {% endif %}
+
+  </div>
+</td>
                 <td>{{ lt.formatted_id }}</td>
                 <td>{{ lt.type_name }}</td>
                 <td>{{ lt.created_by }}</td>
+                <td>{{ lt.created_date|date:"d M Y, h:i A" }}</td>
                 <td>{{ lt.updated_by }}</td>
                 <td>{{ lt.updated_date|date:"d M Y, h:i A" }}</td>
-                <td>{{ lt.created_date|date:"d M Y, h:i A" }}</td>
-                <td>{{ lt.is_deleted }}</td>
-                <td>{{ lt.deleted_at|date:"d M Y, h:i A" }}</
+<td>
+    {% if lt.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ lt.deleted_by }}</td>
+                <td>{{ lt.deleted_at|date:"d M Y, h:i A" }}</td>
         </tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
@@ -1608,65 +1322,30 @@ td {
               <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="2">Type Name<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="3">Created By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="4">Created By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="5">Created Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Created On<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="6">Updated By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="7">Updated Date<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Updated On<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="8">is Deleted<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Deleted at<span class="sort-icon">⬍</span></th>
+                            <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
-        <style>
-.column-search {
-    width: 150px;
-    padding: 4px 0;
-    border: none !important;
-    border-bottom: 2px solid #28a745 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-}
-.column-search:focus {
-    border-bottom: 2px solid #28a745 !important;
-}
-.column-search::placeholder {
-    color: #6c757d !important;
-}
-</style>
 <tr class="column-search-row">
   <td>
    <div class="d-flex justify-content-between">
  {% if permissions.can_add %}
- <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+ <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i class="fa-solid fa-plus"></i> </a>
 {% endif %}
 {% if permissions.can_add %}
 <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
-        </button>
+        <button type="submit"style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i class="bi bi-download"></i> </button>
     </form>
 {% endif %}    
 </div>
 </td>
-          <!-- {% for i in "1234"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
     <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -1675,35 +1354,71 @@ td {
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
 </tr> 
    {% for lt in lookup_page_obj %}
         <tr>
-          <td>
+          <!-- <td>
             <div class="d-inline-flex align-items-center gap-1">
               {% if permissions.can_edit %}
-              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"> <i class="bi bi-pencil-square"></i></a>
               {% endif %}
               {% if permissions.can_delete %}
               <form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  <i class="bi bi-trash"></i></button>
               </form>
               {% endif %}
             </div>
-          </td>
+          </td> -->
+          <td>
+  <div class="d-inline-flex align-items-center gap-1">
+
+    {% if not lt.is_deleted %}
+      {% if permissions.can_edit %}
+        <a href="{% url 'edit_lookup_type' lt.id %}"
+           class="btn-sm p-1"
+           style="font-size: 15px; color:black; text-decoration: none;">
+          <i class="bi bi-pencil-square"></i>
+        </a>
+      {% endif %}
+
+      {% if permissions.can_delete %}
+        <form action="{% url 'delete_lookup_type' lt.id %}"
+              method="POST"
+              class="d-inline m-0 p-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="btn-sm p-1"
+                  style="font-size: 15px; color:black; background-color: transparent;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      {% endif %}
+    {% else %}
+      <span class="badge bg-secondary">Deactivated</span>
+    {% endif %}
+
+  </div>
+</td>
                 <td>{{ lt.formatted_id }}</td>
                 <td>{{ lt.type_name }}</td>
                 <td>{{ lt.created_by }}</td>
                 <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
                 <td>{{ lt.updated_by }}</td>
                 <td>{{ lt.updated_date|date:"d-m-Y H:i" }}</td>
-                <td>{{ lt.is_deleted }}</td>
+<td>
+    {% if lt.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ lt.deleted_by }}</td>
+
                 <td>{{ lt.deleted_at|date:"d-m-Y H:i" }}</td>
         </tr>
         {% empty %}
@@ -1730,82 +1445,37 @@ table th, table td {
 </style>
       {% endif %}
     </div>
-    
 <!-- ✅ LookupType Pagination Controls -->
 <div class="pagination-container text-center">
-  
   {% if lookup_page_obj.has_previous %}
       <a href="?lt_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
       <a href="?lt_page={{ lookup_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
   <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="ltPageSelect" class="fw-bold me-1">Page</label>
-
     <select 
-      name="lt_page"
-      id="ltPageSelect"
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
+      name="lt_page" id="ltPageSelect"class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
       {% for p in lookup_page_obj.paginator.page_range %}
-        <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>
-          {{ p }}
-        </option>
+        <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if lookup_page_obj.has_next %}
       <a href="?lt_page={{ lookup_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
       <a href="?lt_page={{ lookup_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
-
 </div>
-
-
 <!-- ------------Lookup table----------- -->
-
    <div class="card-body">
       <h5 style="color:#1b5e20" >Subcategory/Lookup Table</h5>
-      <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100" role="search">
     <input 
-      type="text" 
-      name="sub_lookup_query" 
-      class="form-control search-input me-2 shadow-none" 
-      placeholder="🔍 Search..." 
-      value="{{ sub_lookup_query|default:'' }}">
+      type="text"name="sub_lookup_query" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ sub_lookup_query|default:'' }}">
   </form>
 </div>
-
-
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
-
  <!-- 📄 Search Results -->
       {% if sub_lookup_query %}
         <h5>Showing results for: "<span ">{{ sub_lookup_query }}</span>"</h5>
@@ -1822,22 +1492,20 @@ table th, table td {
             <th class="sortable" data-col="2">Lookup Name <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="3">Lookup Type <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="4">Created By <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="5">Created Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="5">Created On <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="6">Updated By <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="7">Updated Date <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="8">Deleted At <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="7">Updated On <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="9">Is Deleted <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="8">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
-        <tr class="column-search-row">
+<tr class="column-search-row">
 <td>
       <div class="d-flex justify-content-between">
         {% if permissions.can_add %}
- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+ <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}
 {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
@@ -1852,14 +1520,6 @@ table th, table td {
     {% endif %}
 </div>
 </td>
-
-          <!-- {% for i in "123456789"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
            <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -1869,6 +1529,7 @@ table th, table td {
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
         </tr>
 
 {% for l in lookup_table_obj %}
@@ -1885,9 +1546,7 @@ table th, table td {
               <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')"><i class="bi bi-trash"></i></button>
               </form>
               {% endif %}
             </div>
@@ -1899,8 +1558,17 @@ table th, table td {
                 <td>{{ l.created_date|date:"d M Y, h:i A" }}</td>
                 <td>{{ l.updated_by }}</td>
                 <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if l.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+                <td>{{ l.deleted_by }}</td>
+
                 <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
-                <td>{{ l.is_deleted }}</td>
+
         </tr>
         {% empty %}
         <tr><td colspan="12">No Lookups found.</td></tr>
@@ -1920,11 +1588,13 @@ table th, table td {
             <th class="sortable" data-col="2">Lookup Name <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="3">Lookup Type <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="4">Created By <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="5">Created Date <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="5">Created On <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="6">Updated By <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="7">Updated Date <span class="sort-icon">⬍</span></th>
-            <th class="sortable" data-col="8">Deleted At <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="7">Updated On <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="9">Is Deleted <span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+            <th class="sortable" data-col="8">Deleted On<span class="sort-icon">⬍</span></th>
+
         </tr>
       </thead>
       <tbody>
@@ -1948,14 +1618,6 @@ table th, table td {
     </form>
     {% endif %}
 </div>
-  <!-- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
- {% if lookup_table_obj.object_list %}
-      <a href="?sub_lookup_query={{ sub_lookup_query }}&download=1" style="font-size: 24px;color:black; text-decoration: none; vertical-align: middle;">
-    <i class="bi bi-download"></i>
-      </a>
-    {% endif %} -->
 </td>
  <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
@@ -1966,17 +1628,11 @@ table th, table td {
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-<!-- 
-          {% for i in "123456789"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
+        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
         </tr>
 
-{% for l in lookup_table_obj %}            <tr>
+{% for l in lookup_table_obj %}           
+ <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
               {% if permissions.can_edit %}
@@ -2005,7 +1661,15 @@ table th, table td {
                 <td>{{ l.updated_by }}</td>
                 <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
                 <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
-                <td>{{ l.is_deleted }}</td>
+<td>
+    {% if l.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+                <td>{{ l.deleted_by }}</td>
+                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
                 </tr>
         {% empty %}
         <tr><td colspan="12">No Lookups found.</td></tr>
@@ -2092,36 +1756,13 @@ table th, table td {
     >
 </form>
 </div>
-{% if messages %}
+<!-- {% if messages %}
   <ul style="color: red; text-align: center; list-style: none; padding: 0;">
     {% for message in messages %}
       <li>{{ message }}</li>
     {% endfor %}
   </ul>
-{% endif %}
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
-
+{% endif %} -->
  <!-- 📄 Search Results -->
       {% if query %}
         <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
@@ -2163,13 +1804,6 @@ table th, table td {
     </button>
 </form>
 </td>
-          <!-- {% for i in "123456789"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -2200,35 +1834,6 @@ table th, table td {
               </form>
             </div>
           </td>
-
-<!-- <td>
- 
-
- <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
-    <input type="hidden" name="user_id" value="{{ user.id }}">
-
-    <div class="d-flex align-items-center justify-content-center gap-1">
-
-  <select name="role" required class="form-select text-dark" style="color:black !important;">
-    {% for clean_role in clean_roles %}
-        <option value="{{ clean_role }}"
-            {% if user.userrole and clean_role in user.userrole.role.role_name %}
-                selected
-            {% endif %}>
-            {{ clean_role }}
-        </option>
-    {% endfor %}
-</select>
-        <button type="submit"
-                class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
-                title="Save Role" name="save_user_role">
-                💾
-        </button>
-
-    </div>
-</form> 
-</td> -->
 <td>
 {% if user.userrole and user.userrole.role %}
         {{ user.userrole.role.name }}
@@ -2249,8 +1854,6 @@ table th, table td {
             {% endif %}
           </td>
           <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
-          <!-- <td>{{ user.is_superuser }}</td> -->
-          <!-- <td>{{ user.last_login }}</td> -->
           <td>{{ user.date_joined }}</td>
         </tr>
         {% empty %}
@@ -2282,13 +1885,11 @@ table th, table td {
       </thead>
       <tbody>
         <tr class="column-search-row">
-        
       <td>
 <form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
     <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
@@ -2323,34 +1924,6 @@ table th, table td {
               </form>
             </div>
           </td>
-         <!-- <td>
-
-
- <form method="POST" action="{% url 'assign_role' %}">
-    {% csrf_token %}
-    <input type="hidden" name="user_id" value="{{ user.id }}">
-
-    <div class="d-flex align-items-center justify-content-center gap-1">
-       <select name="role" required class="form-select text-dark" style="color:black !important;">
-    {% for clean_role in clean_roles %}
-        <option value="{{ clean_role }}"
-            {% if user.userrole and clean_role in user.userrole.role.role_name %}
-                selected
-            {% endif %}>
-            {{ clean_role }}
-        </option>
-    {% endfor %}
-</select>
-
-
-        <button type="submit"
-                class="btn btn-outline-primary btn-sm px-2 py-1 rounded-3 shadow-sm"
-                title="Save Role" name="save_user_role">💾 Save
-        </button>
-    </div>
-</form> 
-</td> -->
-
 <td>{% if user.userrole and user.userrole.role %}
         {{ user.userrole.role.name }}
     {% else %}
@@ -2378,22 +1951,6 @@ table th, table td {
       </tbody>
     </table>
 </div>
-<!-- ✅ Scroll CSS -->
-<style>
-.scrollable-table {
-  overflow-y: auto;
-  overflow-x: auto; /* Horizontal scroll */
-}
-table th, table td {
-  white-space: nowrap; /* Prevent wrapping */
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #e9f2ff;
-  z-index: 5;
-}
-</style>
       {% endif %}
     </div>
 
@@ -2455,34 +2012,15 @@ table th, table td {
 
 <div class="tab-content" id="roles">
   <div class="card border-0">
-    
-    <!-- 🌈 Navbar-style Header -->
-    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Roles</h4>
     </div>
-
     <div class="card-body">
-      <!-- 🔍 Search Section -->
 <div class="search-container">
-<form method="GET" action="{% url 'search_roles' %}" 
-      class="d-flex align-items-center w-100" 
-      role="search">
-
-  <input 
-    type="text" 
-    name="query1" 
-    class="form-control search-input me-2 shadow-none" 
-    placeholder="🔍 Search..." 
-    value="{{ query1|default:'' }}">
+<form method="GET" action="{% url 'search_roles' %}" class="d-flex align-items-center w-100" role="search">
+<input type="text"  name="query1" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query1|default:'' }}">
 </form>
 </div>
-{% if messages %}
-  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
 <style>
 /* 🌿 Modern underline input */
 .search-input {
@@ -2524,12 +2062,13 @@ width: 35%;
         <th class="sortable" data-col="8">Delete <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="9">Edit <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="10">View <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="11">created_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="12">created_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="13">updated_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Created_by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Updated On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="15">is_deleted <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Deleted On<span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
@@ -2555,14 +2094,6 @@ width: 35%;
     </form>
 </div>
 </td>
-<!-- 
-        {% for i in "1234567891"|make_list %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-          </div>
-        </td>
-        {% endfor %} -->
           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -2579,6 +2110,7 @@ width: 35%;
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
       </tr>
 
       {% for access in roles_page_obj %}
@@ -2599,7 +2131,6 @@ width: 35%;
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
           </div>
         </td>
         <td>{{ access.id }}</td>
@@ -2616,7 +2147,14 @@ width: 35%;
           <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
           <td>{{ access.updated_by }}</td>
           <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ access.is_deleted }}</td>
+          <td>
+    {% if access.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ access.deleted_by }}</td>
           <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
@@ -2643,12 +2181,13 @@ width: 35%;
         <th class="sortable" data-col="8">Delete <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="9">Edit <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="10">View <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="11">created_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="12">created_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="13">updated_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">updated_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Updated On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="15">is_deleted <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
@@ -2671,20 +2210,8 @@ width: 35%;
             <i class="bi bi-download"></i>
         </button>
     </form>
-
 </div>
-
-
-
 </td>
-
-        <!-- {% for i in "1234567891"|make_list %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-          </div>
-        </td>
-        {% endfor %} -->
           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -2701,6 +2228,7 @@ width: 35%;
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
       </tr>
 
       {% for access in roles_page_obj %}
@@ -2737,7 +2265,14 @@ width: 35%;
           <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
           <td>{{ access.updated_by }}</td>
           <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
-          <td>{{ access.is_deleted }}</td>
+<td>
+    {% if access.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ access.deleted_by }}</td>
           <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
       </tr>
       {% empty %}
@@ -2782,11 +2317,6 @@ width: 35%;
 </div>
   </div>
 </div>
-
-
-<!-- -----------Employee Management System------------------ -->
-
-
 <!-- ----------- Timesheet System------------------ -->
 
 <div class="tab-content" id="Timesheet System">
@@ -2830,14 +2360,7 @@ width: 35%;
       <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100" role="search">
-    <input 
-      type="text" 
-      name="q" 
-      class="form-control search-input me-2 shadow-none" 
-      placeholder="🔍 Search..." 
-      value="{{ query|default:'' }}"
-    >
-    <!-- <button type="submit" class="btn px-4 search-btn">Search</button> -->
+    <input type="text" name="q" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query|default:'' }}">
     {% if query %}
       <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
     {% endif %}
@@ -2848,28 +2371,6 @@ width: 35%;
         <h5>Showing results for: "<span ">{{ query2 }}</span>"</h5>
         <hr>
       {% endif %}
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
  <!-- 🧍‍♂️ donorvolunteer Table -->
       {% if page_obj %}
   <div class="table-responsive">
@@ -2899,12 +2400,15 @@ width: 35%;
         <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="23">created_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="24">created_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="25">updated_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="26">updated_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="27">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="23">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="24">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="25">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="26">Updated On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="27">Deleted On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">pan card<span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
@@ -2913,9 +2417,7 @@ width: 35%;
 <div class="d-flex justify-content-between">
   {% if permissions.can_add %}
  <a href="{% url 'add_donor_volunteer' %}" 
-       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
   {% endif %}
   {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
@@ -2928,14 +2430,6 @@ width: 35%;
   {% endif %}
 </div>
 </td>
-
-   <!-- {% for i in "0123456789012345678901" %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
-          </div>
-        </td>
-        {% endfor %} -->
     <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -2964,6 +2458,7 @@ width: 35%;
     <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
+        <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
       </tr>
 
       <!-- 🧾 Paginated Data -->
@@ -3014,8 +2509,29 @@ width: 35%;
       <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
       <td>{{ donation.updated_by }}</td>
       <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
-      <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-      <td>{{ donation.is_deleted }}</td>
+<td>
+    {% if donation.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+      <td>{{ donation.deleted_by }}</td>
+            <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>
+    {% if donation.id_proof_image %}
+      <img src="{{ donation.id_proof_image.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
+          <td>
+    {% if donation.pan_card_image %}
+      <img src="{{ donation.pan_card_image.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
       </tr>
       {% empty %}
       <tr>
@@ -3024,8 +2540,6 @@ width: 35%;
       {% endfor %}
     </tbody>
   </table>
-
-
 </div>
       {% elif query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query2 }}</strong>".</p>
@@ -3057,12 +2571,17 @@ width: 35%;
         <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="23">created_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="24">created_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="25">updated_by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="26">updated_at <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="27">deleted_at <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="23">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="24">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="25">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="26">Updated On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="27">Deleted By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">pan card<span class="sort-icon">⬍</span></th>
+
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -3087,13 +2606,6 @@ width: 35%;
     {% endif %}
 </div>
 </td>
-<!-- {% for i in "0123456789012345678901" %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search">
-          </div>
-        </td>
-        {% endfor %} -->
         <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -3122,6 +2634,7 @@ width: 35%;
     <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
+        <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
       </tr>
 
       <!-- 🧾 Paginated Data -->
@@ -3172,8 +2685,29 @@ width: 35%;
       <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
       <td>{{ donation.updated_by }}</td>
       <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if donation.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+      <td>{{ donation.deleted_by }}</td>
       <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-      <td>{{ donation.is_deleted }}</td>
+                <td>
+    {% if donation.id_proof_image %}
+      <img src="{{ donation.id_proof_image.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
+          <td>
+    {% if donation.pan_card_image %}
+      <img src="{{ donation.pan_card_image.url }}" width="50" height="50" style="object-fit:cover;">
+    {% else %}
+      No QR
+    {% endif %}
+  </td>
       </tr>
       {% empty %}
       <tr>
@@ -3355,7 +2889,7 @@ width: 35%;
 
 <!-- ------------Donation Owner Module----------- -->
     <div class="card-body">
-      <h5 style="color:#1b5e20">Donation Owner Module</h5>
+      <h5 style="color:#1b5e20">Danpeti Donation</h5>
       <!-- 🔍 Search Section -->
 <div class="search-container d-flex align-items-center">
 
@@ -3368,28 +2902,6 @@ width: 35%;
       value="{{ payments_query|default:'' }}">
   </form>
 </div>
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
       <!-- 🧍‍♂️ User Table -->
       {% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
@@ -3406,12 +2918,14 @@ width: 35%;
               <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">created_by <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="10">created_at <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">updated_by <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="12">updated_at <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="13">delete at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="10">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">Updated On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="13">Deleted By<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
+
         </tr>
       </thead>
 
@@ -3439,13 +2953,6 @@ width: 35%;
     {% endif %}
     </div>
 </td>
-          <!-- {% for i in "123456"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
                   <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -3460,6 +2967,8 @@ width: 35%;
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+
         </tr>
         
         {% for owner in payments_page_obj.object_list %}
@@ -3483,24 +2992,24 @@ width: 35%;
 <a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
  👁&zwj;🗨
 </a>
-<!-- NEW VERIFICATION ICON -->
-   {% if owner and owner.id %}
-    {% if owner.verified %}
-        <i class="fa-solid fa-circle-check"
-           style="font-size: 18px; color:#16a34a;"
-           title="Verified by Admin"></i>
+{% if request.user.is_superuser %}
+    {% if owner and owner.id %}
+        {% if owner.verified %}
+            <i class="fa-solid fa-circle-check"
+               style="font-size: 18px; color:#16a34a;"
+               title="Verified by Admin"></i>
+        {% else %}
+            <a href="{% url 'verify_payment' owner.id %}"
+               onclick="return confirm('Verify this donation?')">
+                <i class="fa-regular fa-circle-check"
+                   style="font-size: 18px; color:#555;"
+                   title="Click to Verify"></i>
+            </a>
+        {% endif %}
     {% else %}
-        <a href="{% url 'verify_payment' owner.id %}"
-           onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"
-               style="font-size: 18px; color:#555;"
-               title="Click to Verify"></i>
-        </a>
+        <span class="text-muted" title="No payment found">—</span>
     {% endif %}
-{% else %}
-    <span class="text-muted" title="No payment found">—</span>
 {% endif %}
-
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3515,14 +3024,21 @@ width: 35%;
           <td>₹{{ owner.amount }}</td>
           <td>{{ owner.payment_method }}</td>
           <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.received_by }}</td>
+          <td>{{ owner.verified_by }}</td>
           <td>{{ owner.i_witness }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
           <td>{{ owner.updated_by }}</td>
           <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if owner.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ owner.deleted_by }}</td>
           <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ owner.is_deleted }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
@@ -3548,12 +3064,13 @@ width: 35%;
               <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">created_by <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="10">created_at <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">updated_by <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="12">updated_at <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="13">delete at <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="10">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">Updated On <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="13">Delete By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="13">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
       <tbody>
@@ -3580,13 +3097,6 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-          <!-- {% for i in "123456"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -3601,8 +3111,8 @@ width: 35%;
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
         </tr> 
-       
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
@@ -3625,22 +3135,23 @@ width: 35%;
 <a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
  👁&zwj;🗨
 </a>
-
-{% if pay and pay.id %}
-    {% if pay.verified %}
-        <i class="fa-solid fa-circle-check"
-           style="font-size: 18px; color:#16a34a;"
-           title="Verified by Admin"></i>
+{% if request.user.is_superuser %}
+    {% if owner and owner.id %}
+        {% if owner.verified %}
+            <i class="fa-solid fa-circle-check"
+               style="font-size: 18px; color:#16a34a;"
+               title="Verified by Admin"></i>
+        {% else %}
+            <a href="{% url 'verify_payment' owner.id %}"
+               onclick="return confirm('Verify this donation?')">
+                <i class="fa-regular fa-circle-check"
+                   style="font-size: 18px; color:#555;"
+                   title="Click to Verify"></i>
+            </a>
+        {% endif %}
     {% else %}
-        <a href="{% url 'verify_payment' pay.id %}"
-           onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"
-               style="font-size: 18px; color:#555;"
-               title="Click to Verify"></i>
-        </a>
+        <span class="text-muted" title="No payment found">—</span>
     {% endif %}
-{% else %}
-    <span class="text-muted" title="No payment found">—</span>
 {% endif %}
 
             </div>
@@ -3657,14 +3168,21 @@ width: 35%;
           <td>₹{{ owner.amount }}</td>
           <td>{{ owner.payment_method }}</td>
           <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.received_by }}</td>
+          <td>{{ owner.verified_by }}</td>
           <td>{{ owner.i_witness }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
           <td>{{ owner.updated_by }}</td>
           <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if owner.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ owner.deleted_by }}</td>
           <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ owner.is_deleted }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
@@ -3672,22 +3190,6 @@ width: 35%;
       </tbody>
     </table>
 </div>
-<!-- ✅ Scroll CSS -->
-<style>
-.scrollable-table {
-  overflow-y: auto;
-  overflow-x: auto; /* Horizontal scroll */
-}
-table th, table td {
-  white-space: nowrap; /* Prevent wrapping */
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #e9f2ff;
-  z-index: 5;
-}
-</style>
 {% endif %}
 </div>
     
@@ -3739,54 +3241,28 @@ table th, table td {
       <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100" role="search">
-    <input 
-      type="text" 
-      name="box_query" 
-      class="form-control search-input me-2 shadow-none" 
-      placeholder="🔍 Search..." 
-      value="{{ box_query|default:'' }}">
+    <input type="text" name="box_query" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ box_query|default:'' }}">
   </form>
 </div>
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
     {% if box_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-                  <th class="sortable" data-col="1">Donation ID<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="8">Created At<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="9">Updated At<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
+                    <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Updated On<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
+                    <th class="sortable" data-col="11">Deleted By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
       <tbody>
@@ -3809,13 +3285,6 @@ table th, table td {
     {% endif %}
   </div>
 </td>
-          <!-- {% for i in "12345"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
                   <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -3828,8 +3297,8 @@ table th, table td {
     <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-        </tr>
-        
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+        </tr>  
         {% for box in box_page_obj  %}
         <tr>
           <td>
@@ -3864,10 +3333,17 @@ table th, table td {
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+                    <td>{{ box.updated_by }}</td>
           <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ box.updated_by }}</td>
+<td>
+    {% if box.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ box.deleted_by }}</td>
           <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ box.is_deleted }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation boxes found.</td></tr>
@@ -3883,16 +3359,16 @@ table th, table td {
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-                  <th class="sortable" data-col="1">Donation ID<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="8">Created At<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="9">Updated At<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
+                    <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="9">Updated On<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
         </tr>
@@ -3918,13 +3394,6 @@ table th, table td {
     {% endif %}
   </div>
 </td>
-          <!-- {% for i in "12345"|make_list %}
-          <td>
-            <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-            </div>
-          </td>
-          {% endfor %} -->
            <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -3937,6 +3406,7 @@ table th, table td {
     <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
         </tr>
         
         {% for box in box_page_obj %}
@@ -3974,10 +3444,17 @@ table th, table td {
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+                    <td>{{ box.updated_by }}</td>
           <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ box.updated_by }}</td>
+<td>
+    {% if box.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+          <td>{{ box.deleted_by }}</td>
           <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
-          <td>{{ box.is_deleted }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="15" class="text-muted py-4">No donation boxes found.</td></tr>
@@ -3985,22 +3462,6 @@ table th, table td {
       </tbody>
     </table>
 </div>
-<!-- ✅ Scroll CSS -->
-<style>
-.scrollable-table {
-  overflow-y: auto;
-  overflow-x: auto; /* Horizontal scroll */
-}
-table th, table td {
-  white-space: nowrap; /* Prevent wrapping */
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #e9f2ff;
-  z-index: 5;
-}
-</style>
       {% endif %}
     </div>
 <!-- ✅ Lookups Pagination Controls -->
@@ -4069,39 +3530,8 @@ table th, table td {
       class="form-control search-input me-2 shadow-none" 
       placeholder="🔍 Search..." 
       value="{{ query3|default:'' }}">
-    {% if query3 %}
-      <a href="{% url 'search_donation' %}" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
-    {% endif %}
   </form>
 </div>
-     <!-- 📄 Search Results -->
-      {% if query3 %}
-        <h5>Showing results for: "<span ">{{ query3 }}</span>"</h5>
-        <hr>
-      {% endif %}
-
-<style>
-/* 🌿 Modern underline input */
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
-}
-
-/* 🪄 Match buttons cleanly */
-.search-btn {
-  border-radius: 8px;
-}
-</style>
       {% if donation_page_obj %}
         <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
@@ -4121,12 +3551,14 @@ table th, table td {
         <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">created_by<span class="sort-icon">⬍</span></th>  
-        <th class="sortable" data-col="15">created_date<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">updated_by<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="17">updated_date<span class="sort-icon">⬍</span></th>  
-        <th class="sortable" data-col="18">deleted_at<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Created By<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="15">Created On<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">Updated On<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
+                <th class="sortable" data-col="18">deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+
       </tr>
     </thead>
     <tbody>
@@ -4134,30 +3566,17 @@ table th, table td {
       <td>
         <div class="d-flex justify-content-between">
           {% if permissions.can_add %}
-    <a href="{% url 'adddonation' %}" 
-       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+    <a href="{% url 'adddonation' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
       <input type="hidden" name="q" value="{{ query3|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;"><i class="bi bi-download"></i> </button>
     </form>
     {% endif %}
 </div>
 </td>
-        <!-- {% for i in "123456789123" %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-          </div>
-        </td>
-        {% endfor %}
-        <td>.</td> -->
         <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -4177,6 +3596,7 @@ table th, table td {
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+                <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
@@ -4185,8 +3605,7 @@ table th, table td {
           <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_edit %}
             <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i>
-            </a>
+              <i class="bi bi-pencil-square"></i> </a>
 {% endif %}
             {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
@@ -4197,25 +3616,18 @@ table th, table td {
               </button>
             </form>
             {% endif %}
-     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">
-    👁‍🗨
-</a>
-
-<!-- NEW VERIFICATION ICON -->
+     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+    {% if request.user.is_superuser %}
     {% if donation.verified %}
-        <i class="fa-solid fa-circle-check"
-           style="font-size: 18px; color:#16a34a;"
-           title="Verified by Admin"></i>
+        <i class="fa-solid fa-circle-check"style="font-size: 18px; color:#16a34a;"title="Verified by Admin"></i>
     {% else %}
-        <a href="{% url 'verify_donation' donation.id %}"
-           onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"
-               style="font-size: 18px; color:#555;"
-               title="Click to Verify"></i>
-        </a>
+        <a href="{% url 'verify_donation' donation.id %}" onclick="return confirm('Verify this donation?')">
+            <i class="fa-regular fa-circle-check"style="font-size: 18px; color:#555;" title="Click to Verify"></i></a>
     {% endif %}
+{% endif %}
           </div>
         </td>
+                <td>{{ donation.id }}</td>
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
         <td>{{ donation.donor.city }}</td>
         <td>{{ donation.donation_amount_declared }}</td>
@@ -4228,22 +3640,25 @@ table th, table td {
         <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
-<td>{{ donation.created_by }}</td>
+        <td>{{ donation.created_by }}</td>
         <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
         <td>{{ donation.updated_by }}</td>
         <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if donation.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+        <td>{{ donation.deleted_by }}</td>
         <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-        <td>{{ donation.is_deleted }}</td>
       </tr>
-      {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
-      {% endfor %}
+      {% empty %}<tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>{% endfor %}
     </tbody>
   </table>
 </div>
-      {% elif query %}
-        <p class="text-danger mt-3">No data found for "<strong>{{ query3 }}</strong>".</p>
-      {% else %}
+      {% elif query %}<p class="text-danger mt-3">No data found for "<strong>{{ query3 }}</strong>".</p>{% else %}
   <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead>
@@ -4262,44 +3677,33 @@ table th, table td {
         <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">created_by<span class="sort-icon">⬍</span></th>  
-        <th class="sortable" data-col="15">created_date<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">updated_by<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="17">updated_date<span class="sort-icon">⬍</span></th>  
-        <th class="sortable" data-col="18">deleted_at<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Created By<span class="sort-icon">⬍</span></th>  
+        <th class="sortable" data-col="15">Created On<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">Updated On<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
+                <th class="sortable" data-col="18">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+
       </tr>
     </thead>
-
     <tbody>
       <tr class="column-search-row">
       <td>
         <div class="d-flex justify-content-between">
           {% if permissions.can_add %}
-    <a href="{% url 'adddonation' %}" 
-       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+    <a href="{% url 'adddonation' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
+        <i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
       <input type="hidden" name="q" value="{{ query3|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size:22px; color:black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
 </div>
 </td>
-        <!-- {% for i in "123456789123" %}
-        <td>
-          <div class="download-group">
-              <input type="text" style="width: 150px;" id="search" name="search" placeholder="Search...">
-          </div>
-        </td>
-        {% endfor %}
-        <td>.</td> -->
         <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
@@ -4319,69 +3723,88 @@ table th, table td {
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="18" type="text  " placeholder="Search..."></td>
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+                <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
-      {% for donation in donation_page_obj %}
-      <tr>
-        <td>
-          <div class="d-inline-flex align-items-center gap-1">
-            {% if permissions.can_edit %}
-            <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-{% endif %}
-            {% if permissions.can_delete %}
-            <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
-              {% csrf_token %}
-              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                onclick="return confirm('Are you sure you want to deactivate this donation?')">
-                <i class="bi bi-trash"></i>
-              </button>
-            </form>
-            {% endif %}
-            {% if permissions.can_delete %}
-         <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+    {% for donation in donation_page_obj %}
+<tr>
+  <td>
+    <div class="d-inline-flex align-items-center gap-1">
 
-         <!-- NEW VERIFICATION ICON -->
-    {% if donation.verified %}
-        <i class="fa-solid fa-circle-check"
-           style="font-size: 18px; color:#16a34a;"
-           title="Verified by Admin"></i>
-    {% else %}
-        <a href="{% url 'verify_donation' donation.id %}"
-           onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"
-               style="font-size: 18px; color:#555;"
-               title="Click to Verify"></i>
+      {% if permissions.can_edit %}
+        <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1"
+           style="font-size: 15px; color:black; text-decoration: none;">
+          <i class="bi bi-pencil-square"></i>
         </a>
-    {% endif %}
-{% endif %}
+      {% endif %}
 
-          </div>
-        </td>
-        <td>{{ donation.id }}</td>
-        <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-        <td>{{ donation.donor.city }}</td>
-        <td>{{ donation.donation_amount_paid }}</td>
-        <td>{{ donation.donation_date }}</td>
-        <td>{{ donation.donation_category.lookup_name }}</td>
-        <td>{{ donation.payment_method.lookup_name }}</td>
-        <td>{{ donation.payment_method }}</td>
-        <td>{{ donation.transaction_id }}</td>
-        <td>{{ donation.payment_status }}</td>
-         <td>{{ donation.check_no }}</td>
-        <td>{{ donation.place_of_donation }}</td>
-        <td>{{ donation.description }}</td>
-        <td>{{ donation.created_by }}</td>
-        <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
-        <td>{{ donation.updated_by }}</td>
-        <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
-        <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-        <td>{{ donation.is_deleted }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>
-      {% endfor %}
+      {% if permissions.can_delete %}
+        <form method="POST" action="{% url 'delete_donation' donation.id %}"
+              class="d-inline m-0 p-0">
+          {% csrf_token %}
+          <button type="submit" class="btn-sm p-1"
+                  style="font-size: 15px; color:black; background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation?')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+
+        <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+
+        {% if request.user.is_superuser %}
+          {% if donation.verified %}
+            <i class="fa-solid fa-circle-check"
+               style="font-size: 18px; color:#16a34a;"
+               title="Verified by Admin"></i>
+          {% else %}
+            <a href="{% url 'verify_donation' donation.id %}"
+               onclick="return confirm('Verify this donation?')">
+              <i class="fa-regular fa-circle-check"
+                 style="font-size: 18px; color:#555;"
+                 title="Click to Verify"></i>
+            </a>
+          {% endif %}
+        {% endif %}
+
+      {% endif %}  {# ✅ THIS WAS MISSING #}
+
+    </div>
+  </td>
+  <td>{{ donation.id }}</td>
+  <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+  <td>{{ donation.donor.city }}</td>
+  <td>{{ donation.donation_amount_paid }}</td>
+  <td>{{ donation.donation_date }}</td>
+  <td>{{ donation.donation_category.lookup_name }}</td>
+  <td>{{ donation.payment_method.lookup_name }}</td>
+  <td>{{ donation.payment_method }}</td>
+  <td>{{ donation.transaction_id }}</td>
+  <td>{{ donation.payment_status }}</td>
+  <td>{{ donation.check_no }}</td>
+  <td>{{ donation.place_of_donation }}</td>
+  <td>{{ donation.description }}</td>
+  <td>{{ donation.created_by }}</td>
+  <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+  <td>{{ donation.updated_by }}</td>
+  <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+<td>
+    {% if donation.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+  <td>{{ donation.deleted_by }}</td>
+  <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="20" class="text-muted py-4 text-center">
+    No donations found.
+  </td>
+</tr>
+{% endfor %}
+
     </tbody>
   </table>
 </div>
@@ -4413,27 +3836,16 @@ table th, table td {
       <a href="?donation_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
     <a href="?donation_page={{ donation_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
   <!-- Page Info + Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="pageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="donation_page" 
-      id="pageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()"
-    >
+    <select name="donation_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
       {% for page_num in donation_page_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == donation_page_obj.number %}selected{% endif %}>
-          {{ page_num }}
-        </option>
+        <option value="{{ page_num }}" {% if page_num == donation_page_obj.number %}selected{% endif %}>{{ page_num }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ donation_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if donation_page_obj.has_next %}
     <a href="?donation_page={{ donation_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?donation_page={{ donation_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
@@ -4442,13 +3854,8 @@ table th, table td {
 </div>
 <style>
 .download-container {
-  /* background: #f9fafb; */
-  /* border: 1px solid #d1d5db; */
   border-radius: 12px;
-  /* padding: 25px; */
-  /* max-width: 700px; */
   margin: 40px auto;
-  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); */
   font-family: "Segoe UI", sans-serif;
 }
 
@@ -4477,14 +3884,8 @@ table th, table td {
   margin-bottom: 5px;
   font-size: 14px;
 }
-
-
-
-
 </style>
-
 <!-- ----------Financial Asset Module----------- -->
-
 <div class="tab-content" id="Financial Asset Module">
             <div class="content-header">
                 <h1>Financial Asset Module</h1>
@@ -4496,9 +3897,7 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Expense Module----------- -->
-
 <div class="tab-content" id="Expense Module">
             <div class="content-header">
                 <h1>Expense Module</h1>
@@ -4510,9 +3909,7 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Medical Module----------- -->
-
 <div class="tab-content" id="Medical Module">
             <div class="content-header">
                 <h1>Medical Module</h1>
@@ -4524,9 +3921,7 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Rehabilitation Module----------- -->
-
 <div class="tab-content" id="Rehabilitation Module">
             <div class="content-header">
                 <h1>Rehabilitation Module</h1>
@@ -4538,9 +3933,7 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Adoption Module----------- -->
-
 <div class="tab-content" id="Adoption Module">
             <div class="content-header">
                 <h1>Adoption Module</h1>
@@ -4552,7 +3945,6 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Trees Module----------- -->
 
 <div class="tab-content" id="Trees Module">
@@ -4566,7 +3958,6 @@ table th, table td {
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------Seeds Module----------- -->
 
 <div class="tab-content" id="Seeds Module">
@@ -4582,56 +3973,32 @@ table th, table td {
 </div>
 </div>
 </div>
-
 <!-- -----------Javascript-------------- -->
  <script>
-// UNIVERSAL SORTING SCRIPT (WORKS FOR ALL TABLES)
 document.querySelectorAll("th.sortable").forEach(header => {
-
     header.addEventListener("click", function () {
-
         let table = header.closest("table");
         let tbody = table.querySelector("tbody");
-
-        if (!tbody) return; // safety check
-
+        if (!tbody) return;
         let rows = Array.from(tbody.querySelectorAll("tr:not(.column-search-row)"));
-
         let colIndex = parseInt(header.dataset.col);
-
-        // get icon inside header
         let sortIcon = header.querySelector(".sort-icon");
-
-        // toggle sorting order
         let ascending = sortIcon.dataset.order !== "asc";
-
         rows.sort((a, b) => {
-
             if (!a.children[colIndex] || !b.children[colIndex]) return 0;
-
             let A = a.children[colIndex].innerText.trim();
             let B = b.children[colIndex].innerText.trim();
-
-            // Number sorting
             if (!isNaN(A) && !isNaN(B)) {
                 return ascending ? A - B : B - A;
             }
-
-            // Date sorting
             if (!isNaN(Date.parse(A)) && !isNaN(Date.parse(B))) {
                 return ascending
                     ? new Date(A) - new Date(B)
                     : new Date(B) - new Date(A);
             }
-
-            // String sorting
             return ascending ? A.localeCompare(B) : B.localeCompare(A);
         });
-
-        // append sorted rows back
         rows.forEach(row => tbody.appendChild(row));
-
-        // reset ALL other table icons
         table.querySelectorAll(".sort-icon").forEach(icon => {
             icon.innerText = "⬍";
             icon.dataset.order = "";
@@ -4645,50 +4012,52 @@ document.querySelectorAll("th.sortable").forEach(header => {
 </script>
 <script>
 let timer;
-
 document.addEventListener("input", function (event) {
     if (!event.target.classList.contains("column-search")) return;
-
     clearTimeout(timer);
-
     timer = setTimeout(() => {
         let input = event.target;
         let col = input.dataset.col;
         let filter = input.value.toLowerCase();
-
         let table = input.closest("table");
         let rows = table.querySelectorAll("tbody tr");
-
         rows.forEach(row => {
             if (row.classList.contains("column-search-row")) return;
 
             let cell = row.cells[col];
             if (!cell) return;
-
             let text = cell.innerText.toLowerCase();
             row.style.display = text.includes(filter) ? "" : "none";
         });
     }, 120); // delay for smoothness
 });
 </script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
-
     function activateTab(tabId){
-        tabBtns.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(c => c.style.display = 'none');
+      tabBtns.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
 
-        document.querySelector('.tab-btn[data-tab="'+ tabId +'"]')?.classList.add('active');
-        document.getElementById(tabId).style.display = 'block';
+      const btn = document.querySelector('.tab-btn[data-tab="'+ tabId +'"]');
+      if(btn) btn.classList.add('active');
+      let content = document.getElementById(tabId);
+      if(!content) {
+        try{
+          if(window.CSS && CSS.escape) {
+            content = document.querySelector('.tab-content[id="'+ CSS.escape(tabId) +'"]');
+          }
+        } catch(e) {
+        }
+      }
+      if(!content) {
+        content = Array.from(tabContents).find(c => c.id === tabId);
+      }
+      if(content) content.classList.add('active');
     }
-
-    // Check if user is returning from a form
+    window.activateTab = activateTab;
     const backFromForm = localStorage.getItem('backFromForm');
-
     if(backFromForm){
         const lastTab = localStorage.getItem('activeTab');
         activateTab(lastTab);  
@@ -4734,43 +4103,45 @@ document.addEventListener('DOMContentLoaded', function(){
         mobileMenuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('active');
         });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
+                document.addEventListener('click', function(event) {
             if (window.innerWidth <= 768) {
                 if (!sidebar.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
                     sidebar.classList.remove('active');
                 }
             }
         });
-        
-        // Tab switching functionality
-        const tabs = document.querySelectorAll('.sidebar a');
+                const tabs = document.querySelectorAll('.sidebar a');
         const contents = document.querySelectorAll('.tab-content');
         
         tabs.forEach(tab => {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class from all tabs and contents
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Show corresponding content
-                const targetId = this.getAttribute('data-tab');
-                const targetContent = document.getElementById(targetId);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
-                
-                // Close mobile sidebar after selecting a tab
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                }
-            });
+          tab.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Visual active state for sidebar anchors
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const targetId = this.getAttribute('data-tab');
+
+            // Prefer shared activateTab if available (handles spaces/special chars)
+            if (window.activateTab && typeof window.activateTab === 'function') {
+              window.activateTab(targetId);
+            } else {
+              // Fallback: robustly find content
+              contents.forEach(c => c.classList.remove('active'));
+              let targetContent = document.getElementById(targetId);
+              if (!targetContent) {
+                try { if (window.CSS && CSS.escape) targetContent = document.querySelector('.tab-content[id="'+CSS.escape(targetId)+'"]'); } catch(e) {}
+                if (!targetContent) targetContent = Array.from(contents).find(c => c.id === targetId);
+              }
+              if (targetContent) targetContent.classList.add('active');
+            }
+
+            // Close mobile sidebar after selecting a tab
+            if (window.innerWidth <= 768) {
+              sidebar.classList.remove('active');
+            }
+          });
         });
         
         // --- Multi-step form functionality (Generic) ---
@@ -4833,7 +4204,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     form.scrollIntoView({ behavior: 'smooth' });
                 });
             });
-
             // Reset form step on submission (handled by individual listeners)
             form.addEventListener('submit', () => {
                 formSteps[currentStep].classList.remove('active');
@@ -4842,16 +4212,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 updateProgressBar();
             });
         }
-
-        // Setup Employee Form
         setupMultiStepForm('multiStepForm', 'progressBar');
-
-        // Setup Donation Form
-        setupMultiStepForm('donationForm', 'donationProgressBar');
-
-
-        // --- Form Submission Handlers ---
-        
+        setupMultiStepForm('donationForm', 'donationProgressBar');        
         // Employee Form Submission
         document.getElementById('multiStepForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -4934,12 +4296,6 @@ document.addEventListener('DOMContentLoaded', function(){
             toggleDonorBoxInput();
         }
     });
-
-
-
-
-
-
     <!-- JavaScript to toggle Donor Box ID input -->
 
 document.addEventListener('DOMContentLoaded', function() {
