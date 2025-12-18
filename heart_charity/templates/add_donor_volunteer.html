@@ -77,8 +77,8 @@
                 <div class="row g-3 mb-3" id="persontype">
 
                     <div class="col-md-6">
-                        <label class="form-label">Person Type</label>
-                        <select name="person_type" id="person_type" class="form-select">
+                        <label class="form-label">Person Type <span style="color: #d9534f;">*</span></label>
+                        <select name="person_type" id="person_type" class="form-select" required aria-required="true">
                             <option value="">Select</option>
                             {% for option in person_type_options %}
                                 <option value="{{ option.id }}">{{ option.lookup_name }}</option>
@@ -103,8 +103,8 @@
                 <hr>
 <div class="row g-3 mb-4" id="personaldetails">
     <div class="col-md-3">
-        <label class="form-label">Salutation</label>
-        <select name="salutation" class="form-select">
+        <label class="form-label">Salutation <span style="color: #d9534f;">*</span></label>
+        <select name="salutation" class="form-select" required aria-required="true">
             <option value="">Select</option>
             <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
             <option>Shri</option><option>Smt.</option><option>Kumari</option>
@@ -112,8 +112,8 @@
     </div>
 
     <div class="col-md-3">
-        <label class="form-label">First Name</label>
-        <input type="text" name="first_name" class="form-control" required>
+        <label class="form-label">First Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="first_name" class="form-control" required aria-required="true">
     </div>
 
     <div class="col-md-3">
@@ -122,8 +122,8 @@
     </div>
 
     <div class="col-md-3">
-        <label class="form-label">Last Name</label>
-        <input type="text" name="last_name" class="form-control" required>
+        <label class="form-label">Last Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="last_name" class="form-control" required aria-required="true">
     </div>
 
 </div>
@@ -150,8 +150,8 @@
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-control">
+        <label class="form-label">Email <span style="color: #d9534f;">*</span></label>
+        <input type="email" name="email" class="form-control" required aria-required="true">
     </div>
 
 </div>
@@ -159,15 +159,33 @@
 <!-- ROW 3 -->
 <div class="row g-3 mb-4">
 
-    <div class="col-md-3">
-        <label class="form-label">Contact Number</label>
-        <input type="text" name="contact_number" class="form-control">
+   <div class="col-md-3">
+    <label class="form-label">Contact Number <span style="color: #d9534f;">*</span></label>
+    <div class="input-group">
+        <span class="input-group-text">+91</span>
+        <input type="text"
+               name="contact_number"
+               class="form-control"
+               maxlength="10"
+               pattern="[0-9]{10}"
+               placeholder="Enter 10 digit number"
+               required aria-required="true">
     </div>
+</div>
 
-    <div class="col-md-3">
-        <label class="form-label">WhatsApp Number</label>
-        <input type="text" name="whatsapp_number" class="form-control">
+<div class="col-md-3">
+    <label class="form-label">WhatsApp Number</label>
+    <div class="input-group">
+        <span class="input-group-text">+91</span>
+        <input type="text"
+               name="whatsapp_number"
+               class="form-control"
+               maxlength="10"
+               pattern="[0-9]{10}"
+               placeholder="Enter 10 digit number">
     </div>
+</div>
+
 <div class="col-md-3" id="donor_box_row2">
     <label class="form-label">Donor Box</label>
 
@@ -198,9 +216,9 @@
         <label class="form-label">Years to Marriage</label>
         <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
     </div>
-<div class="col-md-3">
-        <label class="form-label">Date of Birth</label>
-        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control">
+    <div class="col-md-3">
+        <label class="form-label">Date of Birth <span style="color: #d9534f;">*</span></label>
+        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required aria-required="true">
     </div>
 
     <div class="col-md-3">
@@ -214,36 +232,46 @@
                 <hr>
                 <div class="row g-3 mb-4" id="address">
                     <div class="col-md-4">
-                        <label class="form-label">House Number</label>
-                        <input type="text" name="house_number" class="form-control">
+                        <label class="form-label">House Number <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="house_number" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Building Name</label>
-                        <input type="text" name="building_name" class="form-control">
+                        <label class="form-label">Building Name <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="building_name" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Landmark</label>
-                        <input type="text" name="landmark" class="form-control">
+                        <label class="form-label">Landmark <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="landmark" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Area</label>
-                        <input type="text" name="area" class="form-control">
+                        <label class="form-label">Area <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="area" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">City</label>
-                        <input type="text" name="city" class="form-control">
+                        <label class="form-label">City <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="city" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">State</label>
-                        <input type="text" name="state" class="form-control">
+                        <label class="form-label">State <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="state" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Country</label>
-                        <input type="text" name="country" value="India" class="form-control">
+                        <label class="form-label">Country <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="country" value="India" class="form-control" required aria-required="true">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Postal Code</label>
-                        <input type="text" name="postal_code" class="form-control">
+                        <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
+                        <input type="text" name="postal_code" class="form-control" required aria-required="true">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Native Place</label>
+                        <input type="text" name="native_place" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Native Postal Code</label>
+                        <input type="text" name="native_postal_code" class="form-control">
                     </div>
                 </div>
                 <!-- ===================================== OCCUPATION ===================================== -->
@@ -385,8 +413,8 @@
                               <div class="row g-3 mb-3" id="idproof">
 
     <div class="col-md-4">
-        <label class="form-label">ID Type</label>
-        <select name="id_type" class="form-select">
+        <label class="form-label">ID Type <span style="color: #d9534f;">*</span></label>
+        <select name="id_type" class="form-select" required aria-required="true">
             <option value="">Select</option>
             {% for item in id_type_options %}
                 <option value="{{ item.id }}">{{ item.lookup_name }}</option>
@@ -400,13 +428,13 @@
 <div class="row g-3 mb-3">
 
     <div class="col-md-4">
-        <label class="form-label">ID Number</label>
-        <input type="text" name="id_number" class="form-control">
+        <label class="form-label">ID Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="id_number" class="form-control" required aria-required="true">
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Upload ID Proof</label>
-        <input type="file" name="id_proof_image" class="form-control">
+        <label class="form-label">Upload ID Proof <span style="color: #d9534f;">*</span></label>
+        <input type="file" name="id_proof_image" class="form-control" required aria-required="true">
     </div>
 
 </div>
@@ -415,23 +443,15 @@
 <div class="row g-3 mb-4">
 
     <div class="col-md-4">
-        <label class="form-label">PAN Number</label>
-        <input type="text" name="pan_number" class="form-control">
+        <label class="form-label">PAN Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="pan_number" class="form-control" required aria-required="true">
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Upload PAN Card</label>
-        <input type="file" name="pan_card_image" class="form-control">
+        <label class="form-label">Upload PAN Card <span style="color: #d9534f;">*</span></label>
+        <input type="file" name="pan_card_image" class="form-control" required aria-required="true">
     </div>
-
 </div>
-
-
-                <!-- SUBMIT -->
-                <!-- <div class="text-center mt-4">
-                    <button class="btn btn-success px-4">Save</button>
-                    <a href="{% url 'welcome' %}" class="btn btn-secondary px-4">Cancel</a>
-                </div> -->
                 <div class="action-buttons">
         <button type="submit" class="action-btn save-btn">
             ✔ Save
@@ -441,7 +461,6 @@
             ← Back
         </a>
     </div>
-
             </form>
         </div>
     </div>
@@ -495,6 +514,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
+<script>
+$(document).ready(function () {
+    $('#referred_by').select2({
+        placeholder: "-- Select or Type Person --",
+        allowClear: true,
+        tags: true,                 // ✅ ALLOWS TYPING
+        width: '100%'
+    });
+});
+</script>
 
 
 <script>
@@ -584,8 +613,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Hide by default
         businessSal.style.display = "none";
-
-        // Show ONLY for Business OR Organization
         if (selectedText === "Business" || selectedText === "Organization") {
             businessSal.style.display = "block";
         }

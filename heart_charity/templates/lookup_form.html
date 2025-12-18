@@ -112,7 +112,7 @@
             {% csrf_token %}
  <!-- Lookup Type -->
             <div class="mb-3">
-                <label class="form-label fw-semibold">Lookup Type</label>
+                <label class="form-label fw-semibold">Lookup Type<span style="color: #d9534f;">*</span></label>
                 <select 
                     name="lookup_type"
                     class="form-control custom-input shadow-none"
@@ -121,10 +121,7 @@
 
                     {% for t in lookup_types %}
                         <option value="{{ t.id }}"
-                            {% if lookup and lookup.lookup_type.id == t.id %}
-                                selected
-                            {% endif %}
-                        >
+                            {% if lookup and lookup.lookup_type.id == t.id %}selected{% endif %}>
                             {{ t.type_name }}
                         </option>
                     {% endfor %}
@@ -133,28 +130,9 @@
 
             <!-- Lookup Name -->
             <div class="mb-3">
-                <label class="form-label fw-semibold">Lookup Name</label>
-                <input 
-                    type="text"
-                    name="lookup_name"
-                    class="form-control custom-input shadow-none"
-                    placeholder="Enter Lookup Name"
-                    value="{{ lookup.lookup_name|default:'' }}"
-                    required
-                >
+                <label class="form-label fw-semibold">Lookup Name<span style="color: #d9534f;">*</span></label>
+                <input type="text"name="lookup_name"class="form-control custom-input shadow-none"placeholder="Enter Lookup Name"value="{{ lookup.lookup_name|default:'' }}"required>
             </div>
-
-           
-<!-- 
-            <div class="text-center mt-4">
-        <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Save
-        </button>
-        <a href="/welcome/" class="btn btn-secondary px-5" style="border-radius: 8px;">
-          ← Back
-        </a>
-      </div> -->
-
       
    <div class="action-buttons">
         <button type="submit" class="action-btn save-btn">

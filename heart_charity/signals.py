@@ -1,4 +1,5 @@
 from datetime import timezone
+from django.utils import timezone
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db import models
@@ -162,3 +163,23 @@ def userrole_soft_delete(sender, instance, **kwargs):
 
             action="DELETE"
         )
+
+
+
+
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from .models import Donation,  DonationPaymentBox
+from .utils import generate_receipt_id
+
+
+@receiver(pre_save, sender=Donation)
+def donation_receipt(sender, instance, **kwargs):
+    if not instance.receipt_id:
+        instance.receipt_id = generate_receipt_id()
+
+
+@receiver(pre_save, sender=DonationPaymentBox)
+def danpeti_receipt(sender, instance, **kwargs):
+    if not instance.receipt_id:
+        instance.receipt_id = generate_receipt_id()

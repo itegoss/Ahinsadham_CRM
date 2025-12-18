@@ -8,4 +8,3 @@ class HeartCharityConfig(AppConfig):
     def ready(self):
         import heart_charity.signals
 
-

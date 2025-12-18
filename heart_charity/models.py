@@ -336,6 +336,18 @@ class DonationOwner(models.Model):
     def __str__(self):
         return f"{self.owner_name.first_name} {self.owner_name.last_name} - ₹{self.amount} ({self.donation_box.donation_id})"
 
+
+from django.db import models
+
+class ReceiptSequence(models.Model):
+    year = models.PositiveIntegerField(unique=True)
+    last_number = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.year} → {self.last_number}"
+
+
+
 from django.utils import timezone
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -348,7 +360,12 @@ class Donation(models.Model):
     payment_method = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='donation_payment_methods')
     payment_status = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='payment_statuses')
     transaction_id = models.CharField(max_length=50, blank=True, null=True)
-    receipt_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    receipt_id = models.CharField(
+    max_length=20,
+    unique=True,
+    blank=True,
+    null=True
+)    
     place_of_donation = models.CharField(max_length=200, blank=True, null=True)
     check_no = models.CharField(max_length=50, blank=True, null=True)
     donation_received_by = models.CharField(max_length=150, blank=True, null=True)
@@ -370,26 +387,15 @@ class Donation(models.Model):
     def __str__(self):
         return f"Donation {self.id}"
 
-# Auto-generate receipt ID
-@receiver(pre_save, sender=Donation)
-def generate_receipt_id(sender, instance, **kwargs):
-    if not instance.receipt_id:
-        prefix = "RCPT"
-        year = timezone.now().year
-        last_entry = Donation.objects.filter(
-            receipt_id__startswith=f"{prefix}-{year}-"
-        ).order_by('-id').first()
-
-        if last_entry and last_entry.receipt_id:
-            last_number = int(last_entry.receipt_id.split('-')[-1])
-            new_number = last_number + 1
-        else:
-            new_number = 1
-
-        instance.receipt_id = f"{prefix}-{year}-{new_number:04d}"
 
 class DonationPaymentBox(models.Model):
     id = models.AutoField(primary_key=True)
+    receipt_id = models.CharField(
+    max_length=20,
+    unique=True,
+    blank=True,
+    null=True
+)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='donation_payments')
     donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
     address = models.CharField(max_length=255, blank=True, null=True)

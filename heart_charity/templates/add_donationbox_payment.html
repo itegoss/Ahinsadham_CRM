@@ -198,8 +198,8 @@
       <hr>
 
       <!-- Donation Box -->
-      <label>Donation Box</label>
-      <select name="donation_box" id="donationBoxSelect" required>
+      <label>Donation Box <span style="color: #d9534f;">*</span></label>
+      <select name="donation_box" id="donationBoxSelect" required aria-required="true" class="form-select">
           <option value="">-- Select Donation Box --</option>
           {% for box in donation_boxes %}
               <option value="{{ box.id }}">
@@ -208,13 +208,13 @@
           {% endfor %}
       </select>
 
-      <label>Donation Box Owner</label>
-      <input type="text" id="boxOwner" name="owner_name" readonly placeholder="Auto-filled">
+      <label>Donation Box Owner <span style="color: #d9534f;">*</span></label>
+      <input type="text" id="boxOwner" name="owner_name" readonly placeholder="Auto-filled" required aria-required="true">
 
-      <label>Address</label>
-      <input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled">
-      <label>Opened By</label>
-<select name="opened_by" class="form-select" required>
+      <label>Address <span style="color: #d9534f;">*</span></label>
+      <input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled" required aria-required="true">
+      <label>Opened By <span style="color: #d9534f;">*</span></label>
+<select name="opened_by" class="form-select" required aria-required="true">
     <option value="">-- Select Person --</option>
     {% for person in donor_volunteers %}
         <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
@@ -230,22 +230,22 @@
 </select> -->
 
 
-      <label>Amount (₹)</label>
-      <input type="number" name="amount" step="0.01" required>
+      <label>Amount (₹) <span style="color: #d9534f;">*</span></label>
+      <input type="number" name="amount" step="0.01" required aria-required="true">
 
-      <label>Payment Method</label>
-      <select name="payment_method" required>
+      <label>Payment Method <span style="color: #d9534f;">*</span></label>
+      <select name="payment_method" required aria-required="true" class="form-select">
           <option value="">-- Select Method --</option>
           {% for item in payment_methods %}
               <option value="{{ item.id }}">{{ item.lookup_name }}</option>
           {% endfor %}
       </select>
 
-      <label>Date & Time</label>
-      <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time">
+      <label>Date & Time <span style="color: #d9534f;">*</span></label>
+      <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time" required aria-required="true">
 
-      <label>I Witness</label>
-      <input type="text" name="i_witness">
+      <label>I Witness <span style="color: #d9534f;">*</span></label>
+      <input type="text" name="i_witness" required aria-required="true">
 
       <div class="timer" id="timer">Form expires in: 60s</div>
 

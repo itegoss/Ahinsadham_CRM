@@ -80,52 +80,31 @@
 {% endif %}
     <form method="POST" action="{% url 'adddonation' %}">
       {% csrf_token %}
-
-      <!-- ========================= -->
-      <!-- 🧍 Donor Information -->
-      <!-- ========================= -->
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>
       <hr>
 <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Person Type</label>
-                       <select name="donor" id="donor" class="form-select" required>
-
-                            <option value="">-- Select Donor --</option>
+    <div class="col-md-6">
+      <label class="form-label">Select Donor <span style="color: #d9534f;">*</span></label>
+      <select name="donor"id="donor"class="form-select select2-search"required aria-required="true">
+            <option value="">-- Select or Type Donor --</option>
             {% for donor in donors %}
-            <option value="{{ donor.id }}">
-              {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }}
-            </option>
+                <option value="{{ donor.id }}">
+                    {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }}
+                </option>
             {% endfor %}
-          </select>
-                        </select>
-                    </div>
-                </div>
-      <!-- <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Select Donor</label>
-          <select name="donor" class="form-select" required>
-            <option value="">-- Select Donor --</option>
-            {% for donor in donors %}
-            <option value="{{ donor.id }}">
-              {{ donor.first_name }} {{ donor.last_name }}
-            </option>
-            {% endfor %}
-          </select>
-        </div>
-      </div> -->
+        </select>
 
+    </div>
+</div>
 
       <!-- Donation Details -->
-
       <h5 class="text-success fw-bold mb-2">Donation Details</h5>
       <hr>
-
       <div class="row mb-3">
 
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Declared Amount (₹)</label>
-          <input type="number" step="0.01" name="donation_amount_declared" class="form-control">
+          <label class="form-label fw-semibold">Declared Amount (₹) <span style="color: #d9534f;">*</span></label>
+          <input type="number" step="0.01" name="donation_amount_declared" class="form-control" required aria-required="true">
         </div>
 
         <div class="col-md-6">
@@ -133,21 +112,27 @@
           <input type="number" step="0.01" name="donation_amount_paid" class="form-control">
         </div>
 
-      
-
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Donation Date</label>
-          <input type="date" name="donation_date" value="{{ today }}" class="form-control" required>
+          <label class="form-label fw-semibold">Donation Date <span style="color: #d9534f;">*</span></label>
+          <input type="date" name="donation_date" value="{{ today }}" class="form-control" required aria-required="true">
         </div>
     <div class="col-md-6">
-          <label class="form-label fw-semibold">Donation Category</label>
-          <select name="donation_category" class="form-select" required>
+        <label class="form-label fw-semibold">Donation Category <span style="color: #d9534f;">*</span></label>
+        <select name="donation_category" class="form-select" required aria-required="true">
     <option value="">-- Select Category --</option>
     {% for item in donation_categories %}
+      <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+    {% endfor %}
+  </select>
+      </div>
+          <div class="col-md-6">
+          <label class="form-label fw-semibold">Donation Sub-Category</label>
+          <select name="donation_sub_category" class="form-select" >
+    <option value="">-- Select Sub-Category --</option>
+    {% for item in donation_sub_categories %}
         <option value="{{ item.id }}">{{ item.lookup_name }}</option>
     {% endfor %}
 </select>
-
         </div>
       </div>
 
@@ -159,19 +144,14 @@
       <div class="row mb-3">
 
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Place of Donation</label>
-          <input type="text" name="place_of_donation" class="form-control">
+          <label class="form-label fw-semibold">Place of Donation <span style="color: #d9534f;">*</span></label>
+          <input type="text" name="place_of_donation" class="form-control" required aria-required="true">
         </div>
-
-
-
       </div>
-
       <div class="row mb-3">
-
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Donation Collected By</label>
-          <input type="text" name="donation_received_by" class="form-control">
+          <label class="form-label fw-semibold">Donation Collected By <span style="color: #d9534f;">*</span></label>
+          <input type="text" name="donation_received_by" class="form-control" required aria-required="true">
         </div>
 
         <div class="col-md-6">
@@ -211,23 +191,23 @@
       <div class="row mb-3">
 
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Payment Method</label>
-          <select name="payment_method" class="form-select">
-    <option value="">-- Select Method --</option>
-    {% for item in payment_methods %}
+          <label class="form-label fw-semibold">Payment Method <span style="color: #d9534f;">*</span></label>
+          <select name="payment_method" class="form-select" required aria-required="true">
+      <option value="">-- Select Method --</option>
+      {% for item in payment_methods %}
         <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-    {% endfor %}
-</select>
+      {% endfor %}
+    </select>
 
         </div>
          <div class="col-md-6">
-          <label class="form-label fw-semibold">Payment Status</label>
-          <select name="payment_status" class="form-select">
-    <option value="">-- Select Status --</option>
-    {% for item in payment_statuses %}
+          <label class="form-label fw-semibold">Payment Status <span style="color: #d9534f;">*</span></label>
+          <select name="payment_status" class="form-select" required aria-required="true">
+      <option value="">-- Select Status --</option>
+      {% for item in payment_statuses %}
         <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-    {% endfor %}
-</select>
+      {% endfor %}
+    </select>
 
         </div>
 
@@ -275,14 +255,16 @@
   </div>
 </div>
 
-
 <script>
-    $(document).ready(function() {
-        $('#person_type').select2({
-            placeholder: "Select or Type to Search",
-            allowClear: true
-        });
+$(document).ready(function () {
+    $('#donor').select2({
+        placeholder: "-- Select or Type Donor --",
+        allowClear: true,
+        tags: true,        // ✅ typing allowed
+        width: '100%'
     });
+});
 </script>
+
 {% endblock %}
 

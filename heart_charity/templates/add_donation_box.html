@@ -208,14 +208,14 @@
     <hr>
 
     <div class="row">
-      <div class="col-6">
-        <label>Key ID</label>
-        <input type="text" name="key_id" placeholder="Enter Key ID">
-      </div>
+            <div class="col-6">
+                <label>Key ID <span style="color: #d9534f;">*</span></label>
+                <input type="text" name="key_id" placeholder="Enter Key ID" required aria-required="true">
+            </div>
 
-      <div class="col-6">
-        <label>Status</label>
-        <select name="status" required>
+            <div class="col-6">
+                <label>Status <span style="color: #d9534f;">*</span></label>
+                <select name="status" required aria-required="true">
           <option value="">Select Status</option>
           {% for key, val in status_choices %}
               <option value="{{ key }}">{{ val }}</option>
@@ -224,27 +224,27 @@
       </div>
     </div>
 
-    <!-- Box Size -->
-    <label>Box Size</label>
-    <div class="radio-group">
-      <label class="radio-option">
-        <input type="radio" name="box_size" value="small" required> Small
-      </label>
-      <label class="radio-option">
-        <input type="radio" name="box_size" value="medium"> Medium
-      </label>
-      <label class="radio-option">
-        <input type="radio" name="box_size" value="large"> Large
-      </label>
-    </div>
+        <!-- Box Size -->
+        <label>Box Size <span style="color: #d9534f;">*</span></label>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="box_size" value="small" required aria-required="true"> Small
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="box_size" value="medium" required aria-required="true"> Medium
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="box_size" value="large" required aria-required="true"> Large
+            </label>
+        </div>
 
     <!-- Location -->
     <!-- <label>Location</label>
     <input type="text" name="location" placeholder="Enter full location" required> -->
 
     <!-- QR Upload -->
-    <label>Upload QR Code (Optional)</label>
-    <input type="file" name="qr_code" accept="image/*" onchange="previewQR(event)">
+    <label>Upload QR Code <span style="color: #d9534f;">*</span></label>
+    <input type="file" name="qr_code" accept="image/*" onchange="previewQR(event)" required aria-required="true">
     <div class="qr-preview" id="qrPreview">QR Preview</div>
 
     <small style="color:#555;">Created & Updated timestamps are automatic.</small>

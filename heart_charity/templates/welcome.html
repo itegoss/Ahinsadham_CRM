@@ -1536,6 +1536,7 @@ table th, table td {
             <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
+              {% if not l.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -1548,6 +1549,9 @@ table th, table td {
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this Lookup?')"><i class="bi bi-trash"></i></button>
               </form>
+              {% endif %}
+              {% else %}
+                <span class="badge bg-secondary">Deactivated</span>
               {% endif %}
             </div>
           </td>
@@ -1635,6 +1639,7 @@ table th, table td {
  <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
+              {% if not l.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -1649,6 +1654,9 @@ table th, table td {
                   <i class="bi bi-trash"></i>
                 </button>
               </form>
+              {% endif %}
+              {% else %}
+                <span class="badge bg-secondary">Deactivated</span>
               {% endif %}
             </div>
           </td>
@@ -1728,7 +1736,6 @@ table th, table td {
   {% endif %}
 
 </div>
-
 </div>
 </div>
 
@@ -2003,7 +2010,6 @@ table th, table td {
   font-weight: 600;
 }
 .table td, .table th {
-    color:black;
   vertical-align: middle;
 }
 </style>
@@ -2118,7 +2124,7 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
             <!-- 📝 Edit -->
-
+              {% if not access.is_deleted %}
             <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
             </a>
@@ -2131,6 +2137,9 @@ width: 35%;
                 <i class="bi bi-trash"></i>
               </button>
             </form>
+            {% else %}
+                <span class="badge bg-secondary">Deactivated</span>
+            {% endif %}
           </div>
         </td>
         <td>{{ access.id }}</td>
@@ -2235,6 +2244,7 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
+              {% if not access.is_deleted %}
             <!-- 📝 Edit -->
             <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
@@ -2248,7 +2258,9 @@ width: 35%;
                 <i class="bi bi-trash"></i>
               </button>
             </form>
-
+{% else %}
+                <span class="badge bg-secondary">Deactivated</span>
+{% endif %}
           </div>
         </td>
         <td>{{ access.id }}</td>
@@ -2348,17 +2360,101 @@ width: 35%;
 <!-- ----------- Donor/Volunteer Management System ------------------ -->
 
 <div class="tab-content" id="Donor/Volunteer Management System">
+  
+  <div id="imagePopup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+">
+
+  <div style="
+    background:#fff;
+    padding:18px;
+    border-radius:10px;
+    max-width:90%;
+    max-height:90%;
+    position:relative;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  ">
+
+    <!-- ❌ Close -->
+    <span
+      onclick="closeImagePopup()"
+      style="
+        position:absolute;
+        top:8px;
+        right:12px;
+        cursor:pointer;
+        font-size:22px;
+        color:#444;
+      ">
+      ✖
+    </span>
+
+    <!-- 🔹 Title -->
+    <div id="imageTitle"
+         style="
+           font-weight:600;
+           font-size:14px;
+           color:#0c6d34;
+           margin-bottom:10px;
+         ">
+    </div>
+
+    <!-- 🖼 Image -->
+    <img id="popupImage"
+         style="
+           max-width:100%;
+           max-height:65vh;
+           object-fit:contain;
+           border-radius:6px;
+         ">
+
+    <!-- ⏮ ⏭ Controls -->
+    <div style="margin-top:12px; display:flex; justify-content:center; gap:15px;">
+      <button class="nav-btn" onclick="prevImg()">⟪</button>
+<button class="nav-btn" onclick="nextImg()">⟫</button>
+
+    </div>
+
+  </div>
+</div>
+<style>
+.nav-btn {
+  background:#0c6d34;
+  color:#fff;
+  border:none;
+  
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background:#095528;
+  transform:translateY(-1px);
+}
+
+.nav-btn:disabled {
+  background:#ccc;
+  cursor:not-allowed;
+}
+</style>
+
  <div class="card border-0">
-    
-    <!-- 🌈 Navbar-style Header -->
-    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">All Donors and Volunteers</h4>
     </div>
 
     <div class="card-body">
-      
-      <!-- 🔍 Search Section -->
-    <div class="search-container">
+  <div class="search-container">
   <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100" role="search">
     <input type="text" name="q" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query|default:'' }}">
     {% if query %}
@@ -2366,18 +2462,17 @@ width: 35%;
     {% endif %}
   </form>
 </div>
-    <!-- 📄 Search Results -->
       {% if query2 %}
         <h5>Showing results for: "<span ">{{ query2 }}</span>"</h5>
         <hr>
       {% endif %}
- <!-- 🧍‍♂️ donorvolunteer Table -->
       {% if page_obj %}
   <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead>
     <tr>
         <th>Action</th>
+                <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
@@ -2407,8 +2502,6 @@ width: 35%;
         <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="27">Deleted On <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="28">pan card<span class="sort-icon">⬍</span></th>
       </tr>
     </thead>
     <tbody>
@@ -2459,6 +2552,7 @@ width: 35%;
     <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
         <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
+          <td><input  class="column-search" data-col="30" type="text" placeholder="Search..."></td> 
       </tr>
 
       <!-- 🧾 Paginated Data -->
@@ -2466,6 +2560,7 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
+            {% if not donation.is_deleted %}
            {% if permissions.can_edit %}
             <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
@@ -2481,8 +2576,26 @@ width: 35%;
               </button>
             </form>
             {% endif %}
+            {% else %}
+                <span class="badge bg-secondary">Deactivated</span>
+            {% endif %}
           </div>
         </td>
+        <td>
+  {% if donation.id_proof_image or donation.pan_card_image %}
+    <span
+      style="cursor:pointer;font-size:17px;"
+      title="View ID / PAN"
+      onclick="openImagesPopup(
+        '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
+        '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+      )">
+      <i class="fa-solid fa-eye"></i>
+    </span>
+  {% else %}
+    —
+  {% endif %}
+</td>
         <td>{{ donation.id }}</td>
         <td>{{ donation.person_type }}</td>
         <td>{{ donation.first_name }}</td>
@@ -2518,20 +2631,6 @@ width: 35%;
 </td>
       <td>{{ donation.deleted_by }}</td>
             <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-          <td>
-    {% if donation.id_proof_image %}
-      <img src="{{ donation.id_proof_image.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
-          <td>
-    {% if donation.pan_card_image %}
-      <img src="{{ donation.pan_card_image.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
       </tr>
       {% empty %}
       <tr>
@@ -2549,6 +2648,7 @@ width: 35%;
     <thead>
       <tr>
         <th>Action</th>
+                <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
@@ -2578,9 +2678,6 @@ width: 35%;
         <th class="sortable" data-col="28">is_deleted <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="27">Deleted By <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="28">pan card<span class="sort-icon">⬍</span></th>
-
         <th></th>
       </tr>
     </thead>
@@ -2636,12 +2733,11 @@ width: 35%;
     <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
         <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
       </tr>
-
-      <!-- 🧾 Paginated Data -->
       {% for donation in page_obj %}
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
+            {% if not donation.is_deleted %}
             {% if permissions.can_edit %}
             <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i>
@@ -2657,8 +2753,25 @@ width: 35%;
               </button>
             </form>
             {% endif %}
+                <span class="badge bg-secondary">Deactivated</span>
+            {% endif %}
           </div>
         </td>
+        <td>
+  {% if donation.id_proof_image or donation.pan_card_image %}
+    <span
+      style="cursor:pointer;font-size:17px;"
+      title="View ID / PAN"
+      onclick="openImagesPopup(
+        '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
+        '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+      )">
+      <i class="fa-solid fa-eye"></i>
+    </span>
+  {% else %}
+    —
+  {% endif %}
+</td>
         <td>{{ donation.id }}</td>
         <td>{{ donation.person_type }}</td>
         <td>{{ donation.first_name }}</td>
@@ -2694,20 +2807,6 @@ width: 35%;
 </td>
       <td>{{ donation.deleted_by }}</td>
       <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-                <td>
-    {% if donation.id_proof_image %}
-      <img src="{{ donation.id_proof_image.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
-          <td>
-    {% if donation.pan_card_image %}
-      <img src="{{ donation.pan_card_image.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
       </tr>
       {% empty %}
       <tr>
@@ -2716,11 +2815,7 @@ width: 35%;
       {% endfor %}
     </tbody>
   </table>
-
-
 </div>
-
-<!-- ✅ Optional Scrollbar Styling -->
 <style>
 .table-responsive::-webkit-scrollbar {
   width: 10px;
@@ -2748,23 +2843,16 @@ width: 35%;
       <a href="?donor_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
     <a href="?donor_page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
   <!-- Page Info + Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="pageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="donor_page" 
-      id="pageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
+    <select name="donor_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
       {% for page_num in page_obj.paginator.page_range %}
         <option value="{{ page_num }}" {% if page_num == page_obj.number %}selected{% endif %}>
           {{ page_num }}
         </option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ page_obj.paginator.num_pages }}</span>
   </form>
 
@@ -2882,30 +2970,20 @@ width: 35%;
 
  <div class="tab-content"  id="Donation box (Daan Peti) & ACH Module">
   <div class="card border-0">
-    <!-- 🌈 Navbar-style Header -->
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Donation box (Daan Peti)</h4>
     </div>
-
 <!-- ------------Donation Owner Module----------- -->
     <div class="card-body">
       <h5 style="color:#1b5e20">Danpeti Donation</h5>
-      <!-- 🔍 Search Section -->
 <div class="search-container d-flex align-items-center">
-
   <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
-    <input 
-      type="text" 
-      name="payments_query"
-      class="form-control search-input me-2"
-      placeholder="🔍 Search..."
-      value="{{ payments_query|default:'' }}">
+    <input type="text" name="payments_query"class="form-control search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
   </form>
 </div>
       <!-- 🧍‍♂️ User Table -->
       {% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
- 
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
@@ -2940,15 +3018,9 @@ width: 35%;
   {% endif %}
   {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
     </div>
@@ -2968,13 +3040,12 @@ width: 35%;
     <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-
-        </tr>
-        
+</tr>        
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
+              {% if not owner.is_deleted %}
 {% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -2989,20 +3060,23 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
-<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
- 👁&zwj;🗨
+              {% else %}
+                <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+              {% endif %}
+<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 17px;">
+<i class="fa-solid fa-eye"></i>
 </a>
 {% if request.user.is_superuser %}
     {% if owner and owner.id %}
         {% if owner.verified %}
             <i class="fa-solid fa-circle-check"
-               style="font-size: 18px; color:#16a34a;"
+               style="font-size: 17px; color:#16a34a;"
                title="Verified by Admin"></i>
         {% else %}
             <a href="{% url 'verify_payment' owner.id %}"
                onclick="return confirm('Verify this donation?')">
                 <i class="fa-regular fa-circle-check"
-                   style="font-size: 18px; color:#555;"
+                   style="font-size: 17px; color:red;"
                    title="Click to Verify"></i>
             </a>
         {% endif %}
@@ -3084,12 +3158,8 @@ width: 35%;
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
-      <!-- Maintain search value -->
     <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
-
-    <!-- Trigger CSV download -->
     <input type="hidden" name="download" value="1">
-
     <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
         <i class="bi bi-download"></i>
     </button>
@@ -3117,6 +3187,7 @@ width: 35%;
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
+              {% if not owner.is_deleted %}
              {% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -3132,20 +3203,24 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
-<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 20px;">
- 👁&zwj;🗨
+              {% else %}
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i>
+</span>
+              {% endif %}
+<a href="/donation-payment/receipt/{{ owner.id }}/pdf/" style="font-size: 17px;">
+<i class="fa-solid fa-eye"></i>
 </a>
 {% if request.user.is_superuser %}
     {% if owner and owner.id %}
         {% if owner.verified %}
             <i class="fa-solid fa-circle-check"
-               style="font-size: 18px; color:#16a34a;"
+               style="font-size: 17px; color:#16a34a;"
                title="Verified by Admin"></i>
         {% else %}
             <a href="{% url 'verify_payment' owner.id %}"
                onclick="return confirm('Verify this donation?')">
                 <i class="fa-regular fa-circle-check"
-                   style="font-size: 18px; color:#555;"
+                   style="font-size: 17px; color:red;"
                    title="Click to Verify"></i>
             </a>
         {% endif %}
@@ -3235,6 +3310,59 @@ width: 35%;
 </div>
 
 <!-- ------------Donation Box----------- -->
+<!-- QR Code Popup -->
+<div id="qrModal"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
+
+  <div style="
+      background:#fff;
+      padding:20px 20px 25px;
+      border-radius:12px;
+      width:40%;
+      height: 80%;
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+
+    <!-- Close -->
+    <span onclick="closeQrPopup()"
+          style="position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px;">
+      ×
+    </span>
+
+    <!-- Title -->
+    <h5 style="margin-bottom:10px; color: #095528;">QR Code</h5>
+
+    <!-- QR Image -->
+    <img id="qrImage"src=""style="width:200%; max-width:300px; margin-bottom:12px;">
+
+    <!-- Info -->
+    <div style="font-size:14px; text-align:left; margin-bottom:12px;">
+      <div><strong>Key ID:</strong> <span id="key_id"></span></div>
+      <div><strong>Donation ID:</strong> <span id="donation_id"></span></div>
+    </div>
+
+    <!-- Download -->
+    <a id="qrDownload"
+       href="#"
+       download
+       title="Download QR Code"
+       style="
+         display:inline-flex;
+         align-items:center;
+         gap:6px;
+         font-size:14px;
+         text-decoration:none;
+         color:#000;
+       ">
+      ⬇ Download
+    </a>
+
+  </div>
+</div>
 
    <div class="card-body">
       <h5 style="color:#1b5e20" >Donation Box</h5>
@@ -3303,6 +3431,7 @@ width: 35%;
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
+                            {% if not box.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -3317,16 +3446,29 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
+              {% else %}
+                              <span class="badge bg-secondary">Deactivated</span>
+              {% endif %}
             </div>
           </td>
-          <td>{{ box.donation_id }}</td>
-                 <td>
-    {% if box.qr_code %}
-      <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
+                   <td>{{ box.donation_id }}</td>
+<td style="text-align:center;">
+  {% if box.qr_code %}
+    <span
+      onclick="openQrPopup(
+        '{{ box.qr_code.url }}',
+        '{{ box.key_id }}',
+        '{{ box.id }}'
+      )"
+      title="View QR Code"
+      style="cursor:pointer; font-size:17px;">
+     <i class="fa-solid fa-eye"></i>
+    </span>
+  {% else %}
+    <span class="text-muted">—</span>
+  {% endif %}
+</td>
+
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
           <td>{{ box.location }}</td>
@@ -3413,6 +3555,7 @@ width: 35%;
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
+                                          {% if not box.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -3427,17 +3570,28 @@ width: 35%;
                 </button>
               </form>
               {% endif %}
-              
+                   {% else %}
+                              <span class="badge bg-secondary">Deactivated</span>
+              {% endif %}
             </div>
           </td>
          <td>{{ box.donation_id }}</td>
-    <td>
-    {% if box.qr_code %}
-      <img src="{{ box.qr_code.url }}" width="50" height="50" style="object-fit:cover;">
-    {% else %}
-      No QR
-    {% endif %}
-  </td>
+<td style="text-align:center;">
+  {% if box.qr_code %}
+    <span
+      onclick="openQrPopup(
+        '{{ box.qr_code.url }}',
+        '{{ box.key_id }}',
+        '{{ box.id }}'
+      )"
+      title="View QR Code"style="cursor:pointer; font-size:17px;">
+  <i class="fa-solid fa-eye"></i>
+    </span>
+  {% else %}
+    <span class="text-muted">—</span>
+  {% endif %}
+</td>
+
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
           <td>{{ box.location }}</td>
@@ -3515,21 +3669,13 @@ width: 35%;
 <!-- --------------START:  DONATION MODULE---------- -->
 <div class="tab-content" id="Donation Module">
   <div class="card border-0">
-    
-    <!-- 🌈 Navbar-style Header -->
-    <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">All Donations</h4>
     </div>
-
     <div class="card-body">
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100" role="search">
-    <input 
-      type="text" 
-      name="q" 
-      class="form-control search-input me-2 shadow-none" 
-      placeholder="🔍 Search..." 
-      value="{{ query3|default:'' }}">
+    <input type="text" name="q" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query3|default:'' }}">
   </form>
 </div>
       {% if donation_page_obj %}
@@ -3558,7 +3704,6 @@ width: 35%;
         <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
                 <th class="sortable" data-col="18">deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
-
       </tr>
     </thead>
     <tbody>
@@ -3603,6 +3748,7 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
+{% if not donation.is_deleted %}
 {% if permissions.can_edit %}
             <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i> </a>
@@ -3616,14 +3762,17 @@ width: 35%;
               </button>
             </form>
             {% endif %}
-     <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+     <a href="{% url 'donation_receipt_preview' donation.id %}" style="font-size: 17px;"><i class="fa-solid fa-eye"></i></a>
     {% if request.user.is_superuser %}
     {% if donation.verified %}
-        <i class="fa-solid fa-circle-check"style="font-size: 18px; color:#16a34a;"title="Verified by Admin"></i>
+        <i class="fa-solid fa-circle-check"style="font-size: 17px; color:#16a34a;"title="Verified by Admin"></i>
     {% else %}
         <a href="{% url 'verify_donation' donation.id %}" onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"style="font-size: 18px; color:#555;" title="Click to Verify"></i></a>
+            <i class="fa-regular fa-circle-check"style="font-size: 17px; color:red;" title="Click to Verify"></i></a>
     {% endif %}
+{% endif %}
+{% else %}
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
           </div>
         </td>
@@ -3730,7 +3879,7 @@ width: 35%;
 <tr>
   <td>
     <div class="d-inline-flex align-items-center gap-1">
-
+{% if not donation.is_deleted %}
       {% if permissions.can_edit %}
         <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1"
            style="font-size: 15px; color:black; text-decoration: none;">
@@ -3749,25 +3898,27 @@ width: 35%;
           </button>
         </form>
 
-        <a href="{% url 'donation_receipt' donation.id %}" style="font-size: 20px;">👁‍🗨</a>
+        <a href="{% url 'donation_receipt_preview' donation.id %}" style="font-size: 17px;"><i class="fa-solid fa-eye"></i></a>
 
         {% if request.user.is_superuser %}
           {% if donation.verified %}
             <i class="fa-solid fa-circle-check"
-               style="font-size: 18px; color:#16a34a;"
+               style="font-size: 17px; color:#16a34a;"
                title="Verified by Admin"></i>
           {% else %}
             <a href="{% url 'verify_donation' donation.id %}"
                onclick="return confirm('Verify this donation?')">
               <i class="fa-regular fa-circle-check"
-                 style="font-size: 18px; color:#555;"
+                 style="font-size: 17px; color:#555;"
                  title="Click to Verify"></i>
             </a>
           {% endif %}
         {% endif %}
 
       {% endif %}  {# ✅ THIS WAS MISSING #}
-
+{% else %}
+                <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+{% endif %}
     </div>
   </td>
   <td>{{ donation.id }}</td>
@@ -3974,6 +4125,76 @@ width: 35%;
 </div>
 </div>
 <!-- -----------Javascript-------------- -->
+ 
+
+
+
+<!-- -----------Javascript-------------- -->
+<script>
+let images = [];
+let currentIndex = 0;
+
+function openImagesPopup(idImg, panImg) {
+  images = [];
+
+  if (idImg) {
+    images.push({ url: idImg, title: "ID Proof" });
+  }
+  if (panImg) {
+    images.push({ url: panImg, title: "PAN Card" });
+  }
+
+  if (!images.length) return;
+
+  currentIndex = 0;
+  showImage();
+  document.getElementById("imagePopup").style.display = "flex";
+}
+
+function showImage() {
+  document.getElementById("popupImage").src = images[currentIndex].url;
+  document.getElementById("imageTitle").innerText = images[currentIndex].title;
+}
+
+function nextImg() {
+  if (currentIndex < images.length - 1) {
+    currentIndex++;
+    showImage();
+  }
+}
+
+function prevImg() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    showImage();
+  }
+}
+
+function closeImagePopup() {
+  document.getElementById("imagePopup").style.display = "none";
+  document.getElementById("popupImage").src = "";
+  document.getElementById("imageTitle").innerText = "";
+  images = [];
+}
+</script>
+
+<script>
+function openQrPopup(imageUrl, keyId, donationId) {
+  document.getElementById("qrImage").src = imageUrl;
+
+  // ✅ IDs match popup HTML
+  document.getElementById("key_id").innerText = keyId || "-";
+  document.getElementById("donation_id").innerText = donationId || "-";
+
+  document.getElementById("qrDownload").href = imageUrl;
+  document.getElementById("qrModal").style.display = "block";
+}
+
+function closeQrPopup() {
+  document.getElementById("qrModal").style.display = "none";
+  document.getElementById("qrImage").src = "";
+}
+</script>
  <script>
 document.querySelectorAll("th.sortable").forEach(header => {
     header.addEventListener("click", function () {
