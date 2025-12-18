@@ -1,228 +1,375 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Donation Receipt</title>
+<meta charset="UTF-8">
+<title>Donation Receipt</title>
+
+{% load custom_tags %}
 
 <style>
+@page {
+    size: A4;
+    margin: 6mm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f7f7f7;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    background: #fff;
 }
 
 .receipt-container {
-    border: 2px solid #333;
-    padding: 20px;
-    background: white;
-    max-width: 900px;
+    max-width: 760px;
     margin: auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 .header-table {
     width: 100%;
+    border-collapse: collapse;
+}
+
+.logo {
+    height: 75px;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0c6d34;
     text-align: center;
-    line-height: 22px;
-    margin-bottom: 15px;
+    margin-bottom: 2px;
 }
 
-.title {
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 1px;
+.header-sub {
+    font-size: 10px;
+    text-align: center;
 }
 
-.subtitle {
-    font-size: 15px;
-    margin-top: -5px;
+/* ================= INFO ================= */
+.info-line {
+    font-size: 10px;
+    margin-top: 4px;
+    overflow: hidden;
 }
 
-/* SECTION TITLE */
+.info-line span {
+    float: right;
+}
+
+.info-line b {
+    color: #0c6d34;
+}
+
+/* ================= SECTION ================= */
 .section-title {
-    background: #e6e6e6;
-    padding: 6px 8px;
-    border-left: 4px solid #0c6d34;
-    font-size: 16px;
+    margin-top: 8px;
+    padding: 4px 6px;
+    background: #e8f5ed;
+    border-left: 5px solid #0c6d34;
     font-weight: bold;
-    margin-top: 18px;
+    color: #0c6d34;
 }
 
-/* TABLES */
-.info-table, .donation-table {
+/* ================= TABLE ================= */
+.table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 14px;
+    font-size: 10px;
 }
 
-.info-table td, .donation-table td {
-    border: 1px solid #444;
-    padding: 8px 10px;
+.table td, .table th {
+    padding: 4px;
+    border-bottom: 1px solid #eee;
     vertical-align: top;
 }
 
-/* Amount Right Align */
+.table tr:nth-child(even) td {
+    background: #f7f7f7;
+}
+
 .amount {
     text-align: right;
     font-weight: bold;
 }
 
-/* Footer */
+.total-row td {
+    border-top: 2px solid #8bcfa6;
+    font-weight: bold;
+}
+
+/* ================= FOOTER ================= */
 .footer-text {
     text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
     font-weight: bold;
-    margin-top: 20px;
-    font-size: 16px;
+    color: #0c6d34;
 }
 
 .signature {
-    float: right;
-    margin-top: 40px;
-    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
 }
 
-/* Buttons */
+/* ================= BUTTONS ================= */
 .buttons {
-    text-align: center;
-    margin-top: 25px;
+    margin: 18px 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
 .btn {
     background: #0c6d34;
-    color: white;
-    padding: 10px 16px;
-    border: none;
+    color: #fff;
+    padding: 8px 14px;
     border-radius: 6px;
+    border: none;
     cursor: pointer;
-    margin: 5px;
+    font-weight: 600;
     text-decoration: none;
-    font-size: 14px;
 }
 
-.btn:hover {
-    background: #095528;
-}
+/* Icon-only button (square) */
+.icon-btn { width: 44px; height: 44px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
+.icon-btn svg { width: 20px; height: 20px; display: block }
+
+
+
 </style>
-
 </head>
+
 <body>
 
-<div class="receipt-container" id="receipt">
+<div class="receipt-container">
 
-    <!-- HEADER -->
-    <table class="header-table">
-        <tr><td class="title">BHAGWAN MAHAVIR PASHU RAKSHA KENDRA</td></tr>
-        <tr><td class="subtitle">Organised by : Sheth Shri Lalji Velji Shah</td></tr>
-        <tr><td>Inspired by : Shri Jadavji Ravji Gangar</td></tr>
-        <tr><td><b>'Anchorwala Ahinsadham'</b></td></tr>
-    </table>
+<!-- HEADER -->
+<table class="header-table">
+<tr>
+<td width="12%">
+    <img src="{{ logo_url }}" class="logo">
+</td>
+<td width="88%">
+    <div class="header-title">BHAGWAN MAHAVIR PASHU RAKSHA KENDRA</div>
+    <div class="header-sub">Organised by : Sheth Shri Lalji Velji Shah</div>
+    <div class="header-sub"><b>'Anchorwala Ahinsadham'</b></div>
+    <div class="header-sub">Inspired by : Shri Jadavji Ravji Gangar</div>
+</td>
+</tr>
+</table>
 
-    <!-- Institution Section -->
-    <table class="info-table">
-        <tr>
-            <td>
-                <b>INSTITUTION:</b><br>
-                Pragpur Road junction, Taluka Mundra - Kutch, Gujarat 370415<br>
-                Mob: 076098 88555
-            </td>
-            <td>
-                <b>MUMBAI OFFICE:</b><br>
-                5, Gurukrupa Apartment, Kasturba Cross Road No.1, Borivali (E), Mumbai 400066<br>
-                Mob: 97264 75556 / 97264 85555
-            </td>
-            <td><b>Date:</b> {{ donation.donation_date }}</td>
-        </tr>
+<!-- ADDRESS -->
+<table class="info-line" style="width:100%; border-collapse:collapse;">
+    <tr>
+        <!-- LEFT -->
+        <td style="width:65%; vertical-align:top;">
+            <b>INSTITUTION :</b> Pragpur Road Junction, Taluka Mundra – Kutch, Gujarat 370415
+        </td>
 
-        <tr>
-            <td colspan="3"><b>Receipt No:</b> {{ donation.receipt_id }}</td>
-        </tr>
-    </table>
+        <!-- RIGHT -->
+        <td style="width:35%; text-align:right; vertical-align:top;">
+            <b>Date :</b> {{ donation.donation_date }}
+        </td>
+    </tr>
+</table>
 
-    <!-- DONOR DETAILS -->
-    <div class="section-title">Donor Details</div>
 
-    <table class="info-table">
-        <tr>
-            <td><b>Name:</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-            <td><b>Mobile:</b> {{ donation.donor.mobile_no }}</td>
-        </tr>
+<div class="info-line">
+<table style="width:100%; border-collapse:collapse;">
+    <tr>
+        <!-- LEFT -->
+        <td style="width:65%; vertical-align:top;">
+            <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,
+            Borivali (E), Mumbai 400066
+        </td>
 
-        <tr>
-            <td><b>Address:</b> {{ donation.donor.address }}</td>
-            <td><b>Area:</b> {{ donation.place_of_donation }}</td>
-        </tr>
-
-        <tr>
-            <td><b>PAN No:</b> {{ donation.donor.pan_no }}</td>
-            <td><b>Aadhaar No:</b> {{ donation.donor.aadhaar_no }}</td>
-        </tr>
-
-        <tr>
-            <td><b>Reference Name:</b> {{ donation.reference_name|default:"-" }}</td>
-            <td><b>Received By:</b> {{ donation.donation_received_by|default:"-" }}</td>
-        </tr>
-
-        <tr>
-            <td><b>Cheque No:</b> {{ donation.check_no|default:"-" }}</td>
-            <td><b>Transaction ID:</b> {{ donation.transaction_id|default:"-" }}</td>
-        </tr>
-    </table>
-
-    <!-- DONATION DETAILS -->
-    <div class="section-title">Details of Donation</div>
-
-    <table class="donation-table">
-        <tr>
-            <td><b>Particulars</b></td>
-            <td><b>Amount</b></td>
-        </tr>
-
-        <tr>
-            <td>{{ donation.donation_category.lookup_name }}</td>
-            <td class="amount">₹{{ donation.donation_amount_paid }}</td>
-        </tr>
-
-        <tr>
-            <td><b>TOTAL</b></td>
-            <td class="amount">₹{{ donation.donation_amount_paid }}</td>
-        </tr>
-    </table>
-
-    <p><b>Payment Mode:</b> {{ donation.payment_method.lookup_name }}</p>
-    <p><b>Payment Status:</b> {{ donation.payment_status.lookup_name }}</p>
-
-    <p class="footer-text">Thank you for your valuable Donation</p>
-
-    <div class="signature">
-        <p>Trustee</p>
-        <br><br>
-    </div>
-
+        <!-- RIGHT -->
+        <td style="width:35%; text-align:right; vertical-align:top;">
+            <b>Receipt No :</b> {{ donation.receipt_id }}
+        </td>
+    </tr>
+</table>
 </div>
 
-<!-- BUTTONS -->
-<div class="buttons">
-    <button class="btn" onclick="window.print()">Print</button>
 
-    <a class="btn" href="{% url 'download_receipt_pdf' donation.id %}">
-        Download PDF
+<div class="info-line">
+    <b>Contact :</b> 070699 88555 / 070692 88555 / 97264 75555 / 97264 85555  
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Email :</b> ahinsadham_kutch@yahoo.co.in
+</div>
+
+
+<!-- DONOR DETAILS -->
+<div class="section-title">Donor Details</div>
+<table class="table">
+<tr>
+<td width="50%"><b>Name :</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+<td width="50%"><b>Mobile :</b> {{ donation.donor.contact_number|default:"-" }}</td>
+</tr>
+<tr>
+<td><b>Address :</b> 
+  {% if donation.donor.house_number %}{{ donation.donor.house_number }}, {% endif %}
+  {% if donation.donor.building_name %}{{ donation.donor.building_name }}, {% endif %}
+  {% if donation.donor.landmark %}{{ donation.donor.landmark }}, {% endif %}
+  {% if donation.donor.area %}{{ donation.donor.area }}, {% endif %}
+  {% if donation.donor.city %}{{ donation.donor.city }}, {% endif %}
+  {% if donation.donor.state %}{{ donation.donor.state }}, {% endif %}
+  {% if donation.donor.country %}{{ donation.donor.country }}, {% endif %}
+  {% if donation.donor.postal_code %}{{ donation.donor.postal_code }}{% endif %}
+</td>
+<td><b>Area :</b> {{ donation.place_of_donation }}</td>
+</tr>
+<tr>
+<td><b>PAN No :</b> {{ donation.donor.pan_number|default:"-" }}</td>
+<td><b>Aadhar No :</b> {{ donation.donor.id_number|default:"-" }}</td>
+</tr>
+<tr>
+<td><b>Reference :</b> {{ donation.reference_name|default:"-" }}</td>
+<td><b>Collector :</b> {{ donation.donation_received_by|default:"-" }}</td>
+</tr>
+</table>
+
+<!-- DONATION DETAILS -->
+<div class="section-title">Detail Of Donation</div>
+<table class="table">
+
+  <tr>
+        <th style="text-align:left;">Donation Category</th>
+        <th style="text-align:right;">Amount (₹)</th>
+    </tr>
+
+
+<tr>
+<td>{{ donation.donation_category.lookup_name }}</td>
+<td class="amount">{{ donation.donation_amount_paid }}</td>
+</tr>
+
+<tr class="total-row">
+<td>TOTAL</td>
+<td class="amount">{{ donation.donation_amount_paid }}</td>
+</tr>
+</table>
+
+<p><b>Mode Of Receipt :</b> {{ donation.payment_method.lookup_name }}</p>
+<p><b>Amount in Words :</b> {{ donation.donation_amount_paid|number_to_words }}</p>
+<p><b>Bank :</b> {{ donation.bank_name|default:"-" }} | <b>Cheque / TXN :</b> {{ donation.transaction_id|default:"-" }}</p>
+
+<p>
+<b>80G Certificate :</b> Donation is exempted u/s 80G of Income Tax Act  
+<br>
+URN : AAAJB0003AF20213 (AY 2022-23 to 2026-27)
+</p>
+<br><br>
+
+<div class="signature">
+<div>Trustee</div>
+<div>Authorized Signatory</div>
+</div>
+<br><br>
+<!-- THANK YOU MESSAGE -->
+<div class="footer-text">Thank you for your valuable Donation</div>
+
+
+</div>
+<style>
+.mini-btn {
+    padding: 0;
+    font-size: 0;
+    min-width: auto;
+    width: 40px;
+    height: 40px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.btn.mini-btn {
+    background: #f3f7f5;
+    color: #0c6d34;
+    border: 1px solid #dbeedd;
+}
+
+.btn.mini-btn svg {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.btn.mini-btn:hover {
+    background: #0c6d34;
+    color: #ffffff;
+    transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    transform: translateY(-2px);
+}
+</style>
+<!-- ACTION BUTTONS -->
+<div class="buttons">
+    <!-- PRINT -->
+    <button class="btn mini-btn" onclick="window.print()" title="Print" aria-label="Print receipt">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9V3h12v6" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="13" width="12" height="8" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 13H4a2 2 0 0 1 2-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- DOWNLOAD PDF -->
+    <a class="btn mini-btn" href="{% url 'download_receipt_pdf' donation.id %}" title="Download PDF" aria-label="Download PDF">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7 10 12 15 17 10" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
 
-    <button class="btn" onclick="shareReceipt()">Share</button>
+    <!-- BACK -->
+    <a class="btn mini-btn" href="{% url 'welcome' %}" title="Back" aria-label="Go back">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="15 18 9 12 15 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <!-- SHARE -->
+   <button class="btn mini-btn" onclick="shareReceipt()" title="Share Receipt">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+         fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M22 2L11 13" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="22 2 15 22 11 13 2 9"
+                 stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
 </div>
+
 
 <script>
 function shareReceipt() {
+    const pdfUrl = "{% url 'download_receipt_pdf' donation.id %}";
+
+    // 1️⃣ If Web Share API supported
     if (navigator.share) {
         navigator.share({
             title: "Donation Receipt",
-            text: "Here is your donation receipt",
-            url: window.location.href
+            text: "Please find the donation receipt attached.",
+            url: pdfUrl
+        }).catch(err => {
+            console.log("Share cancelled", err);
         });
-    } else {
-        alert("Sharing not supported on this device.");
+        return;
     }
+
+    // 2️⃣ Fallback: copy link
+    navigator.clipboard.writeText(window.location.origin + pdfUrl)
+        .then(() => {
+            alert("Receipt link copied. You can share it manually.");
+        })
+        .catch(() => {
+            // 3️⃣ Last fallback: open PDF
+            window.open(pdfUrl, "_blank");
+        });
 }
 </script>
 

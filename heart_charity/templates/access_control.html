@@ -93,12 +93,11 @@
 
         <div class="card p-4 shadow permission-card mb-4">
             <h4 class="text-center permission-title mb-4">User Role & Description</h4>
-
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="permission-label">Role Name</label>
-                    <input type="text" name="role_name" value="{{ user_role|default_if_none:'' }}"
-                           class="form-control p-2" placeholder="Enter role name">
+                              <label class="permission-label">Role Name <span style="color:#d9534f;">*</span></label>
+                              <input type="text" name="role_name" value="{{ user_role|default_if_none:'' }}"
+                                  class="form-control p-2" placeholder="Enter role name" required aria-required="true">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -109,8 +108,8 @@
             </div>
 
             <div class="mb-3">
-                <label class="permission-label">Select Module</label>
-                <select name="selected_module" class="form-select p-2" required>
+                <label class="permission-label">Select Module <span style="color:#d9534f;">*</span></label>
+                <select name="selected_module" class="form-select p-2" required aria-required="true">
                     <option value="">-- Choose Module --</option>
                     {% for module in modules %}
                         <option value="{{ module.id }}">{{ module.module_name }}</option>
@@ -148,21 +147,6 @@
                 </div>
 
             </div>
-            <!-- <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success px-5 py-2" style="border-radius: 10px;">
-                    Save Permission
-                </button>
-            </div> -->
-
-            <!-- <div class="text-center mt-4">
-        <button type="submit" class="btn btn-success px-5 me-3" style="border-radius: 8px;">
-          <i class="bi bi-save"></i> Save
-        </button>
-<a href="/welcome/?tab=mdm" class="btn btn-secondary px-5" style="border-radius: 8px;">
-    ← Back
-</a>
-</div> -->
-
    <div class="action-buttons">
         <button type="submit" class="action-btn save-btn">
             ✔ Save
