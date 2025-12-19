@@ -1664,6 +1664,9 @@ from django.core.files.storage import default_storage
 #     }
 
 #     return render(request, 'add_donor_volunteer.html', context)
+
+from django.contrib import messages
+
 def add_donor_volunteer(request):
 
     # ---- LOOKUPS ----
@@ -1708,6 +1711,13 @@ def add_donor_volunteer(request):
         return DonorVolunteer.objects.get(id=value) if value and value.isdigit() else None
 
     if request.method == "POST":
+        email = request.POST.get("email")
+        if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
+            messages.error(
+                request,
+                "This email already exists. Please use a different email."
+            )
+            return redirect("add_donor_volunteer")
         donor = DonorVolunteer.objects.create(
             person_type=get_lookup("person_type"),
             referred_by=get_donor("referred_by"),
@@ -1808,6 +1818,9 @@ def add_donor_volunteer(request):
         # ✅ ADDED
         "blood_groups": blood_groups,
     })
+
+
+
 
 def donor_success(request):
     return render(request, "donor_success.html") 
@@ -1978,15 +1991,25 @@ import os
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 
+import os
+from django.conf import settings
+
 def link_callback(uri, rel):
-    """Convert HTML URIs to absolute file paths so xhtml2pdf can access them."""
-    if uri.startswith(settings.MEDIA_URL):
-        path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
-    elif uri.startswith(settings.STATIC_URL):
+    """
+    Convert HTML image paths to absolute filesystem paths for xhtml2pdf
+    """
+    if uri.startswith(settings.STATIC_URL):
         path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, ""))
+    elif uri.startswith(settings.MEDIA_URL):
+        path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
     else:
-        path = os.path.join(settings.BASE_DIR, uri)
+        return uri
+
+    if not os.path.isfile(path):
+        raise Exception(f"Media URI must start with {settings.STATIC_URL} or {settings.MEDIA_URL}")
+
     return path
+
 
 from io import BytesIO
 from django.core.files.base import ContentFile
@@ -2007,25 +2030,48 @@ def donation_receipt_preview(request, id):
     })
 
 from reportlab.lib.colors import HexColor, black
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.conf import settings
+from xhtml2pdf import pisa
+
 def download_receipt_pdf(request, id):
-    """Render `donation_receipt.html` (with styles) to PDF using xhtml2pdf and return it."""
     donation = get_object_or_404(Donation, id=id)
 
-    logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
+    logo_url = request.build_absolute_uri(
+        settings.STATIC_URL + "images/alogo.png"
+    )
+    signature_url = request.build_absolute_uri(
+        settings.STATIC_URL + "images/signature.png"
+    )
+    # 👇 IMPORTANT: pass preview=False so buttons/JS are hidden
+    html = render_to_string(
+        "donation_receipt.html",
+        {
+            "donation": donation,
+            "logo_url": logo_url,
+            "signature_url":signature_url,
+            "preview": False,   # <-- KEY FIX
+        }
+    )
 
-    html = render_to_string("donation_receipt.html", {
-        "donation": donation,
-        "logo_url": logo_url,
-    })
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'attachment; filename="donation_receipt_{donation.receipt_id or donation.id}.pdf"'
+    )
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="donation_receipt_{donation.receipt_id or donation.id}.pdf"'
-
-    # Create PDF
-    pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+    pisa_status = pisa.CreatePDF(
+        src=html,
+        dest=response,
+        link_callback=link_callback
+    )
 
     if pisa_status.err:
-        return HttpResponse("Error generating PDF", status=500)
+        return HttpResponse(
+            "Error generating PDF. Please check template compatibility.",
+            status=500
+        )
 
     return response
 
@@ -3721,25 +3767,36 @@ def verify_payment(request, payment_id):
 
     return redirect("welcome")
 
-
-from .models import DonationBox
 def select_donation_box(request):
     if request.method == "POST":
-        donation_box_id = request.POST.get("donation_box_id")
+        donation_box_id = request.POST.get("donation_box_id", "").strip()
 
         if not donation_box_id:
-            messages.error(request, "Please scan QR or enter Donation Box ID.")
+            messages.error(
+                request,
+                "Please scan the QR code or enter a valid Donation Box ID."
+            )
             return redirect("select_donation_box")
+
         try:
             donation_box = DonationBox.objects.get(
-                donation_id__iexact=donation_box_id.strip()
+                donation_id__iexact=donation_box_id,
+                is_deleted=False
             )
-            # ✅ Store DonationBox ID in session
+
             request.session["selected_donation_box_id"] = donation_box.id
-            # 🔁 Redirect to payment page
+
+            messages.success(
+                request,
+                f"Donation Box '{donation_box.donation_id}' selected successfully."
+            )
             return redirect("add_donation_payment")
+
         except DonationBox.DoesNotExist:
-            messages.error(request, "Invalid Donation Box ID or QR code.")
+            messages.error(
+                request,
+                "Invalid Donation Box ID. Please scan the correct QR code or re-enter the ID."
+            )
             return redirect("select_donation_box")
 
     return render(request, "donation_box_input.html")

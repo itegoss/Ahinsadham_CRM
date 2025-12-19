@@ -57,6 +57,17 @@
     h5.section-title { color: #0d7a34; font-weight: 600; }
     hr { border-top: 2px solid #bae6c6; }
 </style>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show text-center">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 
 <div class="container mt-4 mb-5">
     <div class="card shadow-lg">
