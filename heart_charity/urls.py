@@ -18,8 +18,9 @@ urlpatterns = [
     path('download-donor-report/', views.download_donor_report, name='download_donor_report'),
     path('edit_user/<int:id>/', views.edit_user, name='edit_user'),
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
-path("receipt/<int:id>/", views.donation_receipt_preview, name="donation_receipt_preview"),
-path("receipt/<int:id>/download/", views.download_receipt_pdf, name="download_receipt_pdf"),
+path("donation/receipt/<int:id>/download/", views.download_receipt_pdf, name="download_receipt_pdf"),
+
+path("donation/receipt/<int:id>/", views.donation_receipt_preview, name="donation_receipt_preview"),
 
 path(
     "donation-payment/receipt/<int:id>/pdf/",
@@ -84,7 +85,7 @@ path('add_donation_payment/', views.add_donation_payment, name='add_donation_pay
 
 path('search_donation_payment/', views.search_donation_payment, name='search_donation_payment'),
 path('search_donation_box/', views.search_donation_box, name='search_donation_box'),
-path("select-donation-box/", views.select_donation_box, name="select_donation_box"),
+path("select_donation_box/", views.select_donation_box, name="select_donation_box"),
 
 path('edit-box-payment/<int:id>/', views.edit_box_payment, name='edit_box_payment'),
     path('edit-donation-box/<int:id>/', views.edit_donation_box, name='edit_donation_box'),
