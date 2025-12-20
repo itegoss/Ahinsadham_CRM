@@ -2023,9 +2023,12 @@ def donation_receipt_preview(request, id):
     donation = get_object_or_404(Donation, id=id)
 
     logo_url = settings.STATIC_URL + "images/alogo.png"
-
+    signature_url = request.build_absolute_uri(
+            settings.STATIC_URL + "images/signature.png"
+        )
     return render(request, "donation_receipt.html", {
         "donation": donation,
+        "signature_url":signature_url,
         "logo_url": logo_url,
     })
 
@@ -2076,24 +2079,67 @@ def download_receipt_pdf(request, id):
     return response
 
 from .models import DonationOwner
-
 def donation_payment_receipt_pdf(request, id):
     payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
 
+    # ensure logo is available to the template (use static url) and use link_callback for static/media files
+    logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
+
+    # Safely compute an owner contact string from available attributes
+    owner = payment.owner
+    owner_contact = None
+    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
+        owner_contact = getattr(owner, attr, None)
+        if owner_contact:
+            break
+
     html = render_to_string("donation_owner_receipt_pdf.html", {
-        "payment": payment
+        "payment": payment,
+        "logo_url": logo_url,
+        "owner_contact": owner_contact,
+        "pdf": True,
     })
 
     response = HttpResponse(content_type="application/pdf")
     response['Content-Disposition'] = f'attachment; filename="donation_payment_{payment.id}.pdf"'
 
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    try:
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        return HttpResponse(f"PDF generation error: {e}\n\n{tb}", status=500)
 
-    if pisa_status.err:
+    if getattr(pisa_status, 'err', False):
         return HttpResponse("Error generating PDF", status=500)
 
     return response
 
+
+def donation_payment_receipt_view(request, id):
+    """Render the receipt HTML for preview in browser. Shows a Download button to trigger PDF download."""
+    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+
+    logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
+    signature_url = request.build_absolute_uri(
+            settings.STATIC_URL + "images/signature.png"
+        )
+    # Safely compute an owner contact string from available attributes
+    owner = payment.owner
+    owner_contact = None
+    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
+        owner_contact = getattr(owner, attr, None)
+        if owner_contact:
+            break
+
+    return render(request, "donation_owner_receipt_pdf.html", {
+        "payment": payment,
+        "signature_url":signature_url,
+        "logo_url": logo_url,
+        "preview": True,
+        "download_url_name": "donation_payment_receipt_pdf",
+        "owner_contact": owner_contact,
+    })
 from datetime import date, timedelta
 from .models import DonorVolunteer
 from reportlab.pdfgen import canvas

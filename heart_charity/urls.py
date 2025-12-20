@@ -27,6 +27,11 @@ path(
     views.donation_payment_receipt_pdf,
     name="donation_payment_receipt_pdf"
 ),
+path(
+    "donation-payment/receipt/<int:id>/view/",
+    views.donation_payment_receipt_view,
+    name="donation_payment_receipt_view"
+),
 
     path('add_donation_box/', views.add_donation_box, name='add_donation_box'),
     path('all_donations/', views.all_donations, name='all_donations'),  # ✅ Add this

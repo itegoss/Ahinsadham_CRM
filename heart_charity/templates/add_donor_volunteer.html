@@ -84,10 +84,8 @@
                 <!-- ===================================== PERSON TYPE ===================================== -->
                 <h5 class="section-title">Person Type</h5>
                 <hr>
-
-                <div class="row g-3 mb-3" id="persontype">
-
-                    <div class="col-md-6">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
                         <label class="form-label">Person Type <span style="color: #d9534f;">*</span></label>
                         <select name="person_type" id="person_type" class="form-select" required aria-required="true">
                             <option value="">Select</option>
@@ -96,8 +94,17 @@
                             {% endfor %}
                         </select>
                     </div>
+<div class="col-md-4" id="donor_box_wrapper" style="display:none;">
+    <label class="form-label">Donor Box</label>
+    <select name="donor_box" class="form-select">
+        <option value="">Select Donor Box</option>
+        {% for box in donation_boxes %}
+            <option value="{{ box.id }}">{{ box.donation_id }}</option>
+        {% endfor %}
+    </select>
+</div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Referred By</label>
                         <select name="referred_by" id="referred_by" class="form-select select2-search">
                             <option value="">-- Select Person --</option>
@@ -106,38 +113,51 @@
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
 
                 <!-- ===================================== PERSONAL DETAILS ===================================== -->
                 <h5 class="section-title">Personal Details</h5>
                 <hr>
-<div class="row g-3 mb-4" id="personaldetails">
-    <div class="col-md-3">
-        <label class="form-label">Salutation <span style="color: #d9534f;">*</span></label>
-        <select name="salutation" class="form-select" required aria-required="true">
-            <option value="">Select</option>
-            <option>Mr.</option><option>Mrs.</option><option>Ms.</option>
-            <option>Shri</option><option>Smt.</option><option>Kumari</option>
+<div class="row g-3 mb-4 align-items-end">
+
+    <!-- Salutation (small but aligned) -->
+    <div class="col-md-1">
+        <label class="form-label">Sal.</label>
+        <select name="salutation" class="form-select">
+            <option value="">—</option>
+            <option>Mr.</option>
+            <option>Mrs.</option>
+            <option>Ms.</option>
+            <option>Shri</option>
+            <option>Smt.</option>
+            <option>Kumari</option>
         </select>
     </div>
 
+    <!-- First Name -->
     <div class="col-md-3">
-        <label class="form-label">First Name <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="first_name" class="form-control" required aria-required="true">
+        <label class="form-label">First Name <span class="text-danger">*</span></label>
+        <input type="text" name="first_name" class="form-control" required>
     </div>
 
+    <!-- Middle Name -->
     <div class="col-md-3">
         <label class="form-label">Middle Name</label>
         <input type="text" name="middle_name" class="form-control">
     </div>
 
+    <!-- Last Name -->
     <div class="col-md-3">
-        <label class="form-label">Last Name <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="last_name" class="form-control" required aria-required="true">
+        <label class="form-label">Last Name <span class="text-danger">*</span></label>
+        <input type="text" name="last_name" class="form-control" required>
     </div>
 
+    <!-- Empty spacer to balance grid -->
+    <div class="col-md-2"></div>
+
 </div>
+
+
 
 <!-- ROW 2 : Gender + Blood Group + Email -->
 <div class="row g-3 mb-4">
@@ -159,35 +179,326 @@
             {% endfor %}
         </select>
     </div>
-
-    <div class="col-md-4">
-        <label class="form-label">Email <span style="color: #d9534f;">*</span></label>
-        <input type="email" name="email" class="form-control" required aria-required="true">
-    </div>
-
 </div>
 
 <!-- ROW 3 -->
 <div class="row g-3 mb-4">
+<div class="col-md-3">
+  <label class="form-label">
+        Contact Number <span style="color:#d9534f">*</span>
+    </label>    <div class="input-group">
+        <span >  
+            <select style="margin-top: 0%;" class="input-group-text" name="contact_country_code" required>
+            <option value="+91" selected>+91</option>
+            <option value="+1">+1</option>
+            <option value="+44">+44</option>
+            <option value="+971">+971</option>
+            <option value="+61">+61</option>
 
-   <div class="col-md-3">
-    <label class="form-label">Contact Number <span style="color: #d9534f;">*</span></label>
-    <div class="input-group">
-        <span class="input-group-text">+91</span>
+            <!-- A -->
+            <option value="+93">+93</option>
+            <option value="+355">+355</option>
+            <option value="+213">+213</option>
+            <option value="+376">+376</option>
+            <option value="+244">+244</option>
+            <option value="+54">+54</option>
+            <option value="+374">+374</option>
+            <option value="+43">+43</option>
+            <option value="+994">+994</option>
+
+            <!-- B -->
+            <option value="+973">+973</option>
+            <option value="+880">+880</option>
+            <option value="+375">+375</option>
+            <option value="+32">+32</option>
+            <option value="+501">+501</option>
+            <option value="+229">+229</option>
+            <option value="+975">+975</option>
+            <option value="+591">+591</option>
+            <option value="+387">+387</option>
+            <option value="+267">+267</option>
+            <option value="+55">+55</option>
+
+            <!-- C -->
+            <option value="+855">+855</option>
+            <option value="+237">+237</option>
+            <option value="+56">+56</option>
+            <option value="+86">+86</option>
+            <option value="+57">+57</option>
+            <option value="+506">+506</option>
+            <option value="+385">+385</option>
+            <option value="+53">+53</option>
+            <option value="+357">+357</option>
+            <option value="+420">+420</option>
+
+            <!-- D -->
+            <option value="+45">+45</option>
+            <option value="+253">+253</option>
+            <option value="+213">+213</option>
+
+            <!-- E -->
+            <option value="+20">+20</option>
+            <option value="+503">+503</option>
+            <option value="+372">+372</option>
+            <option value="+251">+251</option>
+
+            <!-- F -->
+            <option value="+358">+358</option>
+            <option value="+33">+33</option>
+
+            <!-- G -->
+            <option value="+995">+995</option>
+            <option value="+49">+49</option>
+            <option value="+233">+233</option>
+            <option value="+30">+30</option>
+
+            <!-- H -->
+            <option value="+852">+852</option>
+            <option value="+36">+36</option>
+
+            <!-- I -->
+            <option value="+354">+354</option>
+            <option value="+62">+62</option>
+            <option value="+98">+98</option>
+            <option value="+964">+964</option>
+            <option value="+353">+353</option>
+            <option value="+972">+972</option>
+            <option value="+39">+39</option>
+
+            <!-- J -->
+            <option value="+81">+81</option>
+            <option value="+962">+962</option>
+
+            <!-- K -->
+            <option value="+7">+7</option>
+            <option value="+254">+254</option>
+            <option value="+965">+965</option>
+
+            <!-- L -->
+            <option value="+856">+856</option>
+            <option value="+371">+371</option>
+            <option value="+961">+961</option>
+            <option value="+370">+370</option>
+            <option value="+352">+352</option>
+
+            <!-- M -->
+            <option value="+60">+60</option>
+            <option value="+960">+960</option>
+            <option value="+356">+356</option>
+            <option value="+52">+52</option>
+            <option value="+976">+976</option>
+
+            <!-- N -->
+            <option value="+977">+977</option>
+            <option value="+31">+31</option>
+            <option value="+64">+64</option>
+            <option value="+234">+234</option>
+            <option value="+47">+47</option>
+
+            <!-- O -->
+            <option value="+968">+968</option>
+
+            <!-- P -->
+            <option value="+92">+92</option>
+            <option value="+63">+63</option>
+            <option value="+48">+48</option>
+            <option value="+351">+351</option>
+
+            <!-- Q -->
+            <option value="+974">+974</option>
+
+            <!-- R -->
+            <option value="+40">+40</option>
+            <option value="+7">+7</option>
+
+            <!-- S -->
+            <option value="+966">+966</option>
+            <option value="+65">+65</option>
+            <option value="+27">+27</option>
+            <option value="+34">+34</option>
+            <option value="+94">+94</option>
+            <option value="+46">+46</option>
+            <option value="+41">+41</option>
+
+            <!-- T -->
+            <option value="+886">+886</option>
+            <option value="+66">+66</option>
+            <option value="+90">+90</option>
+
+            <!-- U -->
+            <option value="+380">+380</option>
+
+            <!-- V -->
+            <option value="+58">+58</option>
+            <option value="+84">+84</option>
+
+            <!-- Y -->
+            <option value="+967">+967</option>
+
+            <!-- Z -->
+            <option value="+263">+263</option>
+        </select></span>
         <input type="text"
                name="contact_number"
                class="form-control"
-               maxlength="10"
-               pattern="[0-9]{10}"
-               placeholder="Enter 10 digit number"
-               required aria-required="true">
+               placeholder="Enter phone number"
+               required>
     </div>
 </div>
-
 <div class="col-md-3">
     <label class="form-label">WhatsApp Number</label>
     <div class="input-group">
-        <span class="input-group-text">+91</span>
+        <span >  
+            <select style="margin-top: 0%;" class="input-group-text" name="contact_country_code" required>
+            <option value="+91" selected>+91</option>
+            <option value="+1">+1</option>
+            <option value="+44">+44</option>
+            <option value="+971">+971</option>
+            <option value="+61">+61</option>
+
+            <!-- A -->
+            <option value="+93">+93</option>
+            <option value="+355">+355</option>
+            <option value="+213">+213</option>
+            <option value="+376">+376</option>
+            <option value="+244">+244</option>
+            <option value="+54">+54</option>
+            <option value="+374">+374</option>
+            <option value="+43">+43</option>
+            <option value="+994">+994</option>
+
+            <!-- B -->
+            <option value="+973">+973</option>
+            <option value="+880">+880</option>
+            <option value="+375">+375</option>
+            <option value="+32">+32</option>
+            <option value="+501">+501</option>
+            <option value="+229">+229</option>
+            <option value="+975">+975</option>
+            <option value="+591">+591</option>
+            <option value="+387">+387</option>
+            <option value="+267">+267</option>
+            <option value="+55">+55</option>
+
+            <!-- C -->
+            <option value="+855">+855</option>
+            <option value="+237">+237</option>
+            <option value="+56">+56</option>
+            <option value="+86">+86</option>
+            <option value="+57">+57</option>
+            <option value="+506">+506</option>
+            <option value="+385">+385</option>
+            <option value="+53">+53</option>
+            <option value="+357">+357</option>
+            <option value="+420">+420</option>
+
+            <!-- D -->
+            <option value="+45">+45</option>
+            <option value="+253">+253</option>
+            <option value="+213">+213</option>
+
+            <!-- E -->
+            <option value="+20">+20</option>
+            <option value="+503">+503</option>
+            <option value="+372">+372</option>
+            <option value="+251">+251</option>
+
+            <!-- F -->
+            <option value="+358">+358</option>
+            <option value="+33">+33</option>
+
+            <!-- G -->
+            <option value="+995">+995</option>
+            <option value="+49">+49</option>
+            <option value="+233">+233</option>
+            <option value="+30">+30</option>
+
+            <!-- H -->
+            <option value="+852">+852</option>
+            <option value="+36">+36</option>
+
+            <!-- I -->
+            <option value="+354">+354</option>
+            <option value="+62">+62</option>
+            <option value="+98">+98</option>
+            <option value="+964">+964</option>
+            <option value="+353">+353</option>
+            <option value="+972">+972</option>
+            <option value="+39">+39</option>
+
+            <!-- J -->
+            <option value="+81">+81</option>
+            <option value="+962">+962</option>
+
+            <!-- K -->
+            <option value="+7">+7</option>
+            <option value="+254">+254</option>
+            <option value="+965">+965</option>
+
+            <!-- L -->
+            <option value="+856">+856</option>
+            <option value="+371">+371</option>
+            <option value="+961">+961</option>
+            <option value="+370">+370</option>
+            <option value="+352">+352</option>
+
+            <!-- M -->
+            <option value="+60">+60</option>
+            <option value="+960">+960</option>
+            <option value="+356">+356</option>
+            <option value="+52">+52</option>
+            <option value="+976">+976</option>
+
+            <!-- N -->
+            <option value="+977">+977</option>
+            <option value="+31">+31</option>
+            <option value="+64">+64</option>
+            <option value="+234">+234</option>
+            <option value="+47">+47</option>
+
+            <!-- O -->
+            <option value="+968">+968</option>
+
+            <!-- P -->
+            <option value="+92">+92</option>
+            <option value="+63">+63</option>
+            <option value="+48">+48</option>
+            <option value="+351">+351</option>
+
+            <!-- Q -->
+            <option value="+974">+974</option>
+
+            <!-- R -->
+            <option value="+40">+40</option>
+            <option value="+7">+7</option>
+
+            <!-- S -->
+            <option value="+966">+966</option>
+            <option value="+65">+65</option>
+            <option value="+27">+27</option>
+            <option value="+34">+34</option>
+            <option value="+94">+94</option>
+            <option value="+46">+46</option>
+            <option value="+41">+41</option>
+
+            <!-- T -->
+            <option value="+886">+886</option>
+            <option value="+66">+66</option>
+            <option value="+90">+90</option>
+
+            <!-- U -->
+            <option value="+380">+380</option>
+
+            <!-- V -->
+            <option value="+58">+58</option>
+            <option value="+84">+84</option>
+
+            <!-- Y -->
+            <option value="+967">+967</option>
+
+            <!-- Z -->
+            <option value="+263">+263</option>
+        </select></span>
         <input type="text"
                name="whatsapp_number"
                class="form-control"
@@ -197,22 +508,10 @@
     </div>
 </div>
 
-<div class="col-md-3" id="donor_box_row2">
-    <label class="form-label">Donor Box</label>
-
-    <select name="donor_box"
-            
-            class="form-select">
-        <option value="">Select Donor Box</option>
-        {% for box in donation_boxes %}
-            <option value="{{ box.id }}">
-                {{ box.donation_id }}
-            </option>
-        {% endfor %}
-    </select>
-</div>
-
-
+    <div class="col-md-4">
+        <label class="form-label">Email <span style="color: #d9534f;">*</span></label>
+        <input type="email" name="email" class="form-control" required aria-required="true">
+    </div>
 </div>
 
 <!-- ANNIVERSARY -->
@@ -266,10 +565,124 @@
                         <label class="form-label">State <span style="color: #d9534f;">*</span></label>
                         <input type="text" name="state" class="form-control" required aria-required="true">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Country <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="country" value="India" class="form-control" required aria-required="true">
-                    </div>
+                 <div class="col-md-4">
+    <label class="form-label">
+        Country <span style="color:#d9534f">*</span>
+    </label>
+
+    <select name="country" class="form-select" required>
+        <option value="India" selected>India</option>
+
+        <!-- A -->
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Albania">Albania</option>
+        <option value="Algeria">Algeria</option>
+        <option value="Andorra">Andorra</option>
+        <option value="Angola">Angola</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Armenia">Armenia</option>
+        <option value="Australia">Australia</option>
+        <option value="Austria">Austria</option>
+        <option value="Azerbaijan">Azerbaijan</option>
+
+        <!-- B -->
+        <option value="Bahamas">Bahamas</option>
+        <option value="Bahrain">Bahrain</option>
+        <option value="Bangladesh">Bangladesh</option>
+        <option value="Belgium">Belgium</option>
+        <option value="Belize">Belize</option>
+        <option value="Bhutan">Bhutan</option>
+        <option value="Bolivia">Bolivia</option>
+        <option value="Brazil">Brazil</option>
+
+        <!-- C -->
+        <option value="Cambodia">Cambodia</option>
+        <option value="Canada">Canada</option>
+        <option value="China">China</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Croatia">Croatia</option>
+
+        <!-- D -->
+        <option value="Denmark">Denmark</option>
+
+        <!-- E -->
+        <option value="Egypt">Egypt</option>
+
+        <!-- F -->
+        <option value="France">France</option>
+
+        <!-- G -->
+        <option value="Germany">Germany</option>
+        <option value="Greece">Greece</option>
+
+        <!-- H -->
+        <option value="Hong Kong">Hong Kong</option>
+        <option value="Hungary">Hungary</option>
+
+        <!-- I -->
+        <option value="Indonesia">Indonesia</option>
+        <option value="Iran">Iran</option>
+        <option value="Ireland">Ireland</option>
+        <option value="Israel">Israel</option>
+        <option value="Italy">Italy</option>
+
+        <!-- J -->
+        <option value="Japan">Japan</option>
+
+        <!-- K -->
+        <option value="Kenya">Kenya</option>
+        <option value="Kuwait">Kuwait</option>
+
+        <!-- M -->
+        <option value="Malaysia">Malaysia</option>
+        <option value="Maldives">Maldives</option>
+        <option value="Mexico">Mexico</option>
+
+        <!-- N -->
+        <option value="Nepal">Nepal</option>
+        <option value="Netherlands">Netherlands</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Nigeria">Nigeria</option>
+
+        <!-- P -->
+        <option value="Pakistan">Pakistan</option>
+        <option value="Philippines">Philippines</option>
+        <option value="Poland">Poland</option>
+        <option value="Portugal">Portugal</option>
+
+        <!-- Q -->
+        <option value="Qatar">Qatar</option>
+
+        <!-- R -->
+        <option value="Romania">Romania</option>
+        <option value="Russia">Russia</option>
+
+        <!-- S -->
+        <option value="Saudi Arabia">Saudi Arabia</option>
+        <option value="Singapore">Singapore</option>
+        <option value="South Africa">South Africa</option>
+        <option value="Spain">Spain</option>
+        <option value="Sri Lanka">Sri Lanka</option>
+        <option value="Sweden">Sweden</option>
+        <option value="Switzerland">Switzerland</option>
+
+        <!-- T -->
+        <option value="Thailand">Thailand</option>
+        <option value="Turkey">Turkey</option>
+
+        <!-- U -->
+        <option value="United Arab Emirates">United Arab Emirates</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="United States">United States</option>
+
+        <!-- V -->
+        <option value="Vietnam">Vietnam</option>
+
+        <!-- Z -->
+        <option value="Zimbabwe">Zimbabwe</option>
+    </select>
+</div>
+
                     <div class="col-md-4">
                         <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
                         <input type="text" name="postal_code" class="form-control" required aria-required="true">
@@ -476,8 +889,66 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const personType = document.getElementById("person_type");
+    const donorBox = document.getElementById("donor_box_wrapper");
+
+    function normalize(text) {
+        return text.toLowerCase().replace(/[\s\-_]/g, "");
+    }
+
+    function toggleDonorBox() {
+        const selectedOption = personType.options[personType.selectedIndex];
+        const text = selectedOption ? normalize(selectedOption.text) : "";
+
+        if (text === "donationboxowner" || text === "donorboxowner") {
+            donorBox.style.display = "block";
+        } else {
+            donorBox.style.display = "none";
+        }
+    }
+
+    personType.addEventListener("change", toggleDonorBox);
+
+    // run once on load (edit page)
+    toggleDonorBox();
+});
+</script>
 
 <!-- ================= AGE AUTO CALCULATION ================= -->
+ <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const personTypeSelect = document.getElementById("person_type");
+    const donorBoxRow = document.getElementById("donor_box_row");
+
+    function normalize(text) {
+        return text
+            .toLowerCase()
+            .replace(/[\s\-_]/g, ""); // remove space, hyphen, underscore
+    }
+
+    function toggleDonorBox() {
+        const selectedOption = personTypeSelect.options[personTypeSelect.selectedIndex];
+        const selectedText = selectedOption ? selectedOption.text : "";
+
+        const normalizedText = normalize(selectedText);
+
+        if (normalizedText === "donorboxowner") {
+            donorBoxRow.style.display = "block";
+        } else {
+            donorBoxRow.style.display = "none";
+        }
+    }
+
+    personTypeSelect.addEventListener("change", toggleDonorBox);
+
+    // Run once on page load (edit form case)
+    toggleDonorBox();
+});
+</script>
+
 <script>
 document.getElementById("date_of_birth").addEventListener("change", function () {
     let dob = new Date(this.value);
