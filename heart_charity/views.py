@@ -2026,8 +2026,27 @@ def donation_receipt_preview(request, id):
     signature_url = request.build_absolute_uri(
             settings.STATIC_URL + "images/signature.png"
         )
+       # ✅ FIX: absolute filesystem paths (app/static/)
+       # ✅ FIX: absolute filesystem paths (app/static/)
+    facebook_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/facebook.png"
+    )
+    instagram_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/instagram.png"
+    )
+    youtube_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/youtube.png"
+    )
+    globe_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/globe.png"
+    )
     return render(request, "donation_receipt.html", {
         "donation": donation,
+         "signature_url": signature_url,
+            "facebook_icon": facebook_icon,
+            "instagram_icon": instagram_icon,
+            "youtube_icon": youtube_icon,
+            "globe_icon": globe_icon,
         "signature_url":signature_url,
         "logo_url": logo_url,
     })
@@ -2039,6 +2058,51 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from xhtml2pdf import pisa
 
+# def download_receipt_pdf(request, id):
+#     donation = get_object_or_404(Donation, id=id)
+
+#     logo_url = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/alogo.png"
+#     )
+#     signature_url = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/signature.png"
+#     )
+#     # 👇 IMPORTANT: pass preview=False so buttons/JS are hidden
+#     html = render_to_string(
+#         "donation_receipt.html",
+#         {
+#             "donation": donation,
+#             "logo_url": logo_url,
+#             "signature_url":signature_url,
+#             "preview": False,   # <-- KEY FIX
+#         }
+#     )
+
+#     response = HttpResponse(content_type="application/pdf")
+#     response["Content-Disposition"] = (
+#         f'attachment; filename="donation_receipt_{donation.receipt_id or donation.id}.pdf"'
+#     )
+
+#     pisa_status = pisa.CreatePDF(
+#         src=html,
+#         dest=response,
+#         link_callback=link_callback
+#     )
+
+#     if pisa_status.err:
+#         return HttpResponse(
+#             "Error generating PDF. Please check template compatibility.",
+#             status=500
+#         )
+
+#     return response
+import os
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+
 def download_receipt_pdf(request, id):
     donation = get_object_or_404(Donation, id=id)
 
@@ -2048,14 +2112,32 @@ def download_receipt_pdf(request, id):
     signature_url = request.build_absolute_uri(
         settings.STATIC_URL + "images/signature.png"
     )
-    # 👇 IMPORTANT: pass preview=False so buttons/JS are hidden
+
+    # ✅ FIX: absolute filesystem paths (app/static/)
+    facebook_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/facebook.png"
+    )
+    instagram_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/instagram.png"
+    )
+    youtube_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/youtube.png"
+    )
+    globe_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/globe.png"
+    )
+
     html = render_to_string(
         "donation_receipt.html",
         {
             "donation": donation,
             "logo_url": logo_url,
-            "signature_url":signature_url,
-            "preview": False,   # <-- KEY FIX
+            "signature_url": signature_url,
+            "facebook_icon": facebook_icon,
+            "instagram_icon": instagram_icon,
+            "youtube_icon": youtube_icon,
+            "globe_icon": globe_icon,
+            "preview": False,
         }
     )
 
@@ -2064,27 +2146,34 @@ def download_receipt_pdf(request, id):
         f'attachment; filename="donation_receipt_{donation.receipt_id or donation.id}.pdf"'
     )
 
-    pisa_status = pisa.CreatePDF(
-        src=html,
-        dest=response,
-        link_callback=link_callback
-    )
-
-    if pisa_status.err:
-        return HttpResponse(
-            "Error generating PDF. Please check template compatibility.",
-            status=500
-        )
+    pisa.CreatePDF(html, dest=response)
 
     return response
 
 from .models import DonationOwner
 def donation_payment_receipt_pdf(request, id):
+    donation = get_object_or_404(Donation, id=id)
+
     payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
 
     # ensure logo is available to the template (use static url) and use link_callback for static/media files
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
-
+    signature_url = request.build_absolute_uri(
+            settings.STATIC_URL + "images/signature.png"
+        )
+    # ✅ FIX: absolute filesystem paths (app/static/)
+    facebook_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/facebook.png"
+    )
+    instagram_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/instagram.png"
+    )
+    youtube_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/youtube.png"
+    )
+    globe_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/globe.png"
+    )
     # Safely compute an owner contact string from available attributes
     owner = payment.owner
     owner_contact = None
@@ -2095,9 +2184,15 @@ def donation_payment_receipt_pdf(request, id):
 
     html = render_to_string("donation_owner_receipt_pdf.html", {
         "payment": payment,
+        "donation":donation,
         "logo_url": logo_url,
         "owner_contact": owner_contact,
         "pdf": True,
+        "signature_url": signature_url,
+        "facebook_icon": facebook_icon,
+        "instagram_icon": instagram_icon,
+        "youtube_icon": youtube_icon,
+        "globe_icon": globe_icon,
     })
 
     response = HttpResponse(content_type="application/pdf")
@@ -2116,30 +2211,87 @@ def donation_payment_receipt_pdf(request, id):
     return response
 
 
+# def donation_payment_receipt_view(request, id):
+#     donation = get_object_or_404(Donation, id=id)
+
+#     """Render the receipt HTML for preview in browser. Shows a Download button to trigger PDF download."""
+#     payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+
+#     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
+#     signature_url = request.build_absolute_uri(
+#             settings.STATIC_URL + "images/signature.png"
+#         )
+    
+#     # ✅ FIX: absolute filesystem paths (app/static/)
+#     facebook_icon = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/facebook.png"
+#     )
+#     instagram_icon = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/instagram.png"
+#     )
+#     youtube_icon = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/youtube.png"
+#     )
+#     globe_icon = request.build_absolute_uri(
+#         settings.STATIC_URL + "images/globe.png"
+#     )
+#     # Safely compute an owner contact string from available attributes
+#     owner = payment.owner
+#     owner_contact = None
+#     for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
+#         owner_contact = getattr(owner, attr, None)
+#         if owner_contact:
+#             break
+
+#     return render(request, "donation_owner_receipt_pdf.html", {
+#         "donation":donation,
+#         "payment": payment,
+#         "logo_url": logo_url,
+#         "preview": True,
+#         "download_url_name": "donation_payment_receipt_pdf",
+#     "owner_contact": owner_contact,
+#         "signature_url": signature_url,
+#         "facebook_icon": facebook_icon,
+#         "instagram_icon": instagram_icon,
+#         "youtube_icon": youtube_icon,
+#         "globe_icon": globe_icon,
+#     })
 def donation_payment_receipt_view(request, id):
-    """Render the receipt HTML for preview in browser. Shows a Download button to trigger PDF download."""
-    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+    payment = get_object_or_404(
+        DonationPaymentBox,
+        id=id,
+        is_deleted=False
+    )
+    donor = DonorVolunteer.objects.filter(created_by=payment.owner).first()
+
+    owner = payment.owner  # ✅ Donation Box Owner (User)
 
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
-    signature_url = request.build_absolute_uri(
-            settings.STATIC_URL + "images/signature.png"
-        )
-    # Safely compute an owner contact string from available attributes
-    owner = payment.owner
-    owner_contact = None
-    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
-        owner_contact = getattr(owner, attr, None)
-        if owner_contact:
-            break
+    signature_url = request.build_absolute_uri(settings.STATIC_URL + "images/signature.png")
 
-    return render(request, "donation_owner_receipt_pdf.html", {
-        "payment": payment,
-        "signature_url":signature_url,
-        "logo_url": logo_url,
-        "preview": True,
-        "download_url_name": "donation_payment_receipt_pdf",
-        "owner_contact": owner_contact,
-    })
+    facebook_icon = request.build_absolute_uri(settings.STATIC_URL + "images/facebook.png")
+    instagram_icon = request.build_absolute_uri(settings.STATIC_URL + "images/instagram.png")
+    youtube_icon = request.build_absolute_uri(settings.STATIC_URL + "images/youtube.png")
+    globe_icon = request.build_absolute_uri(settings.STATIC_URL + "images/globe.png")
+
+    return render(
+        request,
+        "donation_owner_receipt_pdf.html",
+        {
+            "payment": payment,
+            "donor":donor,
+            "owner": owner,
+            "logo_url": logo_url,
+            "signature_url": signature_url,
+            "facebook_icon": facebook_icon,
+            "instagram_icon": instagram_icon,
+            "youtube_icon": youtube_icon,
+            "globe_icon": globe_icon,
+            "preview": True,
+        }
+    )
+
+
 from datetime import date, timedelta
 from .models import DonorVolunteer
 from reportlab.pdfgen import canvas
@@ -3803,7 +3955,7 @@ def verify_payment(request, payment_id):
         payment = get_object_or_404(DonationPaymentBox, id=payment_id)
         payment.verified = True
         payment.verified_by = request.user
-        payment.verified_at = now()
+        payment.verified_at = timezone.now()
         payment.save()
 
         messages.success(request, "Payment has been verified successfully!")

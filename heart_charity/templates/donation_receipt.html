@@ -6,6 +6,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Donation Receipt</title>
+<head>
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
 <style>
 @page {
     size: A5 landscape;
@@ -46,6 +50,11 @@ body {
 .receipt-box td { padding: 2px; }
 
 /* ================= HEADER ================= */
+.bi {
+    font-size: 13px;
+    vertical-align: middle;
+    margin-right: 2px;
+}
 .header-table {
     width: 100%;
     border-collapse: collapse;
@@ -96,7 +105,7 @@ body {
     padding: 2px 4px;
     background: #a0dcb7;
     font-weight: bold;
-    font-size: 9px;
+    font-size: 13px;
 }
 
 /* ================= TABLE ================= */
@@ -196,9 +205,7 @@ table {
     .buttons, .mini-btn { 
         display: none !important; 
     }
-    
-    /* Ensure no extra space in print */
-    body {
+        body {
         margin: 0;
         padding: 0;
     }
@@ -212,9 +219,7 @@ table {
 }
 </style>
 </head>
-
 <body>
-
 <div class="receipt-container">
 {% if preview %}
 <div style="text-align:right; margin:3px 0 0;">
@@ -238,17 +243,15 @@ table {
 </td>
 </tr>
 </table>
-
 <!-- ADDRESS -->
-<table class="info-line" style="width:100%; border-collapse:collapse;">
+<table class="info-line1" style="width:100%; border-collapse:collapse;">
     <tr>
         <!-- LEFT -->
         <td style="width:65%; vertical-align:top;">
             <b>INSTITUTION :</b> Pragpur Road Junction, Taluka Mundra – Kutch, Gujarat 370415
             <br>
-            <b>Contact :</b> 070699 88555 / 070692 88555
+            <b>Contact :</b> 070699 88555 / 070692 88555 | <b>Email :</b> kutch@ahinsadham.org
         </td>
-
         <!-- RIGHT -->
         <td style="width:35%; text-align:right; vertical-align:top;">
             <b>Date : {{ donation.donation_date|date:"d-M-y" }}</b>
@@ -256,16 +259,15 @@ table {
     </tr>
 </table>
 
-
-<div class="info-line">
+<div class="info-line1">
 <table style="width:100%; border-collapse:collapse;">
     <tr>
         <!-- LEFT -->
         <td style="width:65%; vertical-align:top;">
-            <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,
-            Borivali (E), Mumbai 400066
+            <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,<br>
+            Borivali (E), Mumbai, 400066
             <br>
-                <b>Contact :</b> 97264 75555 / 97264 85555
+                <b>Contact :</b> 97264 75555 / 97264 85555 | <b>Email :</b> mumbai@ahinsadham.org
   
         </td>
 
@@ -277,27 +279,25 @@ table {
 </table>
 </div>
 
-
-<div class="info-line">
+<!-- 
+<div class="info-line1">
 <table>
 <tr>
-<td style="width:100%; vertical-align:top; border:1px solid #000; padding:3px;">
-    <b>Email :</b> info@ahinsadham.org | mumbai@ahinsadham.org
-</td>
+
 </tr>
 </table>
-</div>
+</div> -->
 
 
 <!-- DONOR DETAILS -->
 <div class="section-title">Donor Details</div>
 <table class="table">
 <tr>
-<td width="50%"><b>Name :</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-<td width="50%"><b>Mobile :</b> {{ donation.donor.contact_number }}</td>
+<td width="65%"><b>Name :</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+<td width="35%"><b>Mobile :</b> {{ donation.donor.contact_number }}</td>
 </tr>
 <tr>
-<td colspan="2"><b>Address :</b> 
+<td rowspan="2"><b>Address :</b> 
   {% if donation.donor.house_number %}{{ donation.donor.house_number }}, {% endif %}
   {% if donation.donor.building_name %}{{ donation.donor.building_name }}, {% endif %}
   {% if donation.donor.landmark %}{{ donation.donor.landmark }}, {% endif %}
@@ -307,9 +307,9 @@ table {
   {% if donation.donor.country %}{{ donation.donor.country }}, {% endif %}
   {% if donation.donor.postal_code %}{{ donation.donor.postal_code }}{% endif %}
 </td>
+<td width="50%"><b>PAN No :</b> {{ donation.donor.pan_number|default:"-" }}</td>
 </tr>
 <tr>
-<td><b>PAN No :</b> {{ donation.donor.pan_number|default:"-" }}</td>
 <td><b>Aadhar No :</b> {{ donation.donor.id_number|default:"-" }}</td>
 </tr>
 <tr>
@@ -326,8 +326,8 @@ table {
 <div class="section-title">Detail Of Donation</div>
 <table class="table">
 <tr>
-    <th style="text-align:left;">Donation Category/Donation Sub Category</th>
-    <th style="text-align:right;">Amount (Rs.)</th>
+    <th  width="65%"style="text-align:left;">Donation Category/Donation Sub Category</th>
+    <th  width="35%" style="text-align:right;">Amount (Rs.)</th>
 </tr>
 
 <tr>
@@ -340,12 +340,11 @@ table {
     <td class="amount"> <b>Rs. {{ donation.donation_amount_paid }}</b> </td>
 </tr>
 </table>
-<br>
 <table class="table">
 <tr>
- <th style="text-align:left;">Amount in Words : {{ donation.donation_amount_paid|number_to_words }}</th>
-        <th style="text-align:left;">Mode Of Receipt :{{ donation.payment_method.lookup_name }}  </th>
-    <th style="text-align:left;">Type of Donation :Donation</th>
+ <th  width="35%" style="text-align:left;">Amount in Words : {{ donation.donation_amount_paid|number_to_words }}</th>
+        <th  width="30%" style="text-align:left;">Mode Of Receipt :{{ donation.payment_method.lookup_name }}  </th>
+    <th  width="35%" style="text-align:left;">Type of Donation :Donation</th>
 </tr>
 <tr>
     <th style="text-align:left;">Name of Bank : </th>
@@ -377,9 +376,29 @@ table {
 </table>
 
 
-
-
 <div class="footer-text">Thank you for your valuable Donation</div>
+<table width="100%" style="margin-top:6px; font-size:9px; border-top:1px solid #000;">
+    <tr>
+        <td style="padding-top:4px; text-align:center;">
+
+            <b>Follow Us :</b>
+
+            <img src="{{ facebook_icon }}" width="12" valign="middle" />
+            &nbsp; | &nbsp;
+
+            <img src="{{ instagram_icon }}" width="12" valign="middle" />
+            &nbsp; | &nbsp;
+
+            <img src="{{ youtube_icon }}" width="12" valign="middle" />
+                        <b>@ahinsadham</b>
+            &nbsp; | &nbsp;
+
+            <img src="{{ globe_icon }}" width="12" valign="middle" />
+            <b>www.ahinsadham.org</b>
+        </td>
+    </tr>
+</table>
+
 
 </td></tr></table>
 </div>
