@@ -2989,6 +2989,7 @@ width: 35%;
         <tr>
               <th>Actions</th>
               <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
@@ -2996,26 +2997,25 @@ width: 35%;
               <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Created By <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="10">Created On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">Updated By <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="12">Updated On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="13">Deleted By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
 
+              <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
-
       <tbody>
         <tr class="column-search-row">
   <td>
 <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_add %}
-  <a href="/select_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+  <a href="/select_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
   {% endif %}
   {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
@@ -3040,7 +3040,11 @@ width: 35%;
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+     <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
 </tr>        
         {% for owner in payments_page_obj.object_list %}
         <tr>
@@ -3095,6 +3099,7 @@ width: 35%;
             </div>
           </td>
           <td>{{ owner.id }}</td>
+                    <td>{{ owner.receipt_id }}</td>
 <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
           <td>
             {% if owner.donation_box %}
@@ -3108,6 +3113,8 @@ width: 35%;
           <td>{{ owner.opened_by }}</td>
           <td>{{ owner.verified_by }}</td>
           <td>{{ owner.i_witness }}</td>
+          <td>{{ owner.name_of_bank }}</td>
+          <td>{{ owner.branch }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
           <td>{{ owner.updated_by }}</td>
@@ -3136,9 +3143,10 @@ width: 35%;
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
-        <tr>
+         <tr>
               <th>Actions</th>
               <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
@@ -3146,13 +3154,16 @@ width: 35%;
               <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Created By <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="10">Created On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">Updated By <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="12">Updated On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="14">is_deleted <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="13">Delete By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="13">Deleted On<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
       </thead>
       <tbody>
@@ -3190,6 +3201,11 @@ width: 35%;
     <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+
         </tr> 
         {% for owner in payments_page_obj.object_list %}
         <tr>
@@ -3241,6 +3257,7 @@ width: 35%;
             </div>
           </td>
           <td>{{ owner.id }}</td>
+                              <td>{{ owner.receipt_id }}</td>
 <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
           <td>
             {% if owner.donation_box %}
@@ -3254,6 +3271,8 @@ width: 35%;
           <td>{{ owner.opened_by }}</td>
           <td>{{ owner.verified_by }}</td>
           <td>{{ owner.i_witness }}</td>
+           <td>{{ owner.name_of_bank }}</td>
+          <td>{{ owner.branch }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
           <td>{{ owner.updated_by }}</td>
@@ -3328,7 +3347,7 @@ width: 35%;
       padding:20px 20px 25px;
       border-radius:12px;
       width:40%;
-      height: 80%;
+      height: 55%;
       position:absolute;
       top:50%;
       left:50%;
@@ -3694,6 +3713,7 @@ width: 35%;
       <tr>
         <th>Action</th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+                <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
@@ -3706,6 +3726,8 @@ width: 35%;
         <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="14">Created By<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="15">Created On<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
@@ -3753,6 +3775,9 @@ width: 35%;
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
                 <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+                <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
+        <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
@@ -3790,6 +3815,7 @@ width: 35%;
           </div>
         </td>
                 <td>{{ donation.id }}</td>
+                                <td>{{ donation.receipt_id }}</td>
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
         <td>{{ donation.donor.city }}</td>
         <td>{{ donation.donation_amount_declared }}</td>
@@ -3802,6 +3828,8 @@ width: 35%;
         <td>{{ donation.check_no }}</td>
         <td>{{ donation.place_of_donation }}</td>
         <td>{{ donation.description }}</td>
+          <td>{{ donation.name_of_bank }}</td>
+          <td>{{ donation.branch }}</td>
         <td>{{ donation.created_by }}</td>
         <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
         <td>{{ donation.updated_by }}</td>
@@ -3828,6 +3856,7 @@ width: 35%;
     <tr>
         <th>Action</th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+                        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
@@ -3840,6 +3869,8 @@ width: 35%;
         <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="14">Created By<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="15">Created On<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
@@ -3887,8 +3918,11 @@ width: 35%;
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="18" type="text  " placeholder="Search..."></td>
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-                <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
-                                <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
+        <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
       </tr>
       <!-- 🧾 Paginated Donation Records -->
     {% for donation in donation_page_obj %}
@@ -3939,6 +3973,7 @@ width: 35%;
     </div>
   </td>
   <td>{{ donation.id }}</td>
+                                  <td>{{ donation.receipt_id }}</td>
   <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
   <td>{{ donation.donor.city }}</td>
   <td>{{ donation.donation_amount_paid }}</td>
@@ -3951,6 +3986,8 @@ width: 35%;
   <td>{{ donation.check_no }}</td>
   <td>{{ donation.place_of_donation }}</td>
   <td>{{ donation.description }}</td>
+    <td>{{ donation.name_of_bank }}</td>
+          <td>{{ donation.branch }}</td>
   <td>{{ donation.created_by }}</td>
   <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
   <td>{{ donation.updated_by }}</td>

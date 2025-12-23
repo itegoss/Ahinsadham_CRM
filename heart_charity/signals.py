@@ -173,13 +173,69 @@ from .models import Donation,  DonationPaymentBox
 from .utils import generate_receipt_id
 
 
-@receiver(pre_save, sender=Donation)
-def donation_receipt(sender, instance, **kwargs):
-    if not instance.receipt_id:
-        instance.receipt_id = generate_receipt_id()
+# @receiver(pre_save, sender=Donation)
+# def donation_receipt(sender, instance, **kwargs):
+#     if not instance.receipt_id:
+#         instance.receipt_id = generate_receipt_id()
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.timezone import now
+
+from .models import Donation
+from .utils import generate_receipt_id
 
 
-@receiver(pre_save, sender=DonationPaymentBox)
-def danpeti_receipt(sender, instance, **kwargs):
-    if not instance.receipt_id:
+@receiver(post_save, sender=Donation)
+def generate_receipt_on_verification(sender, instance, created, **kwargs):
+    """
+    Generate receipt ONLY when:
+    - record already exists (not created)
+    - verified = True
+    - receipt_id is empty
+    """
+
+    # ❌ Skip initial creation
+    if created:
+        return
+
+    # ✅ Generate receipt ONLY once
+    if instance.verified and not instance.receipt_id:
         instance.receipt_id = generate_receipt_id()
+        instance.verified_at = instance.verified_at or now()
+
+        # prevent infinite loop using update_fields
+        instance.save(update_fields=["receipt_id", "verified_at"])
+
+
+# @receiver(pre_save, sender=DonationPaymentBox)
+# def danpeti_receipt(sender, instance, **kwargs):
+#     if not instance.receipt_id:
+#         instance.receipt_id = generate_receipt_id()
+
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.timezone import now
+
+from .models import DonationPaymentBox
+from .utils import generate_receipt_id
+
+
+@receiver(post_save, sender=DonationPaymentBox)
+def generate_danpeti_receipt(sender, instance, created, **kwargs):
+    """
+    Generate receipt ONLY after verification
+    """
+
+    # ❌ Skip initial creation
+    if created:
+        return
+
+    # ✅ Generate receipt ONLY once, AFTER verification
+    if instance.verified and not instance.receipt_id:
+        instance.receipt_id = generate_receipt_id()
+        instance.verified_at = instance.verified_at or now()
+
+        # prevent recursive save
+        instance.save(update_fields=["receipt_id", "verified_at"])

@@ -234,12 +234,37 @@
       <input type="number" name="amount" step="0.01" required aria-required="true">
 
       <label>Payment Method <span style="color: #d9534f;">*</span></label>
-      <select name="payment_method" required aria-required="true" class="form-select">
+      <select name="payment_method" id="payment_method" required aria-required="true" class="form-select">
           <option value="">-- Select Method --</option>
           {% for item in payment_methods %}
               <option value="{{ item.id }}">{{ item.lookup_name }}</option>
           {% endfor %}
       </select>
+<div class="row mb-3 payment-field gx-3">
+
+    <div class="col-12 col-md-4">
+        <label class="form-label">Bank Name</label>
+        <input type="text"
+               name="name_of_bank"
+               class="form-control"
+               placeholder="e.g. State Bank of India">
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="form-label">Branch</label>
+        <input type="text"
+               name="branch"
+               class="form-control"
+               placeholder="e.g. Andheri East">
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="form-label">Transaction ID</label>
+        <input type="text"
+               name="transaction_id"
+               class="form-control"
+               placeholder="Enter Transaction ID">
+    </div>
+
+</div>
 
       <label>Date & Time <span style="color: #d9534f;">*</span></label>
       <input type="text" value="{{ current_time|date:'Y-m-d H:i:s' }}" readonly name="date_time" required aria-required="true">
@@ -258,6 +283,36 @@
 
 </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const paymentSelect = document.getElementById("payment_method");
+    const paymentFields = document.querySelectorAll(".payment-field");
+
+    if (!paymentSelect || paymentFields.length === 0) return;
+
+    function togglePaymentFields() {
+        const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
+
+        const selectedText = paymentSelect.options[
+            paymentSelect.selectedIndex
+        ].text.trim().toLowerCase();
+
+        paymentFields.forEach(el => {
+            el.style.display = showFor.includes(selectedText)
+                ? "block"
+                : "none";
+        });
+    }
+
+    // Run once on page load
+    togglePaymentFields();
+
+    // On change
+    paymentSelect.addEventListener("change", togglePaymentFields);
+});
+</script>
+
 
 <!-- AUTO-FILL SCRIPT -->
 <script>
