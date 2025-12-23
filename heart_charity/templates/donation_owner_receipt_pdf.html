@@ -442,6 +442,36 @@ table {
     </button>
 </div>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const paymentSelect = document.getElementById("payment_method");
+    const paymentFields = document.querySelectorAll(".payment-field");
+
+    if (!paymentSelect || paymentFields.length === 0) return;
+
+    function togglePaymentFields() {
+        const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
+
+        const selectedText = paymentSelect.options[
+            paymentSelect.selectedIndex
+        ].text.trim().toLowerCase();
+
+        paymentFields.forEach(el => {
+            el.style.display = showFor.includes(selectedText)
+                ? "flex"   // Bootstrap row uses flex
+                : "none";
+        });
+    }
+
+    // Run once on page load (important for edit forms)
+    togglePaymentFields();
+
+    // Run on change
+    paymentSelect.addEventListener("change", togglePaymentFields);
+});
+</script>
 <script>
 function shareReceipt() {
     const pdfUrl = "{% url 'donation_payment_receipt_pdf' payment.id %}";

@@ -293,7 +293,19 @@ table {
 <div class="section-title">Donor Details</div>
 <table class="table">
 <tr>
-<td width="65%"><b>Name :</b> {{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+<td width="65%">
+    <b>Name :</b>
+    {{ donation.donor.first_name }} {{ donation.donor.last_name }}
+
+    {% if donation.display_name %}
+        {% if donation.display_name|lower != donation.donor.first_name|add:" "|add:donation.donor.last_name|lower %}
+            <br>
+            <small class="text-muted">
+                ({{ donation.display_name }})
+            </small>
+        {% endif %}
+    {% endif %}
+</td>
 <td width="35%"><b>Mobile :</b> {{ donation.donor.contact_number }}</td>
 </tr>
 <tr>

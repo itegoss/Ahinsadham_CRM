@@ -354,6 +354,7 @@ from django.dispatch import receiver
 
 class Donation(models.Model):
     donor = models.ForeignKey('DonorVolunteer',on_delete=models.CASCADE,limit_choices_to={'person_type': 'Donor'},related_name='donations')
+    display_name = models.CharField(max_length=100, blank=True, null=True)
     donation_date = models.DateField(default=timezone.now)
     donation_category = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='donation_categories')
     donation_sub_category = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='donation_sub_categories')
@@ -373,6 +374,8 @@ class Donation(models.Model):
     description = models.TextField(blank=True, null=True)
     donation_amount_declared = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     donation_amount_paid = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    name_of_bank = models.CharField(max_length=100,null=True,blank=True,verbose_name="Bank Name")
+    branch = models.CharField(max_length=100,null=True,blank=True,verbose_name="Branch")
     created_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='donation_created')
     updated_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='donation_updated')
 
@@ -390,12 +393,7 @@ class Donation(models.Model):
 
 class DonationPaymentBox(models.Model):
     id = models.AutoField(primary_key=True)
-    receipt_id = models.CharField(
-    max_length=20,
-    unique=True,
-    blank=True,
-    null=True
-)
+    receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='donation_payments')
     donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -405,6 +403,9 @@ class DonationPaymentBox(models.Model):
     payment_method = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='payment_methods_box')
     date_time = models.DateTimeField(default=timezone.now)
     i_witness = models.CharField(max_length=100, blank=True, null=True)
+    name_of_bank = models.CharField(max_length=100,null=True,blank=True,verbose_name="Bank Name")
+    branch = models.CharField(max_length=100,null=True,blank=True,verbose_name="Branch")
+    transaction_id = models.CharField(max_length=100,null=True,blank=True,verbose_name="Transaction ID")
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_donation_payments')
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
     created_at = models.DateTimeField(default=timezone.now)

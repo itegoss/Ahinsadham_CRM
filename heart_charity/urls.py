@@ -5,8 +5,6 @@ urlpatterns = [
 
     path('login/', views.signin_view, name='login'),
     path("logout", views.logout_view, name="logout"),
-    path("request_password_reset/", views.request_password_reset, name="request_password_reset"),
-    path("reset_password/<uname>/", views.reset_password, name="reset_password"),
     path('welcome/', views.welcome_view, name='welcome'),
     path('send-otp/', views.send_otp, name='send_otp'),
     path('access_control/', views.access_control, name='access_control'),

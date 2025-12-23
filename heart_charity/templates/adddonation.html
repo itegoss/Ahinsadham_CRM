@@ -82,7 +82,53 @@
       {% csrf_token %}
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>
       <hr>
-<div class="row g-3 mb-3">
+      <div class="row g-3 mb-3">
+
+    <!-- Select Donor -->
+    <div class="col-md-6">
+        <label class="form-label">
+            Select Donor / Pan Number<span style="color:#d9534f;">*</span>
+        </label>
+
+        <select name="donor"
+                id="donor"
+                class="form-select select2-search"
+                required>
+            <option value="">-- Select or Type Donor --</option>
+            {% for donor in donors %}
+                <option value="{{ donor.id }}">
+                    {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }} - {{donor.pan_number}}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Display Name -->
+    <div class="col-md-6">
+        <label class="form-label">Display Name</label>
+
+        <input type="text"
+               name="display_name"
+               id="display_name"
+               class="form-control"
+               placeholder="Display Name">
+    </div>
+
+</div>
+
+<!-- Checkbox -->
+<div class="form-check mb-3">
+    <input class="form-check-input"
+           type="checkbox"
+           id="lock_display_name"
+           checked>
+
+    <label class="form-check-label" for="lock_display_name">
+        Use donor name (disable editing)
+    </label>
+</div>
+
+<!-- <div class="row g-3 mb-3">
     <div class="col-md-6">
       <label class="form-label">Select Donor <span style="color: #d9534f;">*</span></label>
       <select name="donor"id="donor"class="form-select select2-search"required aria-required="true">
@@ -95,7 +141,7 @@
         </select>
 
     </div>
-</div>
+</div> -->
 
       <!-- Donation Details -->
       <h5 class="text-success fw-bold mb-2">Donation Details</h5>
@@ -188,11 +234,31 @@
 </select>
 
         </div> -->
-      <div class="row mb-3">
+<div class="row mb-3 payment-field" style="display:none;">
 
+    <div class="col-12 col-md-6">
+        <label class="form-label">Bank Name</label>
+        <input type="text"
+               name="name_of_bank"
+               class="form-control"
+               placeholder="e.g. State Bank of India">
+    </div>
+
+    <div class="col-12 col-md-6">
+        <label class="form-label">Branch</label>
+        <input type="text"
+               name="branch"
+               class="form-control"
+               placeholder="e.g. Andheri East">
+    </div>
+
+</div>
+
+
+      <div class="row mb-3">      
         <div class="col-md-6">
           <label class="form-label fw-semibold">Payment Method <span style="color: #d9534f;">*</span></label>
-          <select name="payment_method" class="form-select" required aria-required="true">
+          <select name="payment_method"  id="payment_method" class="form-select" required aria-required="true">
       <option value="">-- Select Method --</option>
       {% for item in payment_methods %}
         <option value="{{ item.id }}">{{ item.lookup_name }}</option>
@@ -254,6 +320,68 @@
 
   </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const donorSelect = $("#donor");   // jQuery for Select2
+    const displayNameInput = document.getElementById("display_name");
+    const lockCheckbox = document.getElementById("lock_display_name");
+
+    // 🔥 Select2 change event (THIS is the key fix)
+    donorSelect.on("select2:select", function (e) {
+        const selectedText = e.params.data.text;
+        displayNameInput.value = selectedText.trim();
+    });
+
+    // Also handle normal change (fallback)
+    donorSelect.on("change", function () {
+        const selectedText = $("#donor option:selected").text();
+        displayNameInput.value = selectedText.trim();
+    });
+
+    // Lock / unlock typing
+    lockCheckbox.addEventListener("change", function () {
+        displayNameInput.readOnly = this.checked;
+    });
+
+    // Initial state
+    displayNameInput.readOnly = lockCheckbox.checked;
+});
+</script>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const paymentSelect = document.getElementById("payment_method");
+    const paymentFields = document.querySelectorAll(".payment-field");
+
+    if (!paymentSelect || paymentFields.length === 0) return;
+
+    function togglePaymentFields() {
+        const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
+
+        const selectedText = paymentSelect.options[
+            paymentSelect.selectedIndex
+        ].text.trim().toLowerCase();
+
+        paymentFields.forEach(el => {
+            el.style.display = showFor.includes(selectedText)
+                ? "flex"   // Bootstrap row uses flex
+                : "none";
+        });
+    }
+
+    // Run once on page load (important for edit forms)
+    togglePaymentFields();
+
+    // Run on change
+    paymentSelect.addEventListener("change", togglePaymentFields);
+});
+</script>
+
 
 <script>
 $(document).ready(function () {
