@@ -886,7 +886,7 @@ td {
     <span class="sidebar-text">Donation Module</span>
 </a>
 
-<a class="tab-btn" data-tab="Donation box (Daan Peti) & ACH Module">
+<a class="tab-btn" data-tab="Donation Box Module">
     <i class="bi bi-box"></i>
     <span class="sidebar-text">Donation Box</span>
 </a>
@@ -976,7 +976,7 @@ td {
     <span class="sidebar-text">Seeds Module</span>
 </a>
 
-{% elif not user.is_superuser and allowed_modules %}
+{% elif not user.is_superuser or allowed_modules %}
     <!-- Non-admin: show only allowed modules -->
     {% for module_name in allowed_modules %}
         <a class="tab-btn" data-tab="{{ module_name }}">{{ module_name }}</a>
@@ -2968,7 +2968,7 @@ width: 35%;
 <!-- ---------Donation box module-------- -->
 
 
- <div class="tab-content"  id="Donation box (Daan Peti) & ACH Module">
+ <div class="tab-content"  id="Donation Box Module">
   <div class="card border-0">
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Donation box (Dan Peti)</h4>
@@ -3785,6 +3785,12 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
 {% if not donation.is_deleted %}
+   {% if permissions.can_add %}
+<a href="{% url 'donation_summary' donation.id %}"
+   style="font-size: 20px; text-decoration: none; vertical-align: middle;">
+   <i class="fa-solid fa-plus"></i>
+</a>
+{% endif %}
 {% if permissions.can_edit %}
             <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
               <i class="bi bi-pencil-square"></i> </a>
@@ -3930,6 +3936,12 @@ width: 35%;
   <td>
     <div class="d-inline-flex align-items-center gap-1">
 {% if not donation.is_deleted %}
+     {% if permissions.can_add %}
+<a href="{% url 'donation_summary' donation.id %}"
+   style="font-size: 20px; text-decoration: none; vertical-align: middle;">
+   <i class="fa-solid fa-plus"></i>
+</a>
+{% endif %}
       {% if permissions.can_edit %}
         <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1"
            style="font-size: 15px; color:black; text-decoration: none;">
