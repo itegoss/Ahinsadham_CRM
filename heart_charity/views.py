@@ -123,6 +123,7 @@ def welcome_view(request):
                 can_view = True
                 can_access = True
             permissions = SuperPerm()
+
     users = User.objects.all().order_by('id')
     donation_owners = DonationOwner.objects.all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
@@ -1796,6 +1797,10 @@ from .models import Donation, DonorVolunteer, Lookup
 #         "payment_statuses": payment_statuses,
 #         "today": today
 #     })
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db.models import Sum
+from django.utils.timezone import now
 
 def adddonation(request):
     donors = DonorVolunteer.objects.all()
@@ -1822,10 +1827,11 @@ def adddonation(request):
     )
 
     if request.method == "POST":
+
         donor_id = request.POST.get("donor")
 
         if not donor_id or not donor_id.isdigit():
-            messages.error(request, "Please select a donor.")
+            messages.error(request, "Please select a valid donor.")
             return redirect("adddonation")
 
         donor_obj = DonorVolunteer.objects.get(id=donor_id)
@@ -1833,16 +1839,68 @@ def adddonation(request):
         def fk(val):
             return val if val not in ("", None) else None
 
+        category_id = fk(request.POST.get("donation_category"))
+        sub_category_id = fk(request.POST.get("donation_sub_category"))
+
+        declared_amount = float(request.POST.get("donation_amount_declared") or 0)
+        paid_amount = float(request.POST.get("donation_amount_paid") or 0)
+
+        # 🧠 SERVER-SIDE VALIDATION (IMPORTANT)
+        previous_donations = Donation.objects.filter(donor=donor_obj)
+
+        if previous_donations.exists():
+
+            used_categories = previous_donations.values_list(
+                "donation_category_id", flat=True
+            )
+
+            used_sub_categories = previous_donations.values_list(
+                "donation_sub_category_id", flat=True
+            )
+
+            totals = previous_donations.aggregate(
+                total_declared=Sum("donation_amount_declared"),
+                total_paid=Sum("donation_amount_paid")
+            )
+
+            remaining = (totals["total_declared"] or 0) - (totals["total_paid"] or 0)
+
+            # ❌ Category not allowed when remaining exists
+            if remaining > 0 and category_id not in used_categories:
+                messages.error(
+                    request,
+                    "This donation category is not allowed for this donor."
+                )
+                return redirect("adddonation")
+
+            if remaining > 0 and sub_category_id and sub_category_id not in used_sub_categories:
+                messages.error(
+                    request,
+                    "This donation sub-category is not allowed for this donor."
+                )
+                return redirect("adddonation")
+
+        # 🚫 Paid > Declared safety
+        if paid_amount > declared_amount:
+            messages.error(request, "Paid amount cannot exceed declared amount.")
+            return redirect("adddonation")
+        donation_date_raw = request.POST.get("donation_date")
+
+        if donation_date_raw:
+            donation_date = donation_date_raw
+        else:
+            donation_date = timezone.now().date()
+        # ✅ CREATE DONATION
         Donation.objects.create(
             donor=donor_obj,
             display_name=request.POST.get("display_name"),
 
-            donation_amount_declared=request.POST.get("donation_amount_declared") or 0,
-            donation_amount_paid=request.POST.get("donation_amount_paid") or 0,
-            donation_date=request.POST.get("donation_date"),
+            donation_amount_declared=declared_amount,
+            donation_amount_paid=paid_amount,
+            donation_date=donation_date,
 
-            donation_category_id=fk(request.POST.get("donation_category")),
-            donation_sub_category_id=fk(request.POST.get("donation_sub_category")),
+            donation_category_id=category_id,
+            donation_sub_category_id=sub_category_id,
 
             place_of_donation=request.POST.get("place_of_donation"),
             donation_received_by=request.POST.get("donation_received_by"),
@@ -1851,8 +1909,8 @@ def adddonation(request):
 
             payment_method_id=fk(request.POST.get("payment_method")),
             payment_status_id=fk(request.POST.get("payment_status")),
-            name_of_bank = request.POST.get("name_of_bank"),
-            branch = request.POST.get("branch"),
+            name_of_bank=request.POST.get("name_of_bank"),
+            branch=request.POST.get("branch"),
             transaction_id=request.POST.get("transaction_id"),
             check_no=request.POST.get("check_no"),
 
@@ -1870,6 +1928,122 @@ def adddonation(request):
         "payment_statuses": payment_statuses,
         "today": today
     })
+
+from django.shortcuts import render
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.utils import timezone
+from django.db.models import Sum
+from .models import Donation, DonorVolunteer, Lookup
+
+
+def donation_summary(request, id):
+    donation = get_object_or_404(Donation, id=id)
+
+    donors = DonorVolunteer.objects.all()
+    today = timezone.now().date()
+
+    donation_categories = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Donation Category",
+        is_deleted=False
+    )
+
+    donation_sub_categories = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Donation-Sub-Category",
+        is_deleted=False
+    )
+
+    payment_methods = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Payment Method",
+        is_deleted=False
+    )
+
+    payment_statuses = Lookup.objects.filter(
+        lookup_type__type_name__iexact="Payment Status",
+        is_deleted=False
+    )
+
+    if request.method == "POST":
+
+        def fk(val):
+            return val if val not in ("", None) else None
+
+        donation.donor_id = request.POST.get("donor")
+        donation.display_name = request.POST.get("display_name")
+        donation.reference_name = request.POST.get("reference_name")
+
+        donation.donation_category_id = fk(request.POST.get("donation_category"))
+        donation.donation_sub_category_id = fk(request.POST.get("donation_sub_category"))
+
+        donation.donation_amount_declared = float(
+            request.POST.get("donation_amount_declared") or 0
+        )
+
+        donation.donation_amount_paid = float(
+            request.POST.get("donation_amount_paid") or 0
+        )
+
+        donation_date_raw = request.POST.get("donation_date")
+        donation.donation_date = (
+            donation_date_raw if donation_date_raw else timezone.now().date()
+        )
+
+        donation.place_of_donation = request.POST.get("place_of_donation")
+        donation.donation_received_by = request.POST.get("donation_received_by")
+        donation.description = request.POST.get("description")
+
+        donation.payment_method_id = fk(request.POST.get("payment_method"))
+        donation.payment_status_id = fk(request.POST.get("payment_status"))
+        donation.name_of_bank = request.POST.get("name_of_bank")
+        donation.branch = request.POST.get("branch")
+        donation.transaction_id = request.POST.get("transaction_id")
+        donation.check_no = request.POST.get("check_no")
+
+        donation.save()
+
+        messages.success(request, "Donation updated successfully!")
+        return redirect("donation_summary", donation.id)
+
+    return render(request, "donation_summary.html", {
+        "donation": donation,
+        "donors": donors,
+        "donation_categories": donation_categories,
+        "donation_sub_categories": donation_sub_categories,
+        "payment_methods": payment_methods,
+        "payment_statuses": payment_statuses,
+        "today": today,
+    })
+
+from django.db.models import Sum
+
+from django.http import JsonResponse
+from django.db.models import Sum
+from .models import Donation, DonorVolunteer
+
+def donation_summary_ajax(request, donor_id):
+    donations = Donation.objects.filter(donor_id=donor_id)
+
+    total_declared = donations.aggregate(
+        total=Sum("donation_amount_declared")
+    )["total"] or 0
+
+    total_paid = donations.aggregate(
+        total=Sum("donation_amount_paid")
+    )["total"] or 0
+
+    remaining = total_declared - total_paid
+
+    last_donation = donations.order_by("-id").first()
+
+    return JsonResponse({
+        "total_declared": total_declared,
+        "total_paid": total_paid,
+        "remaining": remaining,
+        "last_category": last_donation.donation_category_id if last_donation else None,
+        "last_sub_category": last_donation.donation_sub_category_id if last_donation else None,
+    })
+
 
 def donation_list(request):
     donations = Donation.objects.all().select_related('donor')
@@ -1987,65 +2161,6 @@ def download_receipt_pdf(request, id):
 
     return response
 
-from .models import DonationOwner
-def donation_payment_receipt_pdf(request, id):
-    donation = get_object_or_404(Donation, id=id)
-
-    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
-
-    # ensure logo is available to the template (use static url) and use link_callback for static/media files
-    logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
-    signature_url = request.build_absolute_uri(
-            settings.STATIC_URL + "images/signature.png"
-        )
-    # ✅ FIX: absolute filesystem paths (app/static/)
-    facebook_icon = request.build_absolute_uri(
-        settings.STATIC_URL + "images/facebook.png"
-    )
-    instagram_icon = request.build_absolute_uri(
-        settings.STATIC_URL + "images/instagram.png"
-    )
-    youtube_icon = request.build_absolute_uri(
-        settings.STATIC_URL + "images/youtube.png"
-    )
-    globe_icon = request.build_absolute_uri(
-        settings.STATIC_URL + "images/globe.png"
-    )
-    # Safely compute an owner contact string from available attributes
-    owner = payment.owner
-    owner_contact = None
-    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
-        owner_contact = getattr(owner, attr, None)
-        if owner_contact:
-            break
-
-    html = render_to_string("donation_owner_receipt_pdf.html", {
-        "payment": payment,
-        "donation":donation,
-        "logo_url": logo_url,
-        "owner_contact": owner_contact,
-        "pdf": True,
-        "signature_url": signature_url,
-        "facebook_icon": facebook_icon,
-        "instagram_icon": instagram_icon,
-        "youtube_icon": youtube_icon,
-        "globe_icon": globe_icon,
-    })
-
-    response = HttpResponse(content_type="application/pdf")
-    response['Content-Disposition'] = f'attachment; filename="donation_payment_{payment.id}.pdf"'
-
-    try:
-        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
-    except Exception as e:
-        import traceback
-        tb = traceback.format_exc()
-        return HttpResponse(f"PDF generation error: {e}\n\n{tb}", status=500)
-
-    if getattr(pisa_status, 'err', False):
-        return HttpResponse("Error generating PDF", status=500)
-
-    return response
 
 def donation_payment_receipt_view(request, id):
     payment = get_object_or_404(
@@ -2082,6 +2197,64 @@ def donation_payment_receipt_view(request, id):
         }
     )
 
+from .models import DonationOwner
+def donation_payment_receipt_pdf(request, id):
+    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+    donor = DonorVolunteer.objects.filter(created_by=payment.owner).first()
+
+    owner = payment.owner  # ✅ Donation Box Owner (User)
+
+    # ensure logo is available to the template (use static url) and use link_callback for static/media files
+    logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
+    signature_url = request.build_absolute_uri(settings.STATIC_URL + "images/signature.png")
+    # ✅ FIX: absolute filesystem paths (app/static/)
+    facebook_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/facebook.png"
+    )
+    instagram_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/instagram.png"
+    )
+    youtube_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/youtube.png"
+    )
+    globe_icon = request.build_absolute_uri(
+        settings.STATIC_URL + "images/globe.png"
+    )
+    # Safely compute an owner contact string from available attributes
+    owner = payment.owner
+    owner_contact = None
+    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
+        owner_contact = getattr(owner, attr, None)
+        if owner_contact:
+            break
+
+    html = render_to_string("donation_owner_receipt_pdf.html", {
+        "payment": payment,
+        "donor":donor,
+        "logo_url": logo_url,
+        "owner_contact": owner_contact,
+        "pdf": True,
+        "signature_url": signature_url,
+        "facebook_icon": facebook_icon,
+        "instagram_icon": instagram_icon,
+        "youtube_icon": youtube_icon,
+        "globe_icon": globe_icon,
+    })
+
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = f'attachment; filename="donation_payment_{payment.id}.pdf"'
+
+    try:
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        return HttpResponse(f"PDF generation error: {e}\n\n{tb}", status=500)
+
+    if getattr(pisa_status, 'err', False):
+        return HttpResponse("Error generating PDF", status=500)
+
+    return response
 
 from datetime import date, timedelta
 from .models import DonorVolunteer
@@ -2910,37 +3083,119 @@ def edit_lookup(request, id):
         "types": types
     })
 
+# def edit_user(request, id):
+#     user_obj = get_object_or_404(User, id=id)
+#     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
+#     roles = UserModuleAccess.objects.all()
+#     if request.method == 'POST':
+#         new_username = request.POST.get('username')
+#         if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
+#             messages.error(request, "Username already exists! Please choose a different one.")
+#             return redirect(request.path)
+
+#         # ===== ⭐ Update user basic info =====
+#         user_obj.first_name = request.POST.get('first_name')
+#         user_obj.last_name  = request.POST.get('last_name')
+#         user_obj.username   = new_username
+#         user_obj.email      = request.POST.get('email')
+
+#         # ===== ⭐ Save selected role =====
+#         role_id = request.POST.get('role')
+#         if role_id:
+#             selected_role = UserModuleAccess.objects.get(id=role_id)
+#             user_role_obj.role = selected_role
+#             user_role_obj.save()
+#         user_obj.save()
+#         messages.success(request, "User updated successfully!")
+#         return redirect('welcome')
+
+#     return render(request, 'edit_user.html', {
+#         'edit_user': user_obj,
+#         'roles': roles,
+#         'user_role': user_role_obj,
+#     })
+
+@login_required
 def edit_user(request, id):
     user_obj = get_object_or_404(User, id=id)
     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
     roles = UserModuleAccess.objects.all()
+
     if request.method == 'POST':
         new_username = request.POST.get('username')
+
         if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
-            messages.error(request, "Username already exists! Please choose a different one.")
+            messages.error(
+                request,
+                "Username already exists! Please choose a different one."
+            )
             return redirect(request.path)
 
-        # ===== ⭐ Update user basic info =====
+        # ===== Update user basic info (ALLOWED FOR ALL) =====
         user_obj.first_name = request.POST.get('first_name')
         user_obj.last_name  = request.POST.get('last_name')
         user_obj.username   = new_username
         user_obj.email      = request.POST.get('email')
 
-        # ===== ⭐ Save selected role =====
+        # ===== ROLE ASSIGNMENT (ADMIN ONLY) =====
         role_id = request.POST.get('role')
         if role_id:
-            selected_role = UserModuleAccess.objects.get(id=role_id)
+            if not request.user.is_superuser:
+                messages.error(
+                    request,
+                    "❌ You are not allowed to assign roles."
+                )
+                return redirect("welcome")
+
+            selected_role = get_object_or_404(UserModuleAccess, id=role_id)
             user_role_obj.role = selected_role
             user_role_obj.save()
+
         user_obj.save()
         messages.success(request, "User updated successfully!")
         return redirect('welcome')
 
-    return render(request, 'edit_user.html', {
-        'edit_user': user_obj,
-        'roles': roles,
-        'user_role': user_role_obj,
-    })
+    # ------------------------------------------------------------
+    # ACCESS CONTROL (SAME AS welcome_view)
+    # ------------------------------------------------------------
+    if request.user.is_superuser:
+        allowed_modules = list(
+            Module.objects.all().values_list('module_name', flat=True)
+        )
+    else:
+        current_user_role = (
+            UserRole.objects
+            .filter(user=request.user)
+            .select_related('role')
+            .first()
+        )
+
+        if current_user_role and current_user_role.role:
+            allowed_modules = list(
+                UserModuleAccess.objects.filter(
+                    name=current_user_role.role.name,
+                    can_access=True
+                )
+                .select_related('module')
+                .values_list('module__module_name', flat=True)
+            )
+        else:
+            allowed_modules = []
+            messages.warning(
+                request,
+                "⚠️ You do not have permission to access this module."
+            )
+
+    return render(
+        request,
+        'edit_user.html',
+        {
+            'edit_user': user_obj,
+            'roles': roles,
+            'user_role': user_role_obj,
+            'allowed_modules': allowed_modules,
+        }
+    )
 
 from .models import UserModuleAccess
 
