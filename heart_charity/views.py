@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from requests import request
 from .models import DonationBox, DonationPaymentBox, User ,Donation
 from heart_charity.models import LookupType   # ⬅️ ADD THIS
 
@@ -919,10 +920,12 @@ def search_donation(request):
     # ---- PAGINATION ----
     paginator = Paginator(donations, 10)
     donation_page_obj = paginator.get_page(request.GET.get('page'))
+    permissions = get_user_permissions(request.user)
 
     return render(request, 'welcome.html', {
         'donation_page_obj': donation_page_obj,
         'query3': query3,
+        'permissions': permissions,
     })
 
 @login_required
@@ -956,14 +959,17 @@ def search_donation_payment(request):
             Q(donation_box__box_size__icontains=payments_query) |
             Q(donation_box__status__icontains=payments_query) |
 
-            # 🔹 Regular fields
-            Q(opened_by__icontains=payments_query) |
-            Q(received_by__icontains=payments_query) |
+            # 🔹 Regular fields (search related FK name fields)
+            Q(opened_by__first_name__icontains=payments_query) |
+            Q(opened_by__last_name__icontains=payments_query) |
+            Q(opened_by__contact_number__icontains=payments_query) |
+            Q(received_by__first_name__icontains=payments_query) |
+            Q(received_by__last_name__icontains=payments_query) |
+            Q(received_by__contact_number__icontains=payments_query) |
             Q(address__icontains=payments_query) |
             Q(i_witness__icontains=payments_query) |
 
             # 🔹 Lookup (payment method)
-            Q(payment_method__lookup_name__icontains=payments_query) |
 
             # 🔹 Users
             Q(owner__username__icontains=payments_query) |
@@ -973,10 +979,21 @@ def search_donation_payment(request):
 
         # Numeric search → amount or ID
         if payments_query.replace('.', '', 1).isdigit():
-            filters |= (
-                Q(amount__icontains=payments_query) |
-                Q(id=int(float(payments_query)))
-            )
+            # numeric search — match exact id or amount
+            try:
+                # try to parse decimal amount
+                from decimal import Decimal
+                amt = Decimal(payments_query)
+                filters |= (
+                    Q(amount=amt) |
+                    Q(id=int(float(payments_query)))
+                )
+            except Exception:
+                # fallback to id-only match
+                try:
+                    filters |= Q(id=int(float(payments_query)))
+                except Exception:
+                    pass
 
         # Boolean search
         active_values = {"true", "yes", "active", "1"}
@@ -1072,10 +1089,12 @@ def search_donation_payment(request):
     paginator = Paginator(payments, 5)
     page_number = request.GET.get("payments_page")
     payments_page_obj = paginator.get_page(page_number)
+    permissions = get_user_permissions(request.user)
 
     return render(request, "welcome.html", {
         "payments_page_obj": payments_page_obj,
         "payments_query": payments_query,
+        "permissions": permissions,
  })
 
 @login_required
@@ -1206,13 +1225,14 @@ def search_donation_box(request):
     paginator = Paginator(boxes, 5)
     page_number = request.GET.get("box_page")
     box_page_obj = paginator.get_page(page_number)
-
+    permissions = get_user_permissions(request.user)
     # ---------------------------------------
     # 🔁 RENDER PAGE
     # ---------------------------------------
     return render(request, "welcome.html", {
         "box_page_obj": box_page_obj,
         "box_query": box_query,
+        "permissions": permissions,
     })
 
 #----------------Globle End Search--------------
@@ -2015,11 +2035,39 @@ def donation_summary(request, id):
         "today": today,
     })
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+def donation_detail_ajax(request, donation_id):
+    donation = get_object_or_404(Donation, id=donation_id)
+
+    return JsonResponse({
+        "donor": donation.donor_id,
+        "display_name": donation.display_name,
+        "reference_name": donation.reference_name,
+
+        "donation_category": donation.donation_category_id,
+        "donation_sub_category": donation.donation_sub_category_id,
+        "declared_amount": donation.donation_amount_declared,
+        "paid_amount": donation.donation_amount_paid,
+
+        "payment_method": donation.payment_method_id,
+        "payment_status": donation.payment_status_id,
+        "donation_date": donation.donation_date.strftime("%Y-%m-%d") if donation.donation_date else "",
+
+        "place_of_donation": donation.place_of_donation,
+        "donation_received_by": donation.donation_received_by,
+        "description": donation.description,
+    })
+
 from django.db.models import Sum
 
 from django.http import JsonResponse
 from django.db.models import Sum
 from .models import Donation, DonorVolunteer
+
+from django.http import JsonResponse
+from django.db.models import Sum
 
 def donation_summary_ajax(request, donor_id):
     donations = Donation.objects.filter(donor_id=donor_id)
@@ -2040,8 +2088,23 @@ def donation_summary_ajax(request, donor_id):
         "total_declared": total_declared,
         "total_paid": total_paid,
         "remaining": remaining,
-        "last_category": last_donation.donation_category_id if last_donation else None,
-        "last_sub_category": last_donation.donation_sub_category_id if last_donation else None,
+
+        # 🔥 AUTO-SELECT FIELDS
+        "last_category": (
+            last_donation.donation_category_id if last_donation else None
+        ),
+        "last_sub_category": (
+            last_donation.donation_sub_category_id if last_donation else None
+        ),
+        "last_payment_method": (
+            last_donation.payment_method_id if last_donation else None
+        ),
+        "last_payment_status": (
+            last_donation.payment_status_id if last_donation else None
+        ),
+                # ✅ ADD THESE
+        "transaction_id": last_donation.transaction_id if last_donation else "",
+        "check_no": last_donation.check_no if last_donation else "",
     })
 
 
@@ -3681,3 +3744,77 @@ def select_donation_box(request):
             return redirect("select_donation_box")
 
     return render(request, "donation_box_input.html")
+
+# ✅ AJAX ENDPOINTS FOR PAYMENT MODAL AUTO-FILL
+from django.http import JsonResponse
+
+def get_donation_boxes_data(request):
+    """Returns all donation boxes for the modal dropdown"""
+    boxes = DonationBox.objects.filter(is_deleted=False).values(
+        'id', 'donation_id', 'location', 'box_size'
+    ).order_by('-created_at')
+    
+    return JsonResponse({
+        'boxes': list(boxes)
+    })
+
+
+def get_donation_box_details(request, box_id):
+    """Returns auto-fill data for a selected donation box"""
+    try:
+        box = DonationBox.objects.get(id=box_id, is_deleted=False)
+        
+        # Get last payment for this box to auto-fill payment method & status
+        last_payment = DonationPaymentBox.objects.filter(
+            donation_box=box,
+            is_deleted=False
+        ).order_by('-created_at').first()
+        
+        # Get last donation for payment method preferences
+        last_donation = Donation.objects.filter(
+            is_deleted=False
+        ).order_by('-created_at').first()
+        
+        data = {
+            'donation_id': box.donation_id,
+            'location': box.location,
+            'box_size': box.box_size,
+            'payment_id': f"PAY_{box.donation_id}_{DonationPaymentBox.objects.filter(donation_box=box).count() + 1:03d}",
+            'last_payment_method': last_payment.payment_method_id if last_payment else (last_donation.payment_method_id if last_donation else None),
+            'last_payment_status': last_payment.payment_status_id if last_payment else None,
+            'bank_name': last_payment.name_of_bank if last_payment else (last_donation.name_of_bank if last_donation else ''),
+            'branch': last_payment.branch if last_payment else (last_donation.branch if last_donation else ''),
+            'transaction_id': last_payment.transaction_id if last_payment else '',
+        }
+        
+        return JsonResponse(data)
+    
+    except DonationBox.DoesNotExist:
+        return JsonResponse({'error': 'Donation box not found'}, status=404)
+
+
+def get_donation_data(request, donation_id):
+    """Returns auto-fill data for a selected donation"""
+    try:
+        donation = Donation.objects.get(id=donation_id, is_deleted=False)
+        
+        data = {
+            'donation_id': donation.id,
+            'donor_name': f"{donation.donor.first_name} {donation.donor.last_name}",
+            'donor_pan': donation.donor.pan_number or '',
+            'display_name': donation.display_name or '',
+            'donation_amount_declared': str(donation.donation_amount_declared or 0),
+            'donation_amount_paid': str(donation.donation_amount_paid or 0),
+            'payment_method': donation.payment_method_id,
+            'payment_status': donation.payment_status_id,
+            'bank_name': donation.name_of_bank or '',
+            'branch': donation.branch or '',
+            'transaction_id': donation.transaction_id or '',
+            'check_no': donation.check_no or '',
+            'donation_date': str(donation.donation_date),
+        }
+        
+        return JsonResponse(data)
+    
+    except Donation.DoesNotExist:
+        return JsonResponse({'error': 'Donation not found'}, status=404)

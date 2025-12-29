@@ -11,7 +11,7 @@ def get_user_permissions(user):
     if user.is_superuser:
         return {
             "can_add": True,
-            "can_update": True,   # superuser can do everything
+            "can_edit": True,   # superuser can do everything
             "can_delete": True,
         }
 
@@ -23,7 +23,7 @@ def get_user_permissions(user):
         if role:
             return {
                 "can_add": role.can_add,
-                "can_update": role.can_edit,   # IMPORTANT: your model uses can_edit
+                "can_edit": role.can_edit,   # IMPORTANT: your model uses can_edit
                 "can_delete": role.can_delete,
             }
 
@@ -33,6 +33,6 @@ def get_user_permissions(user):
     # 3️⃣ Default → No permissions
     return {
         "can_add": False,
-        "can_update": False,
+        "can_edit": False,
         "can_delete": False,
     }
