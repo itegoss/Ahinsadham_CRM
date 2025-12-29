@@ -182,6 +182,7 @@
         <select name="donation_category" class="form-select" required aria-required="true">
     <option value="">-- Select Category --</option>
     {% for item in donation_categories %}
+    {% if item.donor_id == donor.id %}selected{% endif %}>
       <option value="{{ item.id }}">{{ item.lookup_name }}</option>
     {% endfor %}
   </select>
@@ -339,29 +340,82 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const checkbox = document.getElementById("togglePayment");
-    const paymentSection = document.getElementById("paymentSection");
+    const donationId = "{{ donation.id|default:'' }}";
+    if (!donationId) return;
 
-    checkbox.addEventListener("change", function () {
-        paymentSection.style.display = this.checked ? "block" : "none";
-    });
+    fetch(`/donation/detail/ajax/${donationId}/`)
+        .then(res => res.json())
+        .then(data => {
 
+            // Donor
+            $("#donor").val(data.donor).trigger("change");
+
+            // Names
+            $("#display_name").val(data.display_name);
+            $("input[name='reference_name']").val(data.reference_name);
+
+          
+$("select[name='donation_category']")
+                .val(data.donation_category);
+
+            $("select[name='donation_sub_category']")
+                .val(data.donation_sub_category);
+
+            $("input[name='donation_amount_declared']")
+                .val(data.declared_amount);
+
+            $("input[name='donation_amount_paid']")
+                .val(data.paid_amount);
+
+            // Payment
+            $("select[name='payment_method']")
+                .val(data.payment_method)
+                .trigger("change");
+
+            $("select[name='payment_status']")
+                .val(data.payment_status);
+
+            $("input[name='donation_date']")
+                .val(data.donation_date);
+
+            // Extra info
+            $("input[name='place_of_donation']")
+                .val(data.place_of_donation);
+
+            $("input[name='donation_received_by']")
+                .val(data.donation_received_by);
+
+            $("textarea[name='description']")
+                .val(data.description);
+        });
 });
 </script>
 
+
 <script>
 $(document).ready(function () {
-
+    const donorSelect = $("#donor");
     const declaredInput = $("input[name='donation_amount_declared']");
     const paidInput = $("input[name='donation_amount_paid']");
     const categorySelect = $("select[name='donation_category']");
     const subCategorySelect = $("select[name='donation_sub_category']");
+    const displayNameInput = $("#display_name");
+    const lockCheckbox = $("#lock_display_name");
+    const paymentSelect = $("#payment_method");
+    const paymentFields = $(".payment-field");
+const transactionInput = $("input[name='transaction_id']");
+const checkInput = $("input[name='check_no']");
 
     let remainingAmount = 0;
-    let lastCategory = null;
-    let lastSubCategory = null;
+    let lastCategory = "";
+    let lastSubCategory = "";
 
-    function loadDonationSummary(donorId) {
+    // ===============================
+    // DONOR CHANGE → LOAD SUMMARY
+    // ===============================
+    donorSelect.on("select2:select change", function () {
+
+        const donorId = this.value;
         if (!donorId) return;
 
         fetch("{% url 'donation_summary_ajax' 0 %}".replace("0", donorId))
@@ -371,55 +425,56 @@ $(document).ready(function () {
                 remainingAmount = parseFloat(data.remaining) || 0;
                 lastCategory = data.last_category || "";
                 lastSubCategory = data.last_sub_category || "";
-
-                // 🔹 Show summary
+ // ✅ NEW
+    transactionInput.val(data.transaction_id || "");
+    checkInput.val(data.check_no || "");
+                // Summary
                 $("#total-declared").text(data.total_declared || 0);
                 $("#total-paid").text(data.total_paid || 0);
                 $("#remaining-amount").text(remainingAmount);
                 $("#donation-summary").show();
 
-                // 🔹 AUTO-SELECT category & sub-category
+                // Auto-select category
                 if (lastCategory) {
                     categorySelect.val(lastCategory);
                 }
+
                 if (lastSubCategory) {
                     subCategorySelect.val(lastSubCategory);
                 }
 
-                evaluateDeclaredAmount();
-            })
-            .catch(err => console.error("Summary error:", err));
-    }
+                // Declared amount logic
+                const selectedCategory = categorySelect.val();
+                const selectedSubCategory = subCategorySelect.val();
 
-    // 🧠 Declared Amount decision
-    function evaluateDeclaredAmount() {
+                if (
+                    remainingAmount > 0 &&
+                    selectedCategory == lastCategory &&
+                    selectedSubCategory == lastSubCategory
+                ) {
+                    declaredInput
+                        .prop("readonly", true)
+                        .attr("placeholder", "Declared amount already exists for this category");
+                } else {
+                    declaredInput.prop("readonly", false);
+                }
+            });
+    });
 
-        const selectedCategory = categorySelect.val();
-        const selectedSubCategory = subCategorySelect.val();
+    // ===============================
+    // CATEGORY CHANGE → RECHECK DECLARED
+    // ===============================
+    categorySelect.on("change", function () {
+        declaredInput.prop("readonly", false);
+    });
 
-        if (
-            remainingAmount === 0 ||              // fully paid
-            !lastCategory ||                      // new donor
-            selectedCategory != lastCategory ||   // category changed
-            selectedSubCategory != lastSubCategory
-        ) {
-            declaredInput.prop("readonly", false);
-            declaredInput.val("");
-        } else {
-            declaredInput.prop("readonly", true);
-            declaredInput.val("");
-            declaredInput.attr(
-                "placeholder",
-                "Declared amount already exists for this category"
-            );
-        }
-    }
+    subCategorySelect.on("change", function () {
+        declaredInput.prop("readonly", false);
+    });
 
-    // 🔁 Re-evaluate when category changes
-    categorySelect.on("change", evaluateDeclaredAmount);
-    subCategorySelect.on("change", evaluateDeclaredAmount);
-
-    // 🚫 Prevent paid > remaining
+    // ===============================
+    // PAID AMOUNT VALIDATION
+    // ===============================
     paidInput.on("input", function () {
         const paidValue = parseFloat(this.value) || 0;
         if (remainingAmount > 0 && paidValue > remainingAmount) {
@@ -428,88 +483,51 @@ $(document).ready(function () {
         }
     });
 
-    // Donor select (Select2)
-    $("#donor").on("select2:select", function (e) {
-        loadDonationSummary(e.params.data.id);
+    // ===============================
+    // DISPLAY NAME AUTO-FILL
+    // ===============================
+    donorSelect.on("select2:select change", function (e) {
+        const text = $("#donor option:selected").text().trim();
+        displayNameInput.val(text);
     });
 
-    // Fallback
-    $("#donor").on("change", function () {
-        loadDonationSummary(this.value);
+    lockCheckbox.on("change", function () {
+        displayNameInput.prop("readonly", this.checked);
     });
 
-});
-</script>
+    displayNameInput.prop("readonly", lockCheckbox.is(":checked"));
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const donorSelect = $("#donor");   // jQuery for Select2
-    const displayNameInput = document.getElementById("display_name");
-    const lockCheckbox = document.getElementById("lock_display_name");
-
-    // 🔥 Select2 change event (THIS is the key fix)
-    donorSelect.on("select2:select", function (e) {
-        const selectedText = e.params.data.text;
-        displayNameInput.value = selectedText.trim();
-    });
-
-    // Also handle normal change (fallback)
-    donorSelect.on("change", function () {
-        const selectedText = $("#donor option:selected").text();
-        displayNameInput.value = selectedText.trim();
-    });
-
-    // Lock / unlock typing
-    lockCheckbox.addEventListener("change", function () {
-        displayNameInput.readOnly = this.checked;
-    });
-
-    // Initial state
-    displayNameInput.readOnly = lockCheckbox.checked;
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const paymentSelect = document.getElementById("payment_method");
-    const paymentFields = document.querySelectorAll(".payment-field");
-
-    if (!paymentSelect || paymentFields.length === 0) return;
-
+    // ===============================
+    // PAYMENT METHOD SHOW/HIDE
+    // ===============================
     function togglePaymentFields() {
-        const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
+        const showFor = ["cheque", "neft", "rtgs", "bank transfer"];
+        const selectedText = paymentSelect.find("option:selected")
+            .text().trim().toLowerCase();
 
-        const selectedText = paymentSelect.options[
-            paymentSelect.selectedIndex
-        ].text.trim().toLowerCase();
-
-        paymentFields.forEach(el => {
-            el.style.display = showFor.includes(selectedText)
-                ? "flex"   // Bootstrap row uses flex
-                : "none";
+        paymentFields.each(function () {
+            $(this).css("display",
+                showFor.includes(selectedText) ? "flex" : "none"
+            );
         });
     }
 
-    // Run once on page load (important for edit forms)
+    paymentSelect.on("change", togglePaymentFields);
     togglePaymentFields();
 
-    // Run on change
-    paymentSelect.addEventListener("change", togglePaymentFields);
+    // ===============================
+    // SELECT2 INIT
+    // ===============================
+    donorSelect.select2({
+        placeholder: "-- Select or Type Donor --",
+        allowClear: true,
+        tags: true,
+        width: "100%"
+    });
+
 });
 </script>
 
-<script>
-$(document).ready(function () {
-    $('#donor').select2({
-        placeholder: "-- Select or Type Donor --",
-        allowClear: true,
-        tags: true,        // ✅ typing allowed
-        width: '100%'
-    });
-});
-</script>
 
 {% endblock %}
 

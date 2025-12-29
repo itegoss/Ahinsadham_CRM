@@ -83,8 +83,14 @@ path(
     views.donation_summary,
     name="donation_summary"
 ),
-
-
+# ✅ AJAX ENDPOINTS FOR AUTO-FILL
+path('donation-boxes-data/', views.get_donation_boxes_data, name='get_donation_boxes_data'),
+path('get-donation-box-details/<int:box_id>/', views.get_donation_box_details, name='get_donation_box_details'),
+path('get-donation-data/<int:donation_id>/', views.get_donation_data, name='get_donation_data'),
+path(
+    "donation/detail/ajax/<int:donation_id>/",
+    views.donation_detail_ajax,
+    name="donation_detail_ajax"
+)
 
 ]
-

@@ -840,6 +840,26 @@ td {
 .card{
     --bs-card-bg: none !important;
 }
+
+.column-search {
+    width: 120px;
+    padding: 4px 0;
+    border: none !important;
+    border-bottom: 2px solid #28a745 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+}
+.column-search:focus {
+    border-bottom: 2px solid #28a745 !important;
+}
+.column-search::placeholder {
+    color: #6c757d !important;
+}
 </style>
 
 <div class="dashboard-container">
@@ -1195,27 +1215,6 @@ td {
         </tr>
       </thead>
       <tbody>
-        <style>
-.column-search {
-    width: 120px;
-    padding: 4px 0;
-    border: none !important;
-    border-bottom: 2px solid #28a745 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-}
-.column-search:focus {
-    border-bottom: 2px solid #28a745 !important;
-}
-.column-search::placeholder {
-    color: #6c757d !important;
-}
-</style>
         <tr class="column-search-row">
   <td>
     <div class="d-flex justify-content-between">
@@ -2967,7 +2966,6 @@ width: 35%;
 
 <!-- ---------Donation box module-------- -->
 
-
  <div class="tab-content"  id="Donation Box Module">
   <div class="card border-0">
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
@@ -3820,7 +3818,7 @@ width: 35%;
 {% endif %}
           </div>
         </td>
-                <td>{{ donation.id }}</td>
+        <td>{{ donation.id }}</td>
                                 <td>{{ donation.receipt_id }}</td>
         <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
         <td>{{ donation.donor.city }}</td>
@@ -3922,7 +3920,7 @@ width: 35%;
         <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="18" type="text  " placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
