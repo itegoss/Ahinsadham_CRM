@@ -43,7 +43,7 @@
 #occupation[style*="display: none"],
 #address[style*="display: none"],
 #idproof[style*="display: none"],
-#donor_box_row[style*="display: none"],
+#donor_box_wrapper[style*="display: none"],
 #org[style*="display: none"] {
     display: none !important;
 }
@@ -70,6 +70,47 @@
 
 
 <div class="container mt-4 mb-5">
+
+<input
+    type="text"
+    class="form-control live-search mb-2"
+    placeholder="Search donation boxes..."
+    data-target="boxTable"
+>
+
+<table class="table">
+    <tbody id="boxTable">
+        <tr><td>Donation Box Pune</td></tr>
+                <tr><td>Donnation Box Pune</td></tr>
+        <tr><td>Varsha Box</td></tr>
+        <tr><td>Mumbai Box</td></tr>
+    </tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".live-search").forEach(input => {
+
+        input.addEventListener("input", function () {
+
+            const query = this.value.toLowerCase().trim();
+            const targetId = this.dataset.target;
+            const rows = document.querySelectorAll(`#${targetId} tr`);
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? "" : "none";
+            });
+        });
+
+    });
+
+});
+</script>
+
+
+
     <div class="card shadow-lg">
         <div class="text-center mb-4 pt-3">
             <h3 class="fw-bold">Add Donor / Volunteer</h3>
@@ -94,7 +135,7 @@
                             {% endfor %}
                         </select>
                     </div>
-<div class="col-md-4" id="donor_box_wrapper" style="display:none;">
+<div class="col-md-4" id="donor_box_wrapper" style="display: none;">
     <label class="form-label">Donor Box</label>
     <select name="donor_box" class="form-select">
         <option value="">Select Donor Box</option>
@@ -509,8 +550,8 @@
 </div>
 
     <div class="col-md-4">
-        <label class="form-label">Email <span style="color: #d9534f;">*</span></label>
-        <input type="email" name="email" class="form-control" required aria-required="true">
+        <label class="form-label">Email </label>
+        <input type="email" name="email" class="form-control">
     </div>
 </div>
 
@@ -775,7 +816,7 @@
                         </div>
                         <hr>
 
-                <div class="row g-3 mb-4" id="business">
+                <div class="row g-3 mb-4" id="business" style="display: none;">
 
                     <div class="col-md-4">
                         <label class="form-label">Business Name</label>
@@ -857,8 +898,8 @@
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Upload ID Proof <span style="color: #d9534f;">*</span></label>
-        <input type="file" name="id_proof_image" class="form-control" required aria-required="true">
+        <label class="form-label">Upload ID Proof </label>
+        <input type="file" name="id_proof_image" class="form-control">
     </div>
 
 </div>
@@ -872,8 +913,8 @@
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Upload PAN Card <span style="color: #d9534f;">*</span></label>
-        <input type="file" name="pan_card_image" class="form-control" required aria-required="true">
+        <label class="form-label">Upload PAN Card </label>
+        <input type="file" name="pan_card_image" class="form-control">
     </div>
 </div>
                 <div class="action-buttons">
@@ -889,65 +930,90 @@
         </div>
     </div>
 </div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     const personType = document.getElementById("person_type");
+
+    // Base sections (always visible)
+    const baseSections = [
+        "persontype",
+        "personaldetails",
+        "idproof",
+        "address",
+        "occupation",
+        "designation"
+    ];
+
+    // Conditional sections
+    const department = document.getElementById("department");
+    const position = document.getElementById("position");
+    const business = document.getElementById("business");
     const donorBox = document.getElementById("donor_box_wrapper");
+    const org = document.getElementById("org");
 
     function normalize(text) {
         return text.toLowerCase().replace(/[\s\-_]/g, "");
     }
 
-    function toggleDonorBox() {
+    function hideAllConditional() {
+        if (department) department.style.display = "none";
+        if (position) position.style.display = "none";
+        if (business) business.style.display = "none";
+        if (donorBox) donorBox.style.display = "none";
+        if (org) org.style.display = "none";
+    }
+
+    function showBaseSections() {
+        baseSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "block";
+        });
+    }
+
+    function updateVisibility() {
         const selectedOption = personType.options[personType.selectedIndex];
         const text = selectedOption ? normalize(selectedOption.text) : "";
 
-        if (text === "donationboxowner" || text === "donorboxowner") {
-            donorBox.style.display = "block";
-        } else {
-            donorBox.style.display = "none";
+        // Always show base
+        showBaseSections();
+
+        // Hide everything first
+        hideAllConditional();
+
+        if (!text) return;
+
+        if (text === "employee") {
+            if (department) department.style.display = "block";
         }
+        else if (text === "committeemember") {
+            if (position) position.style.display = "block";
+        }
+        else if (text === "business") {
+            if (business) business.style.display = "block";
+        }
+        else if (text === "organization") {
+            if (org) org.style.display = "block";
+        }
+        else if (text === "donationboxowner" || text === "donorboxowner") {
+            // ✅ THIS IS WHAT YOU WANT
+            if (business) business.style.display = "block";
+            if (donorBox) donorBox.style.display = "block";
+        }
+        // Donor / Volunteer → base only
     }
 
-    personType.addEventListener("change", toggleDonorBox);
+    // Init
+    updateVisibility();
 
-    // run once on load (edit page)
-    toggleDonorBox();
+    // Change listener
+    personType.addEventListener("change", updateVisibility);
 });
 </script>
 
 <!-- ================= AGE AUTO CALCULATION ================= -->
- <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const personTypeSelect = document.getElementById("person_type");
-    const donorBoxRow = document.getElementById("donor_box_row");
-
-    function normalize(text) {
-        return text
-            .toLowerCase()
-            .replace(/[\s\-_]/g, ""); // remove space, hyphen, underscore
-    }
-
-    function toggleDonorBox() {
-        const selectedOption = personTypeSelect.options[personTypeSelect.selectedIndex];
-        const selectedText = selectedOption ? selectedOption.text : "";
-
-        const normalizedText = normalize(selectedText);
-
-        if (normalizedText === "donorboxowner") {
-            donorBoxRow.style.display = "block";
-        } else {
-            donorBoxRow.style.display = "none";
-        }
-    }
-
-    personTypeSelect.addEventListener("change", toggleDonorBox);
-
-    // Run once on page load (edit form case)
-    toggleDonorBox();
-});
-</script>
+ 
 
 <script>
 document.getElementById("date_of_birth").addEventListener("change", function () {
@@ -1008,12 +1074,10 @@ $(document).ready(function () {
 </script>
 
 
-<script>
+<!-- <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     const personType = document.getElementById("person_type");
-
-    // Base sections (always visible)
     const baseSections = [
         "persontype",
         "personaldetails",
@@ -1023,11 +1087,10 @@ document.addEventListener("DOMContentLoaded", function () {
         "designation"
     ];
 
-    // Conditional sections
     const department = document.getElementById("department");
     const position = document.getElementById("position") || document.getElementById("department");
     const business = document.getElementById("business");
-    const donorBox = document.getElementById("donor_box_row");
+    const donorBox = document.getElementById("donor_box_wrapper");
     const org = document.getElementById("org");
 
     function hideAllConditional() {
@@ -1035,7 +1098,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (position) position.style.display = "none";
         if (business) business.style.display = "none";
         if (donorBox) donorBox.style.display = "none";
-        if (org) org.style.display = "none";   // 👈 always hidden by default
+        if (org) org.style.display = "none"; 
     }
 
     function showBaseSections() {
@@ -1048,10 +1111,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateVisibility() {
         const selectedText = personType.options[personType.selectedIndex]?.text.trim();
 
-        // Always show base
         showBaseSections();
 
-        // Hide all conditional first
         hideAllConditional();
 
         if (!selectedText) return;
@@ -1066,23 +1127,20 @@ document.addEventListener("DOMContentLoaded", function () {
             if (business) business.style.display = "block";
         }
         else if (selectedText === "Organization") {
-            if (org) org.style.display = "block";   // ✅ ONLY Organization
+            if (org) org.style.display = "block";  
         }
-        else if (selectedText === "Donation Box Owner") {
+        else if (selectedText === "Donation-Box-Owner") {
             if (business) business.style.display = "block";
             if (donorBox) donorBox.style.display = "block";
         }
-        // Donor / Volunteer → only base fields visible
     }
 
-    // Init on page load
     updateVisibility();
 
-    // Change listener
     personType.addEventListener("change", updateVisibility);
 
 });
-</script>
+</script> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 

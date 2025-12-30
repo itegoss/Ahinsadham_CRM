@@ -1171,8 +1171,8 @@ td {
     <div class="card-body">
       <h5 style="color:#1b5e20">Category/Lookup Type</h5>
 <div class="search-container d-flex align-items-center">
-  <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
-    <input type="text"name="lookup_query"class="form-control search-input me-2"placeholder="🔍 Search..."value="{{ lookup_query|default:'' }}">
+  <form method="GET" action="{% url 'search_lookup_type' %}"  class="d-flex align-items-center w-100">
+    <input type="text"name="lookup_query" data-target="Lookup" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ lookup_query|default:'' }}">
   </form>
 </div>
 <style>
@@ -1213,9 +1213,7 @@ td {
               <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="9">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-        <tr class="column-search-row">
+                <tr class="column-search-row">
   <td>
     <div class="d-flex justify-content-between">
 {% if permissions.can_add %}
@@ -1240,6 +1238,8 @@ td {
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
+      </thead>
+      <tbody id="Lookup">
 {% for lt in lookup_page_obj %}
         <tr>
           <!-- <td>
@@ -1325,12 +1325,10 @@ td {
               <th class="sortable" data-col="6">Updated By<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Updated On<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="8">is Deleted<span class="sort-icon">⬍</span></th>
-                            <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Deleted On<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-<tr class="column-search-row">
+        <tr class="column-search-row">
   <td>
    <div class="d-flex justify-content-between">
  {% if permissions.can_add %}
@@ -1355,6 +1353,9 @@ td {
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
 </tr> 
+      </thead>
+      <tbody id="Lookup">
+
    {% for lt in lookup_page_obj %}
         <tr>
           <!-- <td>
@@ -1472,7 +1473,7 @@ table th, table td {
     <div class="search-container">
   <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100" role="search">
     <input 
-      type="text"name="sub_lookup_query" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ sub_lookup_query|default:'' }}">
+      type="text"name="sub_lookup_query" data-target="LookupType" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ sub_lookup_query|default:'' }}">
   </form>
 </div>
  <!-- 📄 Search Results -->
@@ -1498,9 +1499,7 @@ table th, table td {
             <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="8">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-<tr class="column-search-row">
+        <tr class="column-search-row">
 <td>
       <div class="d-flex justify-content-between">
         {% if permissions.can_add %}
@@ -1530,6 +1529,9 @@ table th, table td {
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
         </tr>
+      </thead>
+      <tbody id="LookupType">
+
 
 {% for l in lookup_table_obj %}
             <tr>
@@ -1599,9 +1601,7 @@ table th, table td {
             <th class="sortable" data-col="8">Deleted On<span class="sort-icon">⬍</span></th>
 
         </tr>
-      </thead>
-      <tbody>
-        <tr class="column-search-row">
+                <tr class="column-search-row">
 <td>
     <div class="d-flex justify-content-between">
       {% if permissions.can_add %}
@@ -1634,6 +1634,8 @@ table th, table td {
         <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
         </tr>
 
+      </thead>
+      <tbody id="LookupType">
 {% for l in lookup_table_obj %}           
  <tr>
           <td>
@@ -1684,21 +1686,6 @@ table th, table td {
       </tbody>
     </table>
 </div>
-<style>
-.scrollable-table {
-  overflow-y: auto;
-  overflow-x: auto; /* Horizontal scroll */
-}
-table th, table td {
-  white-space: nowrap; /* Prevent wrapping */
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #e9f2ff;
-  z-index: 5;
-}
-</style>
       {% endif %}
     </div>
 <!-- ✅ Lookups Pagination Controls -->
@@ -1752,23 +1739,9 @@ table th, table td {
     <div class="search-container">
 <form method="GET" action="{% url 'search_users' %}" class="d-flex align-items-center w-100">
     <input type="hidden" name="active_tab" value="user">
-
-    <input 
-      type="text" 
-      name="user_query" 
-      class="form-control search-input me-2 shadow-none" 
-      placeholder="🔍 Search..."
-      value="{{ user_query|default:'' }}"
-    >
+    <input type="text" name="user_query" data-target="users" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ user_query|default:'' }}">
 </form>
 </div>
-<!-- {% if messages %}
-  <ul style="color: red; text-align: center; list-style: none; padding: 0;">
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %} -->
  <!-- 📄 Search Results -->
       {% if query %}
         <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
@@ -1794,9 +1767,7 @@ table th, table td {
           <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-        
+                
         <tr class="column-search-row">
           <td> 
 <form method="GET" action="{% url 'search_users' %}"  style="margin: 0; padding: 0;">
@@ -1821,6 +1792,8 @@ table th, table td {
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
 
+      </thead>
+      <tbody id="users">
         {% for user in user_page_obj %}
         <tr>
           <td>
@@ -1865,10 +1838,9 @@ table th, table td {
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
         {% endfor %}
-      </tbody>
+      </tbody id="users">
     </table>
   </form>
-
 </div>
       {% elif query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
@@ -1888,9 +1860,7 @@ table th, table td {
           <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-        <tr class="column-search-row">
+                <tr class="column-search-row">
       <td>
 <form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
@@ -1911,7 +1881,8 @@ table th, table td {
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
-
+      </thead>
+      <tbody>
         {% for user in user_page_obj %}
         <tr>
           <td>
@@ -2023,7 +1994,7 @@ table th, table td {
     <div class="card-body">
 <div class="search-container">
 <form method="GET" action="{% url 'search_roles' %}" class="d-flex align-items-center w-100" role="search">
-<input type="text"  name="query1" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query1|default:'' }}">
+<input type="text"  name="query1" data-target="roless" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query1|default:'' }}">
 </form>
 </div>
 <style>
@@ -2075,9 +2046,7 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Deleted On<span class="sort-icon">⬍</span></th>
       </tr>
-    </thead>
-    <tbody>
-      <tr class="column-search-row">
+            <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
 
@@ -2117,7 +2086,8 @@ width: 35%;
     <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
         <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
       </tr>
-
+    </thead>
+    <tbody id="roless">
       {% for access in roles_page_obj %}
       <tr>
         <td>
@@ -2197,11 +2167,10 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
-    </thead>
-    <tbody>
-      <tr class="column-search-row">
+                  <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
+
     <!-- ➕ Add Button (Green Icon Only) -->
     <a href="{% url 'access_control' %}" 
        style="font-size: 24px; color: #16a34a; text-decoration: none;">
@@ -2238,7 +2207,8 @@ width: 35%;
     <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
         <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
       </tr>
-
+    </thead>
+    <tbody id="roless">
       {% for access in roles_page_obj %}
       <tr>
         <td>
@@ -2390,10 +2360,7 @@ width: 35%;
         right:12px;
         cursor:pointer;
         font-size:22px;
-        color:#444;
-      ">
-      ✖
-    </span>
+        color:#444;">✖</span>
 
     <!-- 🔹 Title -->
     <div id="imageTitle"
@@ -2401,8 +2368,7 @@ width: 35%;
            font-weight:600;
            font-size:14px;
            color:#0c6d34;
-           margin-bottom:10px;
-         ">
+           margin-bottom:10px;">
     </div>
 
     <!-- 🖼 Image -->
@@ -2411,16 +2377,13 @@ width: 35%;
            max-width:100%;
            max-height:65vh;
            object-fit:contain;
-           border-radius:6px;
-         ">
+           border-radius:6px;">
 
     <!-- ⏮ ⏭ Controls -->
     <div style="margin-top:12px; display:flex; justify-content:center; gap:15px;">
       <button class="nav-btn" onclick="prevImg()">⟪</button>
 <button class="nav-btn" onclick="nextImg()">⟫</button>
-
     </div>
-
   </div>
 </div>
 <style>
@@ -2455,7 +2418,7 @@ width: 35%;
     <div class="card-body">
   <div class="search-container">
   <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100" role="search">
-    <input type="text" name="q" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query|default:'' }}">
+    <input type="text" name="q" data-target="donorvolunteer" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query|default:'' }}">
     {% if query %}
       <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
     {% endif %}
@@ -2502,9 +2465,7 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="27">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
-    </thead>
-    <tbody>
-      <tr class="column-search-row">
+            <tr class="column-search-row">
       <td>
 <div class="d-flex justify-content-between">
   {% if permissions.can_add %}
@@ -2553,7 +2514,8 @@ width: 35%;
         <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
           <td><input  class="column-search" data-col="30" type="text" placeholder="Search..."></td> 
       </tr>
-
+    </thead>
+    <tbody id="donorvolunteer">
       <!-- 🧾 Paginated Data -->
       {% for donation in page_obj %}
       <tr>
@@ -2679,9 +2641,7 @@ width: 35%;
         <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
         <th></th>
       </tr>
-    </thead>
-    <tbody>
-      <!-- 🔍 Filter Row -->
+            <!-- 🔍 Filter Row -->
       <tr class="column-search-row">
       <td>
   <div class="d-flex justify-content-between">
@@ -2732,6 +2692,9 @@ width: 35%;
     <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
         <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
       </tr>
+    </thead>
+    <tbody id="donorvolunteer">
+
       {% for donation in page_obj %}
       <tr>
         <td>
@@ -2860,12 +2823,10 @@ width: 35%;
     <a href="?donor_page={{ donor_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
 </div>
-
-  </div>
+</div>
 </div>
 
 <!-- ----------- Visitor Management System ------------------ -->
-
 
 <div class="tab-content" id="Visitor Management System">
             <div class="content-header">
@@ -2880,7 +2841,6 @@ width: 35%;
 </div>
 
 <!-- ----------- Vendor Management System ------------------ -->
-
 
 <div class="tab-content" id="Vendor Management System">
             <div class="content-header">
@@ -2976,7 +2936,7 @@ width: 35%;
       <h5 style="color:#1b5e20">Danpeti Donation</h5>
 <div class="search-container d-flex align-items-center">
   <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
-    <input type="text" name="payments_query"class="form-control search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
+    <input type="text" name="payments_query" data-target="donation" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
   </form>
 </div>
       <!-- 🧍‍♂️ User Table -->
@@ -3007,9 +2967,7 @@ width: 35%;
               <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-        <tr class="column-search-row">
+                <tr class="column-search-row">
   <td>
 <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_add %}
@@ -3043,7 +3001,10 @@ width: 35%;
      <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-</tr>        
+</tr>
+      </thead>
+      <tbody id="donation">
+        
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
@@ -3163,9 +3124,7 @@ width: 35%;
               <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-        <tr class="column-search-row">  
+                <tr class="column-search-row">  
       <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3205,6 +3164,9 @@ width: 35%;
     <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
 
         </tr> 
+      </thead>
+      <tbody id="donation">
+
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
@@ -3395,7 +3357,7 @@ width: 35%;
       <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100" role="search">
-    <input type="text" name="box_query" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ box_query|default:'' }}">
+    <input type="text" name="box_query" data-target="boxx" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ box_query|default:'' }}">
   </form>
 </div>
     {% if box_page_obj %}
@@ -3418,9 +3380,7 @@ width: 35%;
                     <th class="sortable" data-col="11">Deleted By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-      <tbody>
-  <tr class="column-search-row">
+          <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3452,7 +3412,9 @@ width: 35%;
     <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-        </tr>  
+        </tr> 
+      </thead>
+      <tbody id="boxx"> 
         {% for box in box_page_obj  %}
         <tr>
           <td>
@@ -3540,10 +3502,7 @@ width: 35%;
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
         </tr>
-      </thead>
-
-      <tbody>
-           <tr class="column-search-row">
+                   <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3577,6 +3536,10 @@ width: 35%;
         <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
         </tr>
         
+      </thead>
+
+      <tbody id="boxx">
+
         {% for box in box_page_obj %}
         <tr>
           <td>
@@ -3687,8 +3650,6 @@ width: 35%;
   {% endif %}
 
 </div>
-
-
 </div>
 </div>
 
@@ -3701,7 +3662,7 @@ width: 35%;
     <div class="card-body">
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100" role="search">
-    <input type="text" name="q" class="form-control search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query3|default:'' }}">
+    <input type="text" name="q" data-target="alldonations" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query3|default:'' }}">
   </form>
 </div>
       {% if donation_page_obj %}
@@ -3735,9 +3696,7 @@ width: 35%;
         <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
                 <th class="sortable" data-col="18">Verified By<span class="sort-icon">⬍</span></th>
       </tr>
-    </thead>
-    <tbody>
-      <tr class="column-search-row">
+            <tr class="column-search-row">
       <td>
         <div class="d-flex justify-content-between">
           {% if permissions.can_add %}
@@ -3771,12 +3730,14 @@ width: 35%;
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-                <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
-                <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
         <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
       </tr>
+    </thead>
+    <tbody id="alldonations">
       <!-- 🧾 Paginated Donation Records -->
       {% for donation in donation_page_obj %}
       <tr>
@@ -3885,8 +3846,6 @@ width: 35%;
               <th class="sortable" data-col="18">Verified by<span class="sort-icon">⬍</span></th>
 
       </tr>
-    </thead>
-    <tbody>
       <tr class="column-search-row">
       <td>
         <div class="d-flex justify-content-between">
@@ -3928,6 +3887,8 @@ width: 35%;
         <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
         <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
       </tr>
+    </thead>
+    <tbody id="alldonations">
       <!-- 🧾 Paginated Donation Records -->
     {% for donation in donation_page_obj %}
 <tr>
@@ -3978,12 +3939,12 @@ width: 35%;
 
       {% endif %}  {# ✅ THIS WAS MISSING #}
 {% else %}
-                <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
     </div>
   </td>
   <td>{{ donation.id }}</td>
-                                  <td>{{ donation.receipt_id }}</td>
+  <td>{{ donation.receipt_id }}</td>
   <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
   <td>{{ donation.donor.city }}</td>
   <td>{{ donation.donation_amount_paid }}</td>
@@ -4011,7 +3972,7 @@ width: 35%;
 </td>
   <td>{{ donation.deleted_by }}</td>
   <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
-                  <td>{{ donation.verified_by }}</td>
+  <td>{{ donation.verified_by }}</td>
 </tr>
 {% empty %}
 <tr>
@@ -4020,7 +3981,6 @@ width: 35%;
   </td>
 </tr>
 {% endfor %}
-
     </tbody>
   </table>
 </div>
@@ -4191,6 +4151,35 @@ width: 35%;
 </div>
 <!-- -----------Javascript-------------- -->
  
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".live-search").forEach(input => {
+
+        // 🔹 Live search (already working)
+        input.addEventListener("input", function () {
+            const query = this.value.toLowerCase().trim();
+            const targetId = this.dataset.target;
+            const rows = document.querySelectorAll(`#${targetId} tr`);
+
+            rows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query)
+                    ? ""
+                    : "none";
+            });
+        });
+
+        // 🔹 PREVENT ENTER KEY
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();   // ❌ stop form submit
+            }
+        });
+
+    });
+
+});
+</script>
 
 
 
