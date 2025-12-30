@@ -324,11 +324,13 @@ def search_lookup_type(request):
     paginator = Paginator(lookup_types, 5)
     page_number = request.GET.get("lt_page")
     lookup_types_page = paginator.get_page(page_number)
+    permissions = get_user_permissions(request.user)
 
     return render(request, "welcome.html", {
         "lookup_page_obj": lookup_types_page,
         "lookup_query": lookup_query,
         "active_tab": active_tab,
+        "permissions":permissions
     })
 
 
@@ -407,11 +409,13 @@ def search_lookup_table(request):
         return response
     paginator = Paginator(lookups, 5)
     lookup_table_obj = paginator.get_page(request.GET.get("lookup_table_page"))
+    permissions = get_user_permissions(request.user)
 
     return render(request, "welcome.html", {
         "lookup_table_obj": lookup_table_obj,
         "sub_lookup_query": sub_lookup_query,
         "active_tab": active_tab,
+        "permissions":permissions
     })
 
 from .models import User,UserModuleAccess,UserRole
@@ -450,11 +454,13 @@ def search_users(request):
     paginator = Paginator(users, 10)
     page = request.GET.get("user_page")
     user_page_obj = paginator.get_page(page)
+    permissions = get_user_permissions(request.user)
 
     return render(request, "welcome.html", {
         "user_page_obj": user_page_obj,
         "user_query": query,
         "active_tab": active_tab,
+        "permissions":permissions
     })
 
 
@@ -562,11 +568,13 @@ def search_roles(request):
     page_number = request.GET.get('roles_page')
     roles_page_obj = role_paginator.get_page(page_number)
     roles_page_obj.query = query1
+    permissions = get_user_permissions(request.user)
 
     return render(request, 'welcome.html', {
         'roles_page_obj': roles_page_obj,
         'query1': query1,
         'active_tab': active_tab,
+        "permissions":permissions
     })
 
 from .models import LookupType
@@ -826,10 +834,12 @@ def search_donor_volunteer(request):
 
     paginator = Paginator(donorvolunteer, 10)
     page_obj = paginator.get_page(request.GET.get('donor_page'))
+    permissions = get_user_permissions(request.user)
 
     return render(request, "welcome.html", {
         "page_obj": page_obj,
         "query2": query2 if query2 else "",
+        "permissions": permissions
     })
 
 from django.db.models import Value
@@ -2642,12 +2652,10 @@ def add_donation_payment(request):
 
 @login_required
 def add_donation_box(request):
-
     if request.method == "POST":
 
         key_id = request.POST.get("key_id")
         box_size = request.POST.get("box_size")     # small / medium / large
-        location = request.POST.get("location")
         status = request.POST.get("status")
         qr_code = request.FILES.get("qr_code")      # optional
 
@@ -2655,7 +2663,7 @@ def add_donation_box(request):
         box = DonationBox(
             key_id=key_id,
             box_size=box_size,
-            location=location,
+            
             status=status,
             qr_code=qr_code if qr_code else None,
             uploaded_by=request.user,
