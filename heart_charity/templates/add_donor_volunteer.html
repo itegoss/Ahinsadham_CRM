@@ -1,42 +1,34 @@
 {% extends "base.html" %}
 {% block title %}Add Donor / Volunteer{% endblock %}
-
 {% block content %}
 <style>
-/* ================= ZIG-ZAG LAYOUT FIX ================= */
-
-/* Restore Bootstrap grid behavior */
+.btn-submit {
+    background: linear-gradient(90deg, #1a7a42, #2aa85b);
+    color: white;
+    box-shadow: 0 4px 12px rgba(32, 129, 70, 0.25);
+}
 .row {
     margin-left: -12px;
     margin-right: -12px;
 }
-
 [class*="col-"] {
     padding-left: 12px;
     padding-right: 12px;
 }
-
-/* Ensure fields flow left-right properly */
 @media (min-width: 768px) {
     .col-md-3 {  float: left; }
     .col-md-4 {  float: left; }
     .col-md-6 { width: 50%; float: left; }
 }
-
-/* Clear floats after each row */
 .row::after {
     content: "";
     display: table;
     clear: both;
 }
-
-/* Inputs full width */
 .form-control,
 .form-select {
     width: 100%;
 }
-
-/* JS visibility must win */
 #department[style*="display: none"],
 #business[style*="display: none"],
 #designation[style*="display: none"],
@@ -48,8 +40,6 @@
     display: none !important;
 }
 </style>
-
-
 <style>
     .card { background: #f2fff4 !important; border-radius: 12px; }
     .form-control, .form-select { border-radius: 8px; }
@@ -67,61 +57,15 @@
     {% endfor %}
 </div>
 {% endif %}
-
-
 <div class="container mt-4 mb-5">
-
-<input
-    type="text"
-    class="form-control live-search mb-2"
-    placeholder="Search donation boxes..."
-    data-target="boxTable"
->
-
-<table class="table">
-    <tbody id="boxTable">
-        <tr><td>Donation Box Pune</td></tr>
-                <tr><td>Donnation Box Pune</td></tr>
-        <tr><td>Varsha Box</td></tr>
-        <tr><td>Mumbai Box</td></tr>
-    </tbody>
-</table>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    document.querySelectorAll(".live-search").forEach(input => {
-
-        input.addEventListener("input", function () {
-
-            const query = this.value.toLowerCase().trim();
-            const targetId = this.dataset.target;
-            const rows = document.querySelectorAll(`#${targetId} tr`);
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(query) ? "" : "none";
-            });
-        });
-
-    });
-
-});
-</script>
-
-
-
     <div class="card shadow-lg">
         <div class="text-center mb-4 pt-3">
             <h3 class="fw-bold">Add Donor / Volunteer</h3>
             <p class="text-muted">Fill out details to create a donor/volunteer record</p>
         </div>
-
         <div class="card-body px-4">
-
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-
                 <!-- ===================================== PERSON TYPE ===================================== -->
                 <h5 class="section-title">Person Type</h5>
                 <hr>
@@ -144,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
         {% endfor %}
     </select>
 </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Referred By</label>
                         <select name="referred_by" id="referred_by" class="form-select select2-search">
@@ -155,13 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         </select>
                     </div>
                 </div>
-
                 <!-- ===================================== PERSONAL DETAILS ===================================== -->
                 <h5 class="section-title">Personal Details</h5>
                 <hr>
 <div class="row g-3 mb-4 align-items-end">
-
-    <!-- Salutation (small but aligned) -->
     <div class="col-md-1">
         <label class="form-label">Sal.</label>
         <select name="salutation" class="form-select">
@@ -174,35 +114,21 @@ document.addEventListener("DOMContentLoaded", function () {
             <option>Kumari</option>
         </select>
     </div>
-
-    <!-- First Name -->
     <div class="col-md-3">
         <label class="form-label">First Name <span class="text-danger">*</span></label>
         <input type="text" name="first_name" class="form-control" required>
     </div>
-
-    <!-- Middle Name -->
     <div class="col-md-3">
         <label class="form-label">Middle Name</label>
         <input type="text" name="middle_name" class="form-control">
     </div>
-
-    <!-- Last Name -->
     <div class="col-md-3">
         <label class="form-label">Last Name <span class="text-danger">*</span></label>
         <input type="text" name="last_name" class="form-control" required>
     </div>
-
-    <!-- Empty spacer to balance grid -->
     <div class="col-md-2"></div>
-
 </div>
-
-
-
-<!-- ROW 2 : Gender + Blood Group + Email -->
 <div class="row g-3 mb-4">
-
     <div class="col-md-4">
         <label class="form-label">Gender</label>
         <select name="gender" class="form-select">
@@ -210,7 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
             <option>Male</option><option>Female</option><option>Other</option>
         </select>
     </div>
-
     <div class="col-md-4">
         <label class="form-label">Blood Group</label>
         <select name="blood_group" class="form-select text-dark">
@@ -221,13 +146,10 @@ document.addEventListener("DOMContentLoaded", function () {
         </select>
     </div>
 </div>
-
-<!-- ROW 3 -->
 <div class="row g-3 mb-4">
 <div class="col-md-3">
-  <label class="form-label">
-        Contact Number <span style="color:#d9534f">*</span>
-    </label>    <div class="input-group">
+  <label class="form-label">Contact Number <span style="color:#d9534f">*</span></label>  
+      <div class="input-group">
         <span >  
             <select style="margin-top: 0%;" class="input-group-text" name="contact_country_code" required>
             <option value="+91" selected>+91</option>
@@ -548,16 +470,12 @@ document.addEventListener("DOMContentLoaded", function () {
                placeholder="Enter 10 digit number">
     </div>
 </div>
-
     <div class="col-md-4">
         <label class="form-label">Email </label>
         <input type="email" name="email" class="form-control">
     </div>
 </div>
-
-<!-- ANNIVERSARY -->
 <div class="row g-3 mb-4" id="doa">
-
     <div class="col-md-3">
         <label class="form-label">Date of Anniversary</label>
         <input type="date" name="doa" id="doa_input" class="form-control">
@@ -576,7 +494,6 @@ document.addEventListener("DOMContentLoaded", function () {
         <label class="form-label">Age</label>
         <input type="number" name="age" id="age" class="form-control" readonly>
     </div>
-
 </div>
                 <!-- ===================================== ADDRESS DETAILS ===================================== -->
                 <h5 class="section-title">Address Details</h5>
@@ -815,7 +732,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         </div>
                         <hr>
-
                 <div class="row g-3 mb-4" id="business" style="display: none;">
 
                     <div class="col-md-4">
@@ -842,19 +758,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
 
                 <!-- ===================================== ORGANIZATION ===================================== -->
                 <hr>
-
                 <div class="row g-3 mb-4" id="org">
-
                     <div class="col-md-4">
                         <label class="form-label">Organization Name</label>
                         <input type="text" name="org_name" class="form-control">
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Organization Type</label>
                         <select name="org_type" class="form-select">
@@ -864,19 +776,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             {% endfor %}
                         </select>
                     </div>
-
                     <div class="col-md-4">
                         <label class="form-label">Nature of Service</label>
                         <input type="text" name="nature_of_service" class="form-control">
                     </div>
-
                 </div>
-
                 <!-- ===================================== ID & PAN ===================================== -->
                 <h5 class="section-title">ID & PAN Details</h5>
                 <hr>
-                              <div class="row g-3 mb-3" id="idproof">
-
+<div class="row g-3 mb-3" id="idproof">
     <div class="col-md-4">
         <label class="form-label">ID Type <span style="color: #d9534f;">*</span></label>
         <select name="id_type" class="form-select" required aria-required="true">
@@ -886,27 +794,18 @@ document.addEventListener("DOMContentLoaded", function () {
             {% endfor %}
         </select>
     </div>
-
 </div>
-
-<!-- NEXT LINE -->
 <div class="row g-3 mb-3">
-
     <div class="col-md-4">
         <label class="form-label">ID Number <span style="color: #d9534f;">*</span></label>
         <input type="text" name="id_number" class="form-control" required aria-required="true">
     </div>
-
     <div class="col-md-4">
         <label class="form-label">Upload ID Proof </label>
         <input type="file" name="id_proof_image" class="form-control">
     </div>
-
 </div>
-
-<!-- NEXT LINE -->
 <div class="row g-3 mb-4">
-
     <div class="col-md-4">
         <label class="form-label">PAN Number <span style="color: #d9534f;">*</span></label>
         <input type="text" name="pan_number" class="form-control" required aria-required="true">
@@ -918,13 +817,8 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
 </div>
                 <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn btn btn-submit">✔ Save</button>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
     </div>
             </form>
         </div>
@@ -933,10 +827,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const personType = document.getElementById("person_type");
-
-    // Base sections (always visible)
     const baseSections = [
         "persontype",
         "personaldetails",
@@ -975,13 +866,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateVisibility() {
         const selectedOption = personType.options[personType.selectedIndex];
         const text = selectedOption ? normalize(selectedOption.text) : "";
-
-        // Always show base
         showBaseSections();
-
-        // Hide everything first
         hideAllConditional();
-
         if (!text) return;
 
         if (text === "employee") {
@@ -1001,13 +887,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (business) business.style.display = "block";
             if (donorBox) donorBox.style.display = "block";
         }
-        // Donor / Volunteer → base only
     }
-
-    // Init
     updateVisibility();
-
-    // Change listener
     personType.addEventListener("change", updateVisibility);
 });
 </script>
