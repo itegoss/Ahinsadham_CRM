@@ -3985,7 +3985,6 @@ width: 35%;
   </table>
 </div>
 </div>
-<!-- ✅ Scrollbar + Style -->
 <style>
 .table-responsive::-webkit-scrollbar {
   width: 10px;
@@ -4153,23 +4152,17 @@ width: 35%;
  
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     document.querySelectorAll(".live-search").forEach(input => {
-
-        // 🔹 Live search (already working)
         input.addEventListener("input", function () {
             const query = this.value.toLowerCase().trim();
             const targetId = this.dataset.target;
             const rows = document.querySelectorAll(`#${targetId} tr`);
-
             rows.forEach(row => {
                 row.style.display = row.textContent.toLowerCase().includes(query)
                     ? ""
                     : "none";
             });
         });
-
-        // 🔹 PREVENT ENTER KEY
         input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
                 e.preventDefault();   // ❌ stop form submit
@@ -4180,50 +4173,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-
-
-
 <!-- -----------Javascript-------------- -->
 <script>
 let images = [];
 let currentIndex = 0;
-
 function openImagesPopup(idImg, panImg) {
   images = [];
-
   if (idImg) {
     images.push({ url: idImg, title: "ID Proof" });
   }
   if (panImg) {
     images.push({ url: panImg, title: "PAN Card" });
   }
-
   if (!images.length) return;
-
   currentIndex = 0;
   showImage();
   document.getElementById("imagePopup").style.display = "flex";
 }
-
 function showImage() {
   document.getElementById("popupImage").src = images[currentIndex].url;
   document.getElementById("imageTitle").innerText = images[currentIndex].title;
 }
-
 function nextImg() {
   if (currentIndex < images.length - 1) {
     currentIndex++;
     showImage();
   }
 }
-
 function prevImg() {
   if (currentIndex > 0) {
     currentIndex--;
     showImage();
   }
 }
-
 function closeImagePopup() {
   document.getElementById("imagePopup").style.display = "none";
   document.getElementById("popupImage").src = "";
@@ -4235,15 +4217,11 @@ function closeImagePopup() {
 <script>
 function openQrPopup(imageUrl, keyId, donationId) {
   document.getElementById("qrImage").src = imageUrl;
-
-  // ✅ IDs match popup HTML
   document.getElementById("key_id").innerText = keyId || "-";
   document.getElementById("donation_id").innerText = donationId || "-";
-
   document.getElementById("qrDownload").href = imageUrl;
   document.getElementById("qrModal").style.display = "block";
 }
-
 function closeQrPopup() {
   document.getElementById("qrModal").style.display = "none";
   document.getElementById("qrImage").src = "";
@@ -4278,8 +4256,6 @@ document.querySelectorAll("th.sortable").forEach(header => {
             icon.innerText = "⬍";
             icon.dataset.order = "";
         });
-
-        // set this header's icon
         sortIcon.innerText = ascending ? "⬆" : "⬇";
         sortIcon.dataset.order = ascending ? "asc" : "desc";
     });
@@ -4298,13 +4274,12 @@ document.addEventListener("input", function (event) {
         let rows = table.querySelectorAll("tbody tr");
         rows.forEach(row => {
             if (row.classList.contains("column-search-row")) return;
-
             let cell = row.cells[col];
             if (!cell) return;
             let text = cell.innerText.toLowerCase();
             row.style.display = text.includes(filter) ? "" : "none";
         });
-    }, 120); // delay for smoothness
+    }, 120); 
 });
 </script>
 <script>
@@ -4338,12 +4313,9 @@ document.addEventListener('DOMContentLoaded', function(){
         activateTab(lastTab);  
         localStorage.removeItem('backFromForm'); 
     } else {
-        // Normal visit, open saved tab or default dashboard
         const saved = localStorage.getItem('activeTab') || 'default-user';
         activateTab(saved);
     }
-
-    // Save clicked tab
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function(){
             const tabId = this.dataset.tab;
@@ -4356,26 +4328,19 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Sidebar toggle functionality
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const toggleIcon = document.getElementById('toggleIcon');
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        
-        // Desktop sidebar toggle
-        sidebarToggle.addEventListener('click', function() {
+                sidebarToggle.addEventListener('click', function() {
             sidebar.classList.toggle('collapsed');
-            
-            // Change icon based on sidebar state
-            if (sidebar.classList.contains('collapsed')) {
+                        if (sidebar.classList.contains('collapsed')) {
                 toggleIcon.className = 'bi bi-chevron-right';
             } else {
                 toggleIcon.className = 'bi bi-chevron-left';
             }
         });
-        
-        // Mobile menu toggle
-        mobileMenuToggle.addEventListener('click', function() {
+                mobileMenuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('active');
         });
                 document.addEventListener('click', function(event) {
@@ -4391,18 +4356,12 @@ document.addEventListener('DOMContentLoaded', function(){
         tabs.forEach(tab => {
           tab.addEventListener('click', function(e) {
             e.preventDefault();
-
-            // Visual active state for sidebar anchors
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-
             const targetId = this.getAttribute('data-tab');
-
-            // Prefer shared activateTab if available (handles spaces/special chars)
             if (window.activateTab && typeof window.activateTab === 'function') {
               window.activateTab(targetId);
             } else {
-              // Fallback: robustly find content
               contents.forEach(c => c.classList.remove('active'));
               let targetContent = document.getElementById(targetId);
               if (!targetContent) {
@@ -4411,27 +4370,20 @@ document.addEventListener('DOMContentLoaded', function(){
               }
               if (targetContent) targetContent.classList.add('active');
             }
-
-            // Close mobile sidebar after selecting a tab
             if (window.innerWidth <= 768) {
               sidebar.classList.remove('active');
             }
           });
         });
-        
-        // --- Multi-step form functionality (Generic) ---
-        function setupMultiStepForm(formId, progressBarId) {
+                function setupMultiStepForm(formId, progressBarId) {
             const form = document.getElementById(formId);
             if (!form) return;
-
             const progressBar = document.getElementById(progressBarId);
             const nextBtns = form.querySelectorAll('.next');
             const prevBtns = form.querySelectorAll('.prev');
             const formSteps = form.querySelectorAll('.form-step');
             const progressSteps = progressBar ? progressBar.querySelectorAll('.progress-step') : [];
             let currentStep = 0;
-
-            // Function to update progress bar
             function updateProgressBar() {
                 progressSteps.forEach((step, index) => {
                     if (index < currentStep) {
@@ -4445,20 +4397,16 @@ document.addEventListener('DOMContentLoaded', function(){
                     }
                 });
             }
-
-            // Next button functionality
             nextBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const inputs = formSteps[currentStep].querySelectorAll('input[required], select[required], textarea[required]');
                     let isValid = true;
-                    
                     inputs.forEach(input => {
                         if (!input.checkValidity()) {
                             input.reportValidity();
                             isValid = false;
                         }
                     });
-                    
                     if (isValid) {
                         formSteps[currentStep].classList.remove('active');
                         currentStep++;
@@ -4468,9 +4416,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     }
                 });
             });
-            
-            // Previous button functionality
-            prevBtns.forEach(btn => {
+                        prevBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     formSteps[currentStep].classList.remove('active');
                     currentStep--;
@@ -4479,7 +4425,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     form.scrollIntoView({ behavior: 'smooth' });
                 });
             });
-            // Reset form step on submission (handled by individual listeners)
             form.addEventListener('submit', () => {
                 formSteps[currentStep].classList.remove('active');
                 currentStep = 0;
@@ -4489,45 +4434,23 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         setupMultiStepForm('multiStepForm', 'progressBar');
         setupMultiStepForm('donationForm', 'donationProgressBar');        
-        // Employee Form Submission
         document.getElementById('multiStepForm').addEventListener('submit', (e) => {
             e.preventDefault();
             showSuccessMessage('Employee information has been submitted successfully.');
             document.getElementById('multiStepForm').reset();
         });
-
-        // Donation Form Submission
         document.getElementById('donationForm').addEventListener('submit', (e) => {
             e.preventDefault();
             showSuccessMessage('Donation has been recorded successfully.');
             document.getElementById('donationForm').reset();
         });
-
         function showSuccessMessage(message) {
             const successMessage = document.createElement('div');
             successMessage.className = 'alert alert-success';
-            successMessage.innerHTML = `
-                <i class="bi bi-check-circle-fill"></i>
-                <strong>Success!</strong> ${message}
-            `;
-            successMessage.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background-color: #d4edda;
-                color: #155724;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                z-index: 2000;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                animation: slideIn 0.3s ease-out;
-            `;
-            
+            successMessage.innerHTML = `<i class="bi bi-check-circle-fill"></i><strong>Success!</strong> ${message}`;
+            successMessage.style.cssText = `position: fixed; top: 20px; right: 20px; padding: 15px 20px;background-color: #d4edda; color: #155724;
+                border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 2000;display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;`;
             document.body.appendChild(successMessage);
-            
             setTimeout(() => {
                 successMessage.style.animation = 'slideOut 0.3s ease-out';
                 setTimeout(() => {
@@ -4535,9 +4458,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 }, 300);
             }, 5000);
         }
-        
-        // Add animation styles
-        const style = document.createElement('style');
+       const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
                 from { transform: translateX(100%); opacity: 0; }
@@ -4546,14 +4467,10 @@ document.addEventListener('DOMContentLoaded', function(){
             @keyframes slideOut {
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
+            }`;
         document.head.appendChild(style);
-
-        // JavaScript to toggle Donor Box ID input
         const personTypeSelect = document.getElementById('person_type');
         const donorBoxRow = document.getElementById('donor_box_id_row');
-
         function toggleDonorBoxInput() {
             if (personTypeSelect && donorBoxRow) {
                 if (personTypeSelect.value === 'Donor-Box-Owner') {
@@ -4571,8 +4488,6 @@ document.addEventListener('DOMContentLoaded', function(){
             toggleDonorBoxInput();
         }
     });
-    <!-- JavaScript to toggle Donor Box ID input -->
-
 document.addEventListener('DOMContentLoaded', function() {
     const personTypeSelect = document.getElementById('person_type');
     const donorBoxRow = document.getElementById('donor_box_id_row');
@@ -4591,5 +4506,4 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleDonorBoxInput(); // initialize on page load
 });
 </script>
-
 {% endblock %}

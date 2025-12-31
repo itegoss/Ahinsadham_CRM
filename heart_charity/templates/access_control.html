@@ -1,16 +1,13 @@
 {% extends 'base.html' %}
 {% load custom_tags %}
 {% block content %}
-
 <style>
-  
     .action-buttons {
         display: flex;
         justify-content: center;
         gap: 20px;
         margin-top: 35px;
     }
-
     .action-btn {
         padding: 12px 40px;
         border-radius: 10px;
@@ -22,7 +19,6 @@
         transition: .3s ease;
         display: inline-block;
     }
-
     .save-btn {
         background: #0f7b34;
         color: white;
@@ -31,7 +27,6 @@
         background: #0c622a;
         transform: translateY(-2px);
     }
-
     .back-btn {
         background: #6b6f75;
         color: white;
@@ -40,8 +35,6 @@
         background: #4b4f54;
         transform: translateY(-2px);
     }
-
-     /* MOBILE FIX */
     @media (max-width: 755px) {
         .action-buttons {
             flex-direction: column;
@@ -54,14 +47,11 @@
             text-align: center;
         }
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
         .row { flex-direction: column; }
         .col-6 { width: 100%; }
         .container-box { padding: 30px; }
     }
-
 .permission-card {
     border-radius: 14px;
     transition: 0.3s;
@@ -88,9 +78,7 @@
 
 <form method="POST" action="{% url 'access_control' %}">
     {% csrf_token %}
-
     <div class="container mt-4">
-
         <div class="card p-4 shadow permission-card mb-4">
             <h4 class="text-center permission-title mb-4">User Role & Description</h4>
             {% if messages %}
@@ -107,14 +95,12 @@
                               <input type="text" name="role_name" value="{{ user_role|default_if_none:'' }}"
                                   class="form-control p-2" placeholder="Enter role name" required aria-required="true">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="permission-label">Role Description</label>
                     <input type="text" name="roleDescription" value="{{ user_description|default_if_none:'' }}"
                            class="form-control p-2" placeholder="Enter role description">
                 </div>
             </div>
-
             <div class="mb-3">
                 <label class="permission-label">Select Module <span style="color:#d9534f;">*</span></label>
                 <select name="selected_module" class="form-select p-2" required aria-required="true">
@@ -124,11 +110,8 @@
                     {% endfor %}
                 </select>
             </div>
-            
             <label class="permission-label">Select Permissions</label><br>
-
             <div class="mt-2">
-
                 <div class="form-check form-check-inline checkbox-label">
                     <input class="form-check-input" type="checkbox" name="access_permission" value="1">
                     <label class="form-check-label">Access</label>
@@ -153,19 +136,12 @@
                     <input class="form-check-input" type="checkbox" name="view_permission" value="1">
                     <label class="form-check-label">View</label>
                 </div>
-
             </div>
    <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn btn-submit save-btn">✔ Save</button>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back    </a>
     </div>
-             </div>
+    </div>
     </div>
 </form>
-
 {% endblock %}

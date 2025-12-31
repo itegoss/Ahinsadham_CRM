@@ -1,10 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Add Donation Box{% endblock %}
-
 {% block content %}
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
 
     /* PAGE BACKGROUND */
@@ -192,27 +189,19 @@
         .container-box { padding: 30px; }
     }
 </style>
-
-
-<!-- PAGE WRAPPER -->
 <div class="page-wrapper">
 <div class="container-box">
-
   <h2>Add New Donation Box</h2>
   <p class="subtitle">Fill out the details to create a new donation box</p>
-
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-
     <div class="section-title">Donation Box Information</div>
     <hr>
-
     <div class="row">
             <div class="col-6">
                 <label>Key ID <span style="color: #d9534f;">*</span></label>
                 <input type="text" name="key_id" placeholder="Enter Key ID" required aria-required="true">
             </div>
-
             <div class="col-6">
                 <label>Status <span style="color: #d9534f;">*</span></label>
                 <select name="status" required aria-required="true">
@@ -223,8 +212,6 @@
         </select>
       </div>
     </div>
-
-        <!-- Box Size -->
         <label>Box Size <span style="color: #d9534f;">*</span></label>
         <div class="radio-group">
             <label class="radio-option">
@@ -237,27 +224,15 @@
                 <input type="radio" name="box_size" value="large" required aria-required="true"> Large
             </label>
         </div>
-
-    <!-- QR Upload -->
     <label>Upload QR Code <span style="color: #d9534f;">*</span></label>
     <input type="file" name="qr_code" accept="image/*" onchange="previewQR(event)" required aria-required="true">
     <div class="qr-preview" id="qrPreview">QR Preview</div>
-
     <small style="color:#555;">Created & Updated timestamps are automatic.</small>
-
-    <!-- NEW FIXED BUTTONS -->
     <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn btn-submit save-btn">✔ Save</button>
+<a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
     </div>
-
   </form>
-
 </div>
 </div>
 

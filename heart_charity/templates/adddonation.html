@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}Add Donation{% endblock %}
-
 {% block content %}
-
 <style>
-  
+.btn-submit {
+    background: linear-gradient(90deg, #1a7a42, #2aa85b);
+    color: white;
+    box-shadow: 0 4px 12px rgba(32, 129, 70, 0.25);
+}
     .action-buttons {
         display: flex;
         justify-content: center;
         gap: 20px;
         margin-top: 35px;
     }
-
     .action-btn {
         padding: 12px 40px;
         border-radius: 10px;
@@ -23,7 +24,6 @@
         transition: .3s ease;
         display: inline-block;
     }
-
     .save-btn {
         background: #0f7b34;
         color: white;
@@ -32,7 +32,6 @@
         background: #0c622a;
         transform: translateY(-2px);
     }
-
     .back-btn {
         background: #6b6f75;
         color: white;
@@ -41,8 +40,6 @@
         background: #4b4f54;
         transform: translateY(-2px);
     }
-
-     /* MOBILE FIX */
     @media (max-width: 755px) {
         .action-buttons {
             flex-direction: column;
@@ -55,8 +52,6 @@
             text-align: center;
         }
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
         .row { flex-direction: column; }
         .col-6 { width: 100%; }
@@ -65,12 +60,10 @@
 </style>
 <div class="container-fluid py-5">
   <div class="container p-4 shadow rounded-4" style="max-width: 900px;">
-
     <div class="text-center mb-4">
       <h3 class="fw-bold text-success">Add New Donation</h3>
       <p class="text-muted">Fill out the details to record a new donation</p>
     </div>
-
         <div class="text-center mb-4">
 <div id="donation-summary" class="card mt-3" style="display:none; color: black;">
    <div class="card-body" style="color: black;">
@@ -111,17 +104,9 @@
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>
       <hr>
       <div class="row g-3 mb-3">
-
-    <!-- Select Donor -->
     <div class="col-md-4">
-        <label class="form-label">
-            Select Donor / Pan Number<span style="color:#d9534f;">*</span>
-        </label>
-
-        <select name="donor"
-                id="donor"
-                class="form-select select2-search"
-                required>
+        <label class="form-label">Select Donor / Pan Number<span style="color:#d9534f;">*</span></label>
+        <select name="donor" id="donor" class="form-select select2-search" required>
             <option value="">-- Select or Type Donor --</option>
             {% for donor in donors %}
                 <option value="{{ donor.id }}">
@@ -130,50 +115,20 @@
             {% endfor %}
         </select>
     </div>
-
-    <!-- Display Name -->
     <div class="col-md-4">
         <label class="form-label">Display Name</label>
-
         <input type="text"
               name="display_name"id="display_name"class="form-control"placeholder="Display Name">
     </div>
-
     <div class="col-md-4">
           <label class="form-label fw-semibold">Reference Name</label>
           <input type="text" name="reference_name" class="form-control">
         </div>
-
 </div>
-
-<!-- Checkbox -->
 <div class="form-check mb-3">
-    <input class="form-check-input"
-           type="checkbox"
-           id="lock_display_name"
-           checked>
-
-    <label class="form-check-label" for="lock_display_name">
-        Use donor name (disable editing)
-    </label>
+    <input class="form-check-input" type="checkbox" id="lock_display_name" checked>
+    <label class="form-check-label" for="lock_display_name">Use donor name</label>
 </div>
-
-<!-- <div class="row g-3 mb-3">
-    <div class="col-md-6">
-      <label class="form-label">Select Donor <span style="color: #d9534f;">*</span></label>
-      <select name="donor"id="donor"class="form-select select2-search"required aria-required="true">
-            <option value="">-- Select or Type Donor --</option>
-            {% for donor in donors %}
-                <option value="{{ donor.id }}">
-                    {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }}
-                </option>
-            {% endfor %}
-        </select>
-
-    </div>
-</div> -->
-
-      <!-- Donation Details -->
       <h5 class="text-success fw-bold mb-2">Donation Details</h5>
       <hr>
       <div class="row mb-3">
@@ -195,54 +150,27 @@
     {% endfor %}
 </select>
         </div>
-
                 <div class="col-md-6">
           <label class="form-label fw-semibold">Declared Amount (₹) <span style="color: #d9534f;">*</span></label>
           <input type="number" step="0.01" name="donation_amount_declared" class="form-control" required aria-required="true">
         </div>
-
-
-              <!-- <select name="donation_category" class="form-select" required>
-    <option value="">-- Select Category --</option>
-</select>
-
-<select name="donation_sub_category" class="form-select">
-    <option value="">-- Select Sub-Category --</option>
-</select> -->
       </div>
-
 <div class="form-check mb-3">
-    <input class="form-check-input"
-           type="checkbox"
-           id="togglePayment">
-
-    <label class="form-check-label fw-semibold" for="togglePayment">
-        Add Payment Details
-    </label>
+    <input class="form-check-input" type="checkbox" id="togglePayment">
+    <label class="form-check-label fw-semibold" for="togglePayment">Add Payment Details</label>
 </div>
 
 <div id="paymentSection" style="display:none;">
-
-    <!-- 💳 Payment Information -->
     <h5 class="text-success fw-bold mb-2">Payment Information</h5>
     <hr>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Paid Amount (₹)</label>
-            <input type="number" step="0.01"
-                   name="donation_amount_paid"
-                   class="form-control">
+            <input type="number" step="0.01" name="donation_amount_paid"class="form-control">
         </div>
-
         <div class="col-md-6">
-            <label class="form-label fw-semibold">
-                Donation Date 
-            </label>
-            <input type="date"
-                   name="donation_date"
-                   value="{{ today }}"
-                   class="form-control">
+            <label class="form-label fw-semibold"> Donation Date </label>
+            <input type="date" name="donation_date" value="{{ today }}" class="form-control">
         </div>
     </div>
 
@@ -291,22 +219,10 @@
             <input type="text" name="check_no" class="form-control">
         </div>
     </div>
-
-    
       <!-- 📝 Additional Information -->
-      <!-- ========================= -->
       <h5 class="text-success fw-bold mb-2">Additional Information</h5>
       <hr>
-<!-- <select name="donation_category" class="form-select" required>
-    <option value="">-- Select Category --</option>
-</select>
-
-<select name="donation_sub_category" class="form-select">
-    <option value="">-- Select Sub-Category --</option>
-</select> -->
-
       <div class="row mb-3">
-
         <div class="col-md-6">
           <label class="form-label fw-semibold">Place of Donation</label>
           <input type="text" name="place_of_donation" class="form-control">
@@ -323,108 +239,69 @@
           <textarea name="description" class="form-control" rows="3"></textarea>
         </div>
       </div>
-
-
-
-
 </div>
-
-
-   
-  
-    <!-- NEW FIXED BUTTONS -->
     <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn btn btn-submit">✔ Save</button>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn"> ← Back</a>
     </div>
     </form>
-
   </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const checkbox = document.getElementById("togglePayment");
     const paymentSection = document.getElementById("paymentSection");
-
     checkbox.addEventListener("change", function () {
         paymentSection.style.display = this.checked ? "block" : "none";
     });
 
 });
 </script>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const donorSelect = $("#donor");   // jQuery for Select2
     const displayNameInput = document.getElementById("display_name");
     const lockCheckbox = document.getElementById("lock_display_name");
-
-    // 🔥 Select2 change event (THIS is the key fix)
     donorSelect.on("select2:select", function (e) {
         const selectedText = e.params.data.text;
         displayNameInput.value = selectedText.trim();
     });
-
-    // Also handle normal change (fallback)
     donorSelect.on("change", function () {
         const selectedText = $("#donor option:selected").text();
         displayNameInput.value = selectedText.trim();
     });
-
-    // Lock / unlock typing
     lockCheckbox.addEventListener("change", function () {
         displayNameInput.readOnly = this.checked;
     });
-
-    // Initial state
     displayNameInput.readOnly = lockCheckbox.checked;
 });
 </script>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const paymentSelect = document.getElementById("payment_method");
     const paymentFields = document.querySelectorAll(".payment-field");
-
     if (!paymentSelect || paymentFields.length === 0) return;
-
     function togglePaymentFields() {
         const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
-
         const selectedText = paymentSelect.options[
             paymentSelect.selectedIndex
         ].text.trim().toLowerCase();
-
         paymentFields.forEach(el => {
             el.style.display = showFor.includes(selectedText)
                 ? "flex"   // Bootstrap row uses flex
                 : "none";
         });
     }
-
-    // Run once on page load (important for edit forms)
     togglePaymentFields();
-
-    // Run on change
     paymentSelect.addEventListener("change", togglePaymentFields);
 });
 </script>
-
-
 <script>
 $(document).ready(function () {
     $('#donor').select2({
         placeholder: "-- Select or Type Donor --",
         allowClear: true,
-        tags: true,        // ✅ typing allowed
+        tags: true,    
         width: '100%'
     });
 });

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
 <style>
     .action-buttons {
@@ -9,7 +8,6 @@
         gap: 20px;
         margin-top: 35px;
     }
-
     .action-btn {
         padding: 12px 40px;
         border-radius: 10px;
@@ -21,7 +19,6 @@
         transition: .3s ease;
         display: inline-block;
     }
-
     .save-btn {
         background: #0f7b34;
         color: white;
@@ -30,7 +27,6 @@
         background: #0c622a;
         transform: translateY(-2px);
     }
-
     .back-btn {
         background: #6b6f75;
         color: white;
@@ -39,8 +35,6 @@
         background: #4b4f54;
         transform: translateY(-2px);
     }
-
-     /* MOBILE FIX */
     @media (max-width: 755px) {
         .action-buttons {
             flex-direction: column;
@@ -53,8 +47,6 @@
             text-align: center;
         }
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
         .row { flex-direction: column; }
         .col-6 { width: 100%; }
@@ -88,8 +80,6 @@
 
 <div class="container mt-4 main-bg">
     <div class="custom-card">
-
-        <!-- Page Title -->
         <h2 class="text-center fw-bold" style="color: #1f7a3e;">
             {% if lookup %} Update Lookup {% else %} Add Lookup {% endif %}
         </h2>
@@ -102,15 +92,10 @@
         </div>
     {% endfor %}
 {% endif %}
-
-        <!-- Section Title -->
         <div class="section-title mt-4">Lookup Details</div>
         <hr>
-
-        <!-- Form -->
         <form method="POST">
             {% csrf_token %}
- <!-- Lookup Type -->
             <div class="mb-3">
                 <label class="form-label fw-semibold">Lookup Type<span style="color: #d9534f;">*</span></label>
                 <select 
@@ -127,24 +112,16 @@
                     {% endfor %}
                 </select>
             </div>
-
-            <!-- Lookup Name -->
             <div class="mb-3">
                 <label class="form-label fw-semibold">Lookup Name<span style="color: #d9534f;">*</span></label>
                 <input type="text"name="lookup_name"class="form-control custom-input shadow-none"placeholder="Enter Lookup Name"value="{{ lookup.lookup_name|default:'' }}"required>
             </div>
       
    <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn btn-submit save-btn">✔ Save</button>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
     </div>
         </form>
-
     </div>
 </div>
 {% endblock %}
