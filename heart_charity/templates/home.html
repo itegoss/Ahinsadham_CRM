@@ -27,7 +27,8 @@ body {
 .hero-section {
     position: relative;
     overflow: hidden;
-    margin-top: -76px; /* Adjust based on your navbar height */
+      margin-top: -60px;
+    margin-bottom: -4%; /* Adjust based on your navbar height */
 }
 
 .hero-section-full-height {
@@ -307,6 +308,13 @@ body {
     .carousel-content p {
         font-size: 1.1rem;
     }
+     .hero-section-full-height {
+        margin-top: 0;        /* ❌ no negative margin */
+        margin-bottom: 0;
+        min-height: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -327,6 +335,13 @@ body {
         display: block;
         margin-left: 0;
         margin-top: 1rem;
+    }
+     .hero-section-full-height {
+        margin-top: -85px;
+        margin-bottom: -80px;
+        min-height: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
     }
 }
 
