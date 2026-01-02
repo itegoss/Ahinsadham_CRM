@@ -595,20 +595,8 @@ td {
 
     th, td {
       padding: 10px 8px;
-    }
+    } 
   }
-
-
-
-
-
-
-
-
-
-
-
-
    /* Form Styles */
     .form-container {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
@@ -834,8 +822,56 @@ td {
   vertical-align: middle;
 }
 .pagination-container {
-  margin-top: -20px;
-  text-align: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  overflow-x: auto;
+  padding: 6px 4px;
+}
+
+/* Ensure all children stay on one line and remain responsive */
+.pagination-container form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+.pagination-container a.btn,
+.pagination-container button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.pagination-container .form-select {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 64px;
+  flex: 0 0 auto;
+}
+
+.pagination-container label,
+.pagination-container span {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .pagination-container {
+    gap: 4px;
+    padding: 4px 6px;
+  }
+  .pagination-container .form-select {
+    min-width: 48px;
+  }
+  /* Hide less important text to keep controls on one line */
+  .pagination-container label { display: none; }
+  .pagination-container span { display: none; }
 }
 .card{
     --bs-card-bg: none !important;
@@ -864,8 +900,7 @@ td {
 
 <div class="dashboard-container">
     <!-- Mobile Header -->
-    <div class="mobile-header">
-        <h1>Dashboard</h1>
+    <div class="mobile-header1">
         <button class="menu-toggle" id="mobileMenuToggle">
             <i class="bi bi-list"></i>
         </button>
@@ -881,7 +916,7 @@ td {
     <span class="sidebar-text">Dashboard</span>
 </a>
 
-<a class="tab-btn mdm" data-tab="mdm">
+<a class="tab-btn mdm" data-tab="MDM">
     <i class="bi bi-table"></i>
     <span class="sidebar-text">MDM</span>
 </a>
@@ -1115,7 +1150,7 @@ td {
     .mobile-header {
         top: 0;
         left: 0;
-        width: 100%;
+        width: 10%;
         height: 60px;                   /* FIXED HEIGHT */
           background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
         color: white;
@@ -1124,8 +1159,10 @@ td {
         justify-content: space-between;
         padding: 0 15px;
         box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-        z-index: 9999;
-    }
+z-index: 1000;    }
+
+.sticky-top{
+      z-index: auto;}
     .mobile-header h1 {
         font-size: 20px;                /* Fixed Title Size */
         margin: 0;
@@ -1135,8 +1172,8 @@ td {
     .menu-toggle {
         background: none;
         border: none;
-        font-size: 26px;                /* Fixed icon size */
-        color: white;
+        font-size: 30px;                /* Fixed icon size */
+        color: black;
     }
 }
 @media (min-width: 769px) {
@@ -1162,7 +1199,7 @@ td {
 </div>
 
 <!-- ----------- MDM (Master Data)------------------ -->
- <div class="tab-content"  id="mdm">
+ <div class="tab-content"  id="MDM">
   <div class="card border-0">
     <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Master Data</h4>
@@ -1191,11 +1228,10 @@ td {
   box-shadow: none;
   border-bottom-color: #1e7e34; /* darker green when focused */
 }
-
-/* 🪄 Match buttons cleanly */
 .search-btn {
   border-radius: 8px;
 }
+
 </style>
   {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
@@ -1283,7 +1319,7 @@ td {
         </form>
       {% endif %}
     {% else %}
-      <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
     {% endif %}
 
   </div>
@@ -1291,9 +1327,9 @@ td {
                 <td>{{ lt.formatted_id }}</td>
                 <td>{{ lt.type_name }}</td>
                 <td>{{ lt.created_by }}</td>
-                <td>{{ lt.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ lt.created_date|date:"d M Y" }}</td>
                 <td>{{ lt.updated_by }}</td>
-                <td>{{ lt.updated_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ lt.updated_date|date:"d M Y" }}</td>
 <td>
     {% if lt.is_deleted %}
         Yes
@@ -1302,7 +1338,7 @@ td {
     {% endif %}
 </td>
 <td>{{ lt.deleted_by }}</td>
-                <td>{{ lt.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ lt.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
@@ -1399,7 +1435,7 @@ td {
         </form>
       {% endif %}
     {% else %}
-      <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
     {% endif %}
 
   </div>
@@ -1455,7 +1491,7 @@ table th, table td {
   <form method="get" class="d-inline-block">
     <label for="ltPageSelect" class="fw-bold me-1">Page</label>
     <select 
-      name="lt_page" id="ltPageSelect"class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
+      name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
       {% for p in lookup_page_obj.paginator.page_range %}
         <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
       {% endfor %}
@@ -1552,7 +1588,7 @@ table th, table td {
               </form>
               {% endif %}
               {% else %}
-                <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
               {% endif %}
             </div>
           </td>
@@ -1560,9 +1596,9 @@ table th, table td {
                 <td>{{ l.lookup_name }}</td>
                 <td>{{ l.lookup_type.type_name }}</td>
                 <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.created_date|date:"d M Y" }}</td>
                 <td>{{ l.updated_by }}</td>
-                <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.updated_date|date:"d M Y" }}</td>
 <td>
     {% if l.is_deleted %}
         Yes
@@ -1572,7 +1608,7 @@ table th, table td {
 </td>
                 <td>{{ l.deleted_by }}</td>
 
-                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.deleted_at|date:"d M Y" }}</td>
 
         </tr>
         {% empty %}
@@ -1657,7 +1693,7 @@ table th, table td {
               </form>
               {% endif %}
               {% else %}
-                <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
               {% endif %}
             </div>
           </td>
@@ -1666,10 +1702,10 @@ table th, table td {
                 <td>{{ l.lookup_name }}</td>
                 <td>{{ l.lookup_type.type_name }}</td>
                 <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.created_date|date:"d M Y" }}</td>
                 <td>{{ l.updated_by }}</td>
-                <td>{{ l.updated_date|date:"d M Y, h:i A" }}</td>
-                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.updated_date|date:"d M Y" }}</td>
+                <td>{{ l.deleted_at|date:"d M Y" }}</td>
 <td>
     {% if l.is_deleted %}
         Yes
@@ -1678,7 +1714,7 @@ table th, table td {
     {% endif %}
 </td>
                 <td>{{ l.deleted_by }}</td>
-                <td>{{ l.deleted_at|date:"d M Y, h:i A" }}</td>
+                <td>{{ l.deleted_at|date:"d M Y" }}</td>
                 </tr>
         {% empty %}
         <tr><td colspan="12">No Lookups found.</td></tr>
@@ -2122,9 +2158,9 @@ width: 35%;
         <td>{{ access.can_edit }}</td>
           <td>{{ access.can_view }}</td>
           <td>{{ access.created_by }}</td>
-          <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.created_date|date:"d M Y" }}</td>
           <td>{{ access.updated_by }}</td>
-          <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.updated_date|date:"d M Y" }}</td>
           <td>
     {% if access.is_deleted %}
         Yes
@@ -2133,7 +2169,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ access.deleted_by }}</td>
-          <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.deleted_at|date:"d M Y" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2243,9 +2279,9 @@ width: 35%;
         <td>{{ access.can_edit }}</td>
           <td>{{ access.can_view }}</td>
           <td>{{ access.created_by }}</td>
-          <td>{{ access.created_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.created_date|date:"d M Y" }}</td>
           <td>{{ access.updated_by }}</td>
-          <td>{{ access.updated_date|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.updated_date|date:"d M Y" }}</td>
 <td>
     {% if access.is_deleted %}
         Yes
@@ -2254,7 +2290,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ access.deleted_by }}</td>
-          <td>{{ access.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ access.deleted_at|date:"d M Y" }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
@@ -2580,9 +2616,9 @@ width: 35%;
       <td>{{ donation.native_place }}</td>
       <td>{{ donation.native_postal_code }}</td>
       <td>{{ donation.created_by }}</td>
-      <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.created_at|date:"d M Y" }}</td>
       <td>{{ donation.updated_by }}</td>
-      <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -2591,7 +2627,7 @@ width: 35%;
     {% endif %}
 </td>
       <td>{{ donation.deleted_by }}</td>
-            <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+            <td>{{ donation.deleted_at|date:"d M Y" }}</td>
       </tr>
       {% empty %}
       <tr>
@@ -2757,9 +2793,9 @@ width: 35%;
       <td>{{ donation.native_place }}</td>
       <td>{{ donation.native_postal_code }}</td>
       <td>{{ donation.created_by }}</td>
-      <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.created_at|date:"d M Y" }}</td>
       <td>{{ donation.updated_by }}</td>
-      <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -2768,7 +2804,7 @@ width: 35%;
     {% endif %}
 </td>
       <td>{{ donation.deleted_by }}</td>
-      <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+      <td>{{ donation.deleted_at|date:"d M Y" }}</td>
       </tr>
       {% empty %}
       <tr>
@@ -3075,9 +3111,9 @@ width: 35%;
           <td>{{ owner.name_of_bank }}</td>
           <td>{{ owner.branch }}</td>
           <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.created_at|date:"d M Y" }}</td>
           <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.updated_at|date:"d M Y" }}</td>
 <td>
     {% if owner.is_deleted %}
         Yes
@@ -3086,7 +3122,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
@@ -3234,9 +3270,9 @@ width: 35%;
            <td>{{ owner.name_of_bank }}</td>
           <td>{{ owner.branch }}</td>
           <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.created_at|date:"d M Y" }}</td>
           <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.updated_at|date:"d M Y" }}</td>
 <td>
     {% if owner.is_deleted %}
         Yes
@@ -3245,7 +3281,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
@@ -3462,9 +3498,9 @@ width: 35%;
           <td>{{ box.location }}</td>
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
-          <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.created_at|date:"d M Y" }}</td>
                     <td>{{ box.updated_by }}</td>
-          <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_at|date:"d M Y" }}</td>
 <td>
     {% if box.is_deleted %}
         Yes
@@ -3473,7 +3509,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ box.deleted_by }}</td>
-          <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation boxes found.</td></tr>
@@ -3586,9 +3622,9 @@ width: 35%;
           <td>{{ box.location }}</td>
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
-          <td>{{ box.created_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.created_at|date:"d M Y" }}</td>
                     <td>{{ box.updated_by }}</td>
-          <td>{{ box.updated_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.updated_at|date:"d M Y" }}</td>
 <td>
     {% if box.is_deleted %}
         Yes
@@ -3597,7 +3633,7 @@ width: 35%;
     {% endif %}
 </td>
           <td>{{ box.deleted_by }}</td>
-          <td>{{ box.deleted_at|date:"d M Y, h:i A" }}</td>
+          <td>{{ box.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
       <tr><td colspan="15" class="text-muted py-4">No donation boxes found.</td></tr>
@@ -3796,9 +3832,9 @@ width: 35%;
           <td>{{ donation.name_of_bank }}</td>
           <td>{{ donation.branch }}</td>
         <td>{{ donation.created_by }}</td>
-        <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.created_at|date:"d M Y" }}</td>
         <td>{{ donation.updated_by }}</td>
-        <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -3807,7 +3843,7 @@ width: 35%;
     {% endif %}
 </td>
         <td>{{ donation.deleted_by }}</td>
-        <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+        <td>{{ donation.deleted_at|date:"d M Y" }}</td>
                 <td>{{ donation.verified_by }}</td>
       </tr>
       {% empty %}<tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>{% endfor %}
@@ -3960,9 +3996,9 @@ width: 35%;
     <td>{{ donation.name_of_bank }}</td>
           <td>{{ donation.branch }}</td>
   <td>{{ donation.created_by }}</td>
-  <td>{{ donation.created_at|date:"d M Y, h:i A" }}</td>
+  <td>{{ donation.created_at|date:"d M Y" }}</td>
   <td>{{ donation.updated_by }}</td>
-  <td>{{ donation.updated_at|date:"d M Y, h:i A" }}</td>
+  <td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -3971,7 +4007,7 @@ width: 35%;
     {% endif %}
 </td>
   <td>{{ donation.deleted_by }}</td>
-  <td>{{ donation.deleted_at|date:"d M Y, h:i A" }}</td>
+  <td>{{ donation.deleted_at|date:"d M Y" }}</td>
   <td>{{ donation.verified_by }}</td>
 </tr>
 {% empty %}
@@ -4149,7 +4185,40 @@ width: 35%;
 </div>
 </div>
 <!-- -----------Javascript-------------- -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Run ONLY once after login
+    if (!sessionStorage.getItem("dashboardLoaded")) {
+
+        // Remove active from all tabs
+        document.querySelectorAll(".tab-content").forEach(tab => {
+            tab.classList.remove("active");
+        });
+
+        // Activate dashboard tab
+        const dashboardTab = document.getElementById("default-user");
+        if (dashboardTab) {
+            dashboardTab.classList.add("active");
+        }
+
+        // Remove URL hash (optional)
+        if (window.location.hash) {
+            history.replaceState(null, null, window.location.pathname);
+        }
+
+        // Mark dashboard as already shown
+        sessionStorage.setItem("dashboardLoaded", "true");
+    }
+
+});
+</script>
+
  
+
+
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".live-search").forEach(input => {

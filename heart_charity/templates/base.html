@@ -196,41 +196,41 @@
 
 <!-- Header -->
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-        <div class="container">
+    <nav class="navbar shadow-sm sticky-top"
+         style="background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);">
+        <div class="container-fluid d-flex align-items-center">
+
+            <!-- Logo (Left) -->
             <div class="logo-box">
-    <img src="{% static 'images/alogo.png' %}" alt="Logo" 
-         style="width: 80px; height: auto; margin-left: 15px;">
-</div>
-           
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center">
-                    {% if user.is_authenticated %}
-
-                        <li class="nav-item">
-                            <a href="#" class="welcome-link">Welcome, {{ request.user.username }}</a>
-<a href="/logout" class="ms-2" color:black;">
-    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-</a>
-</li>
-                        
-                    {% else %}
-                        <li class="nav-item">
-                            <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Sign In</a>
-                        </li>
-                        
-                    {% endif %}
-                </ul>
+                <img src="{% static 'images/alogo.png' %}"
+                     alt="Logo"
+                     style="width:80px; height:auto; margin-left:15px;">
             </div>
+
+            <!-- Right side text -->
+            <div class="ms-auto d-flex align-items-center gap-3">
+                {% if user.is_authenticated %}
+                    <span style="color:black; font-weight:600;">
+                        Welcome, {{ request.user.username }}
+                    </span>
+
+                    <a href="/logout"
+                       title="Logout"
+                       style="color:black; font-size:18px;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}"
+                       class="btn btn-outline-primary">
+                        Sign In
+                    </a>
+                {% endif %}
+            </div>
+
         </div>
     </nav>
 </header>
+
 
 <!-- Main Content -->
 <main class="flex-grow-1 py-4">

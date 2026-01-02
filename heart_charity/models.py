@@ -102,7 +102,6 @@ gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 
 from datetime import date
 
-
 class DonorVolunteer(models.Model):
     BLOOD_GROUP_CHOICES = [
         ('A+', 'A+'), ('A-', 'A-'),
@@ -131,19 +130,11 @@ class DonorVolunteer(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
-    blood_group = models.CharField(
-        max_length=5, choices=BLOOD_GROUP_CHOICES,
-        blank=True, null=True
-    )
+    blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES,blank=True, null=True)
     contact_number = models.CharField(max_length=20)
     whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(unique=True)
-    donor_box = models.ForeignKey(
-        DonationBox,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    donor_box = models.ForeignKey(DonationBox,on_delete=models.SET_NULL,null=True,blank=True)
     doa = models.DateField(blank=True, null=True)
     years_to_marriage = models.IntegerField(blank=True, null=True)
     # -------------------- ADDRESS --------------------
@@ -246,7 +237,6 @@ class DonorVolunteer(models.Model):
 
 class LookupType(models.Model):
     type_name = models.CharField(max_length=100, unique=True)
-    # Soft Delete Fields
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_created')
@@ -257,30 +247,19 @@ class LookupType(models.Model):
 
     @property
     def formatted_id(self):
-        return f"{self.id:03d}"     # → 001, 002, 010, 123
+        return f"{self.id:03d}"   
 
     def __str__(self):
         return f"{self.formatted_id} - {self.type_name}"
 
 class Lookup(models.Model):
     lookup_name = models.CharField(max_length=100, unique=True)
-
-    lookup_type = models.ForeignKey(
-        LookupType,
-        on_delete=models.CASCADE,
-        related_name="lookups"
-    )
-# Soft Delete Fields
+    lookup_type = models.ForeignKey(LookupType,on_delete=models.CASCADE,related_name="lookups")
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="lookup_created"
-    )
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_created")
     created_date = models.DateTimeField(auto_now_add=True)
-
-    updated_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="lookup_updated"
-    )
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_updated")
     updated_date = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     @property
@@ -290,7 +269,7 @@ class Lookup(models.Model):
     def __str__(self):
         return f"{self.lookup_name} ({self.lookup_type.type_name})"
 
-from .models import DonorVolunteer  # assuming same app (heart_charity)
+from .models import DonorVolunteer 
 class DonationOwner(models.Model):
     PAYMENT_METHOD_CHOICES = [
         ('Cash', 'Cash'),
@@ -300,22 +279,18 @@ class DonationOwner(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-
-    # Foreign key to DonorVolunteer (only Donor-Box-Owner type)
     owner_name = models.ForeignKey(
         DonorVolunteer,
         on_delete=models.CASCADE,
         limit_choices_to={'person_type': 'Donor-Box-Owner'},
         related_name='donation_owners'
     )
-
-    # ✅ Foreign key to DonationBox (linked via donation_id)
     donation_box = models.ForeignKey(
         'DonationBox',
         on_delete=models.CASCADE,
         related_name='donation_owners',
-        to_field='donation_id',  # <-- This line makes the foreign key use donation_id instead of the default pk
-        db_column='donation_id'  # Optional: sets actual DB column name to 'donation_id'
+        to_field='donation_id',  
+        db_column='donation_id'  
     )
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
