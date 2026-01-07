@@ -1,17 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}Add Donation{% endblock %}
-
 {% block content %}
-
 <style>
-  
     .action-buttons {
         display: flex;
         justify-content: center;
         gap: 20px;
         margin-top: 35px;
     }
-
     .action-btn {
         padding: 12px 40px;
         border-radius: 10px;
@@ -23,7 +19,6 @@
         transition: .3s ease;
         display: inline-block;
     }
-
     .save-btn {
         background: #0f7b34;
         color: white;
@@ -32,7 +27,6 @@
         background: #0c622a;
         transform: translateY(-2px);
     }
-
     .back-btn {
         background: #6b6f75;
         color: white;
@@ -41,8 +35,6 @@
         background: #4b4f54;
         transform: translateY(-2px);
     }
-
-     /* MOBILE FIX */
     @media (max-width: 755px) {
         .action-buttons {
             flex-direction: column;
@@ -55,8 +47,6 @@
             text-align: center;
         }
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
         .row { flex-direction: column; }
         .col-6 { width: 100%; }
@@ -65,28 +55,23 @@
 </style>
 <div class="container-fluid py-5">
   <div class="container p-4 shadow rounded-4" style="max-width: 900px;">
-
     <div class="text-center mb-4">
       <h3 class="fw-bold text-success">Add New Donation</h3>
       <p class="text-muted">Fill out the details to record a new donation</p>
     </div>
-
         <div class="text-center mb-4">
 <div id="donation-summary" class="card mt-3" style="display:none; color: black;">
    <div class="card-body" style="color: black;">
     <h6 class="fw-bold mb-3">Donation Summary</h6>
-
     <div class="row text-center">
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Total Declared</div>
             <div>₹<span id="total-declared">0</span></div>
         </div>
-
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Total Paid</div>
             <div>₹<span id="total-paid">0</span></div>
         </div>
-
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Remaining</div>
             <div class="fw-bold text-danger">
@@ -95,10 +80,8 @@
         </div>
     </div>
 </div>
-
 </div>
-
-        </div>
+ </div>
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -112,13 +95,10 @@
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>
       <hr>
       <div class="row g-3 mb-3">
-
-    <!-- Select Donor -->
     <div class="col-md-4">
         <label class="form-label">
             Select Donor / Pan Number<span style="color:#d9534f;">*</span>
         </label>
-
         <select name="donor" id="donor" class="form-select select2-search" required>
     <option value="">-- Select or Type Donor --</option>
     {% for donor in donors %}
@@ -128,34 +108,20 @@
         </option>
     {% endfor %}
 </select>
-
     </div>
-
-    <!-- Display Name -->
     <div class="col-md-4">
         <label class="form-label">Display Name</label>
-
-        <input type="text"
-              name="display_name"id="display_name"class="form-control"placeholder="Display Name">
+        <input type="text" name="display_name"id="display_name"class="form-control"placeholder="Display Name">
     </div>
 
     <div class="col-md-4">
           <label class="form-label fw-semibold">Reference Name</label>
           <input type="text" name="reference_name" class="form-control">
         </div>
-
 </div>
-
-<!-- Checkbox -->
 <div class="form-check mb-3">
-    <input class="form-check-input"
-           type="checkbox"
-           id="lock_display_name"
-           checked>
-
-    <label class="form-check-label" for="lock_display_name">
-        Use donor name (disable editing)
-    </label>
+    <input class="form-check-input" type="checkbox" id="lock_display_name" checked>
+    <label class="form-check-label" for="lock_display_name">Use donor name.</label>
 </div>
 
 <!-- <div class="row g-3 mb-3">
@@ -172,8 +138,6 @@
 
     </div>
 </div> -->
-
-      <!-- Donation Details -->
       <h5 class="text-success fw-bold mb-2">Donation Details</h5>
       <hr>
       <div class="row mb-3">
@@ -196,12 +160,10 @@
     {% endfor %}
 </select>
         </div>
-
                 <div class="col-md-6">
           <label class="form-label fw-semibold">Declared Amount (₹) <span style="color: #d9534f;">*</span></label>
           <input type="number" step="0.01" name="donation_amount_declared" class="form-control" required aria-required="true">
         </div>
-
               <!-- <select name="donation_category" class="form-select" required>
     <option value="">-- Select Category --</option>
 </select>
@@ -212,30 +174,19 @@
       </div>
 
 <div id="paymentSection">
-
-    <!-- 💳 Payment Information -->
     <h5 class="text-success fw-bold mb-2">Payment Information</h5>
     <hr>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Paid Amount (₹)</label>
-            <input type="number" step="0.01"
-                   name="donation_amount_paid"
-                   class="form-control">
+            <input type="number" step="0.01" name="donation_amount_paid" class="form-control">
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">
-                Donation Date <span style="color:#d9534f">*</span>
-            </label>
-            <input type="date"
-                   name="donation_date"
-                   value="{{ today }}"
-                   class="form-control">
+            <label class="form-label fw-semibold">Donation Date <span style="color:#d9534f">*</span></label>
+            <input type="date" name="donation_date" value="{{ today }} "class="form-control">
         </div>
     </div>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Payment Method</label>
@@ -246,7 +197,6 @@
                 {% endfor %}
             </select>
         </div>
-
         <div class="col-md-6">
             <label class="form-label fw-semibold">Payment Status</label>
             <select name="payment_status" class="form-select">
@@ -257,39 +207,28 @@
             </select>
         </div>
     </div>
-
     <div class="row mb-3 payment-field">
         <div class="col-md-6">
             <label class="form-label">Bank Name</label>
             <input type="text" name="name_of_bank" class="form-control">
         </div>
-
         <div class="col-md-6">
             <label class="form-label">Branch</label>
             <input type="text" name="branch" class="form-control">
         </div>
     </div>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Transaction ID</label>
             <input type="text" name="transaction_id" class="form-control">
         </div>
-
         <div class="col-md-6">
             <label class="form-label fw-semibold">Check Number</label>
             <input type="text" name="check_no" class="form-control">
         </div>
     </div>
-
-    
-      <!-- 📝 Additional Information -->
-      <!-- ========================= -->
       <h5 class="text-success fw-bold mb-2">Additional Information</h5>
       <hr>
-
-
-
 <!-- <select name="donation_category" class="form-select" required>
     <option value="">-- Select Category --</option>
 </select>
@@ -297,9 +236,7 @@
 <select name="donation_sub_category" class="form-select">
     <option value="">-- Select Sub-Category --</option>
 </select> -->
-
       <div class="row mb-3">
-
         <div class="col-md-6">
           <label class="form-label fw-semibold">Place of Donation</label>
           <input type="text" name="place_of_donation" class="form-control">
@@ -309,89 +246,43 @@
           <input type="text" name="donation_received_by" class="form-control">
         </div>
       </div>
-
       <div class="row mb-3">
         <div class="col-md-12">
           <label class="form-label fw-semibold">Description</label>
           <textarea name="description" class="form-control" rows="3"></textarea>
         </div>
       </div>
-
-
-
 </div>
-
-   
-  
-    <!-- NEW FIXED BUTTONS -->
     <div class="action-buttons">
-        <button type="submit" class="action-btn save-btn">
-            ✔ Save
-        </button>
-
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
-            ← Back
-        </a>
+        <button type="submit" class="action-btn save-btn">  ✔ Save  </button>
+        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back </a>
     </div>
     </form>
-
   </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const donationId = "{{ donation.id|default:'' }}";
     if (!donationId) return;
-
     fetch(`/donation/detail/ajax/${donationId}/`)
         .then(res => res.json())
         .then(data => {
-
-            // Donor
             $("#donor").val(data.donor).trigger("change");
-
-            // Names
             $("#display_name").val(data.display_name);
             $("input[name='reference_name']").val(data.reference_name);
-
-          
-$("select[name='donation_category']")
-                .val(data.donation_category);
-
-            $("select[name='donation_sub_category']")
-                .val(data.donation_sub_category);
-
-            $("input[name='donation_amount_declared']")
-                .val(data.declared_amount);
-
-            $("input[name='donation_amount_paid']")
-                .val(data.paid_amount);
-
-            // Payment
-            $("select[name='payment_method']")
-                .val(data.payment_method)
-                .trigger("change");
-
-            $("select[name='payment_status']")
-                .val(data.payment_status);
-
-            $("input[name='donation_date']")
-                .val(data.donation_date);
-
-            // Extra info
-            $("input[name='place_of_donation']")
-                .val(data.place_of_donation);
-
-            $("input[name='donation_received_by']")
-                .val(data.donation_received_by);
-
-            $("textarea[name='description']")
-                .val(data.description);
+$("select[name='donation_category']").val(data.donation_category);
+            $("select[name='donation_sub_category']").val(data.donation_sub_category);
+            $("input[name='donation_amount_declared']").val(data.declared_amount);
+            $("input[name='donation_amount_paid']").val(data.paid_amount);
+            $("select[name='payment_method']").val(data.payment_method).trigger("change");
+            $("select[name='payment_status']").val(data.payment_status);
+            $("input[name='donation_date']").val(data.donation_date);
+            $("input[name='place_of_donation']").val(data.place_of_donation);
+            $("input[name='donation_received_by']").val(data.donation_received_by);
+            $("textarea[name='description']").val(data.description);
         });
 });
 </script>
-
-
 <script>
 $(document).ready(function () {
     const donorSelect = $("#donor");
@@ -409,44 +300,29 @@ const checkInput = $("input[name='check_no']");
     let remainingAmount = 0;
     let lastCategory = "";
     let lastSubCategory = "";
-
-    // ===============================
-    // DONOR CHANGE → LOAD SUMMARY
-    // ===============================
     donorSelect.on("select2:select change", function () {
-
         const donorId = this.value;
         if (!donorId) return;
-
         fetch("{% url 'donation_summary_ajax' 0 %}".replace("0", donorId))
             .then(res => res.json())
             .then(data => {
-
                 remainingAmount = parseFloat(data.remaining) || 0;
                 lastCategory = data.last_category || "";
                 lastSubCategory = data.last_sub_category || "";
- // ✅ NEW
     transactionInput.val(data.transaction_id || "");
     checkInput.val(data.check_no || "");
-                // Summary
                 $("#total-declared").text(data.total_declared || 0);
                 $("#total-paid").text(data.total_paid || 0);
                 $("#remaining-amount").text(remainingAmount);
                 $("#donation-summary").show();
-
-                // Auto-select category
                 if (lastCategory) {
                     categorySelect.val(lastCategory);
                 }
-
                 if (lastSubCategory) {
                     subCategorySelect.val(lastSubCategory);
                 }
-
-                // Declared amount logic
                 const selectedCategory = categorySelect.val();
                 const selectedSubCategory = subCategorySelect.val();
-
                 if (
                     remainingAmount > 0 &&
                     selectedCategory == lastCategory &&
@@ -460,21 +336,12 @@ const checkInput = $("input[name='check_no']");
                 }
             });
     });
-
-    // ===============================
-    // CATEGORY CHANGE → RECHECK DECLARED
-    // ===============================
     categorySelect.on("change", function () {
         declaredInput.prop("readonly", false);
     });
-
     subCategorySelect.on("change", function () {
         declaredInput.prop("readonly", false);
     });
-
-    // ===============================
-    // PAID AMOUNT VALIDATION
-    // ===============================
     paidInput.on("input", function () {
         const paidValue = parseFloat(this.value) || 0;
         if (remainingAmount > 0 && paidValue > remainingAmount) {
@@ -482,10 +349,6 @@ const checkInput = $("input[name='check_no']");
             this.value = "";
         }
     });
-
-    // ===============================
-    // DISPLAY NAME AUTO-FILL
-    // ===============================
     donorSelect.on("select2:select change", function (e) {
         const text = $("#donor option:selected").text().trim();
         displayNameInput.val(text);
@@ -494,12 +357,7 @@ const checkInput = $("input[name='check_no']");
     lockCheckbox.on("change", function () {
         displayNameInput.prop("readonly", this.checked);
     });
-
     displayNameInput.prop("readonly", lockCheckbox.is(":checked"));
-
-    // ===============================
-    // PAYMENT METHOD SHOW/HIDE
-    // ===============================
     function togglePaymentFields() {
         const showFor = ["cheque", "neft", "rtgs", "bank transfer"];
         const selectedText = paymentSelect.find("option:selected")
@@ -511,24 +369,16 @@ const checkInput = $("input[name='check_no']");
             );
         });
     }
-
     paymentSelect.on("change", togglePaymentFields);
     togglePaymentFields();
-
-    // ===============================
-    // SELECT2 INIT
-    // ===============================
     donorSelect.select2({
         placeholder: "-- Select or Type Donor --",
         allowClear: true,
         tags: true,
         width: "100%"
     });
-
 });
 </script>
-
-
 {% endblock %}
 
 

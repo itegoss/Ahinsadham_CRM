@@ -2,9 +2,7 @@
 {% block title %} Heart Charity | Sign In {% endblock %}
 {% load static %}
 {% block content %}
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
     .auth-wrapper {
         min-height: 85vh;
@@ -116,7 +114,6 @@
         .auth-card { padding: 2rem 1.2rem; }
     }
 </style>
-
 <div class="auth-wrapper">
     <div class="auth-card">
         <h2>Sign In</h2>
@@ -124,31 +121,9 @@
         {% if errmsg %}
         <div class="alert alert-warning mt-2 mb-3">{{ errmsg }}</div>
         {% endif %}
-        <!-- <form method="post" autocomplete="off">
-            {% csrf_token %}
-            <div class="input-row">
-                <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" required>
-            </div>
-            <div class="input-row">
-                <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="new-password" required>
-            </div>
-            <div class="input-row">
-                
-            </div>
-            <button type="submit" class="auth-btn">Login</button>
-        </form> -->
-
-        <!-- Correct Google login link -->
-        <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn">
-            <i class="fab fa-google"></i> Sign in with Google
-        </a>
+        <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Google</a>
         <hr>
-          <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn">
-            <i class="fab fa-google"></i> Sign in with Mobile Number
-        </a>
-
-        
+          <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Mobile Number</a>
     </div>
 </div>
-
 {% endblock %}

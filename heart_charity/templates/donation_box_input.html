@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Select Donation Box{% endblock %}
-
 {% block content %}
-
 <style>
     .card {
         max-width: 520px;
@@ -30,20 +28,13 @@
         background: #6b7280;
         color: white;
     }
-
-
-
     .alert-error,
     .alert-danger {
-        background-color: #fee2e2 !important;   /* light red */
-        color: #991b1b !important;              /* dark red text */
+        background-color: #fee2e2 !important;
+        color: #991b1b !important;              
         font-weight: 600;
     }
-
-
 </style>
-
-<!-- ✅ Messages -->
 {% if messages %}
 <div class="container mt-3">
     {% for message in messages %}
@@ -54,36 +45,24 @@
     {% endfor %}
 </div>
 {% endif %}
-
 <div class="container mt-5">
     <div class="card p-4">
         <h4 class="text-center fw-bold mb-4">Select Donation Box</h4>
-
         <div class="btn-group mb-4">
             <button type="button" class="btn btn-outline-success" onclick="showQR()">📷 Scan QR</button>
             <button type="button" class="btn btn-outline-primary" onclick="showManual()">⌨️ Enter Box ID</button>
         </div>
-
         <form method="POST">
             {% csrf_token %}
-
-            <!-- QR -->
             <div id="qrSection" style="display:none;">
                 <label class="form-label fw-semibold">Scan Donation Box QR</label>
                 <video id="qr-video" class="border rounded w-100" height="220"></video>
                 <p class="text-muted text-center mt-2">Point camera at QR</p>
             </div>
-
-            <!-- Manual -->
             <div id="manualSection" style="display:none;">
                 <label class="form-label fw-semibold">Donation Box ID</label>
-                <input type="text"
-                       id="donationBoxInput"
-                       name="donation_box_id"
-                       class="form-control"
-                       placeholder="e.g. DO_0001">
+                <input type="text" id="donationBoxInput" name="donation_box_id" class="form-control" placeholder="e.g. DO_0001">
             </div>
-
             <div class="btn-group">
                 <button type="submit" class="btn btn-submit">Continue</button>
                 <button type="button" onclick="history.back()" class="btn btn-back">← Back</button>

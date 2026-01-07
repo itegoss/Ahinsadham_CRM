@@ -201,7 +201,6 @@
             <label class="form-label">Bank Name</label>
             <input type="text" name="name_of_bank" class="form-control">
         </div>
-
         <div class="col-md-6">
             <label class="form-label">Branch</label>
             <input type="text" name="branch" class="form-control">
@@ -213,7 +212,6 @@
             <label class="form-label fw-semibold">Transaction ID</label>
             <input type="text" name="transaction_id" class="form-control">
         </div>
-
         <div class="col-md-6">
             <label class="form-label fw-semibold">Check Number</label>
             <input type="text" name="check_no" class="form-control">
@@ -288,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ].text.trim().toLowerCase();
         paymentFields.forEach(el => {
             el.style.display = showFor.includes(selectedText)
-                ? "flex"   // Bootstrap row uses flex
+                ? "flex"  
                 : "none";
         });
     }
@@ -306,6 +304,5 @@ $(document).ready(function () {
     });
 });
 </script>
-
 {% endblock %}
 

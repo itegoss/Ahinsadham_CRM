@@ -1,6 +1,4 @@
-
 {% load custom_tags %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,15 +13,11 @@
     size: A5 landscape;
     margin: 6mm 4mm 5mm 4mm;
 }
-
-
 html, body {
     width: 100%;
     margin: 0;
     padding: 0;
 }
-
-
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 9px;
@@ -33,22 +27,16 @@ body {
     background: #fff;
     line-height: 1.2;
 }
-
 .receipt-container {
     width: 100%;
 }
-
-/* Outer boxed receipt to match owner design */
 .receipt-box {
     width: 100%;
     border: 1px solid #000;
     border-collapse: collapse;
     background: #fff;
 }
-
 .receipt-box td { padding: 2px; }
-
-/* ================= HEADER ================= */
 .bi {
     font-size: 13px;
     vertical-align: middle;
@@ -58,15 +46,12 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
-
 .header-table td { border: 1px solid #000; padding:3px; vertical-align:middle; }
-
 .logo {
     height: 75px;
     width: 114%;
     display: block;
     margin: 0 auto;}
-
 .header-title {
     font-size: 17px;
     font-weight: bold;
@@ -74,12 +59,10 @@ body {
     text-align: center;
     margin-bottom: 1px;
 }
-
 .header-sub {
     font-size: 15px;
     text-align: center;
 }
-/* ================= INFO ================= */
 .info-line {
     font-size: 12px;
     margin-top: 2px;
@@ -87,14 +70,12 @@ body {
 }
 .info-line table { width:100%; border-collapse:collapse; }
 .info-line td { border: 1px solid #000; padding:3px; vertical-align:top; }
-
 .info-line span {
     float: right;
 }
 .info-line b {
     color: #0c6d34;
 }
-
 /* ================= SECTION ================= */
 .section-title {
     margin-top: 4px;
@@ -103,36 +84,30 @@ body {
     font-weight: bold;
     font-size: 13px;
 }
-
 /* ================= TABLE ================= */
 table {
     width: 100%;
        border-collapse: collapse;
        font-size: 12px;
 }
-
 .table td, .table th {
     padding: 2px;
     border: 1px solid #000;
     vertical-align: top;
     line-height: 1.0;
 }
-
 .table tr:nth-child(even) td {
     background: transparent;
 }
-
 .amount {
     text-align: right;
     font-weight: bold;
     color: #0c6d34;
 }
-
 .total-row td {
     border-top: 2px solid #000;
     font-weight: bold;
 }
-
 /* ================= FOOTER ================= */
 .footer-text {
     text-align: center;
@@ -143,14 +118,12 @@ table {
     padding: 2px 0;
     border-top: 1px solid #0c6d34;
 }
-
 .signature {
     margin-top: 6px;
     display: flex;
     justify-content: space-between;
     font-size: 8px;
 }
-
 /* ================= BUTTONS ================= */
 .buttons {
     margin: 12px 0;
@@ -158,7 +131,6 @@ table {
     gap: 10px;
     justify-content: center;
 }
-
 .mini-btn {
     padding: 0;
     font-size: 0;
@@ -174,29 +146,24 @@ table {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .btn.mini-btn {
     background: #f3f7f5;
     color: #0c6d34;
     border: 1px solid #dbeedd;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
 .btn.mini-btn svg {
     margin: 0;
     width: 16px;
     height: 16px;
     display: block;
 }
-
 .btn.mini-btn:hover {
     background: #0c6d34;
     color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-
-/* Hide buttons in print */
 @media print {
     .buttons, .mini-btn { 
         display: none !important; 
@@ -405,18 +372,13 @@ table {
 
 </td></tr></table>
 </div>
-
-<!-- ACTION BUTTONS -->
 <div class="buttons">
-    <!-- PRINT -->
     <button class="btn mini-btn" onclick="window.print()" title="Print" aria-label="Print receipt">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
         </svg>
     </button>
-
-    <!-- DOWNLOAD PDF -->
     <a class="btn mini-btn" href="{% url 'download_receipt_pdf' donation.id %}" title="Download PDF" aria-label="Download PDF">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
@@ -425,16 +387,12 @@ table {
             <line x1="9" y1="15" x2="15" y2="15"></line>
         </svg>
     </a>
-
-    <!-- BACK -->
     <a class="btn mini-btn" href="{% url 'welcome' %}" title="Back" aria-label="Go back">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="15 18 9 12 15 6"></polyline>
             <line x1="9" y1="12" x2="21" y2="12"></line>
         </svg>
     </a>
-
-    <!-- SHARE -->
     <button class="btn mini-btn" onclick="shareReceipt()" title="Share Receipt">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="18" cy="5" r="3"></circle>
@@ -445,12 +403,9 @@ table {
         </svg>
     </button>
 </div>
-
 <script>
 function shareReceipt() {
     const pdfUrl = "{% url 'download_receipt_pdf' donation.id %}";
-
-    // 1️⃣ If Web Share API supported
     if (navigator.share) {
         navigator.share({
             title: "Donation Receipt",
@@ -461,18 +416,14 @@ function shareReceipt() {
         });
         return;
     }
-
-    // 2️⃣ Fallback: copy link
     navigator.clipboard.writeText(window.location.origin + pdfUrl)
         .then(() => {
             alert("Receipt link copied. You can share it manually.");
         })
         .catch(() => {
-            // 3️⃣ Last fallback: open PDF
             window.open(pdfUrl, "_blank");
         });
 }
 </script>
-
 </body>
 </html>

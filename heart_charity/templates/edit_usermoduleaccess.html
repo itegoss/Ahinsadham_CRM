@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Access</title>
-
 <style>
     body {
         margin: 0;
@@ -16,14 +15,12 @@
         align-items: center;
         min-height: 100vh;
     }
-
     .overlay {
         position: fixed;
         width: 100%; height: 100%;
         background: rgba(0,0,0,0.15);
         backdrop-filter: blur(4px);
     }
-
     .popup-card {
         position: relative;
         width: 85%;
@@ -34,38 +31,27 @@
         box-shadow: 0px 15px 40px rgba(0,0,0,0.2);
         animation: popup .4s ease;
     }
-
     @keyframes popup {
         0% { transform: scale(.8); opacity: 0; }
         100% { transform: scale(1); opacity: 1; }
     }
-
     .title { text-align:center; font-size:38px; font-weight:bold; color:#1e7a33; margin-bottom:6px; }
     .subtitle { text-align:center; font-size:18px; color:gray; margin-bottom:35px; }
-
     .section-label { font-size:22px; color:green; font-weight:bold; margin-bottom:8px;}
     .line { width:100%; height:2px; background:#d1e5d1; margin-bottom:30px; }
-
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:25px 40px;}
-
     .form-group label { font-weight:600; color:#333; display:block; margin-bottom:5px; }
-    .form-group input, textarea {
-        width:100%; padding:14px; border-radius:10px;
-        border:2px solid #cce4cc; font-size:16px; background:#f8fff8;
-    }
+    .form-group input, textarea {width:100%; padding:14px; border-radius:10px; border:2px solid #cce4cc; font-size:16px; background:#f8fff8;}
     textarea { min-height:100px; resize:none; }
     input:focus, textarea:focus { border-color:#21873b; background:white; outline:none; }
-
     .permissions { margin-top:20px; }
     .permissions label { font-size:16px; margin-right:25px; cursor:pointer; }
-
     .btn-area { text-align:center; margin-top:40px; }
     button { padding:14px 40px; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; border:none; margin:0 10px; }
     .btn-submit { background:#21873b; color:white; }
     .btn-submit:hover { background:#17612a; }
     .btn-back { background:#6c757d; color:white; }
     .btn-back:hover { background:#565e64;}
-    
     .close-btn {
         position:absolute; top:18px; right:18px;
         font-size:22px; background:none; border:none; cursor:pointer;
@@ -74,41 +60,29 @@
 </style>
 </head>
 <body>
-
 <div class="overlay"></div>
-
 <div class="popup-card">
-
     <button class="close-btn" onclick="window.history.back()">✖</button>
-
     <div class="title">Edit Role Access</div>
     <div class="subtitle">Modify permissions and details below</div>
-
     <div class="section-label">Access Details</div>
     <div class="line"></div>
-
     <form method="POST">
         {% csrf_token %}
-
         <div class="form-grid">
-
             <div class="form-group">
                 <label>Role Name</label>
                 <input type="text" name="name" placeholder="{{ access.name }}">
             </div>
-
             <div class="form-group">
                 <label>Module</label>
                 <input type="text" value="{{ access.module.module_name }}" readonly style="background:#ececec;">
             </div>
-
             <div class="form-group" style="grid-column: span 2;">
                 <label>Description</label>
                 <textarea name="description" placeholder="{{ access.description }}"></textarea>
             </div>
-
         </div>
-
         <div class="permissions">
             <label><input type="checkbox" name="can_access" {% if access.can_access %}checked{% endif %}> Access</label>
             <label><input type="checkbox" name="can_add" {% if access.can_add %}checked{% endif %}> Add</label>
@@ -116,16 +90,11 @@
             <label><input type="checkbox" name="can_delete" {% if access.can_delete %}checked{% endif %}> Delete</label>
             <label><input type="checkbox" name="can_view" {% if access.can_view %}checked{% endif %}> View</label>
         </div>
-
         <div class="btn-area">
             <button class="btn-submit" type="submit">✔ Update</button>
-            <a href="{% url 'welcome' %}">
-                <button type="button" class="btn-back">← Back</button>
-            </a>
+            <a href="{% url 'welcome' %}"> <button type="button" class="btn-back">← Back</button></a>
         </div>
-
     </form>
 </div>
-
 </body>
 </html>

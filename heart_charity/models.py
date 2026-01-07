@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.conf import settings  # make sure you import this
+from django.conf import settings
+from datetime import date
+from io import BytesIO
+from django.core.files import File
+import qrcode
+
 
 class Module(models.Model):
     module_name = models.CharField(max_length=100, unique=True)
@@ -35,7 +40,6 @@ class UserModuleAccess(models.Model):
 
     def __str__(self):
         return f"{self.module.module_name} — {self.name}"
-
 
 class UserRole(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -89,7 +93,7 @@ class DonationBox(models.Model):
                 new_id = "DO_0001"
             self.donation_id = new_id
         if not self.qr_code:
-            qr_data = f"Donation ID: {self.donation_id}\nBox Name: {self.donation_box_name}\nLocation: {self.location}"
+            qr_data = f"Donation ID: {self.donation_id}\nLocation: {self.location}"
             qr_img = qrcode.make(qr_data)
             buffer = BytesIO()
             qr_img.save(buffer, format='PNG')
@@ -99,8 +103,6 @@ class DonationBox(models.Model):
     def __str__(self):
         return f"{self.donation_box_name} ({self.donation_id})"
 gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
-
-from datetime import date
 
 class DonorVolunteer(models.Model):
     BLOOD_GROUP_CHOICES = [
@@ -122,7 +124,6 @@ class DonorVolunteer(models.Model):
         blank=True,
         related_name='referrals'
     )
-    # -------------------- PERSONAL DETAILS --------------------
     salutation = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
@@ -137,7 +138,6 @@ class DonorVolunteer(models.Model):
     donor_box = models.ForeignKey(DonationBox,on_delete=models.SET_NULL,null=True,blank=True)
     doa = models.DateField(blank=True, null=True)
     years_to_marriage = models.IntegerField(blank=True, null=True)
-    # -------------------- ADDRESS --------------------
     house_number = models.CharField(max_length=50)
     building_name = models.CharField(max_length=100, blank=True, null=True)
     landmark = models.CharField(max_length=100, blank=True, null=True)
@@ -197,8 +197,6 @@ class DonorVolunteer(models.Model):
         on_delete=models.SET_NULL,
         related_name="business_type_lookup"
     )
-
-    # -------------------- NEW BUSINESS FIELDS (ADDED) --------------------
     business_salutation = models.CharField(max_length=50, null=True, blank=True)
     business_name = models.CharField(max_length=200, null=True, blank=True)
     business_nature = models.ForeignKey(
@@ -228,8 +226,6 @@ class DonorVolunteer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
-
-    # -------------------- SAVE --------------------
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
     def __str__(self):
@@ -311,17 +307,13 @@ class DonationOwner(models.Model):
     def __str__(self):
         return f"{self.owner_name.first_name} {self.owner_name.last_name} - ₹{self.amount} ({self.donation_box.donation_id})"
 
-
 from django.db import models
-
 class ReceiptSequence(models.Model):
     year = models.PositiveIntegerField(unique=True)
     last_number = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.year} → {self.last_number}"
-
-
 
 from django.utils import timezone
 from django.db.models.signals import pre_save
@@ -365,11 +357,21 @@ class Donation(models.Model):
     def __str__(self):
         return f"Donation {self.id}"
 
+# class DonationPaymentBox(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
 
 class DonationPaymentBox(models.Model):
     id = models.AutoField(primary_key=True)
     receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='donation_payments')
+
+    owner = models.ForeignKey(
+        DonorVolunteer,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='donation_payments'
+    )    
     donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
     address = models.CharField(max_length=255, blank=True, null=True)
     opened_by = models.ForeignKey('heart_charity.DonorVolunteer',related_name='opened_payments',on_delete=models.SET_NULL,null=True,blank=True)
@@ -436,7 +438,14 @@ class DonationPaymentBox_Hist(models.Model):
     )
 
     # Copy ALL fields from the main table
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    owner = models.ForeignKey(
+    DonorVolunteer,                                                                                                             
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='donation_payment_history'
+)
     donation_box = models.ForeignKey('DonationBox', on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=255, blank=True, null=True)
 

@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 <style>
@@ -158,19 +157,11 @@
                 </div>
                 {% endif %}
             </div>
-
-            <!-- Buttons -->
             <div class="text-center mt-5">
-                <button type="submit" class="btn btn-success me-3">
-                    ✔ Update
-                </button>
-                <a href="{% url 'welcome' %}" class="btn btn-secondary">
-                    ← Back
-                </a>
+                <button type="submit" class="btn btn-success me-3">✔ Update</button>
+                <a href="{% url 'welcome' %}" class="btn btn-secondary">← Back</a>
             </div>
-
         </form>
     </div>
 </div>
-
 {% endblock %}
