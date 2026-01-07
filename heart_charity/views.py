@@ -8,8 +8,12 @@ import random
 from django.shortcuts import render, redirect, get_object_or_404
 from requests import request
 from .models import DonationBox, DonationPaymentBox, User ,Donation
-from heart_charity.models import LookupType,Lookup,UserModuleAccess,Module,UserRole
+from heart_charity.models import LookupType,Lookup,UserModuleAccess,Module,UserRole,User, DonationOwner, DonorVolunteer
 from django.contrib import messages
+import csv
+from django.http import HttpResponse
+import json
+from .utils import generate_receipt_id
 
 
 def home(req):
@@ -22,16 +26,6 @@ def signin_view(request):
         return redirect('welcome') 
     except User.DoesNotExist:
         return render(request, 'signin.html', {"errmsg": """"""})
-
-
-def check_module_access(request,user_id):
-    user = get_object_or_404(User, id=user_id)
-    modules = Module.objects.all() 
-    allowed_modules = UserModuleAccess.objects.filter(
-        user=user,
-        can_access=True
-    ).select_related('module').values_list('module__module_name', flat=True)
-    return render(request, 'welcome.html', { 'user': user,'allowed_modules':list(allowed_modules),'modules': modules})
 
 def access_control(request):
     modules = Module.objects.all()
@@ -68,7 +62,6 @@ def access_control(request):
 from django.db.models import Q
 from django.utils.timezone import now
 from django.utils import timezone
-from .models import User, DonationOwner, DonorVolunteer
 def show_lookup_data(request):
     lookup_types = LookupType.objects.filter(is_deleted=False)
     lookups = Lookup.objects.select_related("lookup_type").filter(is_deleted=False).order_by("id")
@@ -78,9 +71,6 @@ def show_lookup_data(request):
         "lookups": lookups
     })
 from django.core.paginator import Paginator
-from .models import (
-    User
-)
 from .helpers import get_user_permissions
 @login_required
 def welcome_view(request):
@@ -182,10 +172,6 @@ def welcome_view(request):
         'payments_page_obj': payments_page_obj,
         'box_page_obj': box_page_obj,
     }
-
-    # ------------------------------------------------------------
-    # ACCESS CONTROL
-    # ------------------------------------------------------------
     if user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
         context['allowed_modules'] = list(all_modules)
@@ -246,11 +232,9 @@ def send_otp(request):
 
 # ------------Globle All Search-------------------
 
-import csv
-from django.http import HttpResponse
 def search_lookup_type(request):
     lookup_query = request.GET.get('lookup_query', '').strip()
-    active_tab = request.GET.get('active_tab', 'mdm')  # keep active tab info
+    active_tab = request.GET.get('active_tab', 'mdm')
     lookup_types = LookupType.objects.all().order_by('id')
     if lookup_query:
         filters = (
@@ -297,7 +281,6 @@ def search_lookup_type(request):
         "active_tab": active_tab,
         "permissions":permissions
     })
-
 
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
@@ -426,7 +409,6 @@ def search_users(request):
         "active_tab": active_tab,
         "permissions":permissions
     })
-
 
 def search_roles(request):
     query1 = request.GET.get('query1', '').strip()
@@ -1183,157 +1165,6 @@ def search_donation_box(request):
     })
 
 #----------------Globle End Search--------------
-# -----------------Local search------------------------
-@login_required
-def search_id(request):
-    query = request.GET.get('search')
-    users = User.objects.all()
-    active_tab = 'user'
-    if query:
-        try:
-            users = User.objects.filter(id=int(query))
-        except ValueError:
-            users = []
-
-    return render(request, 'welcome.html', {
-        'users': users,
-        'query': query,
-        'active_tab': active_tab
-    })
-@login_required
-def searchfirstname(request):
-    query = request.GET.get('search')
-    users = User.objects.all()
-    active_tab = 'user'
-    if query:
-        users = User.objects.filter(first_name__icontains=query)
-
-    return render(request, 'welcome.html', {
-        'users': users,
-        'query': query,
-        'active_tab': active_tab
-    })
-
-def searchlastname(request):
-    query = request.GET.get('search', '').strip()
-    users = []
-    if query:
-        users = User.objects.filter(last_name__icontains=query)
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-
-def searchemail(request):
-    query = request.GET.get('search', '').strip()
-    users = []
-    if query:
-        users = User.objects.filter(email__icontains=query)
-
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-
-def searchisstaff(request):
-    query = request.GET.get('search', '').strip().lower()
-    users = []
-    if query:
-        if query in ['true', 'yes', '1']:
-            users = User.objects.filter(is_staff=True)
-        elif query in ['false', 'no', '0']:
-            users = User.objects.filter(is_staff=False)
-
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user', 
-    }
-    return render(request, 'welcome.html', context)
-
-def searchactive(request):
-    query = request.GET.get('search', '').strip().lower()
-    users = []
-    if query:
-        if query in ['active', 'true', 'yes', '1']:
-            users = User.objects.filter(is_active=True)
-        elif query in ['inactive', 'false', 'no', '0']:
-            users = User.objects.filter(is_active=False)
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-
-def searchsuperuser(request):
-    query = request.GET.get('search', '').strip().lower()
-    users = []
-    if query:
-        if query in ['true', 'yes', '1', 'superuser']:
-            users = User.objects.filter(is_superuser=True)
-        elif query in ['false', 'no', '0', 'normal']:
-            users = User.objects.filter(is_superuser=False)
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-
-def search_lastlogin(request):
-    query = request.GET.get('search', '').strip().lower()
-    users = []
-    if query:
-        matched_users = []
-        for user in User.objects.all():
-            if user.last_login:
-                formatted = user.last_login.strftime("%b. %d, %Y, %#I:%M %p").lower()
-                clean_formatted = formatted.replace(',', '').replace('.', '')
-                parts = clean_formatted.split()
-                date_part = " ".join(parts[:3])  
-                time_part = " ".join(parts[3:]) 
-                looks_like_time = any(x in query for x in [':', 'am', 'pm'])
-                if looks_like_time:
-                    if query.replace('.', '') in time_part:
-                        matched_users.append(user)
-                else:
-                    if query in date_part:
-                        matched_users.append(user)
-        users = matched_users
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-
-def searchdate(request):
-    query = request.GET.get('search', '').strip().lower()
-    users = []
-    if query:
-        matched_users = []
-        for user in User.objects.all():
-            if user.last_login:
-                formatted = user.last_login.strftime("%b. %d, %Y, %#I:%M %p").lower()
-                clean_formatted = formatted.replace(',', '').replace('.', '')
-                parts = clean_formatted.split()
-                date_part = " ".join(parts[:3])
-                if query in date_part:
-                    matched_users.append(user)
-        users = matched_users
-    context = {
-        'users': users,
-        'query': query,
-        'active_tab': 'user',
-    }
-    return render(request, 'welcome.html', context)
-# ----------------------local search ends---------------
-
 from django.core.files.storage import default_storage
 
 def add_donor_volunteer(request):
@@ -1456,10 +1287,6 @@ def add_donor_volunteer(request):
         "blood_groups": blood_groups,
     })
 
-def donor_success(request):
-    return render(request, "donor_success.html") 
-
-from django.utils.timezone import now
 from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Sum
 
@@ -1548,7 +1375,8 @@ def adddonation(request):
             branch=request.POST.get("branch"),
             transaction_id=request.POST.get("transaction_id"),
             check_no=request.POST.get("check_no"),
-            created_by=request.user
+            created_by=request.user,
+
         )
         messages.success(request, "Donation added successfully!")
         return redirect("adddonation")
@@ -1669,7 +1497,6 @@ def donation_list(request):
     return render(request, 'donation-list.html', {'donations': donations})
 
 from xhtml2pdf import pisa
-from django.template.loader import render_to_string
 import os
 from django.conf import settings
 def link_callback(uri, rel):
@@ -1714,39 +1541,14 @@ def donation_receipt_preview(request, id):
     })
 
 from reportlab.lib.colors import HexColor, black
-from django.http import HttpResponse
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 from reportlab.lib.pagesizes import A5, landscape
-from django.conf import settings
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from io import BytesIO
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A5, landscape
-from reportlab.lib.colors import black
-from reportlab.lib.units import mm
-from reportlab.lib.utils import ImageReader
-from django.core.files.base import ContentFile
 import os
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.core.files.base import ContentFile
-from reportlab.lib.pagesizes import A5, landscape
 from reportlab.platypus import (
-    SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
-)
+    SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image)
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
-from reportlab.lib.units import mm
-from io import BytesIO
-import os
-
 
 def download_receipt_pdf(request, id):
     donation = get_object_or_404(Donation, id=id)
@@ -1757,8 +1559,6 @@ def download_receipt_pdf(request, id):
     signature_url = request.build_absolute_uri(
         settings.STATIC_URL + "images/signature.png"
     )
-
-    # ✅ FIX: absolute filesystem paths (app/static/)
     facebook_icon = request.build_absolute_uri(
         settings.STATIC_URL + "images/facebook.png"
     )
@@ -1794,9 +1594,6 @@ def download_receipt_pdf(request, id):
     pisa.CreatePDF(html, dest=response)
 
     return response
-
-
-
 
 def donation_payment_receipt_view(request, id):
     payment = get_object_or_404(DonationPaymentBox,id=id,is_deleted=False)
@@ -2061,74 +1858,199 @@ def donation_receipt_view(request, donation_id):
     return response
 
 from .models import DonationPaymentBox, DonationBox
-import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.mail import send_mail
 from django.utils import timezone
+# def add_donation_payment(request):
+#     donation_boxes = DonationBox.objects.filter(
+#         is_deleted=False,
+#         donorvolunteer__isnull=False
+#     ).distinct()
+
+#     payment_methods = Lookup.objects.filter(
+#         lookup_type__type_name__iexact="Payment Method",is_deleted=False
+#     ).order_by("lookup_name")
+#     donor_volunteers = DonorVolunteer.objects.filter( is_deleted=False,person_type__lookup_name__iexact="Employee")
+#     box_owner_map = []
+#     donors = DonorVolunteer.objects.filter(is_deleted=False)
+#     for d in donors:
+#         if d.donor_box:
+#             address = ", ".join(filter(None, [
+#                 d.house_number,
+#                 d.building_name,
+#                 d.area,
+#                 d.city,
+#                 d.state,
+#                 d.postal_code
+#             ]))
+
+#             box_owner_map.append({
+#                 "box_id": d.donor_box.id,
+#                 "owner_name": f"{d.first_name} {d.last_name}",
+#                 "address": address,
+#             })
+
+#     if request.method == "POST":
+#         donation_box_id = request.POST.get("donation_box")
+#         address = request.POST.get("address")
+#         opened_by_id = request.POST.get("opened_by")
+#         received_by_id = request.POST.get("received_by")
+#         amount = request.POST.get("amount")
+#         payment_method_id = request.POST.get("payment_method")
+#         date_time = request.POST.get("date_time")
+#         i_witness = request.POST.get("i_witness")
+#         name_of_bank = request.POST.get("name_of_bank")
+#         branch = request.POST.get("branch")
+#         transaction_id = request.POST.get("transaction_id")
+#         donation_box = get_object_or_404(DonationBox, id=donation_box_id)
+#         payment_method = get_object_or_404(Lookup, id=payment_method_id)
+#         opened_by = DonorVolunteer.objects.get(id=opened_by_id) if opened_by_id else None
+#         received_by = DonorVolunteer.objects.get(id=received_by_id) if received_by_id else None
+#         owner = donation_box.donorvolunteer if hasattr(donation_box, "donorvolunteer") else None
+
+#         DonationPaymentBox.objects.create(
+#             owner=owner,    
+#             donation_box=donation_box,
+#             address=address,
+#             opened_by=opened_by,
+#             received_by=received_by,
+#             amount=amount,
+#             payment_method=payment_method,
+#             date_time=date_time,
+#             i_witness=i_witness,
+#             name_of_bank=name_of_bank,
+#             branch=branch,
+#             transaction_id=transaction_id,
+#             created_by=request.user,
+#             updated_by=request.user,
+#         )
+#         messages.success(request, "Donation Payment Added Successfully!")
+#         return redirect("welcome")
+#     context = {
+#         "donation_boxes": donation_boxes,
+#         "payment_methods": payment_methods,
+#         "donor_volunteers": donor_volunteers,
+#         "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
+#         "current_time": timezone.now(),
+#     }
+#     return render(request, "add_donationbox_payment.html", context)
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
 def add_donation_payment(request):
+
+    # -----------------------------
+    # DONATION BOXES (ONLY WITH OWNER)
+    # -----------------------------
     donation_boxes = DonationBox.objects.filter(
         is_deleted=False,
         donorvolunteer__isnull=False
     ).distinct()
 
+    # -----------------------------
+    # PAYMENT METHODS
+    # -----------------------------
     payment_methods = Lookup.objects.filter(
-        lookup_type__type_name__iexact="Payment Method"
+        lookup_type__type_name__iexact="Payment Method",
+        is_deleted=False
     ).order_by("lookup_name")
-    donor_volunteers = DonorVolunteer.objects.filter( is_deleted=False,person_type__lookup_name__iexact="Employee")
+
+    # -----------------------------
+    # EMPLOYEES
+    # -----------------------------
+    donor_volunteers = DonorVolunteer.objects.filter(
+        is_deleted=False,
+        person_type__lookup_name__iexact="Employee"
+    )
+
+    # -----------------------------
+    # BOX → OWNER MAP (FOR JS AUTOFILL)
+    # -----------------------------
     box_owner_map = []
-    donors = DonorVolunteer.objects.filter(is_deleted=False)
-    for d in donors:
-        if d.donor_box:
-            address = ", ".join(filter(None, [
-                d.house_number,
-                d.building_name,
-                d.area,
-                d.city,
-                d.state,
-                d.postal_code
-            ]))
+    owners = DonorVolunteer.objects.filter(
+        is_deleted=False,
+        donor_box__isnull=False
+    )
 
-            box_owner_map.append({
-                "box_id": d.donor_box.id,
-                "owner_name": f"{d.first_name} {d.last_name}",
-                "address": address,
-            })
+    for owner in owners:
+        address = ", ".join(filter(None, [
+            owner.house_number,
+            owner.building_name,
+            owner.area,
+            owner.city,
+            owner.state,
+            owner.postal_code
+        ]))
 
+        box_owner_map.append({
+            "box_id": owner.donor_box.id,
+            "owner_id": owner.id,
+            "owner_name": f"{owner.first_name} {owner.last_name}",
+            "address": address,
+        })
+
+    # -----------------------------
+    # SAVE PAYMENT
+    # -----------------------------
     if request.method == "POST":
-        donation_box_id = request.POST.get("donation_box")
-        address = request.POST.get("address")
+
+        donation_box = get_object_or_404(
+            DonationBox,
+            id=request.POST.get("donation_box")
+        )
+
+        payment_method = get_object_or_404(
+            Lookup,
+            id=request.POST.get("payment_method")
+        )
+
+        # ✅ SAFE HANDLING (NO EMPTY STRING ERROR)
         opened_by_id = request.POST.get("opened_by")
         received_by_id = request.POST.get("received_by")
-        amount = request.POST.get("amount")
-        payment_method_id = request.POST.get("payment_method")
-        date_time = request.POST.get("date_time")
-        i_witness = request.POST.get("i_witness")
-        name_of_bank = request.POST.get("name_of_bank")
-        branch = request.POST.get("branch")
-        transaction_id = request.POST.get("transaction_id")
-        donation_box = get_object_or_404(DonationBox, id=donation_box_id)
-        payment_method = get_object_or_404(Lookup, id=payment_method_id)
-        opened_by = DonorVolunteer.objects.get(id=opened_by_id) if opened_by_id else None
-        received_by = DonorVolunteer.objects.get(id=received_by_id) if received_by_id else None
+
+        opened_by = (
+            DonorVolunteer.objects.filter(id=opened_by_id).first()
+            if opened_by_id else None
+        )
+
+        received_by = (
+            DonorVolunteer.objects.filter(id=received_by_id).first()
+            if received_by_id else None
+        )
+
+        # ✅ FETCH OWNER FROM DONATION BOX
+        owner = DonorVolunteer.objects.filter(
+            donor_box=donation_box,
+            is_deleted=False
+        ).first()
 
         DonationPaymentBox.objects.create(
-            owner=request.user,
+            owner=owner,
             donation_box=donation_box,
-            address=address,
+            address=request.POST.get("address"),
             opened_by=opened_by,
             received_by=received_by,
-            amount=amount,
+            amount=request.POST.get("amount"),
             payment_method=payment_method,
-            date_time=date_time,
-            i_witness=i_witness,
-            name_of_bank=name_of_bank,
-            branch=branch,
-            transaction_id=transaction_id,
+            date_time=request.POST.get("date_time"),
+            i_witness=request.POST.get("i_witness"),
+            name_of_bank=request.POST.get("name_of_bank"),
+            branch=request.POST.get("branch"),
+            transaction_id=request.POST.get("transaction_id"),
             created_by=request.user,
             updated_by=request.user,
         )
+
         messages.success(request, "Donation Payment Added Successfully!")
         return redirect("welcome")
+
+    # -----------------------------
+    # CONTEXT
+    # -----------------------------
     context = {
         "donation_boxes": donation_boxes,
         "payment_methods": payment_methods,
@@ -2136,7 +2058,9 @@ def add_donation_payment(request):
         "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
         "current_time": timezone.now(),
     }
+
     return render(request, "add_donationbox_payment.html", context)
+
 
 @login_required
 def add_donation_box(request):
@@ -2164,7 +2088,7 @@ def add_donation_box(request):
 
 def all_donations(request):
     q = request.GET.get('q', '').strip()
-    donations = Donation.objects.all()
+    donations = Donation.objects.filter(is_deleted=False)
 
     if q:
         donations = donations.filter(
@@ -2186,279 +2110,6 @@ def all_donations(request):
         'query': q,
         'message': message
     })
-
-def donationbox_list(request):
-    query = request.GET.get('q', '')
-    donation_boxes = DonationBox.objects.all()
-
-    if query:
-        donation_boxes = donation_boxes.filter(
-            Q(donation_box_name__icontains=query) |
-            Q(donation_id__icontains=query) |
-            Q(location__icontains=query)
-        )
-
-    return render(request, 'show_donationbox.html', {'donation_boxes': donation_boxes})
-
-# -------------------Filtered and Download data------------------------
-
-def download_filtered_donations(request):
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    search = request.GET.get('search', '').strip()
-
-    # ✅ Prevent download if all fields are empty
-    if not start_date and not end_date and not search:
-        messages.warning(request, "⚠️ Please enter a date range or search term before downloading.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    donations = Donation.objects.all()
-
-    # ✅ Filter by date range
-    if start_date and end_date:
-        donations = donations.filter(donation_date__range=[start_date, end_date])
-    elif start_date:
-        donations = donations.filter(donation_date__gte=start_date)
-    elif end_date:
-        donations = donations.filter(donation_date__lte=end_date)
-
-    # ✅ Apply search filter (search across multiple fields)
-    if search:
-        donations = donations.filter(
-            Q(donor__first_name__icontains=search) |
-            Q(donor__last_name__icontains=search) |
-            Q(transaction_id__icontains=search) |
-            Q(donation_category__icontains=search) |
-            Q(donation_mode__icontains=search) |
-            Q(payment_method__icontains=search)
-        )
-
-    # ✅ Sort by latest first
-    donations = donations.order_by('-donation_date')
-
-    # ✅ If no results found after filtering
-    if not donations.exists():
-        messages.warning(request, "⚠️ No data found for the given filters.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    # ✅ Create Excel workbook
-    workbook = Workbook()
-    sheet = workbook.active
-    sheet.title = "Filtered Donations"
-    headers = ['ID','Donor Name', 'Amount', 'Date', 'Category', 'Mode', 'Payment Method', 'Transaction ID', 'Status']
-    sheet.append(headers)
-
-    for donation in donations:
-        donor_name = str(donation.donor) if donation.donor else "N/A"
-        sheet.append([
-            donation.id,
-            donor_name,
-            donation.donation_amount,
-            donation.donation_date.strftime('%Y-%m-%d') if donation.donation_date else '',
-            donation.donation_category,
-            donation.donation_mode,
-            donation.payment_method,
-            donation.transaction_id,
-            donation.payment_status
-        ])
-
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename="filtered_donations.xlsx"'
-    workbook.save(response)
-    return response
-
-def download_filtered_users(request):
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    search = request.GET.get('search', '').strip()
-
-    # ✅ Prevent download if all filters are empty
-    if not start_date and not end_date and not search:
-        messages.warning(request, "⚠️ Please enter a date range or search term before downloading.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    # ✅ Start with all users
-    users = User.objects.all()
-
-    # ✅ Filter by date range (using date_joined)
-    if start_date and end_date:
-        users = users.filter(date_joined__range=[start_date, end_date])
-    elif start_date:
-        users = users.filter(date_joined__gte=start_date)
-    elif end_date:
-        users = users.filter(date_joined__lte=end_date)
-
-    # ✅ Search filter (search by username, first name, last name, or email)
-    if search:
-        users = users.filter(
-            Q(username__icontains=search) |
-            Q(first_name__icontains=search) |
-            Q(last_name__icontains=search) |
-            Q(email__icontains=search)
-        )
-
-    # ✅ Order by latest joined users
-    users = users.order_by('-date_joined')
-
-    # ✅ If no results found
-    if not users.exists():
-        messages.warning(request, "⚠️ No users found for the given filters.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    # ✅ Create Excel workbook
-    workbook = Workbook()
-    sheet = workbook.active
-    sheet.title = "Filtered Users"
-
-    # ✅ Headers
-    headers = ['Username', 'First Name', 'Last Name', 'Email', 'Date Joined', 'Last Login', 'Is Staff', 'Is Active']
-    sheet.append(headers)
-
-    # ✅ Add user data
-    for user in users:
-        sheet.append([
-            user.username,
-            user.first_name,
-            user.last_name,
-            user.email,
-            user.date_joined.strftime('%Y-%m-%d %H:%M') if user.date_joined else '',
-            user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else '',
-            'Yes' if user.is_staff else 'No',
-            'Active' if user.is_active else 'Inactive'
-        ])
-
-    # ✅ Prepare response
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename="filtered_users.xlsx"'
-    workbook.save(response)
-    return response
-
-def download_filtered_user_access(request):
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    search = request.GET.get('search', '').strip()
-    if not start_date and not end_date and not search:
-        messages.warning(request, "⚠️ Please enter a date range or search term before downloading.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    accesses = UserModuleAccess.objects.all()
-    if hasattr(UserModuleAccess, 'created_at'):
-        if start_date and end_date:
-            accesses = accesses.filter(created_at__range=[start_date, end_date])
-        elif start_date:
-            accesses = accesses.filter(created_at__gte=start_date)
-        elif end_date:
-            accesses = accesses.filter(created_at__lte=end_date)
-    if search:
-        accesses = accesses.filter(
-            Q(module__name__icontains=search) |
-            Q(role__icontains=search) |
-            Q(description__icontains=search)
-        )
-    if hasattr(UserModuleAccess, 'created_at'):
-        accesses = accesses.order_by('-created_at')
-    if not accesses.exists():
-        messages.warning(request, "⚠️ No records found for the given filters.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    workbook = Workbook()
-    sheet = workbook.active
-    sheet.title = "User Access Data"
-    headers = [
-        'Module Name', 'Role', 'Description',
-        'Can Access', 'Can Add', 'Can Edit', 'Can Delete'
-    ]
-    if hasattr(UserModuleAccess, 'created_at'):
-        headers.append('Created At')
-
-    sheet.append(headers)
-    for access in accesses:
-        row = [
-            access.module.name if hasattr(access.module, 'name') else str(access.module),
-            access.role or "N/A",
-            access.description or "",
-            'Yes' if access.can_access else 'No',
-            'Yes' if access.can_add else 'No',
-            'Yes' if access.can_edit else 'No',
-            'Yes' if access.can_delete else 'No',
-        ]
-        if hasattr(access, 'created_at'):
-            row.append(access.created_at.strftime('%Y-%m-%d %H:%M') if access.created_at else '')
-        sheet.append(row)
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename="user_access_data.xlsx"'
-    workbook.save(response)
-    return response
-
-def download_filtered_donor_volunteers(request):
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    search = request.GET.get('search', '').strip()
-    if not start_date and not end_date and not search:
-        messages.warning(request, "⚠️ Please enter a date range or search term before downloading.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    donors = DonorVolunteer.objects.all()
-
-    if hasattr(DonorVolunteer, 'created_at'):
-        if start_date and end_date:
-            donors = donors.filter(created_at__range=[start_date, end_date])
-        elif start_date:
-            donors = donors.filter(created_at__gte=start_date)
-        elif end_date:
-            donors = donors.filter(created_at__lte=end_date)
-    if search:
-        donors = donors.filter(
-            Q(first_name__icontains=search) |
-            Q(last_name__icontains=search) |
-            Q(email__icontains=search) |
-            Q(person_type__icontains=search)
-        )
-    if hasattr(DonorVolunteer, 'created_at'):
-        donors = donors.order_by('-created_at')
-
-    if not donors.exists():
-        messages.warning(request, "⚠️ No records found for the given filters.")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    workbook = Workbook()
-    sheet = workbook.active
-    sheet.title = "Donor Volunteer Data"
-    headers = [
-        'First Name', 'Last Name', 'Email', 'Phone Number',
-        'Person Type', 'Address', 'City', 'State', 'Pincode'
-    ]
-    if hasattr(DonorVolunteer, 'created_at'):
-        headers.append('Created At')
-    sheet.append(headers)
-    for donor in donors:
-        row = [
-            donor.first_name or '',
-            donor.last_name or '',
-            donor.email or '',
-            donor.person_type or '',
-            getattr(donor, 'address', ''),
-            getattr(donor, 'city', ''),
-            getattr(donor, 'state', ''),
-            getattr(donor, 'pincode', ''),
-        ]
-        if hasattr(donor, 'created_at'):
-            row.append(donor.created_at.strftime('%Y-%m-%d %H:%M') if donor.created_at else '')
-        sheet.append(row)
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename="donor_volunteer_data.xlsx"'
-    workbook.save(response)
-    return response
-
-# -------------------END Filtered and Download data------------------------
-
-def user_access_list(request):
-    user_roles = UserRole.objects.select_related('user', 'role__module').all()
-    return render(request, 'user_access_list.html', {'user_roles': user_roles})
 
 def donation_list(request):
     donations = Donation.objects.all().order_by('id')
@@ -2496,7 +2147,7 @@ def lookup_type_create(request):
     return render(request, "lookup_type_form.html", {"lookup_type": None})
 
 def lookup_create(request):
-    lookup_types = LookupType.objects.all()
+    lookup_types = LookupType.objects.filter(is_deleted=False)
     if request.method == "POST":
         name = request.POST.get("lookup_name")
         type_id = request.POST.get("lookup_type")
@@ -2833,18 +2484,72 @@ def edit_donation(request, id):
         "payment_methods": payment_methods,
         "payment_statuses": payment_statuses,
     })
+
+# def edit_box_payment(request, id):
+#     payment = get_object_or_404(DonationPaymentBox, id=id)
+#     if request.method == 'POST':
+#         payment.address = request.POST.get('address')
+#         payment.amount = request.POST.get('amount')
+#         payment.i_witness = request.POST.get('i_witness')
+#         payment.updated_by = request.user
+#         payment.save()
+#         messages.success(request, "Payment updated successfully!")
+#         return redirect('welcome') 
+#     return render(request, 'BoxPayment.html', {
+#         'payment': payment
+#     })
+from django.utils.dateparse import parse_datetime
+
 def edit_box_payment(request, id):
     payment = get_object_or_404(DonationPaymentBox, id=id)
+
     if request.method == 'POST':
+
+        # Text / numeric fields
         payment.address = request.POST.get('address')
         payment.amount = request.POST.get('amount')
         payment.i_witness = request.POST.get('i_witness')
+        payment.name_of_bank = request.POST.get('name_of_bank')
+        payment.branch = request.POST.get('branch')
+        payment.transaction_id = request.POST.get('transaction_id')
+
+        # Foreign keys (IMPORTANT)
+        payment.payment_method_id = (
+            int(request.POST.get('payment_method'))
+            if request.POST.get('payment_method') else None
+        )
+
+        payment.opened_by_id = (
+            int(request.POST.get('opened_by'))
+            if request.POST.get('opened_by') else None
+        )
+
+        payment.received_by_id = (
+            int(request.POST.get('received_by'))
+            if request.POST.get('received_by') else None
+        )
+
+        # Datetime (VERY IMPORTANT)
+        date_time = request.POST.get('date_time')
+        if date_time:
+            payment.date_time = parse_datetime(date_time)
+
+        # Audit
         payment.updated_by = request.user
+        payment.updated_at = timezone.now()
+
         payment.save()
+
         messages.success(request, "Payment updated successfully!")
-        return redirect('welcome') 
+        return redirect('welcome')
+
     return render(request, 'BoxPayment.html', {
-        'payment': payment
+        'payment': payment,
+        'payment_methods': Lookup.objects.filter(
+            lookup_type__type_name__iexact='Payment Method',
+            is_deleted=False
+        ),
+        'donors': DonorVolunteer.objects.filter(is_deleted=False)
     })
 
 def edit_donation_box(request, id):
@@ -2951,7 +2656,6 @@ def delete_donation(request, donation_id):
     return redirect("welcome")
 
 # DONATIONEDELETE VIEW------------------------------
-from django.utils.timezone import now
 from .models import DonationPaymentBox
 
 @login_required
@@ -3088,7 +2792,6 @@ def get_donation_boxes_data(request):
         'boxes': list(boxes)
     })
 
-
 def get_donation_box_details(request, box_id):
     """Returns auto-fill data for a selected donation box"""
     try:
@@ -3121,7 +2824,6 @@ def get_donation_box_details(request, box_id):
     
     except DonationBox.DoesNotExist:
         return JsonResponse({'error': 'Donation box not found'}, status=404)
-
 
 def get_donation_data(request, donation_id):
     """Returns auto-fill data for a selected donation"""

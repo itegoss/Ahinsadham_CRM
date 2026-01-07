@@ -1,6 +1,5 @@
 
 {% load custom_tags %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,15 +14,11 @@
     size: A5 landscape;
     margin: 6mm 4mm 5mm 4mm;
 }
-
-
 html, body {
     width: 100%;
     margin: 0;
     padding: 0;
 }
-
-
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 9px;
@@ -33,23 +28,17 @@ body {
     background: #fff;
     line-height: 1.2;
 }
-
 .receipt-container {
     max-width: 100%;
     margin: auto;
 }
-
-/* Outer boxed receipt to match owner design */
 .receipt-box {
     width: 100%;
     border: 1px solid #000;
     border-collapse: collapse;
     background: #fff;
 }
-
 .receipt-box td { padding: 2px; }
-
-/* ================= HEADER ================= */
 .bi {
     font-size: 13px;
     vertical-align: middle;
@@ -59,15 +48,12 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
-
 .header-table td { border: 1px solid #000; padding:3px; vertical-align:middle; }
-
 .logo {
     height: 75px;
     width: 114%;
     display: block;
     margin: 0 auto;}
-
 .header-title {
     font-size: 17px;
     font-weight: bold;
@@ -75,31 +61,23 @@ body {
     text-align: center;
     margin-bottom: 1px;
 }
-
 .header-sub {
     font-size: 15px;
     text-align: center;
 }
-
-/* ================= INFO ================= */
 .info-line {
     font-size: 12px;
     margin-top: 2px;
     overflow: hidden;
 }
-
 .info-line table { width:100%; border-collapse:collapse; }
 .info-line td { border: 1px solid #000; padding:3px; vertical-align:top; }
-
 .info-line span {
     float: right;
 }
-
 .info-line b {
     color: #0c6d34;
 }
-
-/* ================= SECTION ================= */
 .section-title {
     margin-top: 4px;
     padding: 2px 4px;
@@ -107,36 +85,30 @@ body {
     font-weight: bold;
     font-size: 13px;
 }
-
 /* ================= TABLE ================= */
 table {
     width: 100%;
        border-collapse: collapse;
        font-size: 12px;
 }
-
 .table td, .table th {
     padding: 2px;
     border: 1px solid #000;
     vertical-align: top;
     line-height: 1.0;
 }
-
 .table tr:nth-child(even) td {
     background: transparent;
 }
-
 .amount {
     text-align: right;
     font-weight: bold;
     color: #0c6d34;
 }
-
 .total-row td {
     border-top: 2px solid #000;
     font-weight: bold;
 }
-
 /* ================= FOOTER ================= */
 .footer-text {
     text-align: center;
@@ -147,14 +119,12 @@ table {
     padding: 2px 0;
     border-top: 1px solid #0c6d34;
 }
-
 .signature {
     margin-top: 6px;
     display: flex;
     justify-content: space-between;
     font-size: 8px;
 }
-
 /* ================= BUTTONS ================= */
 .buttons {
     margin: 12px 0;
@@ -162,7 +132,6 @@ table {
     gap: 10px;
     justify-content: center;
 }
-
 .mini-btn {
     padding: 0;
     font-size: 0;
@@ -178,29 +147,24 @@ table {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .btn.mini-btn {
     background: #f3f7f5;
     color: #0c6d34;
     border: 1px solid #dbeedd;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
 .btn.mini-btn svg {
     margin: 0;
     width: 16px;
     height: 16px;
     display: block;
 }
-
 .btn.mini-btn:hover {
     background: #0c6d34;
     color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-
-/* Hide buttons in print */
 @media print {
     .buttons, .mini-btn { 
         display: none !important; 
@@ -223,13 +187,9 @@ table {
 <div class="receipt-container">
 <table class="receipt-box" width="100%" cellpadding="0" cellspacing="0">
 <tr><td style="padding:2px;">
-
-<!-- HEADER -->
 <table class="header-table">
 <tr>
-<td width="12%">
-    <img src="{{ logo_url }}" class="logo">
-</td>
+<td width="12%"><img src="{{ logo_url }}" class="logo"></td>
 <td width="88%">
     <div class="header-title">BHAGWAN MAHAVIR PASHU RAKSHA KENDRA</div>
     <div class="header-sub">Organised by : Sheth Shri Lalji Velji Shah</div>
@@ -238,57 +198,32 @@ table {
 </td>
 </tr>
 </table>
-<!-- ADDRESS -->
 <table class="info-line1" style="width:100%; border-collapse:collapse;">
     <tr>
-        <!-- LEFT -->
         <td style="width:65%; vertical-align:top;">
             <b>INSTITUTION :</b> Pragpur Road Junction, Taluka Mundra – Kutch, Gujarat 370415
             <br>
             <b>Contact :</b> 070699 88555 / 070692 88555 | <b>Email :</b> kutch@ahinsadham.org
         </td>
-        <!-- RIGHT -->
-        <td style="width:35%; text-align:right; vertical-align:top;">
-            <b>Date : {{ payment.date_time|date:"d-M-y" }}</b>
-        </td>
+        <td style="width:35%; text-align:right; vertical-align:top;"><b>Date : {{ payment.date_time|date:"d-M-y" }}</b></td>
     </tr>
 </table>
-
 <div class="info-line1">
 <table style="width:100%; border-collapse:collapse;">
     <tr>
-        <!-- LEFT -->
         <td style="width:65%; vertical-align:top;">
             <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,
             Borivali (E), Mumbai 400066
             <br>
                 <b>Contact :</b> 97264 75555 / 97264 85555 | <b>Email :</b> mumbai@ahinsadham.org
-  
         </td>
-
-        <!-- RIGHT -->
-        <td style="width:35%; text-align:right; vertical-align:top;">
-            <b>Receipt No : {{ payment.receipt_id }}</b>
-        </td>
+        <td style="width:35%; text-align:right; vertical-align:top;"><b>Receipt No : {{ payment.receipt_id }}</b></td>
     </tr>
 </table>
 </div>
-
-<!-- 
-<div class="info-line1">
-<table>
-<tr>
-
-</tr>
-</table>
-</div> -->
-
-
-<!-- DONOR DETAILS -->
 <div class="section-title">Donor Details</div>
 <table class="table">
 <tr>
-    
 <td width="65%"><b>Name :</b> {{ donor.first_name }} {{ donor.last_name }}</td>
 <td width="35%"><b>Box_Id :</b> {{ payment.donation_box.donation_id }}</td>
 </tr>
@@ -305,38 +240,28 @@ table {
 </td>
 <td width="50%"><b>PAN No :</b> {{ donor.pan_number|default:"-" }}</td>
 </tr>
-<tr>
-<td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td>
-</tr>
-<tr>
-<td><b>Area :</b> {{ donor.area }}</td>
-<td><b>Collector :</b> {{ payment.verified_by }}</td>
-</tr>
+<tr><td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td></tr>
+<tr><td><b>Area :</b> {{ donor.area }}</td><td><b>Collector :</b> {{ payment.verified_by }}</td></tr>
 <tr>
 <td><b>Village :</b> {{ donor.city }}</td>
 <td width="35%"><b>Mobile :</b> {{ donor.contact_number }}</td>
 </tr>
 </table>
-
-<!-- DONATION DETAILS -->
 <div class="section-title">Detail Of Donation</div>
 <table class="table">
 <tr>
     <th  width="65%"style="text-align:left;">Donation Category/Donation Sub Category</th>
     <th  width="35%" style="text-align:right;">Amount (Rs.)</th>
 </tr>
-
 <tr>
     <td>{{ donation.donation_category.lookup_name }}/{{ donation.donation_sub_category.lookup_name }}</td>
     <td class="amount"> <b> Rs. {{ payment.amount }}</b></td>
 </tr>
-
 <tr class="total-row">
     <td style="text-align:right;">TOTAL</td>
     <td class="amount"> <b>Rs. {{ payment.amount }}</b> </td>
 </tr>
 </table>
-
 <table class="table">
 <tr>
  <th  width="35%" style="text-align:left;">Amount in Words : {{ payment.amount|number_to_words }}</th>
@@ -351,7 +276,6 @@ table {
 </table>
 <table width="100%" style="font-size:10px; line-height:1.2;">
     <tr>
-        <!-- LEFT : TEXT -->
         <td width="70%" valign="top" style="padding-right:6px;">
             <div style="text-align:justify;">
                 Subject to realisation of cheque please send cheque in favour of
@@ -363,56 +287,37 @@ table {
                 URN : <b>AAAJB0003AF20213</b> (AY 2022-23 to 2026-27)
             </div>
         </td>
-
-        <!-- RIGHT : SIGNATURE -->
-        <td width="30%" valign="middle" align="right">
-            <img src="{{ signature_url }}" width="100" style="display:block; margin-bottom:2px;">
+        <td width="30%" valign="middle" align="right"><img src="{{ signature_url }}" width="100" style="display:block; margin-bottom:2px;">
             <b>Trustee</b>
         </td>
     </tr>
 </table>
-
-
 <div class="footer-text">Thank you for your valuable Donation</div>
 <table width="100%" style="margin-top:6px; font-size:9px; border-top:1px solid #000;">
     <tr>
         <td style="padding-top:4px; text-align:center;">
-
             <b>Follow Us :</b>
-
             <img src="{{ facebook_icon }}" width="12" valign="middle" />
             &nbsp; | &nbsp;
-
             <img src="{{ instagram_icon }}" width="12" valign="middle" />
             &nbsp; | &nbsp;
-
             <img src="{{ youtube_icon }}" width="12" valign="middle" />
              <b>@Ahinsadham</b>
-
             &nbsp; | &nbsp;
-
             <img src="{{ globe_icon }}" width="12" valign="middle" />
             <b>www.ahinsadham.org</b>
-
         </td>
     </tr>
 </table>
-
-
 </td></tr></table>
 </div>
-
-<!-- ACTION BUTTONS -->
 <div class="buttons">
-    <!-- PRINT -->
     <button class="btn mini-btn" onclick="window.print()" title="Print" aria-label="Print receipt">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
         </svg>
     </button>
-
-    <!-- DOWNLOAD PDF -->
     <a class="btn mini-btn" href="{% url 'donation_payment_receipt_pdf' payment.id %}" title="Download PDF" aria-label="Download PDF">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
@@ -421,16 +326,12 @@ table {
             <line x1="9" y1="15" x2="15" y2="15"></line>
         </svg>
     </a>
-
-    <!-- BACK -->
     <a class="btn mini-btn" href="{% url 'welcome' %}" title="Back" aria-label="Go back">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="15 18 9 12 15 6"></polyline>
             <line x1="9" y1="12" x2="21" y2="12"></line>
         </svg>
     </a>
-
-    <!-- SHARE -->
     <button class="btn mini-btn" onclick="shareReceipt()" title="Share Receipt">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="18" cy="5" r="3"></circle>
@@ -441,42 +342,29 @@ table {
         </svg>
     </button>
 </div>
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const paymentSelect = document.getElementById("payment_method");
     const paymentFields = document.querySelectorAll(".payment-field");
-
     if (!paymentSelect || paymentFields.length === 0) return;
-
     function togglePaymentFields() {
         const showFor = ["cheque", "neft", "rtgs", "upi", "bank transfer"];
-
         const selectedText = paymentSelect.options[
             paymentSelect.selectedIndex
         ].text.trim().toLowerCase();
-
         paymentFields.forEach(el => {
             el.style.display = showFor.includes(selectedText)
-                ? "flex"   // Bootstrap row uses flex
+                ? "flex"  
                 : "none";
         });
     }
-
-    // Run once on page load (important for edit forms)
     togglePaymentFields();
-
-    // Run on change
     paymentSelect.addEventListener("change", togglePaymentFields);
 });
 </script>
 <script>
 function shareReceipt() {
     const pdfUrl = "{% url 'donation_payment_receipt_pdf' payment.id %}";
-
-    // 1️⃣ If Web Share API supported
     if (navigator.share) {
         navigator.share({
             title: "Donation Receipt",
@@ -487,18 +375,14 @@ function shareReceipt() {
         });
         return;
     }
-
-    // 2️⃣ Fallback: copy link
     navigator.clipboard.writeText(window.location.origin + pdfUrl)
         .then(() => {
             alert("Receipt link copied. You can share it manually.");
         })
         .catch(() => {
-            // 3️⃣ Last fallback: open PDF
             window.open(pdfUrl, "_blank");
         });
 }
 </script>
-
 </body>
 </html>

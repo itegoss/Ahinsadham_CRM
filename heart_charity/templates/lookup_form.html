@@ -77,7 +77,6 @@
         background: white;
     }
 </style>
-
 <div class="container mt-4 main-bg">
     <div class="custom-card">
         <h2 class="text-center fw-bold" style="color: #1f7a3e;">
@@ -98,12 +97,8 @@
             {% csrf_token %}
             <div class="mb-3">
                 <label class="form-label fw-semibold">Lookup Type<span style="color: #d9534f;">*</span></label>
-                <select 
-                    name="lookup_type"
-                    class="form-control custom-input shadow-none"
-                    required>
+                <select name="lookup_type"class="form-control custom-input shadow-none" required>
                     <option value="">-- Select Lookup Type --</option>
-
                     {% for t in lookup_types %}
                         <option value="{{ t.id }}"
                             {% if lookup and lookup.lookup_type.id == t.id %}selected{% endif %}>
@@ -116,7 +111,6 @@
                 <label class="form-label fw-semibold">Lookup Name<span style="color: #d9534f;">*</span></label>
                 <input type="text"name="lookup_name"class="form-control custom-input shadow-none"placeholder="Enter Lookup Name"value="{{ lookup.lookup_name|default:'' }}"required>
             </div>
-      
    <div class="action-buttons">
         <button type="submit" class="action-btn btn-submit save-btn">✔ Save</button>
         <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>

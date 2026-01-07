@@ -184,8 +184,8 @@
 
       <label>Address <span style="color: #d9534f;">*</span></label>
       <input type="text" id="boxAddress" name="address" readonly placeholder="Auto-filled" required aria-required="true">
-      <label>Opened By <span style="color: #d9534f;">*</span></label>
-<select name="opened_by" class="form-select" required aria-required="true">
+      <label>Opened By </label>
+<select name="opened_by" class="form-select" >
     <option value="">-- Select Person --</option>
     {% for person in donor_volunteers %}
         <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
@@ -201,7 +201,6 @@
 </select> -->
       <label>Amount (₹) <span style="color: #d9534f;">*</span></label>
       <input type="number" name="amount" step="0.01" required aria-required="true">
-
       <label>Payment Method <span style="color: #d9534f;">*</span></label>
       <select name="payment_method" id="payment_method" required aria-required="true" class="form-select">
           <option value="">-- Select Method --</option>
@@ -212,24 +211,15 @@
 <div class="row mb-3 payment-field gx-3">
     <div class="col-12 col-md-4">
         <label class="form-label">Bank Name</label>
-        <input type="text"
-               name="name_of_bank"
-               class="form-control"
-               placeholder="e.g. State Bank of India">
+        <input type="text" name="name_of_bank" class="form-control" placeholder="e.g. State Bank of India">
     </div>
     <div class="col-12 col-md-4">
         <label class="form-label">Branch</label>
-        <input type="text"
-               name="branch"
-               class="form-control"
-               placeholder="e.g. Andheri East">
+        <input type="text" name="branch" class="form-control" placeholder="e.g. Andheri East">
     </div>
     <div class="col-12 col-md-4">
         <label class="form-label">Transaction ID</label>
-        <input type="text"
-               name="transaction_id"
-               class="form-control"
-               placeholder="Enter Transaction ID">
+        <input type="text" name="transaction_id" class="form-control" placeholder="Enter Transaction ID">
     </div>
 </div>
       <label>Date & Time <span style="color: #d9534f;">*</span></label>
@@ -246,19 +236,15 @@
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const paymentSelect = document.getElementById("payment_method");
     const paymentFields = document.querySelectorAll(".payment-field");
-
     if (!paymentSelect || paymentFields.length === 0) return;
 
     function togglePaymentFields() {
         const showFor = ["cheque", "neft", "rtgs","bank transfer"];
-
         const selectedText = paymentSelect.options[
             paymentSelect.selectedIndex
         ].text.trim().toLowerCase();
-
         paymentFields.forEach(el => {
             el.style.display = showFor.includes(selectedText)
                 ? "block"
@@ -274,7 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const boxSelect = document.getElementById("donationBoxSelect");
     const ownerField = document.getElementById("boxOwner");
     const addressField = document.getElementById("boxAddress");
-
     boxSelect.addEventListener("change", function () {
         const selectedId = parseInt(this.value);
         const info = boxOwnerData.find(item => item.box_id === selectedId);

@@ -831,8 +831,6 @@ td {
   overflow-x: auto;
   padding: 6px 4px;
 }
-
-/* Ensure all children stay on one line and remain responsive */
 .pagination-container form {
   display: flex;
   align-items: center;
@@ -869,7 +867,6 @@ td {
   .pagination-container .form-select {
     min-width: 48px;
   }
-  /* Hide less important text to keep controls on one line */
   .pagination-container label { display: none; }
   .pagination-container span { display: none; }
 }
@@ -899,8 +896,7 @@ td {
 </style>
 
 <div class="dashboard-container">
-    <!-- Mobile Header -->
-    <div class="mobile-header1">
+    <div class="mobile-header">
         <button class="menu-toggle" id="mobileMenuToggle">
             <i class="bi bi-list"></i>
         </button>
@@ -946,10 +942,10 @@ td {
     <span class="sidebar-text">Donation Box</span>
 </a>
 
-<a class="tab-btn" data-tab="Employee Management System">
+<!-- <a class="tab-btn" data-tab="Employee Management System">
     <i class="bi bi-people"></i>
     <span class="sidebar-text">Employee Management System</span>
-</a>
+</a> -->
 
 <a class="tab-btn" data-tab="Timesheet System">
     <i class="bi bi-clock"></i>
@@ -1032,7 +1028,6 @@ td {
 </a>
 
 {% elif not user.is_superuser or allowed_modules %}
-    <!-- Non-admin: show only allowed modules -->
     {% for module_name in allowed_modules %}
         <a class="tab-btn" data-tab="{{ module_name }}">{{ module_name }}</a>
     {% endfor %}
@@ -1059,8 +1054,6 @@ td {
     border-radius: 12px;
     gap: 40px;
 }
-
-/* LEFT */
 .hero-content {
     flex: 1.2;
 }
@@ -1081,7 +1074,6 @@ td {
     max-width: 580px;
     color: #4b5563;
 }
-/* RIGHT IMAGE */
 .hero-image {
     flex: 1;
     display: flex;
@@ -1093,7 +1085,6 @@ td {
     border-radius: 20px;
     object-fit: cover;
 }
-/* --- Responsive Tablet (768px–1024px) --- */
 @media (max-width: 1024px) {
     .hero-banner {
         padding: 40px;
@@ -1108,7 +1099,6 @@ td {
         max-width: 380px;
     }
 }
-/* --- Mobile Responsive (< 768px) --- */
 @media (max-width: 768px) {
     .hero-banner {
         flex-direction: column;
@@ -1130,8 +1120,6 @@ td {
         margin-top: 20px;
     }
 }
-
-/* Small phones (< 480px) */
 @media (max-width: 480px) {
     .hero-title {
         font-size: 28px;
@@ -1145,34 +1133,32 @@ td {
         max-width: 100%;
     }
 }
-/* Apply header styles only on mobile/tablet screens */
 @media (max-width: 768px) {
     .mobile-header {
         top: 0;
         left: 0;
         width: 10%;
-        height: 60px;                   /* FIXED HEIGHT */
+        height: 60px;                   
           background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
         color: white;
         display: flex;
-        align-items: center;            /* Vertical center */
+        align-items: center;          
         justify-content: space-between;
         padding: 0 15px;
         box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
 z-index: 1000;    }
-
 .sticky-top{
       z-index: auto;}
     .mobile-header h1 {
-        font-size: 20px;                /* Fixed Title Size */
+        font-size: 20px;                
         margin: 0;
         font-weight: 600;
-        white-space: nowrap;            /* Prevent text wrapping */
+        white-space: nowrap;          
     }
     .menu-toggle {
         background: none;
         border: none;
-        font-size: 30px;                /* Fixed icon size */
+        font-size: 30px;            
         color: black;
     }
 }
@@ -1197,7 +1183,6 @@ z-index: 1000;    }
     </div>
   </div>
 </div>
-
 <!-- ----------- MDM (Master Data)------------------ -->
  <div class="tab-content"  id="MDM">
   <div class="card border-0">
@@ -1304,7 +1289,6 @@ z-index: 1000;    }
           <i class="bi bi-pencil-square"></i>
         </a>
       {% endif %}
-
       {% if permissions.can_delete %}
         <form action="{% url 'delete_lookup_type' lt.id %}"
               method="POST"
@@ -1321,7 +1305,6 @@ z-index: 1000;    }
     {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
     {% endif %}
-
   </div>
 </td>
                 <td>{{ lt.formatted_id }}</td>
@@ -1387,57 +1370,29 @@ z-index: 1000;    }
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+      <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
 </tr> 
       </thead>
       <tbody id="Lookup">
 
    {% for lt in lookup_page_obj %}
         <tr>
-          <!-- <td>
-            <div class="d-inline-flex align-items-center gap-1">
-              {% if permissions.can_edit %}
-              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"> <i class="bi bi-pencil-square"></i></a>
-              {% endif %}
-              {% if permissions.can_delete %}
-              <form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
-                  <i class="bi bi-trash"></i></button>
-              </form>
-              {% endif %}
-            </div>
-          </td> -->
           <td>
   <div class="d-inline-flex align-items-center gap-1">
-
     {% if not lt.is_deleted %}
       {% if permissions.can_edit %}
-        <a href="{% url 'edit_lookup_type' lt.id %}"
-           class="btn-sm p-1"
-           style="font-size: 15px; color:black; text-decoration: none;">
-          <i class="bi bi-pencil-square"></i>
-        </a>
+        <a href="{% url 'edit_lookup_type' lt.id %}"class="btn-sm p-1" style="font-size: 15px; color:black; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
       {% endif %}
-
       {% if permissions.can_delete %}
-        <form action="{% url 'delete_lookup_type' lt.id %}"
-              method="POST"
-              class="d-inline m-0 p-0">
+        <form action="{% url 'delete_lookup_type' lt.id %}" method="POST" class="d-inline m-0 p-0">
           {% csrf_token %}
-          <button type="submit"
-                  class="btn-sm p-1"
-                  style="font-size: 15px; color:black; background-color: transparent;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
-            <i class="bi bi-trash"></i>
-          </button>
+          <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black; background-color: transparent;"
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')"><i class="bi bi-trash"></i> </button>
         </form>
       {% endif %}
     {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
     {% endif %}
-
   </div>
 </td>
                 <td>{{ lt.formatted_id }}</td>
@@ -1454,7 +1409,6 @@ z-index: 1000;    }
     {% endif %}
 </td>
 <td>{{ lt.deleted_by }}</td>
-
                 <td>{{ lt.deleted_at|date:"d-m-Y H:i" }}</td>
         </tr>
         {% empty %}
@@ -1463,7 +1417,6 @@ z-index: 1000;    }
       </tbody>
     </table>
 </div>
-<!-- ✅ Scroll CSS -->
 <style>
 .scrollable-table {
   overflow-y: auto;
@@ -2019,9 +1972,7 @@ table th, table td {
   vertical-align: middle;
 }
 </style>
-
 <!-- ================Roles================== -->
-
 <div class="tab-content" id="roles">
   <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
@@ -2143,7 +2094,7 @@ width: 35%;
               </button>
             </form>
             {% else %}
-                <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
             {% endif %}
           </div>
         </td>
@@ -2264,7 +2215,7 @@ width: 35%;
               </button>
             </form>
 {% else %}
-                <span class="badge bg-secondary">Deactivated</span>
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
           </div>
         </td>
@@ -2347,7 +2298,6 @@ width: 35%;
                 <p>This module is under development. Check back soon for updates.</p>
             </div>
 </div>
-
 <!-- ----------- Leave Management System------------------ -->
 
 <div class="tab-content" id="Leave Management System">
@@ -3110,6 +3060,7 @@ width: 35%;
           <td>{{ owner.i_witness }}</td>
           <td>{{ owner.name_of_bank }}</td>
           <td>{{ owner.branch }}</td>
+          <td>{{ owner.transaction_id }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y" }}</td>
           <td>{{ owner.updated_by }}</td>
@@ -3269,6 +3220,7 @@ width: 35%;
           <td>{{ owner.i_witness }}</td>
            <td>{{ owner.name_of_bank }}</td>
           <td>{{ owner.branch }}</td>
+                    <td>{{ owner.transaction_id }}</td>
           <td>{{ owner.created_by }}</td>
           <td>{{ owner.created_at|date:"d M Y" }}</td>
           <td>{{ owner.updated_by }}</td>
@@ -3406,7 +3358,7 @@ width: 35%;
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
+          <!-- <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th> -->
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
@@ -3439,7 +3391,7 @@ width: 35%;
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <!-- <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td> -->
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
@@ -3495,7 +3447,7 @@ width: 35%;
 
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
-          <td>{{ box.location }}</td>
+          <!-- <td>{{ box.location }}</td> -->
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y" }}</td>
@@ -3529,7 +3481,7 @@ width: 35%;
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
-          <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th>
+          <!-- <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th> -->
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
@@ -3561,7 +3513,7 @@ width: 35%;
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <!-- <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td> -->
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
@@ -3619,7 +3571,7 @@ width: 35%;
 
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
-          <td>{{ box.location }}</td>
+          <!-- <td>{{ box.location }}</td> -->
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y" }}</td>
@@ -4187,38 +4139,26 @@ width: 35%;
 <!-- -----------Javascript-------------- -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     // Run ONLY once after login
     if (!sessionStorage.getItem("dashboardLoaded")) {
-
         // Remove active from all tabs
         document.querySelectorAll(".tab-content").forEach(tab => {
             tab.classList.remove("active");
         });
-
         // Activate dashboard tab
         const dashboardTab = document.getElementById("default-user");
         if (dashboardTab) {
             dashboardTab.classList.add("active");
         }
-
         // Remove URL hash (optional)
         if (window.location.hash) {
             history.replaceState(null, null, window.location.pathname);
         }
-
         // Mark dashboard as already shown
         sessionStorage.setItem("dashboardLoaded", "true");
     }
-
 });
 </script>
-
- 
-
-
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".live-search").forEach(input => {
@@ -4234,12 +4174,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
-                e.preventDefault();   // ❌ stop form submit
+                e.preventDefault(); 
             }
         });
 
     });
-
 });
 </script>
 <!-- -----------Javascript-------------- -->
@@ -4551,7 +4490,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 }
             }
         }
-
         if (personTypeSelect) {
             personTypeSelect.addEventListener('change', toggleDonorBoxInput);
             toggleDonorBoxInput();
@@ -4560,7 +4498,6 @@ document.addEventListener('DOMContentLoaded', function(){
 document.addEventListener('DOMContentLoaded', function() {
     const personTypeSelect = document.getElementById('person_type');
     const donorBoxRow = document.getElementById('donor_box_id_row');
-
     function toggleDonorBoxInput() {
         if (personTypeSelect.value === 'Donor-Box-Owner') {
             donorBoxRow.style.display = 'block';
@@ -4570,9 +4507,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('donor_box_id').required = false;
         }
     }
-
     personTypeSelect.addEventListener('change', toggleDonorBoxInput);
-    toggleDonorBoxInput(); // initialize on page load
+    toggleDonorBoxInput();
 });
 </script>
 {% endblock %}
