@@ -88,7 +88,7 @@
         {% endfor %}
     </select>
 </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="margin-top: 1.7%;">
                         <label class="form-label">Referred By</label>
                         <select name="referred_by" id="referred_by" class="form-select select2-search">
                             <option value="">-- Select Person --</option>
@@ -101,8 +101,8 @@
                 <!-- ===================================== PERSONAL DETAILS ===================================== -->
                 <h5 class="section-title">Personal Details</h5>
                 <hr>
-<div class="row g-3 mb-4 align-items-end">
-    <div class="col-md-1">
+<div class="row g-3 mb-4 align-items-end" >
+    <div class="col-md-1" style="margin: -1.0%; margin-left: 0">
         <label class="form-label">Sal.</label>
         <select name="salutation" class="form-select">
             <option value="">—</option>
@@ -133,7 +133,7 @@
         <label class="form-label">Gender</label>
         <select name="gender" class="form-select">
             <option value="">Select</option>
-            <option>Male</option><option>Female</option><option>Other</option>
+            <option>Male</option><option>Female</option><option>Do Not Provide</option>
         </select>
     </div>
     <div class="col-md-4">
@@ -510,7 +510,7 @@
                         <label class="form-label">City <span style="color: #d9534f;">*</span></label>
                         <input type="text" name="city" class="form-control" required aria-required="true">
                     </div>
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <label class="form-label">State <span style="color: #d9534f;">*</span></label>
                         <input type="text" name="state" class="form-control" required aria-required="true">
                     </div>
@@ -521,6 +521,85 @@
 
     <select name="country" class="form-select" required>
         <option value="India" selected>India</option>
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Albania">Albania</option>
+        <option value="Algeria">Algeria</option>
+        <option value="Andorra">Andorra</option>
+        <option value="Angola">Angola</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Armenia">Armenia</option>
+        <option value="Australia">Australia</option>
+        <option value="Austria">Austria</option>
+        <option value="Azerbaijan">Azerbaijan</option>
+        <option value="Bahamas">Bahamas</option>
+        <option value="Bahrain">Bahrain</option>
+        <option value="Bangladesh">Bangladesh</option>
+        <option value="Belgium">Belgium</option>
+        <option value="Belize">Belize</option>
+        <option value="Bhutan">Bhutan</option>
+        <option value="Bolivia">Bolivia</option>
+        <option value="Brazil">Brazil</option>
+        <option value="Cambodia">Cambodia</option>
+        <option value="Canada">Canada</option>
+        <option value="China">China</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Croatia">Croatia</option>
+        <option value="Denmark">Denmark</option>
+        <option value="Egypt">Egypt</option>
+        <option value="France">France</option>
+        <option value="Germany">Germany</option>
+        <option value="Greece">Greece</option>
+        <option value="Hong Kong">Hong Kong</option>
+        <option value="Hungary">Hungary</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Iran">Iran</option>
+        <option value="Ireland">Ireland</option>
+        <option value="Israel">Israel</option>
+        <option value="Italy">Italy</option>
+        <option value="Japan">Japan</option>
+        <option value="Kenya">Kenya</option>
+        <option value="Kuwait">Kuwait</option>
+        <option value="Malaysia">Malaysia</option>
+        <option value="Maldives">Maldives</option>
+        <option value="Mexico">Mexico</option>
+        <option value="Nepal">Nepal</option>
+        <option value="Netherlands">Netherlands</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Nigeria">Nigeria</option>
+        <option value="Pakistan">Pakistan</option>
+        <option value="Philippines">Philippines</option>
+        <option value="Poland">Poland</option>
+        <option value="Portugal">Portugal</option>
+        <option value="Qatar">Qatar</option>
+        <option value="Romania">Romania</option>
+        <option value="Russia">Russia</option>
+        <option value="Saudi Arabia">Saudi Arabia</option>
+        <option value="Singapore">Singapore</option>
+        <option value="South Africa">South Africa</option>
+        <option value="Spain">Spain</option>
+        <option value="Sri Lanka">Sri Lanka</option>
+        <option value="Sweden">Sweden</option>
+        <option value="Switzerland">Switzerland</option>
+        <option value="Thailand">Thailand</option>
+        <option value="Turkey">Turkey</option>
+        <option value="United Arab Emirates">United Arab Emirates</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="United States">United States</option>
+        <option value="Vietnam">Vietnam</option>
+        <option value="Zimbabwe">Zimbabwe</option>
+    </select>
+</div> -->
+
+
+
+
+
+
+<div class="col-md-4">
+    <label class="form-label">Country</label>
+    <select id="country" name="country" class="form-select">
+        <option value="">Select</option>
+ <option value="India">India</option>
 
         <!-- A -->
         <option value="Afghanistan">Afghanistan</option>
@@ -632,6 +711,18 @@
     </select>
 </div>
 
+<div class="col-md-4" id="stateDropdownBox">
+    <label class="form-label">State</label>
+    <select id="state" name="state" class="form-select">
+        <!-- States will be loaded via JS -->
+    </select>
+</div>
+
+<div class="col-md-4" id="stateTextboxBox" style="display: none;">
+    <label class="form-label">State</label>
+    <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
+</div>
+
                     <div class="col-md-4">
                         <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
                         <input type="text" name="postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
@@ -642,15 +733,28 @@
                         <input type="text" name="native_place" class="form-control">
                     </div>
 
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <label class="form-label">Native Postal Code</label>
                         <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div> -->
+                </div>
+                <hr>
+                <div class="row g-3 mb-4" id="designation">
+                    <div class="col-md-4">
+                        <label class="form-label">Designation</label>
+                        <select name="designation" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in designations %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-                <!-- ===================================== OCCUPATION ===================================== -->
-                <h5 class="section-title">Occupation Details</h5>
                 <hr>
+                <!-- ===================================== OCCUPATION ===================================== -->
                 <div class="row g-3 mb-4" id="occupation">
+                                    <h5 class="section-title">Occupation Details</h5>
+                <hr>
                     <div class="col-md-4">
                         <label class="form-label">Occupation Type</label>
                         <select name="occupation_type" class="form-select">
@@ -671,9 +775,9 @@
                     </div>
                 </div>
                 <!-- ===================================== DEPARTMENT ===================================== -->
-                <h5 class="section-title">Department Details</h5>
-                <hr>
                 <div class="row g-3 mb-4" id="department">
+                                    <h5 class="section-title">Department Details</h5>
+                <hr>
                     <div class="col-md-4">
                         <label class="form-label">Department</label>
                         <select name="department" class="form-select">
@@ -693,44 +797,72 @@
                         </select>
                     </div>
                 </div>
-                  <div class="row g-3 mb-4" id="designation">
-                    <div class="col-md-4">
-                        <label class="form-label">Designation</label>
-                        <select name="designation" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in designations %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
+
+                <!-- ===================================== BUSINESS ===================================== -->
+
+<!-- Business Section -->
+<div id="business" style="display: none;">
+    <h5 class="section-title">Business Details / Organization Details</h5>
+    <hr>
+    <div class="row g-3 mb-4 align-items-end">
+        
+        <div class="col-md-2">
+            <label class="form-label">Business/Org Salutation</label>
+            <select name="business_salutation" class="form-select">
+                <option value="">-- Select --</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Dr.">Dr.</option>
+                <option value="Prof.">Prof.</option>
+                <option value="CEO">CEO</option>
+                <option value="Director">Director</option>
+            </select>
+        </div>
+
+        <div class="col-md-3" style="margin-bottom: 1.0%;">
+            <label class="form-label">Business Name</label>
+            <input type="text" name="business_name" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Business Type</label>
+            <select name="business_type" class="form-select">
+                <option value="">Select</option>
+                {% for item in business_types %}
+                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom: 1.0%;">
+            <label class="form-label">Business Nature</label>
+            <input type="text" name="business_nature" class="form-control" placeholder="Enter business nature">
+        </div>
+    </div>
+</div>
+                <!-- <div class="row g-3 mb-4 align-items-end" id="business" style="display: none;">
+                                    <h5 class="section-title">Business Details/Organization Details</h5>
+                <hr>
+                    <div class="col-md-1">
+                    <label class="form-label">Business/Org Salutation</label>
+                        <select name="business_salutation" class="form-select">
+                            <option value="">-- Select Salutation --</option>
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mrs.">Mrs.</option>
+                            <option value="Ms.">Ms.</option>
+                            <option value="Dr.">Dr.</option>
+                            <option value="Prof.">Prof.</option>
+                            <option value="CEO">CEO</option>
+                            <option value="Director">Director</option>
                         </select>
                     </div>
-                </div>
-                <!-- ===================================== BUSINESS ===================================== -->
-                <h5 class="section-title">Business Details/Organization Details</h5>
-                <hr>
-                     <div class="row g-3" id="business-sal">
-                        <div class="col-md-4 hidden-by-default business-field org-field">
-                            <label class="form-label">Business/Org Salutation</label>
-                            <select name="business_salutation" class="form-select">
-                                <option value="">-- Select Salutation --</option>
-                                <option value="Mr.">Mr.</option>
-                                <option value="Mrs.">Mrs.</option>
-                                <option value="Ms.">Ms.</option>
-                                <option value="Dr.">Dr.</option>
-                                <option value="Prof.">Prof.</option>
-                                <option value="CEO">CEO</option>
-                                <option value="Director">Director</option>
-                            </select>
-                        </div>
-                        </div>
-                        <hr>
-                <div class="row g-3 mb-4" id="business" style="display: none;">
-
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Business Name</label>
                         <input type="text" name="business_name" class="form-control">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3" style="margin-top: 0.6%;">
                         <label class="form-label">Business Type</label>
                         <select name="business_type" class="form-select">
                             <option value="">Select</option>
@@ -739,17 +871,11 @@
                             {% endfor %}
                         </select>
                     </div>
-
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Business Nature</label>
-                        <select name="business_nature" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in business_natures %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="text" name="business_nature" class="form-control" placeholder="Enter business nature">
                     </div>
-                </div>
+                </div> -->
 
                 <!-- ===================================== ORGANIZATION ===================================== -->
                 <hr>
@@ -815,6 +941,75 @@
         </div>
     </div>
 </div>
+<script>
+const indiaStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal"
+];
+
+
+document.getElementById('country').addEventListener('change', function() {
+    const country = this.value;
+    const dropdownBox = document.getElementById('stateDropdownBox');
+    const textboxBox = document.getElementById('stateTextboxBox');
+    const stateSelect = document.getElementById('state');
+
+    if (country === "India") {
+        // Show dropdown
+        dropdownBox.style.display = "block";
+        textboxBox.style.display = "none";
+
+        // Load India states
+        stateSelect.innerHTML = "";
+        indiaStates.forEach(function(state) {
+            let opt = document.createElement("option");
+            opt.value = state;
+            opt.text = state;
+            stateSelect.appendChild(opt);
+        });
+
+    } else {
+        // Show Text box
+        dropdownBox.style.display = "none";
+        textboxBox.style.display = "block";
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -834,6 +1029,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const business = document.getElementById("business");
     const donorBox = document.getElementById("donor_box_wrapper");
     const org = document.getElementById("org");
+    const employee = document.getElementById("employee");
+
 
     function normalize(text) {
         return text.toLowerCase().replace(/[\s\-_]/g, "");
@@ -845,6 +1042,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (business) business.style.display = "none";
         if (donorBox) donorBox.style.display = "none";
         if (org) org.style.display = "none";
+        if (occupation) occupation.style.display = "block";
+
     }
 
     function showBaseSections() {
@@ -863,6 +1062,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (text === "employee") {
             if (department) department.style.display = "block";
+            if (occupation) occupation.style.display = "none";
+
         }
         else if (text === "committeemember") {
             if (position) position.style.display = "block";
@@ -877,6 +1078,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // ✅ THIS IS WHAT YOU WANT
             if (business) business.style.display = "block";
             if (donorBox) donorBox.style.display = "block";
+            if (occupation) occupation.style.display = "none";
         }
     }
     updateVisibility();

@@ -35,8 +35,6 @@ def create_history(sender, instance, created, **kwargs):
         action="INSERT" if created else "UPDATE"
     )
 
-
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -139,6 +137,7 @@ def userrole_history_create(sender, instance, created, **kwargs):
 
         action=action
     )
+
 @receiver(pre_save, sender=UserRole)
 def userrole_soft_delete(sender, instance, **kwargs):
     if not instance.pk:
@@ -163,9 +162,6 @@ def userrole_soft_delete(sender, instance, **kwargs):
 
             action="DELETE"
         )
-
-
-
 
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -220,7 +216,6 @@ from django.utils.timezone import now
 
 from .models import DonationPaymentBox
 from .utils import generate_receipt_id
-
 
 @receiver(post_save, sender=DonationPaymentBox)
 def generate_danpeti_receipt(sender, instance, created, **kwargs):

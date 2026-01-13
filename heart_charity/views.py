@@ -1207,11 +1207,16 @@ def add_donor_volunteer(request):
     if request.method == "POST":
         email = request.POST.get("email")
         if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
-            messages.error(
-                request,
-                "This email already exists. Please use a different email."
-            )
+            messages.error(request,"This email already exists. Please use a different email.")
             return redirect("add_donor_volunteer")
+        
+    if request.method == "POST":
+        country = request.POST.get("country")
+        state = request.POST.get("state")
+        if country == "India" and not state:
+            messages.error(request, "State is required for Indian addresses.")
+            return redirect('add_donor_volunteer')
+    
         donor = DonorVolunteer.objects.create(
             person_type=get_lookup("person_type"),
             referred_by=get_donor("referred_by"),
@@ -1227,8 +1232,7 @@ def add_donor_volunteer(request):
             whatsapp_number=request.POST.get("whatsapp_number"),
             email=request.POST.get("email"),
             donor_box_id=request.POST.get("donor_box") if (
-                get_lookup("person_type") and get_lookup("person_type").lookup_name == "Donor-Box-Owner"
-            ) else None,
+            get_lookup("person_type") and get_lookup("person_type").lookup_name == "Donor-Box-Owner") else None,
             house_number=request.POST.get("house_number"),
             building_name=request.POST.get("building_name"),
             landmark=request.POST.get("landmark"),
@@ -1257,8 +1261,7 @@ def add_donor_volunteer(request):
             id_number=request.POST.get("id_number"),
             pan_number=request.POST.get("pan_number"),
             created_by=request.user,
-            updated_by=request.user,
-        )
+            updated_by=request.user, )
         if request.FILES.get("id_proof_image"):
             donor.id_proof_image.save(
                 request.FILES["id_proof_image"].name,
@@ -1271,6 +1274,8 @@ def add_donor_volunteer(request):
                 request.FILES["pan_card_image"]
             )
         return redirect("welcome")
+    
+
     return render(request, "add_donor_volunteer.html", {
         "person_type_options": person_type_options,
         "id_type_options": id_type_options,
@@ -1325,28 +1330,18 @@ def adddonation(request):
         previous_donations = Donation.objects.filter(donor=donor_obj)
 
         if previous_donations.exists():
-            used_categories = previous_donations.values_list(
-                "donation_category_id", flat=True
-            )
-            used_sub_categories = previous_donations.values_list(
-                "donation_sub_category_id", flat=True
-            )
+            used_categories = previous_donations.values_list("donation_category_id", flat=True)
+            used_sub_categories = previous_donations.values_list("donation_sub_category_id", flat=True)
             totals = previous_donations.aggregate(
                 total_declared=Sum("donation_amount_declared"),
                 total_paid=Sum("donation_amount_paid")
             )
             remaining = (totals["total_declared"] or 0) - (totals["total_paid"] or 0)
             if remaining > 0 and category_id not in used_categories:
-                messages.error(
-                    request,
-                    "This donation category is not allowed for this donor."
-                )
+                messages.error(request,"This donation category is not allowed for this donor.")
                 return redirect("adddonation")
             if remaining > 0 and sub_category_id and sub_category_id not in used_sub_categories:
-                messages.error(
-                    request,
-                    "This donation sub-category is not allowed for this donor."
-                )
+                messages.error(request,"This donation sub-category is not allowed for this donor.")
                 return redirect("adddonation")
         if paid_amount > declared_amount:
             messages.error(request, "Paid amount cannot exceed declared amount.")
@@ -1375,9 +1370,7 @@ def adddonation(request):
             branch=request.POST.get("branch"),
             transaction_id=request.POST.get("transaction_id"),
             check_no=request.POST.get("check_no"),
-            created_by=request.user,
-
-        )
+            created_by=request.user,)
         messages.success(request, "Donation added successfully!")
         return redirect("adddonation")
 
@@ -1674,7 +1667,6 @@ def donation_payment_receipt_pdf(request, id):
     return response
 
 from datetime import date, timedelta
-
 def download_donor_report(request):
     days = request.GET.get('days')
     donors = []
@@ -1942,40 +1934,23 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 
 def add_donation_payment(request):
-
-    # -----------------------------
-    # DONATION BOXES (ONLY WITH OWNER)
-    # -----------------------------
     donation_boxes = DonationBox.objects.filter(
         is_deleted=False,
         donorvolunteer__isnull=False
     ).distinct()
-
-    # -----------------------------
-    # PAYMENT METHODS
-    # -----------------------------
     payment_methods = Lookup.objects.filter(
         lookup_type__type_name__iexact="Payment Method",
         is_deleted=False
     ).order_by("lookup_name")
-
-    # -----------------------------
-    # EMPLOYEES
-    # -----------------------------
     donor_volunteers = DonorVolunteer.objects.filter(
         is_deleted=False,
         person_type__lookup_name__iexact="Employee"
     )
-
-    # -----------------------------
-    # BOX → OWNER MAP (FOR JS AUTOFILL)
-    # -----------------------------
     box_owner_map = []
     owners = DonorVolunteer.objects.filter(
         is_deleted=False,
         donor_box__isnull=False
     )
-
     for owner in owners:
         address = ", ".join(filter(None, [
             owner.house_number,
@@ -1985,7 +1960,6 @@ def add_donation_payment(request):
             owner.state,
             owner.postal_code
         ]))
-
         box_owner_map.append({
             "box_id": owner.donor_box.id,
             "owner_id": owner.id,
