@@ -72,7 +72,6 @@ def show_lookup_data(request):
     })
 from django.core.paginator import Paginator
 from .helpers import get_user_permissions
-@login_required
 def welcome_view(request):
     user = request.user
     permissions = get_user_permissions(user)
@@ -141,18 +140,40 @@ def welcome_view(request):
             f"✅ Role '{role_name}' has been assigned to {selected_user.username}."
         )
         return redirect("welcome")
-
-    # Unique role names
     role_names = roles_qs.values_list("name", flat=True).distinct()
     # ------------------------------------------------------------
     # CONTEXT (COMMON)
-    # ------------------------------------------------------------
+    # ------------------------------------------------------------``
+    icon_map = {
+        "User": "bi bi-person",
+        "Roles": "bi bi-shield-lock",
+        "Donation Module": "bi bi-cash-coin",
+        "Donation Box Module": "bi bi-box",
+        "Donor/Volunteer Management System": "bi bi-heart",
+        "Event Management System": "bi bi-calendar-event",
+        "Timesheet System": "bi bi-clock",
+        "Leave Management System": "bi bi-calendar-x",
+        "Visitor Management System": "bi bi-person-badge",
+        "Vendor Management System": "bi bi-truck",
+        "Request Management System": "bi bi-clipboard-check",
+        "Inventory Management System": "bi bi-boxes",
+        "Asset Management System": "bi bi-pc-display",
+        "Fleet Management System": "bi bi-truck",
+        "Financial Asset Module": "bi bi-graph-up",
+        "Expense Module": "bi bi-receipt",
+        "Medical Module": "fa-solid fa-syringe",
+        "Rehabilitation Module": "bi bi-hand-thumbs-up",
+        "Adoption Module": "bi bi-people-fill",
+        "Trees Module": "bi bi-tree",
+        "Seeds Module": "bi bi-flower1",
+    }
+
     context = {
         'user': user,
         'username': user.username,
         'first_name': user.first_name,
         'donation_payment':donation_payment,
-        'permissions': permissions,   # <-- NEW LINE
+        'permissions': permissions,  
         'donation_owners': donation_owners,
         'roles_qss': roles_qss,
         'role_names': role_names,
@@ -172,13 +193,14 @@ def welcome_view(request):
         'payments_page_obj': payments_page_obj,
         'box_page_obj': box_page_obj,
     }
+    context['icon_map'] = icon_map
+
     if user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
         context['allowed_modules'] = list(all_modules)
 
     else:
         user_role = UserRole.objects.filter(user=user).select_related('role').first()
-
         if user_role and user_role.role:
             allowed_modules = (
                 UserModuleAccess.objects.filter(
@@ -211,7 +233,7 @@ def send_otp(request):
 from twilio.rest import Client
 TWILIO_ACCOUNT_SID = 'AC730c5a6779806941ef6ef4215f92629a'
 TWILIO_AUTH_TOKEN = '8ab4ce8083246cb7fc38dccacc5a521b'
-TWILIO_PHONE = '+917208542366'  # Twilio number
+TWILIO_PHONE = '+917208542366'  
 
 def send_otp(request):
     if request.method == "POST":
@@ -219,12 +241,11 @@ def send_otp(request):
         otp = str(random.randint(100000, 999999))
         otp_storage[phone] = otp
 
-        # Send SMS using Twilio
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         client.messages.create(
             body=f"Your OTP is {otp}",
             from_=TWILIO_PHONE,
-            to=f"+91{phone}"  # or include country code
+            to=f"+91{phone}" 
         )
 
         return redirect(f"/verify-otp/?phone={phone}")
@@ -1932,7 +1953,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-
+@login_required
 def add_donation_payment(request):
     donation_boxes = DonationBox.objects.filter(
         is_deleted=False,
@@ -2169,7 +2190,7 @@ def edit_lookup_type(request, id):
         lookup_type.updated_by = request.user
         lookup_type.save()
         messages.success(request, "Lookup Type updated successfully!")
-        return redirect("lookup_type_list")
+        return redirect("welcome")
     return render(request, "edit_lookup_type.html", {
         "lookup_type": lookup_type
     })
@@ -2188,29 +2209,167 @@ def edit_lookup(request, id):
     })
 
 @login_required
+# def edit_user(request, id):
+#     user_obj = get_object_or_404(User, id=id)
+#     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
+#     roles = UserModuleAccess.objects.all()
+#     if request.method == 'POST':
+#         new_username = request.POST.get('username')
+#         if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
+#             messages.error(
+#                 request,
+#                 "Username already exists! Please choose a different one."
+#             )
+#             return redirect(request.path)
+#         user_obj.first_name = request.POST.get('first_name')
+#         user_obj.last_name  = request.POST.get('last_name')
+#         user_obj.username   = new_username
+#         user_obj.email      = request.POST.get('email')
+#         role_id = request.POST.get('role')
+#         if role_id:
+#             if not request.user.is_superuser:
+#                 messages.error(
+#                     request,
+#                     "❌ You are not allowed to assign roles."
+#                 )
+#                 return redirect("welcome")
+
+#             selected_role = get_object_or_404(UserModuleAccess, id=role_id)
+#             user_role_obj.role = selected_role
+#             user_role_obj.save()
+
+#         user_obj.save()
+#         messages.success(request, "User updated successfully!")
+#         return redirect('welcome')
+#     if request.user.is_superuser:
+#         allowed_modules = list(
+#             Module.objects.all().values_list('module_name', flat=True)
+#         )
+#     else:
+#         current_user_role = (
+#             UserRole.objects
+#             .filter(user=request.user)
+#             .select_related('role')
+#             .first()
+#         )
+#         if current_user_role and current_user_role.role:
+#             allowed_modules = list(
+#                 UserModuleAccess.objects.filter(
+#                     name=current_user_role.role.name,
+#                     can_access=True
+#                 )
+#                 .select_related('module')
+#                 .values_list('module__module_name', flat=True)
+#             )
+#         else:
+#             allowed_modules = []
+#             messages.warning(
+#                 request,
+#                 "⚠️ You do not have permission to access this module.")
+
+#     return render(
+#         request,
+#         'edit_user.html',
+#         {
+#             'edit_user': user_obj,
+#             'roles': roles,
+#             'user_role': user_role_obj,
+#             'allowed_modules': allowed_modules,
+#         }
+#     )
+# def edit_user(request, id):
+#     user_obj = get_object_or_404(User, id=id)
+#     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
+#     roles = UserModuleAccess.objects.all()
+
+#     if request.method == 'POST':
+#         new_username = request.POST.get('username')
+
+#         if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
+#             messages.error(request, "Username already exists! Please choose a different one.")
+#             return redirect(request.path)
+
+#         user_obj.first_name = request.POST.get('first_name')
+#         user_obj.last_name  = request.POST.get('last_name')
+#         user_obj.username   = new_username
+#         user_obj.email      = request.POST.get('email')
+
+#         role_id = request.POST.get('role')
+#         if role_id:
+#             if not request.user.is_superuser:
+#                 messages.error(request, "❌ You are not allowed to assign roles.")
+#                 return redirect("welcome")
+
+#             selected_role = get_object_or_404(UserModuleAccess, id=role_id)
+#             user_role_obj.role = selected_role
+#             user_role_obj.save()
+
+#         user_obj.save()
+#         messages.success(request, "User updated successfully!")
+#         return redirect('welcome')
+
+#     # ---- MODULE ACCESS SECTION ----
+#     if request.user.is_superuser:
+#         allowed_modules = list(
+#             Module.objects.all().values_list('module_name', flat=True).distinct()
+#         )
+#     else:
+#         current_user_role = (
+#             UserRole.objects.filter(user=request.user).select_related('role').first()
+#         )
+
+#         if current_user_role and current_user_role.role:
+#             raw_modules = (
+#                 UserModuleAccess.objects.filter(
+#                     name=current_user_role.role.name,
+#                     can_access=True
+#                 )
+#                 .select_related('module')
+#                 .values_list('module__module_name', flat=True)
+#             )
+
+#             # distinct + preserve order
+#             allowed_modules = list(dict.fromkeys(raw_modules))
+#         else:
+#             allowed_modules = []
+#             messages.warning(request, "⚠️ You do not have permission to access this module.")
+
+#     return render(
+#         request,
+#         'edit_user.html',
+#         {
+#             'edit_user': user_obj,
+#             'roles': roles,
+#             'user_role': user_role_obj,
+#             'allowed_modules': allowed_modules,
+#         }
+#     )
 def edit_user(request, id):
     user_obj = get_object_or_404(User, id=id)
     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
     roles = UserModuleAccess.objects.all()
+
     if request.method == 'POST':
         new_username = request.POST.get('username')
+
         if User.objects.filter(username=new_username).exclude(id=user_obj.id).exists():
-            messages.error(
-                request,
-                "Username already exists! Please choose a different one."
-            )
+            messages.error(request, "Username already exists! Please choose a different one.")
             return redirect(request.path)
+
         user_obj.first_name = request.POST.get('first_name')
         user_obj.last_name  = request.POST.get('last_name')
         user_obj.username   = new_username
         user_obj.email      = request.POST.get('email')
+
         role_id = request.POST.get('role')
-        if role_id:
+
+        # --- ROLE LOGIC ---
+        if role_id in ["", "none", None]:
+            user_role_obj.role = None
+            user_role_obj.save()
+        else:
             if not request.user.is_superuser:
-                messages.error(
-                    request,
-                    "❌ You are not allowed to assign roles."
-                )
+                messages.error(request, "❌ You are not allowed to assign roles.")
                 return redirect("welcome")
 
             selected_role = get_object_or_404(UserModuleAccess, id=role_id)
@@ -2220,32 +2379,8 @@ def edit_user(request, id):
         user_obj.save()
         messages.success(request, "User updated successfully!")
         return redirect('welcome')
-    if request.user.is_superuser:
-        allowed_modules = list(
-            Module.objects.all().values_list('module_name', flat=True)
-        )
-    else:
-        current_user_role = (
-            UserRole.objects
-            .filter(user=request.user)
-            .select_related('role')
-            .first()
-        )
-        if current_user_role and current_user_role.role:
-            allowed_modules = list(
-                UserModuleAccess.objects.filter(
-                    name=current_user_role.role.name,
-                    can_access=True
-                )
-                .select_related('module')
-                .values_list('module__module_name', flat=True)
-            )
-        else:
-            allowed_modules = []
-            messages.warning(
-                request,
-                "⚠️ You do not have permission to access this module.")
 
+    # --- RETURN TEMPLATE ON GET ---
     return render(
         request,
         'edit_user.html',
@@ -2253,9 +2388,10 @@ def edit_user(request, id):
             'edit_user': user_obj,
             'roles': roles,
             'user_role': user_role_obj,
-            'allowed_modules': allowed_modules,
         }
     )
+
+
 def edit_usermoduleaccess(request, id):
     record = get_object_or_404(UserModuleAccess, id=id)
     if request.method == 'POST':
@@ -2531,7 +2667,6 @@ def edit_donation_box(request, id):
     if request.method == 'POST':
         box.key_id = request.POST.get('key_id')
         box.box_size = request.POST.get('box_size')
-        box.location = request.POST.get('location')
         box.status = request.POST.get('status')
         qr_file = request.FILES.get('qr_code')
         if qr_file:
@@ -2824,3 +2959,22 @@ def get_donation_data(request, donation_id):
     
     except Donation.DoesNotExist:
         return JsonResponse({'error': 'Donation not found'}, status=404)
+    
+
+
+def add_event(request):
+    if request.method == "POST":
+        Event.objects.create(
+            event_name = request.POST.get('event_name'),
+            event_type = request.POST.get('event_type'),
+            event_date = request.POST.get('event_date'),
+            start_time = request.POST.get('start_time'),
+            end_time = request.POST.get('end_time'),
+            venue = request.POST.get('venue'),
+            organizer_name = request.POST.get('organizer_name'),
+            organizer_contact = request.POST.get('organizer_contact'),
+            description = request.POST.get('description'),
+        )
+        return redirect('welcome')
+
+    return render(request, 'add_event.html')
