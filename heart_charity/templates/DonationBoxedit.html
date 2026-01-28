@@ -95,29 +95,20 @@
 
 <div class="popup-overlay">
     <div class="popup-card">
-
-        <!-- Close -->
         <a href="{% url 'welcome' %}" class="close-btn">&times;</a>
-
-        <!-- Header -->
         <div class="mb-4">
             <div class="popup-title">Edit Donation Box</div>
             <div class="popup-subtitle">Please update the required details below</div>
             <hr>
         </div>
-
-        <!-- Form -->
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-
             <div class="section-title">Donation Box Details</div>
-
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Key ID</label>
                     <input type="text" name="key_id" class="form-control" value="{{ box.key_id }}" required>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label">Box Size</label>
                     <select name="box_size" class="form-select" required>
@@ -129,10 +120,10 @@
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <label class="form-label">Location</label>
                     <input type="text" name="location" class="form-control" value="{{ box.location }}" required>
-                </div>
+                </div> -->
 
                 <div class="col-md-6">
                     <label class="form-label">Status</label>

@@ -1,13 +1,11 @@
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
-
 <style>
 .dashboard-container {
         display: flex;
         min-height: 100vh;
     } 
-    /* Mobile Header */
     .mobile-header {
         display: none;
         background: #184d61;
@@ -27,14 +25,13 @@
         font-size: 1.5rem;
         cursor: pointer;
     }
-    /* Sidebar */
 .sidebar {
   width: 250px;
   background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
   color: white;
   transition: all 0.3s ease;
-  overflow-y: auto;        /* allow scrolling */
-  scrollbar-width: none;   /* hide scrollbar (for Firefox) */
+  overflow-y: auto;        
+  scrollbar-width: none;   
   height: 100vh;
   position: sticky;
   top: 0;
@@ -88,7 +85,6 @@
         margin-right: 0;
         font-size: 1.4rem;
     }
-    /* Main Content */
     .content {
         flex: 1;
         padding: 20px;
@@ -112,13 +108,11 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         transition: all 0.2s;
     }
-    
     .search-input:focus {
         border-color: #184d61;
         outline: none;
         box-shadow: 0 2px 8px rgba(24, 77, 97, 0.2);
     }
-    
     .search-icon {
         position: absolute;
         right: 15px;
@@ -126,7 +120,6 @@
         transform: translateY(-50%);
         color: #666;
     }
-    /* Tab Content */
     .tab-content {
         display: none;
         animation: fadeIn 0.3s ease-in-out;
@@ -180,7 +173,6 @@
     max-width: 100%;
     border-radius: 16px;
   }
-  /* Form Styles */
     .form-container {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
         padding: 25px;
@@ -279,10 +271,9 @@
     .form-group .checkbox-group input {
         width: auto;
     }
- /* Align buttons (like View Donations) to the right inside their container */
 .button-group {
   display: flex;
-  justify-content: flex-end;  /* pushes button to right */
+  justify-content: flex-end;  
   margin-bottom: 15px;
   padding-right: 10px;
 }  
@@ -298,20 +289,16 @@
         background: #184d61;
         color: white;
     }
-    
     .btn-primary:hover {
         background: #0d3342;
     }
-    
     .btn-secondary {
         background: #6c757d;
         color: white;
     }
-    
     .btn-secondary:hover {
         background: #5a6268;
     }
-    /* Placeholder Content */
     .placeholder-content {
         text-align: center;
         padding: 50px 20px;
@@ -322,12 +309,10 @@
         margin-bottom: 15px;
         color: #ccc;
     }
-    /* Animations */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    /* Responsive Design */
     @media (max-width: 768px) {
         .mobile-header {
             display: flex;
@@ -380,7 +365,6 @@
         min-height: 100vh;
     }
     }
-/*  user table  */
      table {
       width: 90%;
       margin: 30px auto;
@@ -397,7 +381,6 @@
     tr:hover {
       background: #f1f3ff;
     }
-   /* ==== ACTION BUTTONS ==== */
 td a.btn {
   display: inline-block;
   padding: 8px 16px;
@@ -408,14 +391,12 @@ td a.btn {
   text-decoration: none;
   transition: all 0.25s ease;
 }
-/* Align top button to right */
 .button-group.top-right {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 15px;
   padding-right: 15px;
 }
-/* View Donations button styling */
 #viewDonationsBtn {
   background-color: #17a2b8;
   color: #fff;
@@ -451,7 +432,6 @@ h1 {
     color: #1b5e20;
     margin-bottom: 15px;
   }
-  /* 📄 Report Form Styling */
   form {
     border-radius: 10px;
   }
@@ -477,7 +457,6 @@ h1 {
     cursor: pointer;
     font-weight: 600;
   }
-  /* 📊 Table Styling */
   table {
     width: 100%;
     border-collapse: collapse;
@@ -506,31 +485,24 @@ td {
     background-color: #e6ecff;
     transition: background 0.3s ease;
   }
-
-
-  /* 🏷 Status Badges */
   .badge-success {
     background-color: #28a745;
     color: white;
     padding: 5px 10px;
     border-radius: 6px;
   }
-
   .badge-warning {
     background-color: #ffc107;
     color: #333;
     padding: 5px 10px;
     border-radius: 6px;
   }
-
   .badge-failed {
     background-color: #dc3545;
     color: white;
     padding: 5px 10px;
     border-radius: 6px;
   }
-
-  /* 🔙 Back Button */
   .back-link {
     display: inline-block;
     margin-top: 30px;
@@ -541,63 +513,45 @@ td {
     text-decoration: none;
     font-weight: 600;
   }
-
   .back-link:hover {
     background: #495057;
   }
-
   .content-header {
     margin-bottom: 20px;
     margin-left: 74%;
 }
-
-
-/* Make table header sticky and body scrollable */
 .sticky-table {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
   display: block;
-  max-height: 500px;      /* Height of visible area */
-  overflow-y: auto;       /* Scroll only the body */
+  max-height: 500px;      
+  overflow-y: auto;       
 }
-
-/* Sticky header styling */
 .sticky-table thead {
   position: sticky;
   top: 0;
   z-index: 10;
 }
-
-/* Ensure header background is visible when sticky */
 .sticky-table thead th {
-
   text-align: center;
   vertical-align: middle;
 }
-
-/* Make sure rows display properly */
 .sticky-table tbody tr td {
   background: #fff;
 }
-
-/* Optional: hover and padding tweaks */
 .sticky-table tbody tr:hover {
   background-color: #f6fff6;
 }
-
-  /* 📱 Responsive Design */
   @media (max-width: 768px) {
     form, table {
       width: 100%;
       font-size: 14px;
     }
-
     th, td {
       padding: 10px 8px;
     } 
   }
-   /* Form Styles */
     .form-container {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
         padding: 25px;
@@ -606,24 +560,20 @@ td {
         max-width: 800px;
         margin: 0 auto;
     }
-    
     .form-header {
         text-align: center;
         margin-bottom: 25px;
     }
-    
     .form-header h2 {
         color: #184d61;
         margin-bottom: 5px;
     }
-    
     .progress-bar {
         display: flex;
         justify-content: space-between;
         margin-bottom: 30px;
         position: relative;
     }
-    
     .progress-bar::before {
         content: '';
         position: absolute;
@@ -634,13 +584,11 @@ td {
         background: #e0e0e0;
         z-index: 0;
     }
-    
     .progress-step {
         position: relative;
         z-index: 1;
         text-align: center;
     }
-    
     .progress-step-circle {
         width: 30px;
         height: 30px;
@@ -654,43 +602,35 @@ td {
         font-weight: 600;
         font-size: 0.8rem;
     }
-    
     .progress-step.active .progress-step-circle {
         background: #184d61;
         color: white;
     }
-    
     .progress-step-label {
         font-size: 0.7rem;
         color: #666;
     }
-    
     .form-step {
         display: none;
     }
-    
     .form-step.active {
         display: block;
         animation: fadeIn 0.3s ease-in-out;
     }
-    
     .form-step h5 {
         color: #184d61;
         margin-bottom: 20px;
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
-    
     .form-group {
         margin-bottom: 15px;
     }
-    
     .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: 500;
     }
-    
     .form-group input, .form-group select, .form-group textarea {
         width: 50% !important;
         padding: 10px;
@@ -698,12 +638,10 @@ td {
         border-radius: 5px;
         font-size: 1rem;
     }
-    
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         border-color: #184d61;
         outline: none;
     }
-    
     .form-group .checkbox-group {
         display: flex;
         align-items: center;
@@ -714,7 +652,7 @@ td {
     }
 .button-group {
   display: flex;
-  justify-content: flex-end;  /* pushes button to right */
+  justify-content: flex-end; 
   margin-bottom: 15px;
   padding-right: 10px;
 }  
@@ -740,21 +678,17 @@ td {
     .btn-secondary:hover {
         background: #5a6268;
     }
-    /* Placeholder Content */
     .placeholder-content {
         text-align: center;
         padding: 50px 20px;
         color: #666;
     }
-    
     .placeholder-content i {
         font-size: 3rem;
         margin-bottom: 15px;
         color: #ccc;
     }
-    
-    /* Animations */
-    @keyframes fadeIn {
+        @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     } 
@@ -764,7 +698,6 @@ td {
   justify-content: center;
   gap: 20px;
 }
-
 .download-group {
   display: flex;
   flex-direction: column;
@@ -775,8 +708,6 @@ td {
   margin-bottom: 5px;
   font-size: 14px;
 }
-
-/* 🌿 Input styling — bottom border only */
 .download-group input[type="date"],
 .download-group input[type="text"] {
   border: none;
@@ -791,7 +722,6 @@ td {
 .download-group input:focus {
   border-bottom-color: #0f5132; 
 }
-/* 🌿 Button style */
 .download-btn {
   color: white;
   border: none;
@@ -802,7 +732,6 @@ td {
   align-self: flex-end;
   margin-top: 25px;
 }
-/* Make the table wrapper scrollable */
 .table-scroll-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -810,12 +739,10 @@ td {
   border: 1px solid #ddd;
   scroll-behavior: smooth;
 }
-/* Keep table wide so scrollbars stay visible */
 .table-scroll-wrapper table {
   min-width: max-content;
   width: auto;
 }
-
 .table-scroll-wrapper th,
 .table-scroll-wrapper td {
   white-space: nowrap;
@@ -839,26 +766,22 @@ td {
   padding: 0;
   flex: 0 0 auto;
 }
-
 .pagination-container a.btn,
 .pagination-container button {
   flex: 0 0 auto;
   white-space: nowrap;
 }
-
 .pagination-container .form-select {
   display: inline-block !important;
   width: auto !important;
   min-width: 64px;
   flex: 0 0 auto;
 }
-
 .pagination-container label,
 .pagination-container span {
   flex: 0 0 auto;
   white-space: nowrap;
 }
-
 @media (max-width: 480px) {
   .pagination-container {
     gap: 4px;
@@ -873,7 +796,6 @@ td {
 .card{
     --bs-card-bg: none !important;
 }
-
 .column-search {
     width: 120px;
     padding: 4px 0;
@@ -897,154 +819,61 @@ td {
 
 <div class="dashboard-container">
     <div class="mobile-header">
-        <button class="menu-toggle" id="mobileMenuToggle">
-            <i class="bi bi-list"></i>
-        </button>
+        <button class="menu-toggle" id="mobileMenuToggle"> <i class="bi bi-list"></i> </button>
     </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-toggle" id="sidebarToggle">
-            <i class="bi bi-chevron-left" id="toggleIcon"></i>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-chevron-left" id="toggleIcon"></i>
+    </div>
+
+    {% if user.is_superuser %}
+        <a class="tab-btn active" data-tab="default-user">
+            <i class="bi bi-bar-chart-line"></i><span class="sidebar-text">Dashboard</span>
+        </a>
+
+        <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
+        <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
+        <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span class="sidebar-text">Roles</span></a>
+        <a class="tab-btn" data-tab="Donor/Volunteer Management System"><i class="bi bi-heart"></i><span class="sidebar-text">Donor/Volunteer</span></a>
+        <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash-coin"></i><span class="sidebar-text">Donation Module</span></a>
+        <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+        <a class="tab-btn" data-tab="Event Management System"><i class="bi bi-calendar-event"></i><span class="sidebar-text">Event Management</span></a>
+        <a class="tab-btn" data-tab="Timesheet System"><i class="bi bi-clock"></i><span class="sidebar-text">Timesheet System</span></a>
+        <a class="tab-btn" data-tab="Leave Management System"><i class="bi bi-calendar-x"></i><span class="sidebar-text">Leave Management</span></a>
+        <a class="tab-btn" data-tab="Visitor Management System"><i class="bi bi-person-badge"></i><span class="sidebar-text">Visitor Management</span></a>
+        <a class="tab-btn" data-tab="Vendor Management System"><i class="bi bi-truck"></i><span class="sidebar-text">Vendor Management</span></a>
+        <a class="tab-btn" data-tab="Request Management System"><i class="bi bi-clipboard-check"></i><span class="sidebar-text">Request Management</span></a>
+        <a class="tab-btn" data-tab="Inventory Management System"><i class="bi bi-boxes"></i><span class="sidebar-text">Inventory Management</span></a>
+        <a class="tab-btn" data-tab="Asset Management System"><i class="bi bi-pc-display"></i><span class="sidebar-text">Asset Management</span></a>
+        <a class="tab-btn" data-tab="Fleet Management System"><i class="bi bi-truck"></i><span class="sidebar-text">Fleet Management</span></a>
+        <a class="tab-btn" data-tab="Financial Asset Module"><i class="bi bi-graph-up"></i><span class="sidebar-text">Financial Asset</span></a>
+        <a class="tab-btn" data-tab="Expense Module"><i class="bi bi-receipt"></i><span class="sidebar-text">Expense Module</span></a>
+        <a class="tab-btn" data-tab="Medical Module"><i class="fa-solid fa-syringe"></i><span class="sidebar-text">Medical Module</span></a>
+        <a class="tab-btn" data-tab="Rehabilitation Module"><i class="bi bi-hand-thumbs-up"></i><span class="sidebar-text">Rehabilitation</span></a>
+        <a class="tab-btn" data-tab="Adoption Module"><i class="bi bi-people-fill"></i><span class="sidebar-text">Adoption Module</span></a>
+        <a class="tab-btn" data-tab="Trees Module"><i class="bi bi-tree"></i><span class="sidebar-text">Trees Module</span></a>
+        <a class="tab-btn" data-tab="Seeds Module"><i class="bi bi-flower1"></i><span class="sidebar-text">Seeds Module</span></a>
+
+    {% elif allowed_modules and allowed_modules|length > 0 %}
+        {% for module_name in allowed_modules %}
+            <a class="tab-btn" data-tab="{{ module_name }}">
+                <i class="{{ icon_map.module_name|default:'bi bi-dot' }}"></i>
+                <span class="sidebar-text">{{ module_name }}</span>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="welcome-wrapper">
+            <div class="welcome-card">
+                <h3 style="color: #bcb6b6;">Welcome, {{ user.username }}!</h3>
+                <p>You currently do not have access, please contact admin.</p>
+            </div>
         </div>
-
-{% if user.is_superuser %}
-<a class="tab-btn active" data-tab="default-user">
-    <i class="bi bi-bar-chart-line"></i>
-    <span class="sidebar-text">Dashboard</span>
-</a>
-
-<a class="tab-btn mdm" data-tab="MDM">
-    <i class="bi bi-table"></i>
-    <span class="sidebar-text">MDM</span>
-</a>
-
-<a class="tab-btn user" data-tab="user">
-    <i class="bi bi-person"></i>
-    <span class="sidebar-text">User</span>
-</a>
-
-<a class="tab-btn user" data-tab="roles">
-    <i class="bi bi-shield-lock"></i>
-    <span class="sidebar-text">Roles</span>
-</a>
-
-<a class="tab-btn" data-tab="Donor/Volunteer Management System">
-    <i class="bi bi-heart"></i>
-    <span class="sidebar-text">Donor/Volunteer</span>
-</a>
-
-<a class="tab-btn" data-tab="Donation Module">
-    <i class="bi bi-cash-coin"></i>
-    <span class="sidebar-text">Donation Module</span>
-</a>
-
-<a class="tab-btn" data-tab="Donation Box Module">
-    <i class="bi bi-box"></i>
-    <span class="sidebar-text">Donation Box</span>
-</a>
-
-<!-- <a class="tab-btn" data-tab="Employee Management System">
-    <i class="bi bi-people"></i>
-    <span class="sidebar-text">Employee Management System</span>
-</a> -->
-
-<a class="tab-btn" data-tab="Timesheet System">
-    <i class="bi bi-clock"></i>
-    <span class="sidebar-text">Timesheet System</span>
-</a>
-
-<a class="tab-btn" data-tab="Leave Management System">
-    <i class="bi bi-calendar-x"></i>
-    <span class="sidebar-text">Leave Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Visitor Management System">
-    <i class="bi bi-person-badge"></i>
-    <span class="sidebar-text">Visitor Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Vendor Management System">
-    <i class="bi bi-truck"></i>
-    <span class="sidebar-text">Vendor Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Event Management System">
-    <i class="bi bi-calendar-event"></i>
-    <span class="sidebar-text">Event Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Request Management System">
-    <i class="bi bi-clipboard-check"></i>
-    <span class="sidebar-text">Request Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Inventory Management System">
-    <i class="bi bi-boxes"></i>
-    <span class="sidebar-text">Inventory Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Asset Management System">
-    <i class="bi bi-pc-display"></i>
-    <span class="sidebar-text">Asset Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Fleet Management System">
-    <i class="bi bi-truck"></i>
-    <span class="sidebar-text">Fleet Management</span>
-</a>
-
-<a class="tab-btn" data-tab="Financial Asset Module">
-    <i class="bi bi-graph-up"></i>
-    <span class="sidebar-text">Financial Asset</span>
-</a>
-
-<a class="tab-btn" data-tab="Expense Module">
-    <i class="bi bi-receipt"></i>
-    <span class="sidebar-text">Expense Module</span>
-</a>
-
-<a class="tab-btn" data-tab="Medical Module">
-    <i class="fa-solid fa-syringe"></i>
-    <span class="sidebar-text">Medical Module</span>
-</a>
-
-<a class="tab-btn" data-tab="Rehabilitation Module">
-    <i class="bi bi-hand-thumbs-up"></i>
-    <span class="sidebar-text">Rehabilitation</span>
-</a>
-
-<a class="tab-btn" data-tab="Adoption Module">
-    <i class="bi bi-people-fill"></i>
-    <span class="sidebar-text">Adoption Module</span>
-</a>
-
-<a class="tab-btn" data-tab="Trees Module">
-    <i class="bi bi-tree"></i>
-    <span class="sidebar-text">Trees Module</span>
-</a>
-
-<a class="tab-btn" data-tab="Seeds Module">
-    <i class="bi bi-flower1"></i>
-    <span class="sidebar-text">Seeds Module</span>
-</a>
-
-{% elif not user.is_superuser or allowed_modules %}
-    {% for module_name in allowed_modules %}
-        <a class="tab-btn" data-tab="{{ module_name }}">{{ module_name }}</a>
-    {% endfor %}
-{% else %}
-<div class="welcome-wrapper">
-    <div class="welcome-card">
-        <h3>Welcome, {{ user.username }}!</h3>
-        <p>You currently do not have admin access.</p>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 </div>
 
 <!-- =============Main Content========== -->
     <div class="content">
 <style>
-/* --- Desktop Layout --- */
 .hero-banner {
     display: flex;
     align-items: center;
@@ -1090,11 +919,9 @@ td {
         padding: 40px;
         gap: 25px;
     }
-
     .hero-title {
         font-size: 40px;
     }
-
     .hero-image img {
         max-width: 380px;
     }
@@ -1105,16 +932,13 @@ td {
         text-align: center;
         padding: 35px 20px;
     }
-
     .hero-title {
         font-size: 32px;
     }
-
     .hero-description {
         max-width: 100%;
         font-size: 16px;
     }
-
     .hero-image img {
         max-width: 90%;
         margin-top: 20px;
@@ -1124,11 +948,9 @@ td {
     .hero-title {
         font-size: 28px;
     }
-
     .hero-description {
         font-size: 15px;
     }
-
     .hero-image img {
         max-width: 100%;
     }
@@ -1139,16 +961,18 @@ td {
         left: 0;
         width: 10%;
         height: 60px;                   
-          background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
+        background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
         color: white;
         display: flex;
         align-items: center;          
         justify-content: space-between;
         padding: 0 15px;
         box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-z-index: 1000;    }
+z-index: 1000;   
+ }
 .sticky-top{
-      z-index: auto;}
+      z-index: auto;
+    }
     .mobile-header h1 {
         font-size: 20px;                
         margin: 0;
@@ -1169,7 +993,6 @@ z-index: 1000;    }
 }
 </style>
  <div class="tab-content active" id="default-user">
-  <!-- Hero Banner -->
   <div class="hero-banner">
     <div class="hero-content">
       <h1 class="hero-title">Welcome to Your Dashboard 👋</h1>
@@ -1198,25 +1021,22 @@ z-index: 1000;    }
   </form>
 </div>
 <style>
-/* 🌿 Modern underline input */
 .search-input {
   border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
+  border-bottom: 2px solid #28a745; 
   border-radius: 0;
   background-color: transparent;
   transition: all 0.3s ease;
   padding: 8px 10px;
 }
-
 .search-input:focus {
   outline: none;
   box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
+  border-bottom-color: #1e7e34; 
 }
 .search-btn {
   border-radius: 8px;
 }
-
 </style>
   {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
@@ -1263,40 +1083,18 @@ z-index: 1000;    }
       <tbody id="Lookup">
 {% for lt in lookup_page_obj %}
         <tr>
-          <!-- <td>
-            <div class="d-inline-flex align-items-center gap-1">
-              {% if permissions.can_edit %}
-              <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i></a>
-              {% endif %}
-              {% if permissions.can_delete %} 
-<form action="{% url 'delete_lookup_type' lt.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;
-"onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')"><i class="bi bi-trash"></i></button>
-              </form>
-              {% endif %}
-            </div>
-          </td> -->
           <td>
   <div class="d-inline-flex align-items-center gap-1">
-
     {% if not lt.is_deleted %}
       {% if permissions.can_edit %}
-        <a href="{% url 'edit_lookup_type' lt.id %}"
-           class="btn-sm p-1"
-           style="font-size: 15px; color:black; text-decoration: none;">
+        <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black; text-decoration: none;">
           <i class="bi bi-pencil-square"></i>
-        </a>
+      </a>
       {% endif %}
       {% if permissions.can_delete %}
-        <form action="{% url 'delete_lookup_type' lt.id %}"
-              method="POST"
-              class="d-inline m-0 p-0">
+        <form action="{% url 'delete_lookup_type' lt.id %}" method="POST" class="d-inline m-0 p-0">
           {% csrf_token %}
-          <button type="submit"
-                  class="btn-sm p-1"
-                  style="font-size: 15px; color:black; background-color: transparent;"
+          <button type="submit"class="btn-sm p-1"style="font-size: 15px; color:black; background-color: transparent;"
                   onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
             <i class="bi bi-trash"></i>
           </button>
@@ -1313,14 +1111,14 @@ z-index: 1000;    }
                 <td>{{ lt.created_date|date:"d M Y" }}</td>
                 <td>{{ lt.updated_by }}</td>
                 <td>{{ lt.updated_date|date:"d M Y" }}</td>
-<td>
-    {% if lt.is_deleted %}
-        Yes
-    {% else %}
-        No
-    {% endif %}
-</td>
-<td>{{ lt.deleted_by }}</td>
+                <td>
+                    {% if lt.is_deleted %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+                <td>{{ lt.deleted_by }}</td>
                 <td>{{ lt.deleted_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
@@ -1374,7 +1172,6 @@ z-index: 1000;    }
 </tr> 
       </thead>
       <tbody id="Lookup">
-
    {% for lt in lookup_page_obj %}
         <tr>
           <td>
@@ -1420,10 +1217,10 @@ z-index: 1000;    }
 <style>
 .scrollable-table {
   overflow-y: auto;
-  overflow-x: auto; /* Horizontal scroll */
+  overflow-x: auto; 
 }
 table th, table td {
-  white-space: nowrap; /* Prevent wrapping */
+  white-space: nowrap; 
 }
 .table thead th {
   position: sticky;
@@ -1440,11 +1237,9 @@ table th, table td {
       <a href="?lt_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
       <a href="?lt_page={{ lookup_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-  <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="ltPageSelect" class="fw-bold me-1">Page</label>
-    <select 
-      name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+    <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
       {% for p in lookup_page_obj.paginator.page_range %}
         <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
       {% endfor %}
@@ -1465,12 +1260,10 @@ table th, table td {
       type="text"name="sub_lookup_query" data-target="LookupType" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ sub_lookup_query|default:'' }}">
   </form>
 </div>
- <!-- 📄 Search Results -->
       {% if sub_lookup_query %}
         <h5>Showing results for: "<span ">{{ sub_lookup_query }}</span>"</h5>
         <hr>
       {% endif %}
-      <!-- 🧍‍♂️ User Table -->
       {% if lookup_table_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -1498,11 +1291,7 @@ table th, table td {
     <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
-        </button>
+        <button type="submit" style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
 </div>
@@ -1520,8 +1309,6 @@ table th, table td {
         </tr>
       </thead>
       <tbody id="LookupType">
-
-
 {% for l in lookup_table_obj %}
             <tr>
           <td>
@@ -1532,7 +1319,6 @@ table th, table td {
                 <i class="bi bi-pencil-square"></i>
               </a>
               {% endif %}
-
               {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
@@ -1552,17 +1338,15 @@ table th, table td {
                 <td>{{ l.created_date|date:"d M Y" }}</td>
                 <td>{{ l.updated_by }}</td>
                 <td>{{ l.updated_date|date:"d M Y" }}</td>
-<td>
-    {% if l.is_deleted %}
-        Yes
-    {% else %}
-        No
-    {% endif %}
-</td>
+                <td>
+                    {% if l.is_deleted %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
                 <td>{{ l.deleted_by }}</td>
-
                 <td>{{ l.deleted_at|date:"d M Y" }}</td>
-
         </tr>
         {% empty %}
         <tr><td colspan="12">No Lookups found.</td></tr>
@@ -1594,19 +1378,13 @@ table th, table td {
 <td>
     <div class="d-flex justify-content-between">
       {% if permissions.can_add %}
- <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+ <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
       {% endif %}
 {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
-        </button>
+        <button type="submit" style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">  <i class="bi bi-download"></i></button>
     </form>
     {% endif %}
 </div>
@@ -1622,7 +1400,6 @@ table th, table td {
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
         </tr>
-
       </thead>
       <tbody id="LookupType">
 {% for l in lookup_table_obj %}           
@@ -1632,17 +1409,13 @@ table th, table td {
               {% if not l.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+                <i class="bi bi-pencil-square"></i></a>
               {% endif %}
-
               {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')"> <i class="bi bi-trash"></i></button>
               </form>
               {% endif %}
               {% else %}
@@ -1659,13 +1432,13 @@ table th, table td {
                 <td>{{ l.updated_by }}</td>
                 <td>{{ l.updated_date|date:"d M Y" }}</td>
                 <td>{{ l.deleted_at|date:"d M Y" }}</td>
-<td>
-    {% if l.is_deleted %}
-        Yes
-    {% else %}
-        No
-    {% endif %}
-</td>
+                <td>
+                    {% if l.is_deleted %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
                 <td>{{ l.deleted_by }}</td>
                 <td>{{ l.deleted_at|date:"d M Y" }}</td>
                 </tr>
@@ -1679,74 +1452,48 @@ table th, table td {
     </div>
 <!-- ✅ Lookups Pagination Controls -->
 <div class="pagination-container text-center">
-
   {% if lookup_table_obj.has_previous %}
       <a href="?lu_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
       <a href="?lu_page={{ lookup_table_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
-  <!-- Page Info + Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="lookupPageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="lu_page" 
-      id="lookupPageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()"
-    >
+    <select name="lu_page" id="lookupPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
       {% for page_num in lookup_table_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}>
-          {{ page_num }}
-        </option>
+        <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}> {{ page_num }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
   </form>
-
   {% if lookup_table_obj.has_next %}
     <a href="?lu_page={{ lookup_table_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?lu_page={{ lookup_table_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
-
 </div>
 </div>
 </div>
-
 <!--   🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 All Users Section 🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 -->
 <div class="tab-content" id="user">
   <div class="card border-0">
-    
-    <!-- 🌈 Navbar-style Header -->
-    <div class="card-header  text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">All Users</h4>
-    </div>
-
+    <div class="card-header  text-white d-flex justify-content-between align-items-center"><h4 class="mb-0">All Users</h4></div>
     <div class="card-body">
-      <!-- 🔍 Search Section -->
     <div class="search-container">
 <form method="GET" action="{% url 'search_users' %}" class="d-flex align-items-center w-100">
     <input type="hidden" name="active_tab" value="user">
     <input type="text" name="user_query" data-target="users" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ user_query|default:'' }}">
 </form>
 </div>
- <!-- 📄 Search Results -->
       {% if query %}
         <h5>Showing results for: "<span ">{{ query }}</span>"</h5>
         <hr>
       {% endif %}
-
-      <!-- 🧍‍♂️ User Table -->
-
       {% if user_page_obj %}
   <div class="table-responsive scrollable-table1">
-  
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-                    <th class="sortable" data-col="2">Role <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="2">Role <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Username <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">First Name <span class="sort-icon">⬍</span></th>
@@ -1756,21 +1503,16 @@ table th, table td {
           <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
-                
         <tr class="column-search-row">
           <td> 
 <form method="GET" action="{% url 'search_users' %}"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
     <input type="hidden" name="user_query" value="{{ user_query }}">
     <input type="hidden" name="download" value="1">
-
-    <button type="submit"
-        style="background:none; color:black; cursor:pointer; font-size:22px;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" style="background:none; color:black; cursor:pointer; font-size:22px;"><i class="bi bi-download"></i></button>
 </form>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
@@ -1780,25 +1522,17 @@ table th, table td {
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
         </tr>
-
       </thead>
       <tbody id="users">
         {% for user in user_page_obj %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-
-              <!-- 🗑️ Delete -->
+              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
               <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this user?')"><i class="bi bi-trash"></i></button>
               </form>
             </div>
           </td>
@@ -1849,7 +1583,7 @@ table th, table td {
           <th class="sortable" data-col="8">Is Superuser <span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Date of join <span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">
+        <tr class="column-search-row">
       <td>
 <form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"  style="margin: 0; padding: 0;">
     <input type="hidden" name="active_tab" value="user">
@@ -1860,7 +1594,7 @@ table th, table td {
     </button>
 </form>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
@@ -1876,17 +1610,11 @@ table th, table td {
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-              <!-- 📝 Edit -->
-              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-              <!-- 🗑️ Delete -->
+              <a href="{% url 'edit_user' user.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
               <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this user?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this user?')"><i class="bi bi-trash"></i></button>
               </form>
             </div>
           </td>
@@ -1919,33 +1647,20 @@ table th, table td {
 </div>
       {% endif %}
     </div>
-
- <!-- ✅ Pagination Controls -->
 <div class="pagination-container text-center mt-3">
   {% if user_page_obj.has_previous %}
       <a href="?user_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
     <a href="?user_page={{ user_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
-  <!-- Page Info + Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="pageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="user_page" 
-      id="pageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
+    <select name="user_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
       {% for page_num in user_page_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == user_page_obj.number %}selected{% endif %}>
-          {{ page_num }}
-        </option>
+        <option value="{{ page_num }}" {% if page_num == user_page_obj.number %}selected{% endif %}> {{ page_num }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ user_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if user_page_obj.has_next %}
     <a href="?user_page={{ user_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?user_page={{ user_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
@@ -1953,8 +1668,6 @@ table th, table td {
 </div>
 </div>
 </div>
-
-<!-- 💅 Optional: extra subtle styling -->
 <style>
   .scrollable-table1 {
   max-height: 500px;
@@ -1985,30 +1698,24 @@ table th, table td {
 </form>
 </div>
 <style>
-/* 🌿 Modern underline input */
 .search-input {
 width: 35%;
   border: none;
-  border-bottom: 2px solid #28a745; /* success green line */
+  border-bottom: 2px solid #28a745;
   border-radius: 0;
   background-color: transparent;
   transition: all 0.3s ease;
   padding: 8px 10px;
 }
-
 .search-input:focus {
   outline: none;
   box-shadow: none;
-  border-bottom-color: #1e7e34; /* darker green when focused */
+  border-bottom-color: #1e7e34; 
 }
-
-/* 🪄 Match buttons cleanly */
 .search-btn {
   border-radius: 8px;
 }
 </style>
-
-      <!-- 🧍‍♂️ User Table -->
       {% if roles_page_obj %}
 <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle">
@@ -2036,26 +1743,15 @@ width: 35%;
             <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
-
-    <!-- ➕ Add Button (Green Icon Only) -->
-    <a href="{% url 'access_control' %}" 
-       style="font-size: 24px; color: #16a34a; text-decoration: none;">
-        <i class="fa-solid fa-plus"></i>
-    </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+    <a href="{% url 'access_control' %}" style="font-size: 24px; color: #16a34a; text-decoration: none;"><i class="fa-solid fa-plus"></i></a>
     <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="query1" value="{{ query1 }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
-        </button>
+        <button type="submit" style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"> <i class="bi bi-download"></i> </button>
     </form>
 </div>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
@@ -2079,19 +1775,12 @@ width: 35%;
       <tr>
         <td>
           <div class="d-inline-flex align-items-center gap-1">
-            <!-- 📝 Edit -->
               {% if not access.is_deleted %}
-            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-
-            <!-- 🗑️ Delete -->
+            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
             <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                onclick="return confirm('Are you sure you want to deactivate this User module access?')">
-                <i class="bi bi-trash"></i>
-              </button>
+                onclick="return confirm('Are you sure you want to deactivate this User module access?')"><i class="bi bi-trash"></i></button>
             </form>
             {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
@@ -2157,26 +1846,16 @@ width: 35%;
                   <tr class="column-search-row">
        <td>
 <div class="d-flex justify-content-between">
-
-    <!-- ➕ Add Button (Green Icon Only) -->
-    <a href="{% url 'access_control' %}" 
-       style="font-size: 24px; color: #16a34a; text-decoration: none;">
-        <i class="fa-solid fa-plus"></i>
-    </a>
-
-    <!-- ⬇ Download Button (Black Icon Only) -->
+    <a href="{% url 'access_control' %}" style="font-size: 24px; color: #16a34a; text-decoration: none;"><i class="fa-solid fa-plus"></i></a>
     <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
         <input type="hidden" name="query1" value="{{ query1 }}">
         <input type="hidden" name="download" value="1">
-
-        <button type="submit" 
-                style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-            <i class="bi bi-download"></i>
+        <button type="submit"  style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">  <i class="bi bi-download"></i>
         </button>
     </form>
 </div>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
@@ -2201,18 +1880,11 @@ width: 35%;
         <td>
           <div class="d-inline-flex align-items-center gap-1">
               {% if not access.is_deleted %}
-            <!-- 📝 Edit -->
-            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-
-            <!-- 🗑️ Delete -->
+            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
             <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
               {% csrf_token %}
               <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                onclick="return confirm('Are you sure you want to deactivate this User module access?')">
-                <i class="bi bi-trash"></i>
-              </button>
+                onclick="return confirm('Are you sure you want to deactivate this User module access?')"><i class="bi bi-trash"></i></button>
             </form>
 {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
@@ -2249,35 +1921,22 @@ width: 35%;
     </tbody>
   </table>
 </div>
-
       {% endif %}
     </div>
- <!-- ✅ Pagination Controls -->
 <div class="pagination-container text-center mt-3">
   {% if roles_page_obj.has_previous %}
       <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
     <a href="?roles_page={{ roles_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
-  <!-- Page Info + Dropdown -->
   <form method="get" class="d-inline-block">
     <label for="pageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="roles_page" 
-      id="pageSelect" 
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
+    <select name="roles_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
       {% for page_num in roles_page_obj.paginator.page_range %}
-        <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}>
-          {{ page_num }}
-        </option>
+        <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}> {{ page_num }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if roles_page_obj.has_next %}
     <a href="?roles_page={{ roles_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?roles_page={{ roles_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
@@ -2842,18 +2501,313 @@ width: 35%;
 
 <!-- ----------- Event Management System ------------------ -->
 
-<div class="tab-content" id="Event Management System">
-            <div class="content-header">
-                <h1>Event Management System</h1>
-                <p>Manage events and activities</p>
-            </div>
-            <div class="placeholder-content">
-                <i class="bi bi-calendar-event"></i>
-                <h2>Event Management Module</h2>
-                <p>This module is under development. Check back soon for updates.</p>
-            </div>
+ <div class="tab-content"  id="Event Management System">
+  <div class="card border-0">
+    <div class="card-header  text-white d-flex justify-content-between align-items-center"> <h4 class="mb-0">All Events</h4></div>
+    <div class="card-body">
+<div class="search-container d-flex align-items-center">
+  <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
+    <input type="text" name="payments_query" data-target="donation" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
+  </form>
 </div>
-
+      {% if payments_page_obj %}
+  <div class="table-responsive scrollable-table1">
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+        <tr>
+              <th>Actions</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+        </tr>
+                <tr class="column-search-row">
+  <td>
+<div class="d-inline-flex align-items-center gap-1">
+{% if permissions.can_add %}
+  <a href="{% url 'add_event' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
+  {% endif %}
+  {% if permissions.can_add %}
+    <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+    <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+    <input type="hidden" name="download" value="1">
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
+    </form>
+    {% endif %}
+    </div>
+</td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+     <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+</tr>
+      </thead>
+      <tbody id="donation">
+        {% for owner in payments_page_obj.object_list %}
+        <tr>
+            <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              {% if not owner.is_deleted %}
+{% if permissions.can_edit %}
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
+              {% endif %}
+              {% if permissions.can_delete %}
+              <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')"> <i class="bi bi-trash"></i></button>
+              </form>
+{% if owner.verified %}
+    <a href="{% url 'donation_payment_receipt_view' owner.id %}"style="font-size: 17px;"title="View Receipt"><i class="fa-solid fa-eye"></i></a>
+{% endif %}
+{% if request.user.is_superuser %}
+    {% if owner and owner.id %}
+        {% if owner.verified %}
+            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;"title="Verified by Admin"></i>
+        {% else %}
+            <a href="{% url 'verify_payment' owner.id %}"onclick="return confirm('Verify this donation?')"> <i class="fa-regular fa-circle-check" style="font-size: 17px; color:red;"title="Click to Verify"></i></a>
+        {% endif %}
+    {% else %}
+        <span class="text-muted" title="No payment found">—</span>
+    {% endif %}
+{% endif %}
+              {% endif %}
+              {% else %}
+                <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+              {% endif %}
+            </div>
+          </td>
+          <td>{{ owner.id }}</td>
+          <td>{{ owner.receipt_id }}</td>
+          <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+          <td>
+            {% if owner.donation_box %}
+              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+          <td>₹{{ owner.amount }}</td>
+          <td>{{ owner.payment_method }}</td>
+          <td>{{ owner.opened_by }}</td>
+          <td>{{ owner.verified_by }}</td>
+          <td>{{ owner.i_witness }}</td>
+          <td>{{ owner.name_of_bank }}</td>
+          <td>{{ owner.branch }}</td>
+          <td>{{ owner.transaction_id }}</td>
+          <td>{{ owner.created_by }}</td>
+          <td>{{ owner.created_at|date:"d M Y" }}</td>
+          <td>{{ owner.updated_by }}</td>
+          <td>{{ owner.updated_at|date:"d M Y" }}</td>
+          <td>
+              {% if owner.is_deleted %}
+                  Yes
+              {% else %}
+                  No
+              {% endif %}
+          </td>
+          <td>{{ owner.deleted_by }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+      {% elif payments_query %}
+        <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
+      {% else %}
+  <div class="table-responsive scrollable-table1">
+    <table class="table table-hover table-bordered align-middle paginated-table">
+      <thead class="sticky-top">
+         <tr>
+              <th>Actions</th>
+              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
+              <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+              <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+        </tr>
+                <tr class="column-search-row">  
+      <td>
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if permissions.can_add %}
+  <a href="{% url 'add_event' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
+    {% endif %}
+    {% if permissions.can_add %}
+    <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+    <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+    <input type="hidden" name="download" value="1">
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"> <i class="bi bi-download"></i></button>
+    </form>
+    {% endif %}
+  </div>
+</td>
+          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+        </tr> 
+      </thead>
+      <tbody id="donation">
+        {% for owner in payments_page_obj.object_list %}
+        <tr>
+            <td>
+            <div class="d-inline-flex align-items-center gap-1">
+              {% if not owner.is_deleted %}
+             {% if permissions.can_edit %}
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
+              {% endif %}
+              {% if permissions.can_delete %}
+              <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donation owner?')"><i class="bi bi-trash"></i></button>
+              </form>
+{% if owner.verified %}
+    <a href="{% url 'donation_payment_receipt_view' owner.id %}" style="font-size: 17px;" title="View Receipt"><i class="fa-solid fa-eye"></i></a>
+{% endif %}{% if request.user.is_superuser %}
+    {% if owner and owner.id %}
+        {% if owner.verified %}
+            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;" title="Verified by Admin"></i>
+        {% else %}
+            <a href="{% url 'verify_payment' owner.id %}"onclick="return confirm('Verify this donation?')">
+                <i class="fa-regular fa-circle-check"style="font-size: 17px; color:red;" title="Click to Verify"></i>
+            </a>
+        {% endif %}
+    {% else %}
+        <span class="text-muted" title="No payment found">—</span>
+    {% endif %}
+{% endif %}
+              {% endif %}
+              {% else %}
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+              {% endif %}
+            </div>
+          </td>
+          <td>{{ owner.id }}</td>
+          <td>{{ owner.receipt_id }}</td>
+          <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+          <td>
+            {% if owner.donation_box %}
+              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+          <td>₹{{ owner.amount }}</td>
+          <td>{{ owner.payment_method }}</td>
+          <td>{{ owner.opened_by }}</td>
+          <td>{{ owner.verified_by }}</td>
+          <td>{{ owner.i_witness }}</td>
+           <td>{{ owner.name_of_bank }}</td>
+          <td>{{ owner.branch }}</td>
+          <td>{{ owner.transaction_id }}</td>
+          <td>{{ owner.created_by }}</td>
+          <td>{{ owner.created_at|date:"d M Y" }}</td>
+          <td>{{ owner.updated_by }}</td>
+          <td>{{ owner.updated_at|date:"d M Y" }}</td>
+          <td>
+              {% if owner.is_deleted %}
+                  Yes
+              {% else %}
+                  No
+              {% endif %}
+          </td>
+          <td>{{ owner.deleted_by }}</td>
+          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endif %}
+</div>    
+<!-- ✅ Donation Payment Pagination Controls -->
+<div class="pagination-container text-center">
+  {% if payments_page_obj.has_previous %}
+      <a href="?payments_page=1&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm me-2">⏮</a>
+      <a href="?payments_page={{ payments_page_obj.previous_page_number }}&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm me-2">◀</a>
+  {% endif %}
+  <form method="get" class="d-inline-block pagination-form">
+    <input type="hidden" name="payments_query" value="{{ payments_query }}"/>
+    <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+    <select  name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+      {% for p in payments_page_obj.paginator.page_range %}
+        <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+      {% endfor %}
+    </select>
+    <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+  </form>
+  {% if payments_page_obj.has_next %}
+      <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm ms-2">▶</a>
+      <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+  {% endif %}
+</div>
+</div>
+</div>
 <!-- ----------- Request Management System------------------ -->
 
 <div class="tab-content" id="Request Management System">
@@ -2925,7 +2879,6 @@ width: 35%;
     <input type="text" name="payments_query" data-target="donation" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
   </form>
 </div>
-      <!-- 🧍‍♂️ User Table -->
       {% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -2990,47 +2943,30 @@ width: 35%;
 </tr>
       </thead>
       <tbody id="donation">
-        
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
               {% if not owner.is_deleted %}
 {% if permissions.can_edit %}
-              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
               {% endif %}
               {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')"><i class="bi bi-trash"></i> </button>
               </form>
-
 {% if owner.verified %}
-    <a href="{% url 'donation_payment_receipt_view' owner.id %}"
-       style="font-size: 17px;"
-       title="View Receipt">
-        <i class="fa-solid fa-eye"></i>
-    </a>
+    <a href="{% url 'donation_payment_receipt_view' owner.id %}" style="font-size: 17px;"title="View Receipt"> <i class="fa-solid fa-eye"></i></a>
 {% endif %}
-
 {% if request.user.is_superuser %}
     {% if owner and owner.id %}
         {% if owner.verified %}
-            <i class="fa-solid fa-circle-check"
-               style="font-size: 17px; color:#16a34a;"
-               title="Verified by Admin"></i>
+            <i class="fa-solid fa-circle-check"style="font-size: 17px; color:#16a34a;"title="Verified by Admin"></i>
         {% else %}
-            <a href="{% url 'verify_payment' owner.id %}"
-               onclick="return confirm('Verify this donation?')">
-                <i class="fa-regular fa-circle-check"
-                   style="font-size: 17px; color:red;"
-                   title="Click to Verify"></i>
-            </a>
+            <a href="{% url 'verify_payment' owner.id %}"onclick="return confirm('Verify this donation?')">
+          <i class="fa-regular fa-circle-check" style="font-size: 17px; color:red;" title="Click to Verify"></i> </a>
         {% endif %}
     {% else %}
         <span class="text-muted" title="No payment found">—</span>
@@ -3040,7 +2976,6 @@ width: 35%;
               {% else %}
                 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
               {% endif %}
-
             </div>
           </td>
           <td>{{ owner.id }}</td>
@@ -3078,10 +3013,8 @@ width: 35%;
         {% empty %}
       <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
         {% endfor %}
-
       </tbody>
     </table>
-
 </div>
       {% elif payments_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
@@ -3115,17 +3048,13 @@ width: 35%;
       <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
-  <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+  <a href="/add_donation_payment/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
     <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"> <i class="bi bi-download"></i></button>
     </form>
     {% endif %}
   </div>
@@ -3149,49 +3078,31 @@ width: 35%;
         <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-
         </tr> 
       </thead>
       <tbody id="donation">
-
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
               {% if not owner.is_deleted %}
              {% if permissions.can_edit %}
-              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+              <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"> <i class="bi bi-pencil-square"></i> </a>
               {% endif %}
               {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')"><i class="bi bi-trash"></i></button>
               </form>
-
 {% if owner.verified %}
-    <a href="{% url 'donation_payment_receipt_view' owner.id %}"
-       style="font-size: 17px;"
-       title="View Receipt">
-        <i class="fa-solid fa-eye"></i>
-    </a>
+    <a href="{% url 'donation_payment_receipt_view' owner.id %}" style="font-size: 17px;" title="View Receipt"> <i class="fa-solid fa-eye"></i></a>
 {% endif %}{% if request.user.is_superuser %}
     {% if owner and owner.id %}
         {% if owner.verified %}
-            <i class="fa-solid fa-circle-check"
-               style="font-size: 17px; color:#16a34a;"
-               title="Verified by Admin"></i>
+            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;"title="Verified by Admin"></i>
         {% else %}
-            <a href="{% url 'verify_payment' owner.id %}"
-               onclick="return confirm('Verify this donation?')">
-                <i class="fa-regular fa-circle-check"
-                   style="font-size: 17px; color:red;"
-                   title="Click to Verify"></i>
-            </a>
+            <a href="{% url 'verify_payment' owner.id %}"onclick="return confirm('Verify this donation?')"><i class="fa-regular fa-circle-check" style="font-size: 17px; color:red;" title="Click to Verify"></i> </a>
         {% endif %}
     {% else %}
         <span class="text-muted" title="No payment found">—</span>
@@ -3204,7 +3115,7 @@ width: 35%;
             </div>
           </td>
           <td>{{ owner.id }}</td>
-                              <td>{{ owner.receipt_id }}</td>
+          <td>{{ owner.receipt_id }}</td>
 <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
           <td>
             {% if owner.donation_box %}
@@ -3243,56 +3154,31 @@ width: 35%;
 </div>
 {% endif %}
 </div>
-    
 <!-- ✅ Donation Payment Pagination Controls -->
 <div class="pagination-container text-center">
   {% if payments_page_obj.has_previous %}
-      <a href="?payments_page=1&payments_query={{ payments_query }}" 
-         class="btn btn-outline-primary btn-sm me-2">⏮</a>
-
-      <a href="?payments_page={{ payments_page_obj.previous_page_number }}&payments_query={{ payments_query }}" 
-         class="btn btn-outline-primary btn-sm me-2">◀</a>
+      <a href="?payments_page=1&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm me-2">⏮</a>
+      <a href="?payments_page={{ payments_page_obj.previous_page_number }}&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
-  <!-- Page Dropdown -->
   <form method="get" class="d-inline-block pagination-form">
-
     <input type="hidden" name="payments_query" value="{{ payments_query }}"/>
-
     <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="payments_page"
-      id="dpPageSelect"
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
-
+    <select  name="payments_page"id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
       {% for p in payments_page_obj.paginator.page_range %}
-        <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}>
-          {{ p }}
-        </option>
+        <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
   </form>
   {% if payments_page_obj.has_next %}
-      <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}" 
-         class="btn btn-outline-primary btn-sm ms-2">▶</a>
-
-      <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}" 
-         class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+      <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+      <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}"  class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
 </div>
-
 <!-- ------------Donation Box----------- -->
 <!-- QR Code Popup -->
-<div id="qrModal"
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
-
-  <div style="
-      background:#fff;
-      padding:20px 20px 25px;
+<div id="qrModal"style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
+  <div style=" background:#fff;padding:20px 20px 25px;
       border-radius:12px;
       width:40%;
       height: 55%;
@@ -3302,47 +3188,18 @@ width: 35%;
       transform:translate(-50%, -50%);
       text-align:center;
       box-shadow:0 10px 30px rgba(0,0,0,0.2);">
-
-    <!-- Close -->
-    <span onclick="closeQrPopup()"
-          style="position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px;">
-      ×
-    </span>
-
-    <!-- Title -->
+    <span onclick="closeQrPopup()"style="position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px;">  × </span>
     <h5 style="margin-bottom:10px; color: #095528;">QR Code</h5>
-
-    <!-- QR Image -->
     <img id="qrImage"src=""style="width:200%; max-width:300px; margin-bottom:12px;">
-
-    <!-- Info -->
     <div style="font-size:14px; text-align:left; margin-bottom:12px;">
       <div><strong>Key ID:</strong> <span id="key_id"></span></div>
       <div><strong>Donation ID:</strong> <span id="donation_id"></span></div>
     </div>
-
-    <!-- Download -->
-    <a id="qrDownload"
-       href="#"
-       download
-       title="Download QR Code"
-       style="
-         display:inline-flex;
-         align-items:center;
-         gap:6px;
-         font-size:14px;
-         text-decoration:none;
-         color:#000;
-       ">
-      ⬇ Download
-    </a>
-
+    <a id="qrDownload"href="#" download title="Download QR Code"style="display:inline-flex;align-items:center;gap:6px;font-size:14px;text-decoration:none;color:#000;">  ⬇ Download </a>
   </div>
 </div>
-
    <div class="card-body">
       <h5 style="color:#1b5e20" >Donation Box</h5>
-      <!-- 🔍 Search Section -->
     <div class="search-container">
   <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100" role="search">
     <input type="text" name="box_query" data-target="boxx" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ box_query|default:'' }}">
@@ -3354,44 +3211,38 @@ width: 35%;
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-                  <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
-          <!-- <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th> -->
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
-                    <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Updated On<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
-                    <th class="sortable" data-col="11">Deleted By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="11">Deleted By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
         </tr>
           <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
-  <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+  <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
     <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
   </div>
 </td>
-                  <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <!-- <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td> -->
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
@@ -3407,19 +3258,15 @@ width: 35%;
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-                            {% if not box.is_deleted %}
+              {% if not box.is_deleted %}
               {% if permissions.can_edit %}
-              <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
+              <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i> </a>
               {% endif %}
               {% if permissions.can_delete %}
               <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this donation box?')">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  onclick="return confirm('Are you sure you want to deactivate this donation box?')"><i class="bi bi-trash"></i></button>
               </form>
               {% endif %}
               {% else %}
@@ -3427,31 +3274,25 @@ width: 35%;
               {% endif %}
             </div>
           </td>
-                   <td>{{ box.donation_id }}</td>
+        <td>{{ box.donation_id }}</td>
 <td style="text-align:center;">
   {% if box.qr_code %}
-    <span
-      onclick="openQrPopup(
+    <span onclick="openQrPopup(
         '{{ box.qr_code.url }}',
         '{{ box.key_id }}',
-        '{{ box.id }}'
-      )"
-      title="View QR Code"
-      style="cursor:pointer; font-size:17px;">
-     <i class="fa-solid fa-eye"></i>
+        '{{ box.id }}' )"
+      title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
     </span>
   {% else %}
     <span class="text-muted">—</span>
   {% endif %}
 </td>
-
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
-          <!-- <td>{{ box.location }}</td> -->
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y" }}</td>
-                    <td>{{ box.updated_by }}</td>
+          <td>{{ box.updated_by }}</td>
           <td>{{ box.updated_at|date:"d M Y" }}</td>
 <td>
     {% if box.is_deleted %}
@@ -3481,39 +3322,33 @@ width: 35%;
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
-          <!-- <th class="sortable" data-col="5">Location<span class="sort-icon">⬍</span></th> -->
           <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="7">Created By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="8">Created On<span class="sort-icon">⬍</span></th>
-                    <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="10">Updated By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="9">Updated On<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="12">Is Deleted<span class="sort-icon">⬍</span></th>
         </tr>
-                   <tr class="column-search-row">
+        <tr class="column-search-row">
   <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
-  <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+  <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i class="fa-solid fa-plus"></i> </a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
     <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
   </div>
 </td>
-           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <!-- <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td> -->
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
@@ -3523,16 +3358,13 @@ width: 35%;
     <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
         <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
         </tr>
-        
       </thead>
-
       <tbody id="boxx">
-
         {% for box in box_page_obj %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
-                                          {% if not box.is_deleted %}
+                         {% if not box.is_deleted %}
               {% if permissions.can_edit %}
               <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
                 <i class="bi bi-pencil-square"></i>
@@ -3568,10 +3400,8 @@ width: 35%;
     <span class="text-muted">—</span>
   {% endif %}
 </td>
-
           <td>{{ box.key_id }}</td>
           <td>{{ box.box_size }}</td>
-          <!-- <td>{{ box.location }}</td> -->
           <td>{{ box.status }}</td>
           <td>{{ box.created_by }}</td>
           <td>{{ box.created_at|date:"d M Y" }}</td>
@@ -3597,38 +3427,21 @@ width: 35%;
     </div>
 <!-- ✅ Lookups Pagination Controls -->
 <div class="pagination-container text-center">
-
   {% if box_page_obj.has_previous %}
-      <a href="?box_page=1&box_query={{ box_query }}" 
-         class="btn btn-outline-primary btn-sm me-2">⏮</a>
-
-      <a href="?box_page={{ box_page_obj.previous_page_number }}&box_query={{ box_query }}" 
-         class="btn btn-outline-primary btn-sm me-2">◀</a>
+      <a href="?box_page=1&box_query={{ box_query }}"  class="btn btn-outline-primary btn-sm me-2">⏮</a>
+      <a href="?box_page={{ box_page_obj.previous_page_number }}&box_query={{ box_query }}"  class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-
   <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
-
     <input type="hidden" name="box_query" value="{{ box_query }}"/>
-
     <label for="boxPageSelect" class="fw-bold me-1">Page</label>
-
-    <select 
-      name="box_page"
-      id="boxPageSelect"
-      class="form-select form-select-sm d-inline-block w-auto"
-      onchange="this.form.submit()">
-
+    <select name="box_page" id="boxPageSelect" class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
       {% for p in box_page_obj.paginator.page_range %}
-        <option value="{{ p }}" {% if p == box_page_obj.number %}selected{% endif %}>
-          {{ p }}
-        </option>
+        <option value="{{ p }}" {% if p == box_page_obj.number %}selected{% endif %}>{{ p }}</option>
       {% endfor %}
     </select>
-
     <span class="fw-bold">of {{ box_page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if box_page_obj.has_next %}
       <a href="?box_page={{ box_page_obj.next_page_number }}&box_query={{ box_query }}" 
          class="btn btn-outline-primary btn-sm ms-2">▶</a>

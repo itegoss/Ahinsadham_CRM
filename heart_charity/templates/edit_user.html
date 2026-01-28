@@ -192,7 +192,7 @@
         </div>
         <div class="form-group">
     <label>Role</label>
-    <select name="role" required class="styled-select">
+    <!-- <select name="role" required class="styled-select">
         <option value="">-- Select Role --</option>
         {% for r in roles %}
             <option value="{{ r.id }}"
@@ -200,7 +200,19 @@
                 {{ r.name }}
             </option>
         {% endfor %}
-    </select>
+    </select> -->
+    <select name="role" class="styled-select">
+<option value="none"
+    {% if not user_role.role %}selected{% endif %}>-- No Role --</option>
+   {% for r in roles %}
+    <option value="{{ r.id }}"
+        {% if user_role.role and user_role.role.id == r.id %}selected{% endif %}>
+        {{ r.name }}
+    </option>
+{% endfor %}
+
+</select>
+
 </div>
     </div>
     <div class="btn-area">

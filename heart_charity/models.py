@@ -57,7 +57,6 @@ class UserRole(models.Model):
 class DonationBox(models.Model):
     donation_id = models.CharField(max_length=10, unique=True, editable=False)
     qr_code = models.ImageField(upload_to='qr_images/', blank=True, null=True)
-    location = models.CharField(max_length=255)
     key_id = models.CharField(max_length=50, null=True, blank=True)
     BOX_SIZES = [
         ('small', 'Small'),
@@ -299,8 +298,6 @@ class DonationOwner(models.Model):
     updated_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_updated_by"
     )
-
-    # Soft Delete Fields
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add New Event</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+/* Header Bar */
+.header {
+    width:100%;
+    background:#148f52;
+    color:white;
+    padding:14px 30px;
+    font-size:20px;
+    font-weight:600;
+}
+
+/* Footer */
+.footer {
+    width:100%;
+    background:#f3f3f3;
+    padding:12px;
+    text-align:center;
+    font-size:14px;
+    color:#555;
+    margin-top:40px;
+}
+
+body{
+    background:#f7fdf7;
+    padding:30px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+}
+
+.page-title{
+    text-align:center;
+    font-size:32px;
+    font-weight:700;
+    color:#157347;
+    margin-top:20px;
+}
+
+.page-subtitle{
+    text-align:center;
+    font-size:14px;
+    color:#666;
+    margin-bottom:35px;
+}
+
+.form-wrapper{
+    width:90%;
+    max-width:1100px;
+    margin:0 auto;
+    background:white;
+    padding:40px;
+    border-radius:18px;
+    box-shadow:0px 4px 20px rgba(0,0,0,0.07);
+}
+
+.section-title{
+    font-size:22px;
+    font-weight:600;
+    color:#145c35;
+    margin-bottom:20px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.form-group label{
+    display:block;
+    font-size:15px;
+    color:#444;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #dcdcdc;
+    border-radius:10px;
+    font-size:15px;
+}
+
+textarea{
+    height:120px;
+    resize:none;
+}
+
+.action-buttons {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:30px;
+}
+
+.action-btn {
+    background:#157347;
+    padding:14px 35px;
+    border:none;
+    color:white;
+    font-size:16px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.action-btn:hover {
+    background:#0e5f34;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    Ahinsadham — Event Module
+</div>
+
+<h1 class="page-title">Add New Event</h1>
+<p class="page-subtitle">Fill out the details to create a new event</p>
+
+<div class="form-wrapper">
+    <h2 class="section-title">Event Details Information</h2>
+
+    <form>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Event Name *</label>
+                <input type="text" placeholder="Annual Charity Run">
+            </div>
+
+            <div class="form-group">
+                <label>Event Type *</label>
+                <input type="text" placeholder="Fundraiser / Awareness / Social">
+            </div>
+
+            <div class="form-group">
+                <label>Event Date *</label>
+                <input type="date">
+            </div>
+
+            <div class="form-group">
+                <label>Venue *</label>
+                <input type="text" placeholder="City Park Stadium">
+            </div>
+
+            <div class="form-group">
+                <label>Start Time *</label>
+                <input type="datetime-local">
+            </div>
+
+            <div class="form-group">
+                <label>End Time *</label>
+                <input type="datetime-local">
+            </div>
+
+            <div class="form-group">
+                <label>Organizer Name *</label>
+                <input type="text" placeholder="Meera Iyer">
+            </div>
+
+            <div class="form-group">
+                <label>Organizer Contact *</label>
+                <input type="text" placeholder="+91-9876543210 / email@example.com">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Description *</label>
+            <textarea placeholder="Brief about the event..."></textarea>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="action-btn">✔ Save</button>
+            <a href="/welcome/?tab=Event Module" class="action-btn">← Back</a>
+        </div>
+    </form>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    © 2026 Ahinsadham - All Rights Reserved
+</div>
+
+</body>
+</html>
