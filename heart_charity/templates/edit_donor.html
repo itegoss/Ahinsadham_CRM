@@ -1,31 +1,24 @@
 {% extends "base.html" %}
 {% block title %}Edit Donor / Volunteer{% endblock %}
-
 {% block content %}
-
 <style>
 .card { background: #f2fff4 !important; border-radius: 12px; }
 .form-control, .form-select { border-radius: 8px; }
 h3.fw-bold, h5.section-title { color: #0d7a34; }
 hr { border-top: 2px solid #bae6c6; }
 </style>
-
 <div class="container mt-4 mb-5">
 <div class="card shadow-lg">
-
 <div class="text-center mb-4 pt-3">
     <h3 class="fw-bold">Edit Donor / Volunteer</h3>
     <p class="text-muted">Update donor / volunteer details</p>
 </div>
-
 <div class="card-body px-4">
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
-
 <!-- ================= PERSON TYPE ================= -->
 <h5 class="section-title">Person Type</h5>
 <hr>
-
 <div class="row g-3 mb-3" id="persontype">
    <div class="col-md-6">
                         <label class="form-label">Person Type</label>
@@ -36,49 +29,36 @@ hr { border-top: 2px solid #bae6c6; }
                             {% endfor %}
                         </select>
                     </div>
-
-
 <div class="col-md-6">
 <label class="form-label">Referred By</label>
 <select name="referred_by" class="form-select">
 <option value="">-- Select Person --</option>
 {% for d in donors %}
-<option value="{{ d.id }}"
-{% if donor.referred_by_id == d.id %}selected{% endif %}>
-{{ d.first_name }} {{ d.last_name }}
-</option>
+<option value="{{ d.id }}"{% if donor.referred_by_id == d.id %}selected{% endif %}>{{ d.first_name }} {{ d.last_name }}</option>
 {% endfor %}
 </select>
 </div>
-
 </div>
-
 <!-- ================= PERSONAL DETAILS ================= -->
 <h5 class="section-title">Personal Details</h5>
 <hr>
-
 <div class="row g-3 mb-4">
-
 <div class="col-md-3">
 <label>Salutation</label>
 <input name="salutation" class="form-control" value="{{ donor.salutation }}">
 </div>
-
 <div class="col-md-3">
 <label>First Name</label>
 <input name="first_name" class="form-control" value="{{ donor.first_name }}">
 </div>
-
 <div class="col-md-3">
 <label>Middle Name</label>
 <input name="middle_name" class="form-control" value="{{ donor.middle_name }}">
 </div>
-
 <div class="col-md-3">
 <label>Last Name</label>
 <input name="last_name" class="form-control" value="{{ donor.last_name }}">
 </div>
-
 <div class="col-md-3">
 <label>Gender</label>
 <select name="gender" class="form-select">
@@ -88,148 +68,112 @@ hr { border-top: 2px solid #bae6c6; }
 <option {% if donor.gender == "Other" %}selected{% endif %}>Other</option>
 </select>
 </div>
-
 <div class="col-md-3">
 <label>Date of Birth</label>
-<input type="date" name="date_of_birth" class="form-control"
-value="{{ donor.date_of_birth|date:'Y-m-d' }}">
+<input type="date" name="date_of_birth" class="form-control"value="{{ donor.date_of_birth|date:'Y-m-d' }}">
 </div>
-
 <div class="col-md-3">
 <label>Age</label>
 <input name="age" class="form-control" value="{{ donor.age }}">
 </div>
-
 <div class="col-md-3">
 <label>Blood Group</label>
 <select name="blood_group" class="form-select">
 <option value="">Select</option>
 {% for bg,val in blood_groups %}
-<option value="{{ bg }}"
-{% if donor.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+<option value="{{ bg }}"{% if donor.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
 {% endfor %}
 </select>
 </div>
-
 <div class="col-md-3">
 <label>Contact Number</label>
 <input name="contact_number" class="form-control" value="{{ donor.contact_number }}">
 </div>
-
 <div class="col-md-3">
 <label>WhatsApp Number</label>
 <input name="whatsapp_number" class="form-control" value="{{ donor.whatsapp_number }}">
 </div>
-
 <div class="col-md-3">
 <label>Email</label>
 <input name="email" class="form-control" value="{{ donor.email }}">
 </div>
-
 <div class="col-md-3" id="donor_box_row2">
     <label class="form-label">Donor Box</label>
-
-    <select name="donor_box"
-            
-            class="form-select">
+    <select name="donor_box"class="form-select">
         <option value="">Select Donor Box</option>
         {% for box in donation_boxes %}
-            <option value="{{ box.id }}">
-                {{ box.donation_id }}
-            </option>
+            <option value="{{ box.id }}">{{ box.donation_id }}</option>
         {% endfor %}
     </select>
 </div>
-
-
-
 <div class="col-md-3">
 <label>Date of Anniversary</label>
-<input type="date" name="doa" class="form-control"
-value="{{ donor.doa|date:'Y-m-d' }}">
+<input type="date" name="doa" class="form-control"value="{{ donor.doa|date:'Y-m-d' }}">
 </div>
-
 <div class="col-md-3">
 <label>Years to Marriage</label>
-<input name="years_to_marriage" class="form-control"
-value="{{ donor.years_to_marriage }}">
+<input name="years_to_marriage" class="form-control"value="{{ donor.years_to_marriage }}">
 </div>
-
 </div>
-
 <h5 class="section-title">Address Details</h5>
 <hr>
-
 <div class="row g-3 mb-4">
-
     <div class="col-md-3">
         <label class="form-label">House Number</label>
-        <input type="text" name="house_number" class="form-control"
-               value="{{ donor.house_number }}">
+        <input type="text" name="house_number" class="form-control"value="{{ donor.house_number }}">
     </div>
-
     <div class="col-md-3">
         <label class="form-label">Building Name</label>
-        <input type="text" name="building_name" class="form-control"
-               value="{{ donor.building_name }}">
+        <input type="text" name="building_name" class="form-control"value="{{ donor.building_name }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Landmark</label>
-        <input type="text" name="landmark" class="form-control"
-               value="{{ donor.landmark }}">
+        <input type="text" name="landmark" class="form-control"value="{{ donor.landmark }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Area</label>
-        <input type="text" name="area" class="form-control"
-               value="{{ donor.area }}">
+        <input type="text" name="area" class="form-control"value="{{ donor.area }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">City</label>
-        <input type="text" name="city" class="form-control"
-               value="{{ donor.city }}">
+        <input type="text" name="city" class="form-control"value="{{ donor.city }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">State</label>
-        <input type="text" name="state" class="form-control"
-               value="{{ donor.state }}">
+        <input type="text" name="state" class="form-control"value="{{ donor.state }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Country</label>
-        <input type="text" name="country" class="form-control"
-               value="{{ donor.country }}">
+        <input type="text" name="country" class="form-control"value="{{ donor.country }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Postal Code</label>
-        <input type="text" name="postal_code" class="form-control"
-               value="{{ donor.postal_code }}">
+        <input type="text" name="postal_code" class="form-control"value="{{ donor.postal_code }}">
     </div>
-
 </div>
-
-
 <h5 class="section-title">Occupation & Business</h5>
 <hr>
 <div class="row g-3" id="business-sal">
-                        <div class="col-md-4 hidden-by-default business-field org-field">
-                            <label class="form-label">Business/Org Salutation</label>
-                            <select name="business_salutation" class="form-select">
-                                <option value="">-- Select Salutation --</option>
-                                <option value="Mr.">Mr.</option>
-                                <option value="Mrs.">Mrs.</option>
-                                <option value="Ms.">Ms.</option>
-                                <option value="Dr.">Dr.</option>
-                                <option value="Prof.">Prof.</option>
-                                <option value="CEO">CEO</option>
-                                <option value="Director">Director</option>
-                            </select>
-                        </div>
-                        </div>
+<div class="col-md-4 hidden-by-default business-field org-field">
+    <label class="form-label">Business/Org Salutation</label>
+    <select name="business_salutation" class="form-select">
+        <option value="">-- Select Salutation --</option>
+        <option value="Mr.">Mr.</option>
+        <option value="Mrs.">Mrs.</option>
+        <option value="Ms.">Ms.</option>
+        <option value="Dr.">Dr.</option>
+        <option value="Prof.">Prof.</option>
+        <option value="CEO">CEO</option>
+        <option value="Director">Director</option>
+    </select>
+</div>
+</div>
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <label class="form-label">Occupation Type</label>
@@ -237,9 +181,7 @@ value="{{ donor.years_to_marriage }}">
             <option value="">Select</option>
             {% for o in occupation_types %}
                 <option value="{{ o.id }}"
-                {% if donor.occupation_type_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.occupation_type_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -250,9 +192,7 @@ value="{{ donor.years_to_marriage }}">
             <option value="">Select</option>
             {% for o in occupation_natures %}
                 <option value="{{ o.id }}"
-                {% if donor.occupation_nature_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.occupation_nature_id == o.id %}selected{% endif %}> {{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -263,79 +203,60 @@ value="{{ donor.years_to_marriage }}">
             <option value="">Select</option>
             {% for o in departments %}
                 <option value="{{ o.id }}"
-                {% if donor.department_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.department_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
-
     <div class="col-md-3">
         <label class="form-label">Position</label>
         <select name="position" class="form-select">
             <option value="">Select</option>
             {% for o in positions %}
                 <option value="{{ o.id }}"
-                {% if donor.position_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.position_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
-
     <div class="col-md-3">
         <label class="form-label">Designation</label>
         <select name="designation" class="form-select">
             <option value="">Select</option>
             {% for o in designations %}
                 <option value="{{ o.id }}"
-                {% if donor.designation_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.designation_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
-
     <div class="col-md-3">
         <label class="form-label">Business Type</label>
         <select name="business_type" class="form-select">
             <option value="">Select</option>
             {% for o in business_types %}
                 <option value="{{ o.id }}"
-                {% if donor.business_type_id == o.id %}selected{% endif %}>
-                    {{ o.lookup_name }}
-                </option>
+                {% if donor.business_type_id == o.id %}selected{% endif %}> {{ o.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
-
     <div class="col-md-3">
         <label class="form-label">Business Name</label>
-        <input type="text" name="business_name" class="form-control"
-               value="{{ donor.business_name }}">
+        <input type="text" name="business_name" class="form-control"value="{{ donor.business_name }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Organization Name</label>
-        <input type="text" name="org_name" class="form-control"
-               value="{{ donor.org_name }}">
+        <input type="text" name="org_name" class="form-control"value="{{ donor.org_name }}">
     </div>
-
 </div>
 <h5 class="section-title">ID & PAN Details</h5>
 <hr>
-
 <div class="row g-3 mb-4">
-
     <div class="col-md-3">
         <label class="form-label">ID Type</label>
         <select name="id_type" class="form-select">
             <option value="">Select</option>
             {% for idt in id_types %}
                 <option value="{{ idt.id }}"
-                {% if donor.id_type_id == idt.id %}selected{% endif %}>
-                    {{ idt.lookup_name }}
-                </option>
+                {% if donor.id_type_id == idt.id %}selected{% endif %}>{{ idt.lookup_name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -343,8 +264,7 @@ value="{{ donor.years_to_marriage }}">
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <label class="form-label">ID Number</label>
-        <input type="text" name="id_number" class="form-control"
-               value="{{ donor.id_number }}">
+        <input type="text" name="id_number" class="form-control"value="{{ donor.id_number }}">
     </div>
 
     <div class="col-md-3">
@@ -354,15 +274,13 @@ value="{{ donor.years_to_marriage }}">
 
     <div class="col-md-3">
         <label class="form-label">PAN Number</label>
-        <input type="text" name="pan_number" class="form-control"
-               value="{{ donor.pan_number }}">
+        <input type="text" name="pan_number" class="form-control"value="{{ donor.pan_number }}">
     </div>
 
     <div class="col-md-3">
         <label class="form-label">Upload PAN Card</label>
         <input type="file" name="pan_card_image" class="form-control">
     </div>
-
 </div>
 
 <div class="text-center mt-4">
@@ -373,7 +291,6 @@ value="{{ donor.years_to_marriage }}">
 </div>
 </div>
 </div>
-
 
 <!-- ================= AGE AUTO CALCULATION ================= -->
 <script>
@@ -390,23 +307,16 @@ document.getElementById("date_of_birth").addEventListener("change", function () 
 <!-- ================= YEARS TO MARRIAGE AUTO CALCULATION ================= -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const doaInput = document.getElementById("doa_input");
     const yearsField = document.getElementById("years_to_marriage");
-
     doaInput.addEventListener("change", function () {
-
         if (!this.value) {
             yearsField.value = "";
             return;
         }
-
         const doa = new Date(this.value);
         const today = new Date();
-
         let years = today.getFullYear() - doa.getFullYear();
-
-        // Adjust if anniversary hasn't occurred yet this year
         const hasHadAnniversaryThisYear =
             today.getMonth() > doa.getMonth() ||
             (today.getMonth() === doa.getMonth() && today.getDate() >= doa.getDate());
@@ -414,23 +324,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!hasHadAnniversaryThisYear) {
             years--;
         }
-
         yearsField.value = years >= 0 ? years : 0;
     });
-
 });
 </script>
-
-
 <!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const personType = document.getElementById("person_type");
-
-    // Base sections (always visible)
     const baseSections = [
         "persontype",
         "personaldetails",
@@ -439,40 +340,29 @@ document.addEventListener("DOMContentLoaded", function () {
         "occupation",
         "designation"
     ];
-
-    // Conditional sections
     const department = document.getElementById("department");
     const position = document.getElementById("position") || document.getElementById("department");
     const business = document.getElementById("business");
     const donorBox = document.getElementById("donor_box_row");
     const org = document.getElementById("org");
-
     function hideAllConditional() {
         if (department) department.style.display = "none";
         if (position) position.style.display = "none";
         if (business) business.style.display = "none";
         if (donorBox) donorBox.style.display = "none";
-        if (org) org.style.display = "none";   // 👈 always hidden by default
+        if (org) org.style.display = "none"; 
     }
-
     function showBaseSections() {
         baseSections.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = "block";
         });
     }
-
     function updateVisibility() {
         const selectedText = personType.options[personType.selectedIndex]?.text.trim();
-
-        // Always show base
         showBaseSections();
-
-        // Hide all conditional first
         hideAllConditional();
-
         if (!selectedText) return;
-
         if (selectedText === "Employee") {
             if (department) department.style.display = "block";
         }
@@ -483,50 +373,31 @@ document.addEventListener("DOMContentLoaded", function () {
             if (business) business.style.display = "block";
         }
         else if (selectedText === "Organization") {
-            if (org) org.style.display = "block";   // ✅ ONLY Organization
+            if (org) org.style.display = "block"; 
         }
         else if (selectedText === "Donation Box Owner") {
             if (business) business.style.display = "block";
             if (donorBox) donorBox.style.display = "block";
         }
-        // Donor / Volunteer → only base fields visible
     }
-
-    // Init on page load
     updateVisibility();
-
-    // Change listener
     personType.addEventListener("change", updateVisibility);
-
 });
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const personType = document.getElementById("person_type");
     const businessSal = document.getElementById("business-sal");
-
     function updateBusinessSalutation() {
         const selectedText =
             personType.options[personType.selectedIndex]?.text.trim();
-
-        // Hide by default
         businessSal.style.display = "none";
-
-        // Show ONLY for Business OR Organization
         if (selectedText === "Business" || selectedText === "Organization") {
             businessSal.style.display = "block";
         }
     }
-
-    // Init on load
     updateBusinessSalutation();
-
-    // On change
     personType.addEventListener("change", updateBusinessSalutation);
-
 });
 </script>
-
-
 {% endblock %}

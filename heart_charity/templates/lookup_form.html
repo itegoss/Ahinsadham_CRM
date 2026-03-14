@@ -52,7 +52,6 @@
         .col-6 { width: 100%; }
         .container-box { padding: 30px; }
     }
-
     .main-bg {
         background-color: #eef8ef;
         border-radius: 20px;
@@ -100,10 +99,7 @@
                 <select name="lookup_type"class="form-control custom-input shadow-none" required>
                     <option value="">-- Select Lookup Type --</option>
                     {% for t in lookup_types %}
-                        <option value="{{ t.id }}"
-                            {% if lookup and lookup.lookup_type.id == t.id %}selected{% endif %}>
-                            {{ t.type_name }}
-                        </option>
+                        <option value="{{ t.id }}"{% if lookup and lookup.lookup_type.id == t.id %}selected{% endif %}>{{ t.type_name }}</option>
                     {% endfor %}
                 </select>
             </div>

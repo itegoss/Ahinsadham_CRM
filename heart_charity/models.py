@@ -64,12 +64,8 @@ class DonationBox(models.Model):
         ('large', 'Large'),
     ]
     box_size = models.CharField(max_length=20, choices=BOX_SIZES, default='medium')
-    uploaded_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_boxes'
-    )
-    created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_boxes'
-    )
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_boxes')
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_boxes')
     status_choices = [
         ('Active', 'Active'),
         ('Inactive', 'Inactive'),
@@ -79,7 +75,7 @@ class DonationBox(models.Model):
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)  # auto update time
+    updated_at = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
     def save(self, *args, **kwargs):
@@ -110,19 +106,8 @@ class DonorVolunteer(models.Model):
         ('AB+', 'AB+'), ('AB-', 'AB-'),
         ('O+', 'O+'), ('O-', 'O-'),
     ]
-    person_type = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="person_type_lookup"
-    )
-    referred_by = models.ForeignKey(
-        'self',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='referrals'
-    )
+    person_type = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,related_name="person_type_lookup")
+    referred_by = models.ForeignKey('self',on_delete=models.SET_NULL,null=True, blank=True,related_name='referrals')
     salutation = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
@@ -147,72 +132,18 @@ class DonorVolunteer(models.Model):
     postal_code = models.CharField(max_length=20)
     native_place = models.CharField(max_length=200, blank=True, null=True)
     native_postal_code = models.CharField(max_length=20, blank=True, null=True)
-    # -------------------- LOOKUPS --------------------
-    id_type = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="id_type_lookup"
-    )
-    occupation_type = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="occupation_type_lookup"
-    )
-    occupation_nature = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="occupation_nature_lookup"
-    )
-    department = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="department_lookup"
-    )
-    position = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="position_lookup"
-    )
-    designation = models.ForeignKey(
-        "Lookup",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="designation_lookup"
-    )
-    business_type = models.ForeignKey(
-        "Lookup",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="business_type_lookup"
-    )
+    id_type = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,related_name="id_type_lookup")
+    occupation_type = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True,blank=True,related_name="occupation_type_lookup")
+    occupation_nature = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,blank=True,related_name="occupation_nature_lookup")
+    department = models.ForeignKey("Lookup", on_delete=models.SET_NULL,null=True,blank=True,related_name="department_lookup")
+    position = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,blank=True,related_name="position_lookup")
+    designation = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True, blank=True,  related_name="designation_lookup")
+    business_type = models.ForeignKey("Lookup", null=True, blank=True,on_delete=models.SET_NULL, related_name="business_type_lookup")
     business_salutation = models.CharField(max_length=50, null=True, blank=True)
     business_name = models.CharField(max_length=200, null=True, blank=True)
-    business_nature = models.ForeignKey(
-        "Lookup",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="business_nature_lookup"
-    )
+    business_nature = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="business_nature_lookup")
     org_name = models.CharField(max_length=200, null=True, blank=True)
-    org_type = models.ForeignKey(
-        "Lookup",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="org_type_lookup"
-    )
+    org_type = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="org_type_lookup")
     nature_of_service = models.ForeignKey("Lookup",null=True,blank=True,on_delete=models.SET_NULL,related_name="nature_of_service_lookup")
     id_number = models.CharField(max_length=20, blank=True, null=True)
     id_proof_image = models.ImageField(upload_to='id_proofs/', blank=True, null=True)
@@ -272,39 +203,21 @@ class DonationOwner(models.Model):
         ('Cheque', 'Cheque'),
         ('UPI', 'UPI'),
     ]
-
     id = models.AutoField(primary_key=True)
-    owner_name = models.ForeignKey(
-        DonorVolunteer,
-        on_delete=models.CASCADE,
-        limit_choices_to={'person_type': 'Donor-Box-Owner'},
-        related_name='donation_owners'
-    )
-    donation_box = models.ForeignKey(
-        'DonationBox',
-        on_delete=models.CASCADE,
-        related_name='donation_owners',
-        to_field='donation_id',  
-        db_column='donation_id'  
-    )
-
+    owner_name = models.ForeignKey(DonorVolunteer,on_delete=models.CASCADE,limit_choices_to={'person_type': 'Donor-Box-Owner'},related_name='donation_owners')
+    donation_box = models.ForeignKey('DonationBox',on_delete=models.CASCADE,related_name='donation_owners',to_field='donation_id',db_column='donation_id')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_created_by"
-    )
-    updated_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_updated_by"
-    )
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_created_by")
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="donation_owner_updated_by")
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     def __str__(self):
         return f"{self.owner_name.first_name} {self.owner_name.last_name} - ₹{self.amount} ({self.donation_box.donation_id})"
 
-from django.db import models
 class ReceiptSequence(models.Model):
     year = models.PositiveIntegerField(unique=True)
     last_number = models.PositiveIntegerField(default=0)
@@ -312,8 +225,6 @@ class ReceiptSequence(models.Model):
     def __str__(self):
         return f"{self.year} → {self.last_number}"
 
-from django.utils import timezone
-from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 class Donation(models.Model):
@@ -325,12 +236,7 @@ class Donation(models.Model):
     payment_method = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='donation_payment_methods')
     payment_status = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='payment_statuses')
     transaction_id = models.CharField(max_length=50, blank=True, null=True)
-    receipt_id = models.CharField(
-    max_length=20,
-    unique=True,
-    blank=True,
-    null=True
-)    
+    receipt_id = models.CharField(max_length=20,unique=True,blank=True,null=True)    
     place_of_donation = models.CharField(max_length=200, blank=True, null=True)
     check_no = models.CharField(max_length=50, blank=True, null=True)
     donation_received_by = models.CharField(max_length=150, blank=True, null=True)
@@ -342,9 +248,8 @@ class Donation(models.Model):
     branch = models.CharField(max_length=100,null=True,blank=True,verbose_name="Branch")
     created_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='donation_created')
     updated_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='donation_updated')
-
-    created_at = models.DateTimeField(auto_now_add=True)  # auto timestamp
-    updated_at = models.DateTimeField(auto_now=True)      # auto update timestamp
+    created_at = models.DateTimeField(auto_now_add=True) 
+    updated_at = models.DateTimeField(auto_now=True)    
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")  
@@ -357,7 +262,31 @@ class Donation(models.Model):
 # class DonationPaymentBox(models.Model):
 #     id = models.AutoField(primary_key=True)
 #     receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
+#     owner = models.ForeignKey(DonorVolunteer, on_delete=models.SET_NULL, null=True, blank=True,related_name='donation_payments')    
+#     donation_box = models.ForeignKey('DonationBox', on_delete=models.CASCADE, related_name='payment')
+#     address = models.CharField(max_length=255, blank=True, null=True)
+#     opened_by = models.ForeignKey('heart_charity.DonorVolunteer',related_name='opened_payments',on_delete=models.SET_NULL,null=True,blank=True)
+#     received_by = models.ForeignKey('heart_charity.DonorVolunteer',related_name='received_payments',on_delete=models.SET_NULL,null=True,blank=True)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     payment_mode = models.CharField(max_length=10,
+#     choices=[
+#         ("cash", "Cash"),
+#         ("online", "Online")], default="cash")
+#     date_time = models.DateTimeField(default=timezone.now)
+#     i_witness = models.CharField(max_length=100, blank=True, null=True)
+#     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_donation_payments')
+#     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
+#     created_at = models.DateTimeField(default=timezone.now)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     is_deleted = models.BooleanField(default=False)
+#     deleted_at = models.DateTimeField(null=True, blank=True)
+#     verified = models.BooleanField(default=False)
+#     verified_by = models.ForeignKey(User, on_delete=models.SET_NULL,null=True, blank=True,related_name='verified_donation_payments')
+#     verified_at = models.DateTimeField(null=True, blank=True)
+#     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
+#     def __str__(self):
+#         return f"{self.donation_box} - ₹{self.amount} by {self.owner}"  
 class DonationPaymentBox(models.Model):
     id = models.AutoField(primary_key=True)
     receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
@@ -374,7 +303,7 @@ class DonationPaymentBox(models.Model):
     opened_by = models.ForeignKey('heart_charity.DonorVolunteer',related_name='opened_payments',on_delete=models.SET_NULL,null=True,blank=True)
     received_by = models.ForeignKey('heart_charity.DonorVolunteer',related_name='received_payments',on_delete=models.SET_NULL,null=True,blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='payment_methods_box')
+    payment_mode = models.ForeignKey(Lookup,on_delete=models.SET_NULL,null=True,related_name='payment_modes_box')
     date_time = models.DateTimeField(default=timezone.now)
     i_witness = models.CharField(max_length=100, blank=True, null=True)
     name_of_bank = models.CharField(max_length=100,null=True,blank=True,verbose_name="Bank Name")
@@ -397,7 +326,7 @@ class DonationPaymentBox(models.Model):
 class Donation_Hist(models.Model):
     hist_id = models.AutoField(primary_key=True)
     donation = models.ForeignKey('Donation',on_delete=models.CASCADE,related_name='history' )
-    donor = models.ForeignKey('DonorVolunteer', on_delete=models.SET_NULL, null=True)
+    donor = models.ForeignKey(DonorVolunteer, on_delete=models.SET_NULL, null=True)
     donation_date = models.DateField(null=True)
     donation_category = models.ForeignKey(Lookup, on_delete=models.SET_NULL, null=True, related_name='+')
     donation_sub_category = models.ForeignKey(Lookup, on_delete=models.SET_NULL, null=True, related_name='+')
@@ -418,7 +347,7 @@ class Donation_Hist(models.Model):
     updated_at = models.DateTimeField(null=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    action = models.CharField(max_length=20)  # INSERT / UPDATE / DELETE
+    action = models.CharField(max_length=20)
     action_at = models.DateTimeField(auto_now_add=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     def __str__(self):
@@ -426,66 +355,24 @@ class Donation_Hist(models.Model):
 
 class DonationPaymentBox_Hist(models.Model):
     id = models.AutoField(primary_key=True)
-
-    # Link to main Payment record
-    payment = models.ForeignKey(
-        'DonationPaymentBox',
-        on_delete=models.CASCADE,
-        related_name='history'
-    )
-
-    # Copy ALL fields from the main table
-    # owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    owner = models.ForeignKey(
-    DonorVolunteer,                                                                                                             
-    on_delete=models.SET_NULL,
-    null=True,
-    blank=True,
-    related_name='donation_payment_history'
-)
+    payment = models.ForeignKey('DonationPaymentBox', on_delete=models.CASCADE, related_name='history')
+    owner = models.ForeignKey('DonorVolunteer',on_delete=models.SET_NULL, null=True,blank=True,related_name='donation_payment_history')
     donation_box = models.ForeignKey('DonationBox', on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=255, blank=True, null=True)
-
-    opened_by = models.ForeignKey(
-        'heart_charity.DonorVolunteer',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
-
-    received_by = models.ForeignKey(
-        'heart_charity.DonorVolunteer',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
-
+    opened_by = models.ForeignKey('heart_charity.DonorVolunteer', on_delete=models.SET_NULL,null=True,blank=True,related_name='+')
+    received_by = models.ForeignKey('heart_charity.DonorVolunteer',on_delete=models.SET_NULL,null=True,blank=True, related_name='+')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.ForeignKey(
-        Lookup,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
-
+    payment_mode = models.CharField(max_length=100, null=True, blank=True)   
     date_time = models.DateTimeField(null=True, blank=True)
     i_witness = models.CharField(max_length=100, blank=True, null=True)
-
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
-
     created_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
-
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
-
-    # Extra fields for tracking what happened
-    action = models.CharField(max_length=20)  # INSERT / UPDATE / DELETE
+    action = models.CharField(max_length=20)
     action_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -495,30 +382,18 @@ class DonationPaymentBox_Hist(models.Model):
         return f"History for Payment {self.payment.id} ({self.action})"
 
 class UserRole_Hist(models.Model):
-    # History table primary key
     hist_id = models.AutoField(primary_key=True)
-
-    # Link back to main table
-    user_role = models.ForeignKey(
-        'UserRole',
-        on_delete=models.CASCADE,
-        related_name="history"
-    )
-
-    # Copy of all fields from main table
+    user_role = models.ForeignKey('UserRole',on_delete=models.CASCADE,related_name="history")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     role = models.ForeignKey(UserModuleAccess, on_delete=models.SET_NULL, null=True, blank=True)
-
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     created_date = models.DateTimeField(null=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_date = models.DateTimeField(null=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
-    # Audit for history
-    action = models.CharField(max_length=20)   # INSERT / UPDATE / DELETE
+    action = models.CharField(max_length=20)
     action_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

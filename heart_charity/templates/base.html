@@ -135,7 +135,7 @@
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
-  color: #0f172a;           /* dark text */
+  color: #0f172a;       
   transition: background 160ms ease, transform 120ms ease;
 }
   .container{
@@ -154,7 +154,6 @@
             <div class="ms-auto d-flex align-items-center gap-3">
                 {% if user.is_authenticated %}
                     <span style="color:black; font-weight:600;">Welcome, {{ request.user.username }}</span>
-
                     <a href="/logout" title="Logout" style="color:black; font-size:18px;"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-primary">Sign In</a>
@@ -169,7 +168,6 @@
         {% endblock %}
     </div>
 </main>
-
 <!-- Footer -->
 <footer class="mt-auto">
     <div class="container text-center">
