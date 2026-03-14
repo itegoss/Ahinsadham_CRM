@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-
 <style>
 .popup-overlay {
     min-height: 90vh;
@@ -8,38 +7,32 @@
     align-items: center;
     justify-content: center;
 }
-
 .popup-card {
     background: #fff;
     border-radius: 18px;
     padding: 35px 45px;
     width: 100%;
-    max-width: 1200px; /* 🔥 wider card */
+    max-width: 1200px;
     box-shadow: 0 20px 45px rgba(0,0,0,.12);
 }
-
 .section-title {
     font-size: 28px;
     font-weight: 800;
     color: #166534;
     margin-bottom: 20px;
 }
-
-/* 🔥 TWO FIELDS PER ROW – SAME WIDTH */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 24px;   /* 🔥 reduced gap */
+    column-gap: 24px;  
     row-gap: 22px;
 }
-
 .form-group label {
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 6px;
     display: block;
 }
-
 .form-control,
 .form-select {
     width: 50%;
@@ -49,26 +42,21 @@
     background: #f4fff8;
     font-size: 16px;
 }
-
 .form-group input, .form-group select, .form-group textarea {
         width: 80% !important;
 }
-
 .form-control:focus,
 .form-select:focus {
     outline: none;
     border-color: #22c55e;
     box-shadow: 0 0 0 3px rgba(34,197,94,.25);
 }
-
-/* Buttons */
 .action-buttons {
     display: flex;
     justify-content: center;
     gap: 30px;
     margin-top: 45px;
 }
-
 .btn-update {
     background: #15803d;
     color: #fff;
@@ -78,7 +66,6 @@
     border: none;
     font-weight: 600;
 }
-
 .btn-back {
     background: #6b7280;
     color: #fff;
@@ -87,7 +74,6 @@
     border-radius: 30px;
     text-decoration: none;
 }
-
     .btn-success {
         background: #15803d;
         border: none;
@@ -96,14 +82,12 @@
         font-size: 18px;
         font-weight: 600;
     }
-
     .btn-secondary {
         border-radius: 14px;
         padding: 12px 40px;
         font-size: 18px;
         font-weight: 600;
     }
-
     .close-btn {
         position: absolute;
         top: 18px;
@@ -112,136 +96,59 @@
         text-decoration: none;
         color: #374151;
     }
-
-/* Mobile */
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;
     }
 }
 </style>
-
 <div class="popup-overlay">
 <div class="popup-card">
-
 <div class="section-title">Edit Danpeti Payment</div>
 <hr>
-
 <form method="POST">
 {% csrf_token %}
-
 <div class="form-grid">
-
-    <!-- Address -->
     <div class="form-group">
         <label>Address</label>
-        <input type="text" name="address"
-               class="form-control"
-               value="{{ payment.address }}">
+        <input type="text" name="address"class="form-control"value="{{ payment.address }}">
     </div>
-
-    <!-- Amount -->
     <div class="form-group">
         <label>Amount (₹)</label>
-        <input type="number" step="0.01"
-               name="amount"
-               class="form-control"
-               value="{{ payment.amount }}" required>
+        <input type="number" step="0.01"name="amount"class="form-control"value="{{ payment.amount }}" required>
     </div>
-    <!-- Payment Method -->
     <div class="form-group">
         <label>Payment Method</label>
         <select name="payment_method" class="form-select">
             <option value="">-- Select --</option>
-            <option>
-                {% if payment.payment_method %}{{ payment.payment_method.lookup_name }}{% else %}Select a method{% endif %}
-                    {{ method.lookup_name }}
-                </option>
+            <option> {% if payment.payment_method %}{{ payment.payment_method.lookup_name }}{% else %}Select a method{% endif %}{{ method.lookup_name }}</option>
         </select>
     </div>
-
-    <!-- Payment Date -->
     <div class="form-group">
         <label>Payment Date & Time</label>
-        <input type="datetime-local"
-               name="date_time"
-               class="form-control"
-               value="{{ payment.date_time|date:'Y-m-d\\TH:i' }}">
+        <input type="datetime-local"name="date_time"class="form-control"value="{{ payment.date_time|date:'Y-m-d\\TH:i' }}">
     </div>
-
-    <!-- Witness -->
     <div class="form-group">
         <label>Witness</label>
-        <input type="text"
-               name="i_witness"
-               class="form-control"
-               value="{{ payment.i_witness }}">
+        <input type="text"name="i_witness"class="form-control"value="{{ payment.i_witness }}">
     </div>
-
-    <!-- Bank Name -->
     <div class="form-group">
         <label>Bank Name</label>
-        <input type="text"
-               name="name_of_bank"
-               class="form-control"
-               value="{{ payment.name_of_bank }}">
+        <input type="text"name="name_of_bank"class="form-control"value="{{ payment.name_of_bank }}">
     </div>
-
-    <!-- Branch -->
     <div class="form-group">
         <label>Branch</label>
-        <input type="text"
-               name="branch"
-               class="form-control"
-               value="{{ payment.branch }}">
+        <input type="text"name="branch"class="form-control"value="{{ payment.branch }}">
     </div>
-
-    <!-- Transaction ID -->
     <div class="form-group">
         <label>Transaction ID</label>
-        <input type="text"
-               name="transaction_id"
-               class="form-control"
-               value="{{ payment.transaction_id }}">
+        <input type="text"name="transaction_id"class="form-control"value="{{ payment.transaction_id }}">
     </div>
-
-    <!-- Opened By -->
-    <!-- <div class="form-group">
-        <label>Opened By</label>
-        <select name="opened_by" class="form-select">
-            <option value="">-- Select --</option>
-            {% for donor in donors %}
-            <option value="{{ donor.id }}"
-                {% if payment.opened_by_id == donor.id %}selected{% endif %}>
-                {{ donor }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-</div> -->
-<!-- <div class="form-group">
-        <label>Opened By</label>
-        <select name="opened_by" class="form-select">
-            <option value="">-- Select --</option>
-            {% for donor in donors %}
-            <option value="{{ donor.id }}"
-                {% if payment.opened_by_id == donor.id %}selected{% endif %}>
-                {{ donor }}
-            </option>
-            {% endfor %}
-        </select>
-    </div> -->
-<!-- <div class="action-buttons">
-    <button type="submit" class="btn-update">✔ UPDATE</button>
-    <a href="{% url 'welcome' %}" class="btn-back">← BACK</a>
-</div> -->
 <div class="text-center mt-5">
     <button type="submit" class="btn btn-success me-3">✔ Update</button>
     <a href="{% url 'welcome' %}" class="btn btn-secondary">← Back</a>
 </div>
 </form>
-
 </div>
 </div>
-
 {% endblock %}

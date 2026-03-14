@@ -1,18 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-
 <style>
     body {
         background: linear-gradient(135deg, #e9f7ef, #f4fff8);
     }
-
     .popup-overlay {
         min-height: 90vh;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-
     .popup-card {
         background: #fff;
         border-radius: 18px;
@@ -22,30 +19,25 @@
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
         position: relative;
     }
-
     .popup-title {
         font-size: 36px;
         font-weight: 800;
         color: #15803d;
     }
-
     .popup-subtitle {
         color: #6b7280;
         margin-bottom: 25px;
     }
-
     .section-title {
         font-size: 22px;
         font-weight: 700;
         color: #166534;
         margin-bottom: 20px;
     }
-
     .form-label {
         font-weight: 600;
         color: #374151;
     }
-
     .form-control,
     .form-select {
         border-radius: 12px;
@@ -53,13 +45,11 @@
         background: #f7fff9;
         border: 1px solid #c7e7d4;
     }
-
     .form-control:focus,
     .form-select:focus {
         box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
         border-color: #22c55e;
     }
-
     .btn-success {
         background: #15803d;
         border: none;
@@ -68,14 +58,12 @@
         font-size: 18px;
         font-weight: 600;
     }
-
     .btn-secondary {
         border-radius: 14px;
         padding: 12px 40px;
         font-size: 18px;
         font-weight: 600;
     }
-
     .close-btn {
         position: absolute;
         top: 18px;
@@ -84,7 +72,6 @@
         text-decoration: none;
         color: #374151;
     }
-
     .qr-preview img {
         border-radius: 10px;
         border: 1px solid #d1fae5;
@@ -92,7 +79,6 @@
         background: #f0fdf4;
     }
 </style>
-
 <div class="popup-overlay">
     <div class="popup-card">
         <a href="{% url 'welcome' %}" class="close-btn">&times;</a>
@@ -119,12 +105,6 @@
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- <div class="col-md-6">
-                    <label class="form-label">Location</label>
-                    <input type="text" name="location" class="form-control" value="{{ box.location }}" required>
-                </div> -->
-
                 <div class="col-md-6">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
@@ -135,7 +115,6 @@
                         {% endfor %}
                     </select>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label">Upload QR Code (optional)</label>
                     <input type="file" name="qr_code" class="form-control">

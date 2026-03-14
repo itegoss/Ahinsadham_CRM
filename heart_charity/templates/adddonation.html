@@ -68,18 +68,15 @@
 <div id="donation-summary" class="card mt-3" style="display:none; color: black;">
    <div class="card-body" style="color: black;">
     <h6 class="fw-bold mb-3">Donation Summary</h6>
-
     <div class="row text-center">
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Total Declared</div>
             <div>₹<span id="total-declared">0</span></div>
         </div>
-
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Total Paid</div>
             <div>₹<span id="total-paid">0</span></div>
         </div>
-
         <div class="col-md-4 col-12 mb-2">
             <div class="fw-semibold">Remaining</div>
             <div class="fw-bold text-danger">
@@ -90,7 +87,6 @@
 </div>
 </div>
 </div>
-
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -109,16 +105,13 @@
         <select name="donor" id="donor" class="form-select select2-search" required>
             <option value="">-- Select or Type Donor --</option>
             {% for donor in donors %}
-                <option value="{{ donor.id }}">
-                    {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }} - {{donor.pan_number}}
-                </option>
+                <option value="{{ donor.id }}">{{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }} - {{donor.pan_number}}</option>
             {% endfor %}
         </select>
     </div>
     <div class="col-md-4">
         <label class="form-label">Display Name</label>
-        <input type="text"
-              name="display_name"id="display_name"class="form-control"placeholder="Display Name">
+        <input type="text"name="display_name"id="display_name"class="form-control"placeholder="Display Name">
     </div>
     <div class="col-md-4">
           <label class="form-label fw-semibold">Reference Name</label>
@@ -159,7 +152,6 @@
     <input class="form-check-input" type="checkbox" id="togglePayment">
     <label class="form-check-label fw-semibold" for="togglePayment">Add Payment Details</label>
 </div>
-
 <div id="paymentSection" style="display:none;">
     <h5 class="text-success fw-bold mb-2">Payment Information</h5>
     <hr>
@@ -173,7 +165,6 @@
             <input type="date" name="donation_date" value="{{ today }}" class="form-control">
         </div>
     </div>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Payment Method</label>
@@ -184,7 +175,6 @@
                 {% endfor %}
             </select>
         </div>
-
         <div class="col-md-6">
             <label class="form-label fw-semibold">Payment Status</label>
             <select name="payment_status" class="form-select">
@@ -195,7 +185,6 @@
             </select>
         </div>
     </div>
-
     <div class="row mb-3 payment-field">
         <div class="col-md-6">
             <label class="form-label">Bank Name</label>
@@ -206,7 +195,6 @@
             <input type="text" name="branch" class="form-control">
         </div>
     </div>
-
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label fw-semibold">Transaction ID</label>
@@ -217,7 +205,6 @@
             <input type="text" name="check_no" class="form-control">
         </div>
     </div>
-      <!-- 📝 Additional Information -->
       <h5 class="text-success fw-bold mb-2">Additional Information</h5>
       <hr>
       <div class="row mb-3">
@@ -230,7 +217,6 @@
           <input type="text" name="donation_received_by" class="form-control">
         </div>
       </div>
-
       <div class="row mb-3">
         <div class="col-md-12">
           <label class="form-label fw-semibold">Description</label>

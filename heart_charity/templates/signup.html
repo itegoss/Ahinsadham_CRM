@@ -12,8 +12,8 @@
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 6px 36px #6a88a233;
-    max-width: 500px;  /* wider than before */
-    width: 90%;         /* responsive on smaller screens */
+    max-width: 500px;  
+    width: 90%;        
     padding: 2rem 2rem;
     box-sizing: border-box;
   }
@@ -33,14 +33,14 @@
     text-align: center;
   }
   .input-row {
-    margin-bottom: 12px; /* smaller margin to reduce height */
+    margin-bottom: 12px;
   }
   input[type="text"],
   input[type="email"],
   input[type="password"],
   select {
     width: 100%;
-    padding: 10px 12px; /* reduce padding to reduce height */
+    padding: 10px 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 15px;
@@ -57,7 +57,7 @@
   }
   .auth-btn {
     width: 100%;
-    padding: 10px; /* smaller button height */
+    padding: 10px; 
     background: linear-gradient(90deg, #3498db 0%, #6a88a2 85%);
     border: none;
     color: #fff;
@@ -65,7 +65,7 @@
     border-radius: 8px;
     font-weight: 600;
     letter-spacing: 1px;
-    margin-top: 6px; /* reduce margin */
+    margin-top: 6px; 
     cursor: pointer;
     box-shadow: 0 2px 14px #3498db40;
     transition: background 0.2s ease;
@@ -76,7 +76,7 @@
   .alt-option {
     font-size: 14px;
     color: #555;
-    margin-top: 16px; /* slightly less spacing */
+    margin-top: 16px; 
     text-align: center;
   }
   .alt-option a {
@@ -95,8 +95,6 @@
     border-radius: 7px;
     font-size: 15px;
   }
-
-  /* Mobile responsiveness */
   @media (max-width: 768px) {
     h2 {
         font-size: 26px;
@@ -106,15 +104,14 @@
         font-size: 14px;
     }
     .auth-card {
-        max-width: 100%;   /* keep it fairly wide */
-        padding: 1.2rem 1rem; /* reduce padding to decrease height */
+        max-width: 100%;  
+        padding: 1.2rem 1rem;
     }
   }
-
   @media (max-width: 480px) {
     .auth-card {
         max-width: 100%;
-        padding: 1rem 0.8rem; /* even smaller for tiny screens */
+        padding: 1rem 0.8rem;
     }
     .input-row {
         margin-bottom: 5px;
@@ -127,19 +124,16 @@
     }
   }
 </style>
-
 <div class="auth-wrapper">
   <div class="auth-card">
     <h2>Sign Up</h2>
     <p class="subtext">Enter your details below. You’ll receive an OTP to verify your email.</p>
-
     {% if errmsg %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
       <strong>Error!</strong> {{ errmsg }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
-
     <form action="{% url 'signup' %}" method="POST" autocomplete="off">
       {% csrf_token %}
       <div class="input-row">
@@ -164,7 +158,6 @@
       </div>
       <button type="submit" class="auth-btn">Send OTP</button>
     </form>
-
     <p class="alt-option">Already have an account? <a href="{% url 'signin' %}">Sign In</a></p>
   </div>
 </div>

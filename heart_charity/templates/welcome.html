@@ -62,7 +62,6 @@
     .sidebar.collapsed .sidebar-text {
         display: none;
     }
-    
     .sidebar a {
         display: flex;
         align-items: center;
@@ -827,10 +826,7 @@ td {
     </div>
 
     {% if user.is_superuser %}
-        <a class="tab-btn active" data-tab="default-user">
-            <i class="bi bi-bar-chart-line"></i><span class="sidebar-text">Dashboard</span>
-        </a>
-
+        <a class="tab-btn active" data-tab="default-user"><i class="bi bi-bar-chart-line"></i><span class="sidebar-text">Dashboard</span></a>
         <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
         <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
         <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span class="sidebar-text">Roles</span></a>
@@ -991,6 +987,145 @@ z-index: 1000;
         display: none;
     }
 }
+.search-input {
+  border: none;
+  border-bottom: 2px solid #28a745; 
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; 
+}
+.search-btn {
+  border-radius: 8px;
+}
+.scrollable-table {
+  overflow-y: auto;
+  overflow-x: auto; 
+}
+table th, table td {
+  white-space: nowrap; 
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #e9f2ff;
+  z-index: 5;
+}
+  .scrollable-table1 {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.table thead {
+  font-weight: 600;
+}
+.table td, .table th {
+  vertical-align: middle;
+}
+.search-input {
+width: 35%;
+  border: none;
+  border-bottom: 2px solid #28a745;
+  border-radius: 0;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 8px 10px;
+}
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #1e7e34; 
+}
+.search-btn {
+  border-radius: 8px;
+}
+.nav-btn {
+  background:#0c6d34;
+  color:#fff;
+  border:none;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+.nav-btn:hover {
+  background:#095528;
+  transform:translateY(-1px);
+}
+.nav-btn:disabled {
+  background:#ccc;
+  cursor:not-allowed;
+}
+.table-responsive::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.paginated-table th,
+.paginated-table td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.table-responsive::-webkit-scrollbar {
+  width: 10px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.paginated-table th,
+.paginated-table td {
+  text-align: left;
+  vertical-align: middle;
+}
+.download-container {
+  border-radius: 12px;
+  margin: 40px auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.download-container h3 {
+  color: #065f46;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 20px;
+}
+.download-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+.download-group {
+  display: flex;
+  flex-direction: column;
+}
+.download-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
 </style>
  <div class="tab-content active" id="default-user">
   <div class="hero-banner">
@@ -1020,24 +1155,6 @@ z-index: 1000;
     <input type="text"name="lookup_query" data-target="Lookup" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ lookup_query|default:'' }}">
   </form>
 </div>
-<style>
-.search-input {
-  border: none;
-  border-bottom: 2px solid #28a745; 
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; 
-}
-.search-btn {
-  border-radius: 8px;
-}
-</style>
   {% if lookup_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
@@ -1054,9 +1171,9 @@ z-index: 1000;
               <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="9">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">
-  <td>
-    <div class="d-flex justify-content-between">
+<tr class="column-search-row">
+<td>
+<div class="d-flex justify-content-between">
 {% if permissions.can_add %}
  <a href="/lookup_type_create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}  
@@ -1077,26 +1194,24 @@ z-index: 1000;
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        </tr>
-      </thead>
-      <tbody id="Lookup">
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
+<tbody id="Lookup">
 {% for lt in lookup_page_obj %}
-        <tr>
-          <td>
+<tr>
+<td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if not lt.is_deleted %}
       {% if permissions.can_edit %}
         <a href="{% url 'edit_lookup_type' lt.id %}" class="btn-sm p-1" style="font-size: 15px; color:black; text-decoration: none;">
-          <i class="bi bi-pencil-square"></i>
-      </a>
+          <i class="bi bi-pencil-square"></i></a>
       {% endif %}
       {% if permissions.can_delete %}
         <form action="{% url 'delete_lookup_type' lt.id %}" method="POST" class="d-inline m-0 p-0">
           {% csrf_token %}
           <button type="submit"class="btn-sm p-1"style="font-size: 15px; color:black; background-color: transparent;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')">
-            <i class="bi bi-trash"></i>
+                  onclick="return confirm('Are you sure you want to deactivate this Lookup Type?')"><i class="bi bi-trash"></i>
           </button>
         </form>
       {% endif %}
@@ -1105,22 +1220,22 @@ z-index: 1000;
     {% endif %}
   </div>
 </td>
-                <td>{{ lt.formatted_id }}</td>
-                <td>{{ lt.type_name }}</td>
-                <td>{{ lt.created_by }}</td>
-                <td>{{ lt.created_date|date:"d M Y" }}</td>
-                <td>{{ lt.updated_by }}</td>
-                <td>{{ lt.updated_date|date:"d M Y" }}</td>
-                <td>
-                    {% if lt.is_deleted %}
-                        Yes
-                    {% else %}
-                        No
-                    {% endif %}
-                </td>
-                <td>{{ lt.deleted_by }}</td>
-                <td>{{ lt.deleted_at|date:"d M Y" }}</td>
-        </tr>
+<td>{{ lt.formatted_id }}</td>
+<td>{{ lt.type_name }}</td>
+<td>{{ lt.created_by }}</td>
+<td>{{ lt.created_date|date:"d M Y" }}</td>
+<td>{{ lt.updated_by }}</td>
+<td>{{ lt.updated_date|date:"d M Y" }}</td>
+<td>
+    {% if lt.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ lt.deleted_by }}</td>
+<td>{{ lt.deleted_at|date:"d M Y" }}</td>
+</tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
         {% endfor %}
@@ -1134,7 +1249,7 @@ z-index: 1000;
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
-                <th>Actions</th>
+              <th>Actions</th>
               <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="2">Type Name<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="3">Created By<span class="sort-icon">⬍</span></th>
@@ -1145,7 +1260,7 @@ z-index: 1000;
               <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="10">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-        <tr class="column-search-row">
+<tr class="column-search-row">
   <td>
    <div class="d-flex justify-content-between">
  {% if permissions.can_add %}
@@ -1168,10 +1283,10 @@ z-index: 1000;
     <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-      <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
 </tr> 
-      </thead>
-      <tbody id="Lookup">
+</thead>
+<tbody id="Lookup">
    {% for lt in lookup_page_obj %}
         <tr>
           <td>
@@ -1192,12 +1307,12 @@ z-index: 1000;
     {% endif %}
   </div>
 </td>
-                <td>{{ lt.formatted_id }}</td>
-                <td>{{ lt.type_name }}</td>
-                <td>{{ lt.created_by }}</td>
-                <td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
-                <td>{{ lt.updated_by }}</td>
-                <td>{{ lt.updated_date|date:"d-m-Y H:i" }}</td>
+<td>{{ lt.formatted_id }}</td>
+<td>{{ lt.type_name }}</td>
+<td>{{ lt.created_by }}</td>
+<td>{{ lt.created_date|date:"d-m-Y H:i" }}</td>
+<td>{{ lt.updated_by }}</td>
+<td>{{ lt.updated_date|date:"d-m-Y H:i" }}</td>
 <td>
     {% if lt.is_deleted %}
         Yes
@@ -1206,29 +1321,14 @@ z-index: 1000;
     {% endif %}
 </td>
 <td>{{ lt.deleted_by }}</td>
-                <td>{{ lt.deleted_at|date:"d-m-Y H:i" }}</td>
-        </tr>
+<td>{{ lt.deleted_at|date:"d-m-Y H:i" }}</td>
+</tr>
         {% empty %}
         <tr><td colspan="12">No users found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
 </div>
-<style>
-.scrollable-table {
-  overflow-y: auto;
-  overflow-x: auto; 
-}
-table th, table td {
-  white-space: nowrap; 
-}
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #e9f2ff;
-  z-index: 5;
-}
-</style>
       {% endif %}
     </div>
 <!-- ✅ LookupType Pagination Controls -->
@@ -1283,7 +1383,7 @@ table th, table td {
         </tr>
         <tr class="column-search-row">
 <td>
-      <div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between">
         {% if permissions.can_add %}
  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}
@@ -1296,7 +1396,7 @@ table th, table td {
     {% endif %}
 </div>
 </td>
-           <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
@@ -1305,52 +1405,52 @@ table th, table td {
     <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
     <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-        </tr>
-      </thead>
-      <tbody id="LookupType">
+    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
+<tbody id="LookupType">
 {% for l in lookup_table_obj %}
-            <tr>
-          <td>
-            <div class="d-inline-flex align-items-center gap-1">
-              {% if not l.is_deleted %}
-              {% if permissions.can_edit %}
-              <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-              {% endif %}
-              {% if permissions.can_delete %}
-              <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')"><i class="bi bi-trash"></i></button>
-              </form>
-              {% endif %}
-              {% else %}
+<tr>
+<td>
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if not l.is_deleted %}
+    {% if permissions.can_edit %}
+    <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+      <i class="bi bi-pencil-square"></i>
+    </a>
+    {% endif %}
+    {% if permissions.can_delete %}
+    <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
+      {% csrf_token %}
+      <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+        onclick="return confirm('Are you sure you want to deactivate this Lookup?')"><i class="bi bi-trash"></i></button>
+    </form>
+    {% endif %}
+    {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
-              {% endif %}
-            </div>
-          </td>
-                <td>{{ l.formatted_id }}</td>
-                <td>{{ l.lookup_name }}</td>
-                <td>{{ l.lookup_type.type_name }}</td>
-                <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d M Y" }}</td>
-                <td>{{ l.updated_by }}</td>
-                <td>{{ l.updated_date|date:"d M Y" }}</td>
-                <td>
-                    {% if l.is_deleted %}
-                        Yes
-                    {% else %}
-                        No
-                    {% endif %}
-                </td>
-                <td>{{ l.deleted_by }}</td>
-                <td>{{ l.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="12">No Lookups found.</td></tr>
-        {% endfor %}
+    {% endif %}
+  </div>
+</td>
+<td>{{ l.formatted_id }}</td>
+<td>{{ l.lookup_name }}</td>
+<td>{{ l.lookup_type.type_name }}</td>
+<td>{{ l.created_by }}</td>
+<td>{{ l.created_date|date:"d M Y" }}</td>
+<td>{{ l.updated_by }}</td>
+<td>{{ l.updated_date|date:"d M Y" }}</td>
+<td>
+    {% if l.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ l.deleted_by }}</td>
+<td>{{ l.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="12">No Lookups found.</td></tr>
+{% endfor %}
       </tbody>
     </table>
 </div>
@@ -1360,7 +1460,7 @@ table th, table td {
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
-                     <tr>
+        <tr>
             <th>Actions</th>
             <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="2">Lookup Name <span class="sort-icon">⬍</span></th>
@@ -1372,11 +1472,10 @@ table th, table td {
             <th class="sortable" data-col="9">Is Deleted <span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
             <th class="sortable" data-col="8">Deleted On<span class="sort-icon">⬍</span></th>
-
         </tr>
-                <tr class="column-search-row">
+<tr class="column-search-row">
 <td>
-    <div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between">
       {% if permissions.can_add %}
  <a href="/lookup/create/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
       {% endif %}
@@ -1389,59 +1488,59 @@ table th, table td {
     {% endif %}
 </div>
 </td>
- <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-        </tr>
-      </thead>
+ <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+  <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
       <tbody id="LookupType">
 {% for l in lookup_table_obj %}           
- <tr>
-          <td>
-            <div class="d-inline-flex align-items-center gap-1">
-              {% if not l.is_deleted %}
-              {% if permissions.can_edit %}
-              <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i></a>
-              {% endif %}
-              {% if permissions.can_delete %}
-              <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this Lookup?')"> <i class="bi bi-trash"></i></button>
-              </form>
-              {% endif %}
-              {% else %}
+<tr>
+<td>
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if not l.is_deleted %}
+    {% if permissions.can_edit %}
+    <a href="{% url 'edit_lookup' l.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+      <i class="bi bi-pencil-square"></i></a>
+    {% endif %}
+    {% if permissions.can_delete %}
+    <form method="POST" action="{% url 'delete_lookup' l.id %}" class="d-inline m-0 p-0">
+      {% csrf_token %}
+      <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+        onclick="return confirm('Are you sure you want to deactivate this Lookup?')"> <i class="bi bi-trash"></i></button>
+    </form>
+    {% endif %}
+    {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
-              {% endif %}
-            </div>
-          </td>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ l.formatted_id }}</td>
-                <td>{{ l.lookup_name }}</td>
-                <td>{{ l.lookup_type.type_name }}</td>
-                <td>{{ l.created_by }}</td>
-                <td>{{ l.created_date|date:"d M Y" }}</td>
-                <td>{{ l.updated_by }}</td>
-                <td>{{ l.updated_date|date:"d M Y" }}</td>
-                <td>{{ l.deleted_at|date:"d M Y" }}</td>
-                <td>
-                    {% if l.is_deleted %}
-                        Yes
-                    {% else %}
-                        No
-                    {% endif %}
-                </td>
-                <td>{{ l.deleted_by }}</td>
-                <td>{{ l.deleted_at|date:"d M Y" }}</td>
-                </tr>
+    {% endif %}
+  </div>
+</td>
+<td>{{ forloop.counter }}</td>
+<td>{{ l.formatted_id }}</td>
+<td>{{ l.lookup_name }}</td>
+<td>{{ l.lookup_type.type_name }}</td>
+<td>{{ l.created_by }}</td>
+<td>{{ l.created_date|date:"d M Y" }}</td>
+<td>{{ l.updated_by }}</td>
+<td>{{ l.updated_date|date:"d M Y" }}</td>
+<td>{{ l.deleted_at|date:"d M Y" }}</td>
+<td>
+    {% if l.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ l.deleted_by }}</td>
+<td>{{ l.deleted_at|date:"d M Y" }}</td>
+</tr>
         {% empty %}
         <tr><td colspan="12">No Lookups found.</td></tr>
         {% endfor %}
@@ -1449,7 +1548,7 @@ table th, table td {
     </table>
 </div>
       {% endif %}
-    </div>
+</div>
 <!-- ✅ Lookups Pagination Controls -->
 <div class="pagination-container text-center">
   {% if lookup_table_obj.has_previous %}
@@ -1543,25 +1642,25 @@ table th, table td {
         No Role
     {% endif %}
 </td>
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.first_name }}</td>
-          <td>{{ user.last_name }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            {% if user.is_active %}
-              <span class="badge1">Active</span>
-            {% else %}
-              <span class="badge1">Inactive</span>
-            {% endif %}
-          </td>
-          <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
-          <td>{{ user.date_joined }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="12">No users found.</td></tr>
-        {% endfor %}
-      </tbody id="users">
+<td>{{ user.id }}</td>
+<td>{{ user.username }}</td>
+<td>{{ user.first_name }}</td>
+<td>{{ user.last_name }}</td>
+<td>{{ user.email }}</td>
+<td>
+  {% if user.is_active %}
+    <span class="badge1">Active</span>
+  {% else %}
+    <span class="badge1">Inactive</span>
+  {% endif %}
+</td>
+<td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
+<td>{{ user.date_joined }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="12">No users found.</td></tr>
+{% endfor %}
+</tbody id="users">
     </table>
   </form>
 </div>
@@ -1589,22 +1688,21 @@ table th, table td {
     <input type="hidden" name="active_tab" value="user">
     <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i>
     </button>
 </form>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        </tr>
-      </thead>
+<td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
       <tbody>
         {% for user in user_page_obj %}
         <tr>
@@ -1625,28 +1723,28 @@ table th, table td {
     {% endif %}
 </td>
 <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.first_name }}</td>
-          <td>{{ user.last_name }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            {% if user.is_active %}
-              <span class="badge1">Active</span>
-            {% else %}
-              <span class="badge1">Inactive</span>
-            {% endif %}
-          </td>
-           <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
-          <td>{{ user.date_joined }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="12">No users found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<td>{{ user.username }}</td>
+<td>{{ user.first_name }}</td>
+<td>{{ user.last_name }}</td>
+<td>{{ user.email }}</td>
+<td>
+  {% if user.is_active %}
+    <span class="badge1">Active</span>
+  {% else %}
+    <span class="badge1">Inactive</span>
+  {% endif %}
+</td>
+  <td>{{ user.is_superuser|yesno:"Yes,No" }}</td>
+<td>{{ user.date_joined }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="12">No users found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
-      {% endif %}
-    </div>
+ {% endif %}
+</div>
 <div class="pagination-container text-center mt-3">
   {% if user_page_obj.has_previous %}
       <a href="?user_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
@@ -1668,27 +1766,10 @@ table th, table td {
 </div>
 </div>
 </div>
-<style>
-  .scrollable-table1 {
-  max-height: 500px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-.card {
-  border-radius: 12px;
-  overflow: hidden;
-}
-.table thead {
-  font-weight: 600;
-}
-.table td, .table th {
-  vertical-align: middle;
-}
-</style>
 <!-- ================Roles================== -->
 <div class="tab-content" id="roles">
   <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Roles</h4>
     </div>
     <div class="card-body">
@@ -1697,26 +1778,8 @@ table th, table td {
 <input type="text"  name="query1" data-target="roless" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query1|default:'' }}">
 </form>
 </div>
-<style>
-.search-input {
-width: 35%;
-  border: none;
-  border-bottom: 2px solid #28a745;
-  border-radius: 0;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  padding: 8px 10px;
-}
-.search-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-bottom-color: #1e7e34; 
-}
-.search-btn {
-  border-radius: 8px;
-}
-</style>
-      {% if roles_page_obj %}
+
+{% if roles_page_obj %}
 <div class="table-responsive">
   <table class="table table-hover table-bordered align-middle">
     <thead>
@@ -1740,8 +1803,8 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Deleted On<span class="sort-icon">⬍</span></th>
       </tr>
-            <tr class="column-search-row">
-       <td>
+<tr class="column-search-row">
+<td>
 <div class="d-flex justify-content-between">
     <a href="{% url 'access_control' %}" style="font-size: 24px; color: #16a34a; text-decoration: none;"><i class="fa-solid fa-plus"></i></a>
     <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
@@ -1751,77 +1814,77 @@ width: 35%;
     </form>
 </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
       </tr>
     </thead>
-    <tbody id="roless">
-      {% for access in roles_page_obj %}
-      <tr>
-        <td>
-          <div class="d-inline-flex align-items-center gap-1">
-              {% if not access.is_deleted %}
-            <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
-            <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
-              {% csrf_token %}
-              <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                onclick="return confirm('Are you sure you want to deactivate this User module access?')"><i class="bi bi-trash"></i></button>
-            </form>
-            {% else %}
-<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
-            {% endif %}
-          </div>
-        </td>
-        <td>{{ access.id }}</td>
-        <td>{{ access.module_id }}</td>
-<td>{{ access.module.module_name }}</td>
-        <td>{{ access.description }}</td>
-        <td>{{ access.name }}</td>
-        <td>{{ access.can_access }}</td>
-        <td>{{ access.can_add }}</td>
-        <td>{{ access.can_delete }}</td>
-        <td>{{ access.can_edit }}</td>
-          <td>{{ access.can_view }}</td>
-          <td>{{ access.created_by }}</td>
-          <td>{{ access.created_date|date:"d M Y" }}</td>
-          <td>{{ access.updated_by }}</td>
-          <td>{{ access.updated_date|date:"d M Y" }}</td>
-          <td>
-    {% if access.is_deleted %}
-        Yes
+<tbody id="roless">
+{% for access in roles_page_obj %}
+<tr>
+<td>
+  <div class="d-inline-flex align-items-center gap-1">
+      {% if not access.is_deleted %}
+    <a href="{% url 'edit_access' access.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
+    <form method="POST" action="{% url 'delete_user_module_access' access.id %}" class="d-inline m-0 p-0">
+      {% csrf_token %}
+      <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+        onclick="return confirm('Are you sure you want to deactivate this User module access?')"><i class="bi bi-trash"></i></button>
+    </form>
     {% else %}
-        No
+<span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
     {% endif %}
+  </div>
 </td>
-          <td>{{ access.deleted_by }}</td>
-          <td>{{ access.deleted_at|date:"d M Y" }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
-      {% endfor %}
+<td>{{ access.id }}</td>
+<td>{{ access.module_id }}</td>
+<td>{{ access.module.module_name }}</td>
+<td>{{ access.description }}</td>
+<td>{{ access.name }}</td>
+<td>{{ access.can_access }}</td>
+<td>{{ access.can_add }}</td>
+<td>{{ access.can_delete }}</td>
+<td>{{ access.can_edit }}</td>
+<td>{{ access.can_view }}</td>
+<td>{{ access.created_by }}</td>
+<td>{{ access.created_date|date:"d M Y" }}</td>
+<td>{{ access.updated_by }}</td>
+<td>{{ access.updated_date|date:"d M Y" }}</td>
+<td>
+{% if access.is_deleted %}
+Yes
+{% else %}
+No
+{% endif %}
+</td>
+<td>{{ access.deleted_by }}</td>
+<td>{{ access.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
+{% endfor %}
     </tbody>
   </table>
 </div>
-      {% elif query %}
-        <p class="text-danger mt-3">No users found for "<strong>{{ query }}</strong>".</p>
-      {% else %}
-      <div class="table-responsive">
-  <table class="table table-hover table-bordered align-middle">
+{% elif query %}
+  <p class="text-danger mt-3">No users found for "<strong>{{ query }}</strong>".</p>
+{% else %}
+<div class="table-responsive">
+<table class="table table-hover table-bordered align-middle">
     <thead>
       <tr>
         <th>Actions</th>
@@ -1843,8 +1906,8 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
-                  <tr class="column-search-row">
-       <td>
+<tr class="column-search-row">
+<td>
 <div class="d-flex justify-content-between">
     <a href="{% url 'access_control' %}" style="font-size: 24px; color: #16a34a; text-decoration: none;"><i class="fa-solid fa-plus"></i></a>
     <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
@@ -1855,25 +1918,25 @@ width: 35%;
     </form>
 </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
-      </tr>
-    </thead>
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text  " placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="17" type="text  " placeholder="Search..."></td>
+</tr>
+</thead>
     <tbody id="roless">
       {% for access in roles_page_obj %}
       <tr>
@@ -1889,22 +1952,22 @@ width: 35%;
 {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
-          </div>
-        </td>
-        <td>{{ access.id }}</td>
-        <td>{{ access.module_id }}</td>
+</div>
+</td>
+<td>{{ access.id }}</td>
+<td>{{ access.module_id }}</td>
 <td>{{ access.module.module_name }}</td>
-        <td>{{ access.description }}</td>
-        <td>{{ access.name }}</td>
-        <td>{{ access.can_access }}</td>
-        <td>{{ access.can_add }}</td>
-        <td>{{ access.can_delete }}</td>
-        <td>{{ access.can_edit }}</td>
-          <td>{{ access.can_view }}</td>
-          <td>{{ access.created_by }}</td>
-          <td>{{ access.created_date|date:"d M Y" }}</td>
-          <td>{{ access.updated_by }}</td>
-          <td>{{ access.updated_date|date:"d M Y" }}</td>
+<td>{{ access.description }}</td>
+<td>{{ access.name }}</td>
+<td>{{ access.can_access }}</td>
+<td>{{ access.can_add }}</td>
+<td>{{ access.can_delete }}</td>
+<td>{{ access.can_edit }}</td>
+<td>{{ access.can_view }}</td>
+<td>{{ access.created_by }}</td>
+<td>{{ access.created_date|date:"d M Y" }}</td>
+<td>{{ access.updated_by }}</td>
+<td>{{ access.updated_date|date:"d M Y" }}</td>
 <td>
     {% if access.is_deleted %}
         Yes
@@ -1912,17 +1975,17 @@ width: 35%;
         No
     {% endif %}
 </td>
-          <td>{{ access.deleted_by }}</td>
-          <td>{{ access.deleted_at|date:"d M Y" }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
-      {% endfor %}
+<td>{{ access.deleted_by }}</td>
+<td>{{ access.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="11" class="text-center text-muted">No users found.</td></tr>
+{% endfor %}
     </tbody>
   </table>
 </div>
       {% endif %}
-    </div>
+</div>
 <div class="pagination-container text-center mt-3">
   {% if roles_page_obj.has_previous %}
       <a href="?roles_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
@@ -1974,93 +2037,26 @@ width: 35%;
 <!-- ----------- Donor/Volunteer Management System ------------------ -->
 
 <div class="tab-content" id="Donor/Volunteer Management System">
-  
-  <div id="imagePopup" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.7);
-  z-index:9999;
-  align-items:center;
-  justify-content:center;
-">
-
-  <div style="
-    background:#fff;
-    padding:18px;
-    border-radius:10px;
-    max-width:90%;
-    max-height:90%;
-    position:relative;
-    text-align:center;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  ">
-
-    <!-- ❌ Close -->
-    <span
-      onclick="closeImagePopup()"
-      style="
-        position:absolute;
-        top:8px;
-        right:12px;
-        cursor:pointer;
-        font-size:22px;
-        color:#444;">✖</span>
-
-    <!-- 🔹 Title -->
-    <div id="imageTitle"
-         style="
-           font-weight:600;
-           font-size:14px;
-           color:#0c6d34;
-           margin-bottom:10px;">
+  <div id="imagePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;padding:18px;border-radius:10px;max-width:90%;max-height:90%;position:relative;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+    <span onclick="closeImagePopup()" style="position:absolute;top:8px;right:12px;cursor:pointer;font-size:22px;color:#444;">✖</span>
+    <div id="imageTitle" style="font-weight:600;font-size:14px;color:#0c6d34; margin-bottom:10px;">
     </div>
-
-    <!-- 🖼 Image -->
-    <img id="popupImage"
-         style="
-           max-width:100%;
-           max-height:65vh;
-           object-fit:contain;
-           border-radius:6px;">
-
-    <!-- ⏮ ⏭ Controls -->
+    <img id="popupImage" style="max-width:100%; max-height:65vh;object-fit:contain;border-radius:6px;">
     <div style="margin-top:12px; display:flex; justify-content:center; gap:15px;">
       <button class="nav-btn" onclick="prevImg()">⟪</button>
 <button class="nav-btn" onclick="nextImg()">⟫</button>
     </div>
   </div>
 </div>
-<style>
-.nav-btn {
-  background:#0c6d34;
-  color:#fff;
-  border:none;
-  
-  padding:8px 16px;
-  border-radius:20px;
-  font-size:13px;
-  cursor:pointer;
-  transition:all 0.2s ease;
-}
 
-.nav-btn:hover {
-  background:#095528;
-  transform:translateY(-1px);
-}
-
-.nav-btn:disabled {
-  background:#ccc;
-  cursor:not-allowed;
-}
-</style>
 
  <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+    <div class="card-header  text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">All Donors and Volunteers</h4>
     </div>
 
-    <div class="card-body">
+  <div class="card-body">
   <div class="search-container">
   <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100" role="search">
     <input type="text" name="q" data-target="donorvolunteer" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query|default:'' }}">
@@ -2079,7 +2075,7 @@ width: 35%;
     <thead>
     <tr>
         <th>Action</th>
-                <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
@@ -2101,7 +2097,6 @@ width: 35%;
         <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
-        <!-- <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th> -->
         <th class="sortable" data-col="23">Created By <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="24">Created On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="25">Updated By <span class="sort-icon">⬍</span></th>
@@ -2110,8 +2105,8 @@ width: 35%;
         <th class="sortable" data-col="9">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="27">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
-            <tr class="column-search-row">
-      <td>
+<tr class="column-search-row">
+<td>
 <div class="d-flex justify-content-between">
   {% if permissions.can_add %}
  <a href="{% url 'add_donor_volunteer' %}" 
@@ -2121,43 +2116,40 @@ width: 35%;
     <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
     <input type="hidden" name="q" value="{{ query2|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
     </form>
   {% endif %}
 </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="25" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
-        <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
-          <!-- <td><input  class="column-search" data-col="30" type="text" placeholder="Search..."></td>  -->
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="23" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="25" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="26" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="27" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
+    <td><input class="column-search" data-col="29" type="text" placeholder="Search..."></td> 
       </tr>
     </thead>
     <tbody id="donorvolunteer">
@@ -2169,8 +2161,7 @@ width: 35%;
             {% if not donation.is_deleted %}
            {% if permissions.can_edit %}
             <a href="{% url 'edit_donor' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i>
-            </a>
+              <i class="bi bi-pencil-square"></i></a>
             {% endif %}
 
             {% if permissions.can_delete %}
@@ -2202,48 +2193,47 @@ width: 35%;
     —
   {% endif %}
 </td>
-        <td>{{ donation.id }}</td>
-        <td>{{ donation.person_type }}</td>
-        <td>{{ donation.first_name }}</td>
-        <td>{{ donation.middle_name }}</td>
-        <td>{{ donation.last_name }}</td>
-        <td>{{ donation.gender }}</td>
-        <td>{{ donation.date_of_birth }}</td>
-        <td>{{ donation.contact_number }}</td>
-        <td>{{ donation.email }}</td>
-        <td>{{ donation.donor_box_id }}</td>
-        <td>{{ donation.id_type }}</td>
-        <td>{{ donation.id_number }}</td>
-        <td>{{ donation.house_number }}</td>
-        <td>{{ donation.building_name }}</td>
-      <td>{{ donation.landmark }}</td>
-      <td>{{ donation.area }}</td>
-      <td>{{ donation.city }}</td>
-      <td>{{ donation.state }}</td>
-      <td>{{ donation.country }}</td>
-      <td>{{ donation.postal_code }}</td>
-      <td>{{ donation.native_place }}</td>
-      <!-- <td>{{ donation.native_postal_code }}</td> -->
-      <td>{{ donation.created_by }}</td>
-      <td>{{ donation.created_at|date:"d M Y" }}</td>
-      <td>{{ donation.updated_by }}</td>
-      <td>{{ donation.updated_at|date:"d M Y" }}</td>
+<td>{{ donation.id }}</td>
+<td>{{ donation.person_type }}</td>
+<td>{{ donation.first_name }}</td>
+<td>{{ donation.middle_name }}</td>
+<td>{{ donation.last_name }}</td>
+<td>{{ donation.gender }}</td>
+<td>{{ donation.date_of_birth }}</td>
+<td>{{ donation.contact_number }}</td>
+<td>{{ donation.email }}</td>
+<td>{{ donation.donor_box_id }}</td>
+<td>{{ donation.id_type }}</td>
+<td>{{ donation.id_number }}</td>
+<td>{{ donation.house_number }}</td>
+<td>{{ donation.building_name }}</td>
+<td>{{ donation.landmark }}</td>
+<td>{{ donation.area }}</td>
+<td>{{ donation.city }}</td>
+<td>{{ donation.state }}</td>
+<td>{{ donation.country }}</td>
+<td>{{ donation.postal_code }}</td>
+<td>{{ donation.native_place }}</td>
+<td>{{ donation.created_by }}</td>
+<td>{{ donation.created_at|date:"d M Y" }}</td>
+<td>{{ donation.updated_by }}</td>
+<td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
-    {% if donation.is_deleted %}
-        Yes
-    {% else %}
-        No
-    {% endif %}
+{% if donation.is_deleted %}
+Yes
+{% else %}
+No
+{% endif %}
 </td>
-      <td>{{ donation.deleted_by }}</td>
-            <td>{{ donation.deleted_at|date:"d M Y" }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
+<td>{{ donation.deleted_by }}</td>
+    <td>{{ donation.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="14" class="text-center text-muted py-4">No donors found.</td>
+</tr>
+{% endfor %}
+</tbody>
   </table>
 </div>
       {% elif query %}
@@ -2254,7 +2244,7 @@ width: 35%;
     <thead>
       <tr>
         <th>Action</th>
-                <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="28">id prooof <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Person Type <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">First Name <span class="sort-icon">⬍</span></th>
@@ -2276,7 +2266,6 @@ width: 35%;
         <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="21">Native Place <span class="sort-icon">⬍</span></th>
-        <!-- <th class="sortable" data-col="22">Native Postal Code <span class="sort-icon">⬍</span></th> -->
         <th class="sortable" data-col="23">Created By <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="24">Created On <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="25">Updated By <span class="sort-icon">⬍</span></th>
@@ -2286,60 +2275,52 @@ width: 35%;
         <th class="sortable" data-col="27">Deleted On<span class="sort-icon">⬍</span></th>
         <th></th>
       </tr>
-            <!-- 🔍 Filter Row -->
-      <tr class="column-search-row">
-      <td>
-  <div class="d-flex justify-content-between">
-    {% if permissions.can_add %}
- <a href="{% url 'add_donor_volunteer' %}" 
-       style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-        <i class="fa-solid fa-plus"></i>
-  </a>
+<tr class="column-search-row">
+<td>
+<div class="d-flex justify-content-between">
+{% if permissions.can_add %}
+ <a href="{% url 'add_donor_volunteer' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donor_volunteer' %}" style="margin: -9px; padding: 0;">
     <input type="hidden" name="q" value="{{ query2|default:'' }}">
     <input type="hidden" name="download" value="1">
-    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;">
-        <i class="bi bi-download"></i>
-    </button>
+    <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i class="bi bi-download"></i></button>
     </form>
     {% endif %}
 </div>
 </td>
-        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="25" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="26" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="27" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
-        <!-- <td><input  class="column-search" data-col="29" type="text" placeholder="Search..."></td>  -->
-      </tr>
-    </thead>
-    <tbody id="donorvolunteer">
-
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="23" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="25" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="26" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="27" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="28" type="text" placeholder="Search..."></td> 
+</tr>
+</thead>
+<tbody id="donorvolunteer">
       {% for donation in page_obj %}
       <tr>
         <td>
@@ -2379,32 +2360,31 @@ width: 35%;
     —
   {% endif %}
 </td>
-        <td>{{ donation.id }}</td>
-        <td>{{ donation.person_type }}</td>
-        <td>{{ donation.first_name }}</td>
-        <td>{{ donation.middle_name }}</td>
-        <td>{{ donation.last_name }}</td>
-        <td>{{ donation.gender }}</td>
-        <td>{{ donation.date_of_birth }}</td>
-        <td>{{ donation.contact_number }}</td>
-        <td>{{ donation.email }}</td>
-        <td>{{ donation.donor_box_id }}</td>
-        <td>{{ donation.id_type }}</td>
-        <td>{{ donation.id_number }}</td>
-        <td>{{ donation.house_number }}</td>
-        <td>{{ donation.building_name }}</td>
-      <td>{{ donation.landmark }}</td>
-      <td>{{ donation.area }}</td>
-      <td>{{ donation.city }}</td>
-      <td>{{ donation.state }}</td>
-      <td>{{ donation.country }}</td>
-      <td>{{ donation.postal_code }}</td>
-      <td>{{ donation.native_place }}</td>
-      <!-- <td>{{ donation.native_postal_code }}</td> -->
-      <td>{{ donation.created_by }}</td>
-      <td>{{ donation.created_at|date:"d M Y" }}</td>
-      <td>{{ donation.updated_by }}</td>
-      <td>{{ donation.updated_at|date:"d M Y" }}</td>
+<td>{{ donation.id }}</td>
+<td>{{ donation.person_type }}</td>
+<td>{{ donation.first_name }}</td>
+<td>{{ donation.middle_name }}</td>
+<td>{{ donation.last_name }}</td>
+<td>{{ donation.gender }}</td>
+<td>{{ donation.date_of_birth }}</td>
+<td>{{ donation.contact_number }}</td>
+<td>{{ donation.email }}</td>
+<td>{{ donation.donor_box_id }}</td>
+<td>{{ donation.id_type }}</td>
+<td>{{ donation.id_number }}</td>
+<td>{{ donation.house_number }}</td>
+<td>{{ donation.building_name }}</td>
+<td>{{ donation.landmark }}</td>
+<td>{{ donation.area }}</td>
+<td>{{ donation.city }}</td>
+<td>{{ donation.state }}</td>
+<td>{{ donation.country }}</td>
+<td>{{ donation.postal_code }}</td>
+<td>{{ donation.native_place }}</td>
+<td>{{ donation.created_by }}</td>
+<td>{{ donation.created_at|date:"d M Y" }}</td>
+<td>{{ donation.updated_by }}</td>
+<td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -2412,38 +2392,19 @@ width: 35%;
         No
     {% endif %}
 </td>
-      <td>{{ donation.deleted_by }}</td>
-      <td>{{ donation.deleted_at|date:"d M Y" }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
-      </tr>
-      {% endfor %}
+<td>{{ donation.deleted_by }}</td>
+<td>{{ donation.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
+</tr>
+{% endfor %}
     </tbody>
   </table>
 </div>
-<style>
-.table-responsive::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-.table-responsive::-webkit-scrollbar-thumb {
-  background-color: #007bff;
-  border-radius: 10px;
-}
-.table-responsive::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
-.paginated-table th,
-.paginated-table td {
-  text-align: center;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-</style>
-      {% endif %}
-    </div>
+{% endif %}
+</div>
  <!-- ✅ Pagination Controls -->
 <div class="pagination-container text-center mt-3">
   {% if page_obj.has_previous %}
@@ -2462,7 +2423,6 @@ width: 35%;
     </select>
     <span class="fw-bold">of {{ page_obj.paginator.num_pages }}</span>
   </form>
-
   {% if page_obj.has_next %}
     <a href="?donor_page={{ page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?donor_page={{ donor_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
@@ -2501,7 +2461,7 @@ width: 35%;
 
 <!-- ----------- Event Management System ------------------ -->
 
- <div class="tab-content"  id="Event Management System">
+<div class="tab-content"  id="Event Management System">
   <div class="card border-0">
     <div class="card-header  text-white d-flex justify-content-between align-items-center"> <h4 class="mb-0">All Events</h4></div>
     <div class="card-body">
@@ -2510,7 +2470,7 @@ width: 35%;
     <input type="text" name="payments_query" data-target="donation" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
   </form>
 </div>
-      {% if payments_page_obj %}
+{% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
@@ -2536,8 +2496,8 @@ width: 35%;
               <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">
-  <td>
+<tr class="column-search-row">
+<td>
 <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_add %}
   <a href="{% url 'add_event' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
@@ -2551,27 +2511,27 @@ width: 35%;
     {% endif %}
     </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-     <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
 </tr>
-      </thead>
+</thead>
       <tbody id="donation">
         {% for owner in payments_page_obj.object_list %}
         <tr>
@@ -2601,49 +2561,49 @@ width: 35%;
         <span class="text-muted" title="No payment found">—</span>
     {% endif %}
 {% endif %}
-              {% endif %}
-              {% else %}
-                <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
-              {% endif %}
-            </div>
-          </td>
-          <td>{{ owner.id }}</td>
-          <td>{{ owner.receipt_id }}</td>
-          <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
-          <td>
-            {% if owner.donation_box %}
-              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
-            {% else %}
-              <span class="text-muted">N/A</span>
-            {% endif %}
-          </td>
-          <td>₹{{ owner.amount }}</td>
-          <td>{{ owner.payment_method }}</td>
-          <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.verified_by }}</td>
-          <td>{{ owner.i_witness }}</td>
-          <td>{{ owner.name_of_bank }}</td>
-          <td>{{ owner.branch }}</td>
-          <td>{{ owner.transaction_id }}</td>
-          <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y" }}</td>
-          <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y" }}</td>
-          <td>
-              {% if owner.is_deleted %}
-                  Yes
-              {% else %}
-                  No
-              {% endif %}
-          </td>
-          <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% endif %}
+{% else %}
+  <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
+{% endif %}
+</div>
+</td>
+<td>{{ owner.id }}</td>
+<td>{{ owner.receipt_id }}</td>
+<td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+<td>
+  {% if owner.donation_box %}
+    {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+  {% else %}
+    <span class="text-muted">N/A</span>
+  {% endif %}
+</td>
+<td>₹{{ owner.amount }}</td>
+<td>{{ owner.payment_method }}</td>
+<td>{{ owner.opened_by }}</td>
+<td>{{ owner.verified_by }}</td>
+<td>{{ owner.i_witness }}</td>
+<td>{{ owner.name_of_bank }}</td>
+<td>{{ owner.branch }}</td>
+<td>{{ owner.transaction_id }}</td>
+<td>{{ owner.created_by }}</td>
+<td>{{ owner.created_at|date:"d M Y" }}</td>
+<td>{{ owner.updated_by }}</td>
+<td>{{ owner.updated_at|date:"d M Y" }}</td>
+<td>
+  {% if owner.is_deleted %}
+    Yes
+  {% else %}
+    No
+  {% endif %}
+</td>
+<td>{{ owner.deleted_by }}</td>
+<td>{{ owner.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
       {% elif payments_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
@@ -2673,9 +2633,9 @@ width: 35%;
               <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">  
-      <td>
-  <div class="d-inline-flex align-items-center gap-1">
+<tr class="column-search-row">  
+<td>
+<div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
   <a href="{% url 'add_event' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
@@ -2688,33 +2648,33 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-        </tr> 
-      </thead>
-      <tbody id="donation">
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+</tr> 
+</thead>
+<tbody id="donation">
         {% for owner in payments_page_obj.object_list %}
         <tr>
             <td>
             <div class="d-inline-flex align-items-center gap-1">
-              {% if not owner.is_deleted %}
+            {% if not owner.is_deleted %}
              {% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
               {% endif %}
@@ -2739,49 +2699,49 @@ width: 35%;
         <span class="text-muted" title="No payment found">—</span>
     {% endif %}
 {% endif %}
-              {% endif %}
-              {% else %}
+{% endif %}
+{% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
-              {% endif %}
-            </div>
-          </td>
-          <td>{{ owner.id }}</td>
-          <td>{{ owner.receipt_id }}</td>
-          <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
-          <td>
-            {% if owner.donation_box %}
-              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
-            {% else %}
-              <span class="text-muted">N/A</span>
-            {% endif %}
-          </td>
-          <td>₹{{ owner.amount }}</td>
-          <td>{{ owner.payment_method }}</td>
-          <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.verified_by }}</td>
-          <td>{{ owner.i_witness }}</td>
-           <td>{{ owner.name_of_bank }}</td>
-          <td>{{ owner.branch }}</td>
-          <td>{{ owner.transaction_id }}</td>
-          <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y" }}</td>
-          <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y" }}</td>
-          <td>
-              {% if owner.is_deleted %}
-                  Yes
-              {% else %}
-                  No
-              {% endif %}
-          </td>
-          <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% endif %}
+</div>
+</td>
+<td>{{ owner.id }}</td>
+<td>{{ owner.receipt_id }}</td>
+<td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+<td>
+  {% if owner.donation_box %}
+    {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+  {% else %}
+    <span class="text-muted">N/A</span>
+  {% endif %}
+</td>
+<td>₹{{ owner.amount }}</td>
+<td>{{ owner.payment_method }}</td>
+<td>{{ owner.opened_by }}</td>
+<td>{{ owner.verified_by }}</td>
+<td>{{ owner.i_witness }}</td>
+  <td>{{ owner.name_of_bank }}</td>
+<td>{{ owner.branch }}</td>
+<td>{{ owner.transaction_id }}</td>
+<td>{{ owner.created_by }}</td>
+<td>{{ owner.created_at|date:"d M Y" }}</td>
+<td>{{ owner.updated_by }}</td>
+<td>{{ owner.updated_at|date:"d M Y" }}</td>
+<td>
+    {% if owner.is_deleted %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+</td>
+<td>{{ owner.deleted_by }}</td>
+<td>{{ owner.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endif %}
 </div>    
@@ -2879,35 +2839,31 @@ width: 35%;
     <input type="text" name="payments_query" data-target="donation" class="form-control live-search search-input me-2"placeholder="🔍 Search..."value="{{ payments_query|default:'' }}">
   </form>
 </div>
-      {% if payments_page_obj %}
+{% if payments_page_obj %}
   <div class="table-responsive scrollable-table1">
     <table class="table table-hover table-bordered align-middle paginated-table">
       <thead class="sticky-top">
         <tr>
-              <th>Actions</th>
-              <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
-
-              <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
-              <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+          <th>Actions</th>
+          <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
+          <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
+          <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">
-  <td>
+<tr class="column-search-row">
+<td>
 <div class="d-inline-flex align-items-center gap-1">
 {% if permissions.can_add %}
   <a href="/select_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
@@ -2921,33 +2877,30 @@ width: 35%;
     {% endif %}
     </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-     <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
 </tr>
-      </thead>
-      <tbody id="donation">
-        {% for owner in payments_page_obj.object_list %}
-        <tr>
-            <td>
-            <div class="d-inline-flex align-items-center gap-1">
-              {% if not owner.is_deleted %}
+</thead>
+<tbody id="donation">
+{% for owner in payments_page_obj.object_list %}
+<tr>
+<td>
+<div class="d-inline-flex align-items-center gap-1">
+{% if not owner.is_deleted %}
 {% if permissions.can_edit %}
               <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
               {% endif %}
@@ -2978,28 +2931,25 @@ width: 35%;
               {% endif %}
             </div>
           </td>
-          <td>{{ owner.id }}</td>
-                    <td>{{ owner.receipt_id }}</td>
+<td>{{ owner.id }}</td>
+<td>{{ owner.receipt_id }}</td>
 <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
-          <td>
-            {% if owner.donation_box %}
-              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
-            {% else %}
-              <span class="text-muted">N/A</span>
-            {% endif %}
-          </td>
-          <td>₹{{ owner.amount }}</td>
-          <td>{{ owner.payment_method }}</td>
-          <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.verified_by }}</td>
-          <td>{{ owner.i_witness }}</td>
-          <td>{{ owner.name_of_bank }}</td>
-          <td>{{ owner.branch }}</td>
-          <td>{{ owner.transaction_id }}</td>
-          <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y" }}</td>
-          <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y" }}</td>
+<td>
+    {% if owner.donation_box %}
+      {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+    {% else %}
+      <span class="text-muted">N/A</span>
+    {% endif %}
+</td>
+<td>₹{{ owner.amount }}</td>
+<td>{{ owner.payment_mode }}</td>
+<td>{{ owner.opened_by }}</td>
+<td>{{ owner.verified_by }}</td>
+<td>{{ owner.i_witness }}</td>
+<td>{{ owner.created_by }}</td>
+<td>{{ owner.created_at|date:"d M Y" }}</td>
+<td>{{ owner.updated_by }}</td>
+<td>{{ owner.updated_at|date:"d M Y" }}</td>
 <td>
     {% if owner.is_deleted %}
         Yes
@@ -3007,14 +2957,14 @@ width: 35%;
         No
     {% endif %}
 </td>
-          <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<td>{{ owner.deleted_by }}</td>
+<td>{{ owner.deleted_at|date:"d M Y" }}</td>
+</tr>
+  {% empty %}
+<tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+    {% endfor %}
+</tbody>
+</table>
 </div>
       {% elif payments_query %}
         <p class="text-danger mt-3">No data found for "<strong>{{ query }}</strong>".</p>
@@ -3033,9 +2983,6 @@ width: 35%;
               <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="7">Received by <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="12">Created By <span class="sort -icon">⬍</span></th>
               <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
@@ -3044,7 +2991,7 @@ width: 35%;
               <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
               <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
         </tr>
-                <tr class="column-search-row">  
+  <tr class="column-search-row">  
       <td>
   <div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
@@ -3059,27 +3006,24 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-          <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="5" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text " placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-        </tr> 
-      </thead>
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="5" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td> 
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text " placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+</tr> 
+</thead>
       <tbody id="donation">
         {% for owner in payments_page_obj.object_list %}
         <tr>
@@ -3112,30 +3056,27 @@ width: 35%;
               {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
               {% endif %}
-            </div>
-          </td>
-          <td>{{ owner.id }}</td>
-          <td>{{ owner.receipt_id }}</td>
+</div>
+</td>
+<td>{{ owner.id }}</td>
+<td>{{ owner.receipt_id }}</td>
 <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
-          <td>
-            {% if owner.donation_box %}
-              {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
-            {% else %}
-              <span class="text-muted">N/A</span>
-            {% endif %}
-          </td>
-          <td>₹{{ owner.amount }}</td>
-          <td>{{ owner.payment_method }}</td>
-          <td>{{ owner.opened_by }}</td>
-          <td>{{ owner.verified_by }}</td>
-          <td>{{ owner.i_witness }}</td>
-           <td>{{ owner.name_of_bank }}</td>
-          <td>{{ owner.branch }}</td>
-                    <td>{{ owner.transaction_id }}</td>
-          <td>{{ owner.created_by }}</td>
-          <td>{{ owner.created_at|date:"d M Y" }}</td>
-          <td>{{ owner.updated_by }}</td>
-          <td>{{ owner.updated_at|date:"d M Y" }}</td>
+<td>
+    {% if owner.donation_box %}
+      {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+    {% else %}
+      <span class="text-muted">N/A</span>
+    {% endif %}
+</td>
+<td>₹{{ owner.amount }}</td>
+<td>{{ owner.payment_mode }}</td>
+<td>{{ owner.opened_by }}</td>
+<td>{{ owner.verified_by }}</td>
+<td>{{ owner.i_witness }}</td>
+<td>{{ owner.created_by }}</td>
+<td>{{ owner.created_at|date:"d M Y" }}</td>
+<td>{{ owner.updated_by }}</td>
+<td>{{ owner.updated_at|date:"d M Y" }}</td>
 <td>
     {% if owner.is_deleted %}
         Yes
@@ -3143,14 +3084,14 @@ width: 35%;
         No
     {% endif %}
 </td>
-          <td>{{ owner.deleted_by }}</td>
-          <td>{{ owner.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<td>{{ owner.deleted_by }}</td>
+<td>{{ owner.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="10" class="text-muted py-4">No donation payment owner found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endif %}
 </div>
@@ -3178,19 +3119,10 @@ width: 35%;
 <!-- ------------Donation Box----------- -->
 <!-- QR Code Popup -->
 <div id="qrModal"style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
-  <div style=" background:#fff;padding:20px 20px 25px;
-      border-radius:12px;
-      width:40%;
-      height: 55%;
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%, -50%);
-      text-align:center;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+  <div style=" background:#fff;padding:20px 20px 25px;border-radius:12px; width:40%;height: 55%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
     <span onclick="closeQrPopup()"style="position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px;">  × </span>
     <h5 style="margin-bottom:10px; color: #095528;">QR Code</h5>
-    <img id="qrImage"src=""style="width:200%; max-width:300px; margin-bottom:12px;">
+    <img id="qrImage"src=""style="width:30%; max-width:300px; margin-bottom:12px;">
     <div style="font-size:14px; text-align:left; margin-bottom:12px;">
       <div><strong>Key ID:</strong> <span id="key_id"></span></div>
       <div><strong>Donation ID:</strong> <span id="donation_id"></span></div>
@@ -3224,9 +3156,9 @@ width: 35%;
           <th class="sortable" data-col="11">Deleted By<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="11">Deleted At<span class="sort-icon">⬍</span></th>
         </tr>
-          <tr class="column-search-row">
-  <td>
-  <div class="d-inline-flex align-items-center gap-1">
+<tr class="column-search-row">
+<td>
+<div class="d-inline-flex align-items-center gap-1">
     {% if permissions.can_add %}
   <a href="/add_donation_box/" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
@@ -3239,22 +3171,22 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-        </tr> 
-      </thead>
-      <tbody id="boxx"> 
-        {% for box in box_page_obj  %}
+    <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+    <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+    <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+</tr> 
+</thead>
+<tbody id="boxx"> 
+{% for box in box_page_obj  %}
         <tr>
           <td>
             <div class="d-inline-flex align-items-center gap-1">
@@ -3270,7 +3202,7 @@ width: 35%;
               </form>
               {% endif %}
               {% else %}
-                              <span class="badge bg-secondary">Deactivated</span>
+                 <span class="badge bg-secondary">Deactivated</span>
               {% endif %}
             </div>
           </td>
@@ -3287,13 +3219,13 @@ width: 35%;
     <span class="text-muted">—</span>
   {% endif %}
 </td>
-          <td>{{ box.key_id }}</td>
-          <td>{{ box.box_size }}</td>
-          <td>{{ box.status }}</td>
-          <td>{{ box.created_by }}</td>
-          <td>{{ box.created_at|date:"d M Y" }}</td>
-          <td>{{ box.updated_by }}</td>
-          <td>{{ box.updated_at|date:"d M Y" }}</td>
+<td>{{ box.key_id }}</td>
+<td>{{ box.box_size }}</td>
+<td>{{ box.status }}</td>
+<td>{{ box.created_by }}</td>
+<td>{{ box.created_at|date:"d M Y" }}</td>
+<td>{{ box.updated_by }}</td>
+<td>{{ box.updated_at|date:"d M Y" }}</td>
 <td>
     {% if box.is_deleted %}
         Yes
@@ -3301,12 +3233,12 @@ width: 35%;
         No
     {% endif %}
 </td>
-          <td>{{ box.deleted_by }}</td>
-          <td>{{ box.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="10" class="text-muted py-4">No donation boxes found.</td></tr>
-        {% endfor %}
+<td>{{ box.deleted_by }}</td>
+<td>{{ box.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="10" class="text-muted py-4">No donation boxes found.</td></tr>
+{% endfor %}
       </tbody>
     </table>
 </div>
@@ -3318,7 +3250,7 @@ width: 35%;
       <thead class="sticky-top">
         <tr>
           <th>Actions</th>
-                  <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
+          <th class="sortable" data-col="1">Danpeti ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
           <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
@@ -3345,46 +3277,46 @@ width: 35%;
     {% endif %}
   </div>
 </td>
-    <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-    <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-        </tr>
-      </thead>
-      <tbody id="boxx">
-        {% for box in box_page_obj %}
-        <tr>
-          <td>
-            <div class="d-inline-flex align-items-center gap-1">
-                         {% if not box.is_deleted %}
-              {% if permissions.can_edit %}
-              <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-              {% endif %}
-              {% if permissions.can_delete %}
-              <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                  onclick="return confirm('Are you sure you want to deactivate this donation box?')">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </form>
-              {% endif %}
-                   {% else %}
-                              <span class="badge bg-secondary">Deactivated</span>
-              {% endif %}
-            </div>
-          </td>
-         <td>{{ box.donation_id }}</td>
+<td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+<td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
+<tbody id="boxx">
+{% for box in box_page_obj %}
+<tr>
+<td>
+  <div class="d-inline-flex align-items-center gap-1">
+    {% if not box.is_deleted %}
+    {% if permissions.can_edit %}
+    <a href="{% url 'edit_donation_box' box.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
+      <i class="bi bi-pencil-square"></i>
+    </a>
+    {% endif %}
+    {% if permissions.can_delete %}
+    <form method="POST" action="{% url 'delete_donation_box' box.id %}" class="d-inline m-0 p-0">
+      {% csrf_token %}
+      <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+        onclick="return confirm('Are you sure you want to deactivate this donation box?')">
+        <i class="bi bi-trash"></i>
+      </button>
+    </form>
+    {% endif %}
+          {% else %}
+          <span class="badge bg-secondary">Deactivated</span>
+    {% endif %}
+  </div>
+</td>
+<td>{{ box.donation_id }}</td>
 <td style="text-align:center;">
   {% if box.qr_code %}
     <span
@@ -3392,21 +3324,18 @@ width: 35%;
         '{{ box.qr_code.url }}',
         '{{ box.key_id }}',
         '{{ box.id }}'
-      )"
-      title="View QR Code"style="cursor:pointer; font-size:17px;">
-  <i class="fa-solid fa-eye"></i>
-    </span>
+      )"title="View QR Code"style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
   {% else %}
     <span class="text-muted">—</span>
   {% endif %}
 </td>
-          <td>{{ box.key_id }}</td>
-          <td>{{ box.box_size }}</td>
-          <td>{{ box.status }}</td>
-          <td>{{ box.created_by }}</td>
-          <td>{{ box.created_at|date:"d M Y" }}</td>
-                    <td>{{ box.updated_by }}</td>
-          <td>{{ box.updated_at|date:"d M Y" }}</td>
+<td>{{ box.key_id }}</td>
+<td>{{ box.box_size }}</td>
+<td>{{ box.status }}</td>
+<td>{{ box.created_by }}</td>
+<td>{{ box.created_at|date:"d M Y" }}</td>
+<td>{{ box.updated_by }}</td>
+<td>{{ box.updated_at|date:"d M Y" }}</td>
 <td>
     {% if box.is_deleted %}
         Yes
@@ -3414,24 +3343,23 @@ width: 35%;
         No
     {% endif %}
 </td>
-          <td>{{ box.deleted_by }}</td>
-          <td>{{ box.deleted_at|date:"d M Y" }}</td>
-        </tr>
-        {% empty %}
-      <tr><td colspan="15" class="text-muted py-4">No donation boxes found.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<td>{{ box.deleted_by }}</td>
+<td>{{ box.deleted_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="15" class="text-muted py-4">No donation boxes found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
-      {% endif %}
-    </div>
+{% endif %}
+</div>
 <!-- ✅ Lookups Pagination Controls -->
 <div class="pagination-container text-center">
   {% if box_page_obj.has_previous %}
       <a href="?box_page=1&box_query={{ box_query }}"  class="btn btn-outline-primary btn-sm me-2">⏮</a>
       <a href="?box_page={{ box_page_obj.previous_page_number }}&box_query={{ box_query }}"  class="btn btn-outline-primary btn-sm me-2">◀</a>
   {% endif %}
-  <!-- Page Dropdown -->
   <form method="get" class="d-inline-block">
     <input type="hidden" name="box_query" value="{{ box_query }}"/>
     <label for="boxPageSelect" class="fw-bold me-1">Page</label>
@@ -3443,13 +3371,9 @@ width: 35%;
     <span class="fw-bold">of {{ box_page_obj.paginator.num_pages }}</span>
   </form>
   {% if box_page_obj.has_next %}
-      <a href="?box_page={{ box_page_obj.next_page_number }}&box_query={{ box_query }}" 
-         class="btn btn-outline-primary btn-sm ms-2">▶</a>
-
-      <a href="?box_page={{ box_page_obj.paginator.num_pages }}&box_query={{ box_query }}" 
-         class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+      <a href="?box_page={{ box_page_obj.next_page_number }}&box_query={{ box_query }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+      <a href="?box_page={{ box_page_obj.paginator.num_pages }}&box_query={{ box_query }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
   {% endif %}
-
 </div>
 </div>
 </div>
@@ -3466,14 +3390,14 @@ width: 35%;
     <input type="text" name="q" data-target="alldonations" class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..." value="{{ query3|default:'' }}">
   </form>
 </div>
-      {% if donation_page_obj %}
-        <div class="table-responsive">
+{% if donation_page_obj %}
+<div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead>
       <tr>
         <th>Action</th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
-                <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
@@ -3493,67 +3417,63 @@ width: 35%;
         <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="17">Updated On<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
-                <th class="sortable" data-col="18">deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
-                <th class="sortable" data-col="18">Verified By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Verified By<span class="sort-icon">⬍</span></th>
       </tr>
-            <tr class="column-search-row">
-      <td>
-        <div class="d-flex justify-content-between">
-          {% if permissions.can_add %}
+<tr class="column-search-row">
+<td>
+<div class="d-flex justify-content-between">
+{% if permissions.can_add %}
     <a href="{% url 'adddonation' %}" style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i class="fa-solid fa-plus"></i></a>
     {% endif %}
     {% if permissions.can_add %}
     <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
-      <input type="hidden" name="q" value="{{ query3|default:'' }}">
+    <input type="hidden" name="q" value="{{ query3|default:'' }}">
     <input type="hidden" name="download" value="1">
     <button type="submit" class="btn btn-link" style="font-size:22px; color:black;"><i class="bi bi-download"></i> </button>
     </form>
     {% endif %}
 </div>
 </td>
-        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="5" type="text " placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
-        <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
-      </tr>
-    </thead>
-    <tbody id="alldonations">
+  <td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="5" type="text " placeholder="Search..."></td>
+  <td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+  <td><input class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
+  <td><input class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
+<tbody id="alldonations">
       <!-- 🧾 Paginated Donation Records -->
-      {% for donation in donation_page_obj %}
-      <tr>
-        <td>
-          <div class="d-inline-flex align-items-center gap-1">
+{% for donation in donation_page_obj %}
+<tr>
+<td>
+<div class="d-inline-flex align-items-center gap-1">
 {% if not donation.is_deleted %}
    {% if permissions.can_add %}
-<a href="{% url 'donation_summary' donation.id %}"
-   style="font-size: 20px; text-decoration: none; vertical-align: middle;">
-   <i class="fa-solid fa-plus"></i>
-</a>
+<a href="{% url 'donation_summary' donation.id %}"style="font-size: 20px; text-decoration: none; vertical-align: middle;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}
 {% if permissions.can_edit %}
-            <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;">
-              <i class="bi bi-pencil-square"></i> </a>
+<a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black ; text-decoration: none;"><i class="bi bi-pencil-square"></i> </a>
 {% endif %}
             {% if permissions.can_delete %}
             <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
@@ -3564,42 +3484,42 @@ width: 35%;
               </button>
             </form>
             {% endif %}
-            {% if donation.verified %}
+{% if donation.verified %}
      <a href="{% url 'donation_receipt_preview' donation.id %}" style="font-size: 17px;"><i class="fa-solid fa-eye"></i></a>
-     {% endif %}
-    {% if request.user.is_superuser %}
+{% endif %}
+{% if request.user.is_superuser %}
     {% if donation.verified %}
         <i class="fa-solid fa-circle-check"style="font-size: 17px; color:#16a34a;"title="Verified by Admin"></i>
     {% else %}
         <a href="{% url 'verify_donation' donation.id %}" onclick="return confirm('Verify this donation?')">
-            <i class="fa-regular fa-circle-check"style="font-size: 17px; color:red;" title="Click to Verify"></i></a>
+        <i class="fa-regular fa-circle-check"style="font-size: 17px; color:red;" title="Click to Verify"></i></a>
     {% endif %}
 {% endif %}
 {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
-          </div>
-        </td>
-        <td>{{ donation.id }}</td>
-                                <td>{{ donation.receipt_id }}</td>
-        <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-        <td>{{ donation.donor.city }}</td>
-        <td>{{ donation.donation_amount_declared }}</td>
-        <td>{{ donation.donation_amount_paid }}</td>
-        <td>{{ donation.donation_date }}</td>
-      <td>{{ donation.donation_category.lookup_name }}</td>
-        <td>{{ donation.payment_method.lookup_name }}</td>
-        <td>{{ donation.transaction_id }}</td>
-        <td>{{ donation.payment_status }}</td>
-        <td>{{ donation.check_no }}</td>
-        <td>{{ donation.place_of_donation }}</td>
-        <td>{{ donation.description }}</td>
-          <td>{{ donation.name_of_bank }}</td>
-          <td>{{ donation.branch }}</td>
-        <td>{{ donation.created_by }}</td>
-        <td>{{ donation.created_at|date:"d M Y" }}</td>
-        <td>{{ donation.updated_by }}</td>
-        <td>{{ donation.updated_at|date:"d M Y" }}</td>
+</div>
+</td>
+<td>{{ donation.id }}</td>
+<td>{{ donation.receipt_id }}</td>
+<td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+<td>{{ donation.donor.city }}</td>
+<td>{{ donation.donation_amount_declared }}</td>
+<td>{{ donation.donation_amount_paid }}</td>
+<td>{{ donation.donation_date }}</td>
+<td>{{ donation.donation_category.lookup_name }}</td>
+<td>{{ donation.payment_method.lookup_name }}</td>
+<td>{{ donation.transaction_id }}</td>
+<td>{{ donation.payment_status }}</td>
+<td>{{ donation.check_no }}</td>
+<td>{{ donation.place_of_donation }}</td>
+<td>{{ donation.description }}</td>
+<td>{{ donation.name_of_bank }}</td>
+<td>{{ donation.branch }}</td>
+<td>{{ donation.created_by }}</td>
+<td>{{ donation.created_at|date:"d M Y" }}</td>
+<td>{{ donation.updated_by }}</td>
+<td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -3607,22 +3527,22 @@ width: 35%;
         No
     {% endif %}
 </td>
-        <td>{{ donation.deleted_by }}</td>
-        <td>{{ donation.deleted_at|date:"d M Y" }}</td>
-                <td>{{ donation.verified_by }}</td>
-      </tr>
-      {% empty %}<tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>{% endfor %}
-    </tbody>
-  </table>
+<td>{{ donation.deleted_by }}</td>
+<td>{{ donation.deleted_at|date:"d M Y" }}</td>
+<td>{{ donation.verified_by }}</td>
+</tr>
+{% empty %}<tr><td colspan="10" class="text-muted py-4">No donations found.</td></tr>{% endfor %}
+</tbody>
+</table>
 </div>
-      {% elif query %}<p class="text-danger mt-3">No data found for "<strong>{{ query3 }}</strong>".</p>{% else %}
-  <div class="table-responsive">
+{% elif query %}<p class="text-danger mt-3">No data found for "<strong>{{ query3 }}</strong>".</p>{% else %}
+<div class="table-responsive">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead>
     <tr>
         <th>Action</th>
         <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
-                        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
@@ -3636,16 +3556,15 @@ width: 35%;
         <th class="sortable" data-col="12">Place of donation<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="13">Description<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Branch  <span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="14">Created By<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="15">Created On<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="16">Updated By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="17">Updated On<span class="sort-icon">⬍</span></th>  
         <th class="sortable" data-col="19">is_deleted<span class="sort-icon">⬍</span></th>
-                <th class="sortable" data-col="18">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Deleted By<span class="sort-icon">⬍</span></th>
         <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
-              <th class="sortable" data-col="18">Verified by<span class="sort-icon">⬍</span></th>
-
+        <th class="sortable" data-col="18">Verified by<span class="sort-icon">⬍</span></th>
       </tr>
       <tr class="column-search-row">
       <td>
@@ -3663,107 +3582,93 @@ width: 35%;
     {% endif %}
 </div>
 </td>
-        <td><input  class="column-search" data-col="1" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="2" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="3" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="4" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="5" type="text " placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="6" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="7" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="10" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="11" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="13" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="15" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="17" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="18" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="19" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="20" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="21" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="22" type="text" placeholder="Search..."></td>
-        <td><input  class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
-        <td><input  class="column-search" data-col="24" type="text" placeholder="Search..."></td>
-      </tr>
-    </thead>
-    <tbody id="alldonations">
+<td><input class="column-search" data-col="1" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="2" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="3" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="4" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="5" type="text " placeholder="Search..."></td>
+<td><input class="column-search" data-col="6" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="7" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="8" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="9" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="10" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="11" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="12" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="13" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="14" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="15" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="16" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="17" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="18" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="19" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="20" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="21" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="22" type="text" placeholder="Search..."></td>
+<td><input class="column-search" data-col="23" type="text" placeholder="Search..."></td>    
+<td><input class="column-search" data-col="24" type="text" placeholder="Search..."></td>
+</tr>
+</thead>
+<tbody id="alldonations">
       <!-- 🧾 Paginated Donation Records -->
-    {% for donation in donation_page_obj %}
+{% for donation in donation_page_obj %}
 <tr>
-  <td>
-    <div class="d-inline-flex align-items-center gap-1">
+<td>
+<div class="d-inline-flex align-items-center gap-1">
 {% if not donation.is_deleted %}
-     {% if permissions.can_add %}
-<a href="{% url 'donation_summary' donation.id %}"
-   style="font-size: 20px; text-decoration: none; vertical-align: middle;">
-   <i class="fa-solid fa-plus"></i>
-</a>
+{% if permissions.can_add %}
+<a href="{% url 'donation_summary' donation.id %}"style="font-size: 20px; text-decoration: none; vertical-align: middle;"><i class="fa-solid fa-plus"></i></a>
 {% endif %}
       {% if permissions.can_edit %}
-        <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1"
-           style="font-size: 15px; color:black; text-decoration: none;">
-          <i class="bi bi-pencil-square"></i>
-        </a>
+        <a href="{% url 'edit_donation' donation.id %}" class="btn-sm p-1" style="font-size: 15px; color:black; text-decoration: none;"><i class="bi bi-pencil-square"></i></a>
       {% endif %}
 
       {% if permissions.can_delete %}
-        <form method="POST" action="{% url 'delete_donation' donation.id %}"
-              class="d-inline m-0 p-0">
+        <form method="POST" action="{% url 'delete_donation' donation.id %}" class="d-inline m-0 p-0">
           {% csrf_token %}
-          <button type="submit" class="btn-sm p-1"
-                  style="font-size: 15px; color:black; background-color: transparent !important;"
+          <button type="submit" class="btn-sm p-1" style="font-size: 15px; color:black; background-color: transparent !important;"
                   onclick="return confirm('Are you sure you want to deactivate this donation?')">
             <i class="bi bi-trash"></i>
           </button>
         </form>
 
-      {% if donation.verified %}
+{% if donation.verified %}
      <a href="{% url 'donation_receipt_preview' donation.id %}" style="font-size: 17px;"><i class="fa-solid fa-eye"></i></a>
      {% endif %}
         {% if request.user.is_superuser %}
           {% if donation.verified %}
-            <i class="fa-solid fa-circle-check"
-               style="font-size: 17px; color:#16a34a;"
-               title="Verified by Admin"></i>
+            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;" title="Verified by Admin"></i>
           {% else %}
-            <a href="{% url 'verify_donation' donation.id %}"
-               onclick="return confirm('Verify this donation?')">
-              <i class="fa-regular fa-circle-check"
-                 style="font-size: 17px; color:#555;"
-                 title="Click to Verify"></i>
+            <a href="{% url 'verify_donation' donation.id %}" onclick="return confirm('Verify this donation?')">
+              <i class="fa-regular fa-circle-check" style="font-size: 17px; color:#555;" title="Click to Verify"></i>
             </a>
           {% endif %}
         {% endif %}
-
-      {% endif %}  {# ✅ THIS WAS MISSING #}
+      {% endif %}
 {% else %}
 <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban" title="Deactivate"></i></span>
 {% endif %}
-    </div>
-  </td>
-  <td>{{ donation.id }}</td>
-  <td>{{ donation.receipt_id }}</td>
-  <td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
-  <td>{{ donation.donor.city }}</td>
-  <td>{{ donation.donation_amount_paid }}</td>
-  <td>{{ donation.donation_date }}</td>
-  <td>{{ donation.donation_category.lookup_name }}</td>
-  <td>{{ donation.payment_method.lookup_name }}</td>
-  <td>{{ donation.payment_method }}</td>
-  <td>{{ donation.transaction_id }}</td>
-  <td>{{ donation.payment_status }}</td>
-  <td>{{ donation.check_no }}</td>
-  <td>{{ donation.place_of_donation }}</td>
-  <td>{{ donation.description }}</td>
-    <td>{{ donation.name_of_bank }}</td>
-          <td>{{ donation.branch }}</td>
-  <td>{{ donation.created_by }}</td>
-  <td>{{ donation.created_at|date:"d M Y" }}</td>
-  <td>{{ donation.updated_by }}</td>
-  <td>{{ donation.updated_at|date:"d M Y" }}</td>
+</div>
+</td>
+<td>{{ donation.id }}</td>
+<td>{{ donation.receipt_id }}</td>
+<td>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</td>
+<td>{{ donation.donor.city }}</td>
+<td>{{ donation.donation_amount_paid }}</td>
+<td>{{ donation.donation_date }}</td>
+<td>{{ donation.donation_category.lookup_name }}</td>
+<td>{{ donation.payment_method.lookup_name }}</td>
+<td>{{ donation.payment_method }}</td>
+<td>{{ donation.transaction_id }}</td>
+<td>{{ donation.payment_status }}</td>
+<td>{{ donation.check_no }}</td>
+<td>{{ donation.place_of_donation }}</td>
+<td>{{ donation.description }}</td>
+<td>{{ donation.name_of_bank }}</td>
+<td>{{ donation.branch }}</td>
+<td>{{ donation.created_by }}</td>
+<td>{{ donation.created_at|date:"d M Y" }}</td>
+<td>{{ donation.updated_by }}</td>
+<td>{{ donation.updated_at|date:"d M Y" }}</td>
 <td>
     {% if donation.is_deleted %}
         Yes
@@ -3771,9 +3676,9 @@ width: 35%;
         No
     {% endif %}
 </td>
-  <td>{{ donation.deleted_by }}</td>
-  <td>{{ donation.deleted_at|date:"d M Y" }}</td>
-  <td>{{ donation.verified_by }}</td>
+<td>{{ donation.deleted_by }}</td>
+<td>{{ donation.deleted_at|date:"d M Y" }}</td>
+<td>{{ donation.verified_by }}</td>
 </tr>
 {% empty %}
 <tr>
@@ -3782,37 +3687,17 @@ width: 35%;
   </td>
 </tr>
 {% endfor %}
-    </tbody>
-  </table>
+</tbody>
+</table>
 </div>
 </div>
-<style>
-.table-responsive::-webkit-scrollbar {
-  width: 10px;
-}
-.table-responsive::-webkit-scrollbar-thumb {
-  background-color: #007bff;
-  border-radius: 10px;
-}
-.table-responsive::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
-
-/* ✅ Left-align table text (no centering) */
-.paginated-table th,
-.paginated-table td {
-  text-align: left;
-  vertical-align: middle;
-}
-</style>
-      {% endif %}
-    </div>
-    <div class="pagination-container text-center mt-3">
-  {% if donation_page_obj.has_previous %}
+{% endif %}
+</div>
+<div class="pagination-container text-center mt-3">
+{% if donation_page_obj.has_previous %}
       <a href="?donation_page=1" class="btn btn-outline-primary btn-sm me-2">⏮</a>
     <a href="?donation_page={{ donation_page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">◀</a>
-  {% endif %}
-  <!-- Page Info + Dropdown -->
+{% endif %}
   <form method="get" class="d-inline-block">
     <label for="pageSelect" class="fw-bold me-1">Page</label>
     <select name="donation_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"onchange="this.form.submit()">
@@ -3822,45 +3707,13 @@ width: 35%;
     </select>
     <span class="fw-bold">of {{ donation_page_obj.paginator.num_pages }}</span>
   </form>
-  {% if donation_page_obj.has_next %}
+{% if donation_page_obj.has_next %}
     <a href="?donation_page={{ donation_page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
     <a href="?donation_page={{ donation_page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-  {% endif %}
+{% endif %}
 </div>
 </div>
-<style>
-.download-container {
-  border-radius: 12px;
-  margin: 40px auto;
-  font-family: "Segoe UI", sans-serif;
-}
 
-.download-container h3 {
-  color: #065f46;
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 20px;
-}
-
-.download-form {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.download-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.download-group label {
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-</style>
 <!-- ----------Financial Asset Module----------- -->
 <div class="tab-content" id="Financial Asset Module">
             <div class="content-header">
@@ -3952,22 +3805,17 @@ width: 35%;
 <!-- -----------Javascript-------------- -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Run ONLY once after login
     if (!sessionStorage.getItem("dashboardLoaded")) {
-        // Remove active from all tabs
         document.querySelectorAll(".tab-content").forEach(tab => {
             tab.classList.remove("active");
         });
-        // Activate dashboard tab
         const dashboardTab = document.getElementById("default-user");
         if (dashboardTab) {
             dashboardTab.classList.add("active");
         }
-        // Remove URL hash (optional)
         if (window.location.hash) {
             history.replaceState(null, null, window.location.pathname);
         }
-        // Mark dashboard as already shown
         sessionStorage.setItem("dashboardLoaded", "true");
     }
 });
@@ -3994,7 +3842,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-<!-- -----------Javascript-------------- -->
 <script>
 let images = [];
 let currentIndex = 0;
@@ -4144,7 +3991,6 @@ document.addEventListener('DOMContentLoaded', function(){
             activateTab(tabId);
         });
     });
-
 });
 </script>
 <script>
@@ -4171,7 +4017,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 }
             }
         });
-                const tabs = document.querySelectorAll('.sidebar a');
+        const tabs = document.querySelectorAll('.sidebar a');
         const contents = document.querySelectorAll('.tab-content');
         
         tabs.forEach(tab => {

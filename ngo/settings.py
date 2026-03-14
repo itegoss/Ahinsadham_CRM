@@ -1,15 +1,10 @@
 from pathlib import Path
 import environ
 import os
-
-
-# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# SECURITY
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 ALLOWED_HOSTS = [
@@ -24,7 +19,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 ]
 
-# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -46,7 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "social_django.middleware.SocialAuthExceptionMiddleware",  # handle social auth errors
+    "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "ngo.urls"
@@ -54,15 +48,15 @@ ROOT_URLCONF = "ngo.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],  # your templates folder
+        "DIRS": [BASE_DIR / 'templates'], 
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
-                "django.template.context_processors.request",  # required by social_django
+                "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "social_django.context_processors.login_redirect", # redirect URL
+                "social_django.context_processors.login_redirect",
                 "social_django.context_processors.backends",
             ],
         },
@@ -70,12 +64,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "ngo.wsgi.application"
-
-# Database
-
-
 import os
-
 ENV = os.getenv("ENV", "DEV")
 
 if ENV == "PROD":
@@ -118,7 +107,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-# Static files
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -128,18 +117,15 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-
 # Social auth keys
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
-# 
 # URLs
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = '/welcome/'
 LOGOUT_REDIRECT_URL = '/'
-# or use name with reverse: SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('social_redirect')
 
 # Optional: pipeline customization
 SOCIAL_AUTH_PIPELINE = (
@@ -173,3 +159,8 @@ AWS_S3_FILE_OVERWRITE = os.environ.get("AWS_S3_FILE_OVERWRITE", "False") == 'Tru
 AWS_DEFAULT_ACL = os.environ.get("AWS_DEFAULT_ACL")
 AWS_S3_VERITY = os.environ.get("AWS_S3_VERITY", "True") == 'True'
 DEFAULT_FILE_STORAGE = os.environ.get("DEFAULT_FILE_STORAGE")
+
+
+# Razorpay Test Keys
+RAZORPAY_KEY_ID = "rzp_test_SPTJRQZDmqknyI"
+RAZORPAY_KEY_SECRET = "63U2Unoiwf6aJh1cV4xuyqd5"
