@@ -9,8 +9,6 @@ def get_item(dictionary, key):
         return dictionary.get(key)
     return None
 
-
-
 @register.filter(name='number_to_words')
 def number_to_words(value):
     """Convert a number to words in English"""

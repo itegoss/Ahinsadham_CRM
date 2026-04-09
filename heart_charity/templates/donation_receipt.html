@@ -5,8 +5,7 @@
 <meta charset="UTF-8">
 <title>Donation Receipt</title>
 <head>
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <style>
 @page {
@@ -164,7 +163,7 @@ table {
     .buttons, .mini-btn { 
         display: none !important; 
     }
-        body {
+    body {
         margin: 0;
         padding: 0;
     }
@@ -277,13 +276,13 @@ table {
 </table>
 <table class="table">
 <tr>
- <th  width="35%" style="text-align:left;">Amount in Words : {{ donation.donation_amount_paid|number_to_words }}</th>
-        <th  width="30%" style="text-align:left;">Mode Of Receipt :{{ donation.payment_method.lookup_name }}  </th>
-    <th  width="35%" style="text-align:left;">Type of Donation :Donation</th>
+    <th width="35%" style="text-align:left;">Amount in Words : {{ donation.donation_amount_paid|number_to_words }}</th>
+    <th width="30%" style="text-align:left;">Mode Of Receipt :{{ donation.payment_method.lookup_name }}  </th>
+    <th width="35%" style="text-align:left;">Type of Donation :Donation</th>
 </tr>
 <tr>
     <th style="text-align:left;">Name of Bank : </th>
-        <th style="text-align:left;">Branch :{{ donation.bank_name|default:"-" }}  </th>
+    <th style="text-align:left;">Branch :{{ donation.bank_name|default:"-" }}  </th>
     <th style="text-align:left;">Cheque / TXN :{{ donation.transaction_id|default:"-" }}</th>
 </tr>
 </table>
@@ -316,7 +315,7 @@ table {
             <img src="{{ instagram_icon }}" width="12" valign="middle" />
             &nbsp; | &nbsp;
             <img src="{{ youtube_icon }}" width="12" valign="middle" />
-                        <b>@ahinsadham</b>
+            <b>@ahinsadham</b>
             &nbsp; | &nbsp;
             <img src="{{ globe_icon }}" width="12" valign="middle" />
             <b>www.ahinsadham.org</b>

@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from requests import request
 from .models import DonationBox, DonationPaymentBox, User ,Donation
 from heart_charity.models import LookupType,Lookup,UserModuleAccess,Module,UserRole,User, DonationOwner, DonorVolunteer
+from django.conf import settings
 from django.contrib import messages
 import csv
 from django.http import HttpResponse
@@ -1114,7 +1115,225 @@ def search_donation_box(request):
 #----------------Globle End Search--------------
 from django.core.files.storage import default_storage
 
+# def add_donor_volunteer(request):
+#     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
+#     id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
+
+#     occupation_types = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Type")
+#     occupation_natures = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Nature")
+
+#     departments = Lookup.objects.filter(lookup_type__type_name__iexact="Department")
+#     positions = Lookup.objects.filter(lookup_type__type_name__iexact="Position")
+#     designations = Lookup.objects.filter(lookup_type__type_name__iexact="Designation")
+
+#     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
+#     business_types = Lookup.objects.filter(lookup_type__type_name__iexact="Business Type")
+
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False)
+#     all_donors = DonorVolunteer.objects.filter(is_deleted=False)
+
+#     donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
+#     donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
+#     blood_groups = [
+#         ("A+", "A+"),
+#         ("A-", "A-"),
+#         ("B+", "B+"),
+#         ("B-", "B-"),
+#         ("AB+", "AB+"),
+#         ("AB-", "AB-"),
+#         ("O+", "O+"),
+#         ("O-", "O-"),
+#     ]
+#     def get_lookup(field):
+#         value = request.POST.get(field)
+#         return Lookup.objects.get(id=value) if value and value.isdigit() else None
+
+#     def get_donor(field):
+#         value = request.POST.get(field)
+#         return DonorVolunteer.objects.get(id=value) if value and value.isdigit() else None
+
+#     if request.method == "POST":
+#         email = request.POST.get("email")
+#         if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
+#             messages.error(request,"This email already exists. Please use a different email.")
+#             return redirect("add_donor_volunteer")
+        
+#     if request.method == "POST":
+#         country = request.POST.get("country")
+#         state = request.POST.get("state")
+#         if country == "India" and not state:
+#             messages.error(request, "State is required for Indian addresses.")
+#             return redirect('add_donor_volunteer')
+    
+#         donor = DonorVolunteer.objects.create(
+#             person_type=get_lookup("person_type"),
+#             referred_by=get_donor("referred_by"),
+#             salutation=request.POST.get("salutation"),
+#             first_name=request.POST.get("first_name"),
+#             middle_name=request.POST.get("middle_name"),
+#             last_name=request.POST.get("last_name"),
+#             gender=request.POST.get("gender"),
+#             date_of_birth=request.POST.get("date_of_birth") or None,
+#             age=request.POST.get("age") or None,
+#             blood_group=request.POST.get("blood_group"),
+#             contact_number=request.POST.get("contact_number"),
+#             whatsapp_number=request.POST.get("whatsapp_number"),
+#             email=request.POST.get("email"),
+#             donor_box_id=request.POST.get("donor_box") if (
+#             get_lookup("person_type") and get_lookup("person_type").lookup_name == "Donor-Box-Owner") else None,
+#             house_number=request.POST.get("house_number"),
+#             building_name=request.POST.get("building_name"),
+#             landmark=request.POST.get("landmark"),
+#             area=request.POST.get("area"),
+#             city=request.POST.get("city"),
+#             state=request.POST.get("state"),
+#             country=request.POST.get("country"),
+#             postal_code=request.POST.get("postal_code"),
+#             native_place=request.POST.get("native_place"),
+#             native_postal_code=request.POST.get("native_postal_code"),
+#             occupation_type=get_lookup("occupation_type"),
+#             occupation_nature=get_lookup("occupation_nature"),
+#             department=get_lookup("department"),
+#             position=get_lookup("position"),
+#             designation=get_lookup("designation"),
+#             doa=request.POST.get("doa") or None,
+#             years_to_marriage=request.POST.get("years_to_marriage") or None,
+#             business_salutation=request.POST.get("business_salutation"),
+#             business_name=request.POST.get("business_name"),
+#             business_type=get_lookup("business_type"),
+#             business_nature=get_lookup("business_nature"),
+#             org_name=request.POST.get("org_name"),
+#             org_type=get_lookup("org_type"),
+#             nature_of_service=get_lookup("nature_of_service"),
+#             id_type=get_lookup("id_type"),
+#             id_number=request.POST.get("id_number"),
+#             pan_number=request.POST.get("pan_number"),
+#             created_by=request.user,
+#             updated_by=request.user, )
+#         if request.FILES.get("id_proof_image"):
+#             donor.id_proof_image.save(
+#                 request.FILES["id_proof_image"].name,
+#                 request.FILES["id_proof_image"]
+#             )
+
+#         if request.FILES.get("pan_card_image"):
+#             donor.pan_card_image.save(
+#                 request.FILES["pan_card_image"].name,
+#                 request.FILES["pan_card_image"]
+#             )
+#         return redirect("welcome")
+    
+
+#     return render(request, "add_donor_volunteer.html", {
+#         "person_type_options": person_type_options,
+#         "id_type_options": id_type_options,
+#         "donation_boxes": donation_boxes,
+#         "all_donors": all_donors,
+#         "occupation_types": occupation_types,
+#         "occupation_natures": occupation_natures,
+#         "departments": departments,
+#         "positions": positions,
+#         "designations": designations,
+#         "org_types": org_types,
+#         "business_types": business_types,
+#         "donor_box_owner_id": donor_box_owner_id,
+#         "blood_groups": blood_groups,
+#     })
+
+
+
+# from django.contrib import messages
+# from django.shortcuts import render, redirect
+
+# def add_donor_volunteer(request):
+
+#     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
+#     id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
+
+#     occupation_types = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Type")
+#     occupation_natures = Lookup.objects.filter(lookup_type__type_name__iexact="Occupation Nature")
+
+#     departments = Lookup.objects.filter(lookup_type__type_name__iexact="Department")
+#     positions = Lookup.objects.filter(lookup_type__type_name__iexact="Position")
+#     designations = Lookup.objects.filter(lookup_type__type_name__iexact="Designation")
+
+#     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
+
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False)
+#     all_donors = DonorVolunteer.objects.filter(is_deleted=False)
+
+#     blood_groups = [
+#         ("A+", "A+"), ("A-", "A-"),
+#         ("B+", "B+"), ("B-", "B-"),
+#         ("AB+", "AB+"), ("AB-", "AB-"),
+#         ("O+", "O+"), ("O-", "O-"),
+#     ]
+
+#     def get_lookup(field):
+#         value = request.POST.get(field)
+#         return Lookup.objects.get(id=value) if value and value.isdigit() else None
+
+#     def get_donor(field):
+#         value = request.POST.get(field)
+#         return DonorVolunteer.objects.get(id=value) if value and value.isdigit() else None
+
+
+#     if request.method == "POST":
+#         try:
+
+#             email = request.POST.get("email")
+#             if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
+#                 messages.error(request, "This email already exists.")
+#                 return redirect("add_donor_volunteer")
+
+#             donor = DonorVolunteer.objects.create(
+#                 person_type=get_lookup("person_type"),
+#                 referred_by=get_donor("referred_by"),
+#                 old_box_id=request.POST.get("old_box_id"),
+#                 first_name=request.POST.get("first_name"),
+#                 last_name=request.POST.get("last_name"),
+#                 contact_number=request.POST.get("contact_number"),
+#                 email=request.POST.get("email"),
+#                 house_number=request.POST.get("house_number"),
+#                 city=request.POST.get("city"),
+#                 state=request.POST.get("state"),
+#                 postal_code=request.POST.get("postal_code"),
+#                 created_by=request.user,
+#                 updated_by=request.user,
+#             )
+
+#             donor.save()
+
+#             messages.success(request, "Saved successfully!")
+#             return redirect("welcome")
+
+#         except Exception as e:
+#             print("ERROR:", e)
+#             messages.error(request, str(e))
+
+
+#     return render(request, "add_donor_volunteer.html", {
+#         "person_type_options": person_type_options,
+#         "id_type_options": id_type_options,
+#         "donation_boxes": donation_boxes,
+#         "all_donors": all_donors,
+#         "occupation_types": occupation_types,
+#         "occupation_natures": occupation_natures,
+#         "departments": departments,
+#         "positions": positions,
+#         "designations": designations,
+#         "org_types": org_types,
+#         "blood_groups": blood_groups,
+#     })
+
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import DonorVolunteer, DonationBox, Lookup
+
+
 def add_donor_volunteer(request):
+
     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
     id_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='ID Type')
 
@@ -1126,23 +1345,17 @@ def add_donor_volunteer(request):
     designations = Lookup.objects.filter(lookup_type__type_name__iexact="Designation")
 
     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
-    business_types = Lookup.objects.filter(lookup_type__type_name__iexact="Business Type")
 
     donation_boxes = DonationBox.objects.filter(is_deleted=False)
     all_donors = DonorVolunteer.objects.filter(is_deleted=False)
 
-    donor_box_owner = Lookup.objects.filter(lookup_name='Donor-Box-Owner').first()
-    donor_box_owner_id = donor_box_owner.id if donor_box_owner else None
     blood_groups = [
-        ("A+", "A+"),
-        ("A-", "A-"),
-        ("B+", "B+"),
-        ("B-", "B-"),
-        ("AB+", "AB+"),
-        ("AB-", "AB-"),
-        ("O+", "O+"),
-        ("O-", "O-"),
+        ("A+", "A+"), ("A-", "A-"),
+        ("B+", "B+"), ("B-", "B-"),
+        ("AB+", "AB+"), ("AB-", "AB-"),
+        ("O+", "O+"), ("O-", "O-"),
     ]
+
     def get_lookup(field):
         value = request.POST.get(field)
         return Lookup.objects.get(id=value) if value and value.isdigit() else None
@@ -1151,77 +1364,95 @@ def add_donor_volunteer(request):
         value = request.POST.get(field)
         return DonorVolunteer.objects.get(id=value) if value and value.isdigit() else None
 
+    def get_box(field):
+        value = request.POST.get(field)
+        return DonationBox.objects.get(id=value) if value and value.isdigit() else None
+
     if request.method == "POST":
-        email = request.POST.get("email")
-        if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
-            messages.error(request,"This email already exists. Please use a different email.")
-            return redirect("add_donor_volunteer")
-        
-    if request.method == "POST":
-        country = request.POST.get("country")
-        state = request.POST.get("state")
-        if country == "India" and not state:
-            messages.error(request, "State is required for Indian addresses.")
-            return redirect('add_donor_volunteer')
-    
-        donor = DonorVolunteer.objects.create(
-            person_type=get_lookup("person_type"),
-            referred_by=get_donor("referred_by"),
-            salutation=request.POST.get("salutation"),
-            first_name=request.POST.get("first_name"),
-            middle_name=request.POST.get("middle_name"),
-            last_name=request.POST.get("last_name"),
-            gender=request.POST.get("gender"),
-            date_of_birth=request.POST.get("date_of_birth") or None,
-            age=request.POST.get("age") or None,
-            blood_group=request.POST.get("blood_group"),
-            contact_number=request.POST.get("contact_number"),
-            whatsapp_number=request.POST.get("whatsapp_number"),
-            email=request.POST.get("email"),
-            donor_box_id=request.POST.get("donor_box") if (
-            get_lookup("person_type") and get_lookup("person_type").lookup_name == "Donor-Box-Owner") else None,
-            house_number=request.POST.get("house_number"),
-            building_name=request.POST.get("building_name"),
-            landmark=request.POST.get("landmark"),
-            area=request.POST.get("area"),
-            city=request.POST.get("city"),
-            state=request.POST.get("state"),
-            country=request.POST.get("country"),
-            postal_code=request.POST.get("postal_code"),
-            native_place=request.POST.get("native_place"),
-            native_postal_code=request.POST.get("native_postal_code"),
-            occupation_type=get_lookup("occupation_type"),
-            occupation_nature=get_lookup("occupation_nature"),
-            department=get_lookup("department"),
-            position=get_lookup("position"),
-            designation=get_lookup("designation"),
-            doa=request.POST.get("doa") or None,
-            years_to_marriage=request.POST.get("years_to_marriage") or None,
-            business_salutation=request.POST.get("business_salutation"),
-            business_name=request.POST.get("business_name"),
-            business_type=get_lookup("business_type"),
-            business_nature=get_lookup("business_nature"),
-            org_name=request.POST.get("org_name"),
-            org_type=get_lookup("org_type"),
-            nature_of_service=get_lookup("nature_of_service"),
-            id_type=get_lookup("id_type"),
-            id_number=request.POST.get("id_number"),
-            pan_number=request.POST.get("pan_number"),
-            created_by=request.user,
-            updated_by=request.user, )
-        if request.FILES.get("id_proof_image"):
-            donor.id_proof_image.save(
-                request.FILES["id_proof_image"].name,
-                request.FILES["id_proof_image"]
+        try:
+            email = request.POST.get("email") or None
+
+            if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
+                messages.error(request, "This email already exists.")
+                return redirect("add_donor_volunteer")
+
+            # CONTACT
+            contact_code = request.POST.get("contact_country_code")
+            contact_number = request.POST.get("contact_number")
+            full_contact = f"{contact_code}{contact_number}" if contact_code and contact_number else None
+
+            # WHATSAPP
+            whatsapp_code = request.POST.get("whatsapp_country_code")
+            whatsapp_number = request.POST.get("whatsapp_number")
+            full_whatsapp = f"{whatsapp_code}{whatsapp_number}" if whatsapp_code and whatsapp_number else None
+            gst_number = request.POST.get("gst_number")
+
+            donor = DonorVolunteer.objects.create(
+
+                # BASIC
+                person_type=get_lookup("person_type"),
+                referred_by=get_donor("referred_by"),
+                donor_box=get_box("donor_box"),
+                old_box_id=request.POST.get("old_box_id") or None,
+
+                first_name=request.POST.get("first_name"),
+                middle_name=request.POST.get("middle_name"),
+                last_name=request.POST.get("last_name"),
+                gender=request.POST.get("gender"),
+                blood_group=request.POST.get("blood_group"),
+
+                # CONTACT
+                contact_number=full_contact,
+                whatsapp_number=full_whatsapp,
+                email=email,
+
+                # PERSONAL
+                date_of_birth=request.POST.get("date_of_birth") or None,
+                age=request.POST.get("age") or None,
+                doa=request.POST.get("doa") or None,
+                years_to_marriage=request.POST.get("years_to_marriage") or None,
+
+                # ADDRESS
+                house_number=request.POST.get("house_number"),
+                building_name=request.POST.get("building_name"),
+                street_name=request.POST.get("street_name"),
+                landmark=request.POST.get("landmark"),
+                area=request.POST.get("area"),
+                city=request.POST.get("city"),
+                state=request.POST.get("state"),
+                country=request.POST.get("country") or "India",
+                postal_code=request.POST.get("postal_code"),
+                native_place=request.POST.get("native_place"),
+
+                # OCCUPATION
+                occupation_salutation=request.POST.get("occupation_salutation"),
+                occupation_type=get_lookup("occupation_type"),
+                occupation_name=request.POST.get("occupation_name"),
+                occupation_nature=get_lookup("occupation_nature"),
+                gst_number=request.POST.get("gst_number"),
+
+                # JOB
+                department=get_lookup("department"),
+                position=get_lookup("position"),
+                designation=get_lookup("designation"),
+
+                # ID
+                id_type=get_lookup("id_type"),
+                id_number=request.POST.get("id_number"),
+                pan_number=request.POST.get("pan_number"),
+
+                created_by=request.user,
+                updated_by=request.user,
             )
 
-        if request.FILES.get("pan_card_image"):
-            donor.pan_card_image.save(
-                request.FILES["pan_card_image"].name,
-                request.FILES["pan_card_image"]
-            )
-        return redirect("welcome")
-    
+            donor.save()
+
+            messages.success(request, "Saved successfully!")
+            return redirect("welcome")
+
+        except Exception as e:
+            print("ERROR:", e)
+            messages.error(request, str(e))
 
     return render(request, "add_donor_volunteer.html", {
         "person_type_options": person_type_options,
@@ -1234,10 +1465,9 @@ def add_donor_volunteer(request):
         "positions": positions,
         "designations": designations,
         "org_types": org_types,
-        "business_types": business_types,
-        "donor_box_owner_id": donor_box_owner_id,
         "blood_groups": blood_groups,
     })
+
 
 from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Sum
@@ -1299,6 +1529,22 @@ def adddonation(request):
             donation_date = donation_date_raw
         else:
             donation_date = timezone.now().date()
+
+        transaction_id = request.POST.get("transaction_id")
+        payment_status_id = fk(request.POST.get("payment_status"))
+        payment_method_id = fk(request.POST.get("payment_method"))
+
+        payment_method_obj = Lookup.objects.filter(id=payment_method_id).first() if payment_method_id else None
+        if payment_method_obj and payment_method_obj.lookup_name.strip().lower() == "razorpay":
+            if not transaction_id:
+                messages.error(request, "Razorpay payment is required when payment method is Razorpay.")
+                return redirect("adddonation")
+            if not payment_status_id:
+                payment_status_id = Lookup.objects.filter(
+                    lookup_type__type_name__iexact="Payment Status",
+                    lookup_name__in=["Completed", "Paid", "Success"]
+                ).values_list("id", flat=True).first()
+
         Donation.objects.create(
             donor=donor_obj,
             display_name=request.POST.get("display_name"),
@@ -1311,13 +1557,14 @@ def adddonation(request):
             donation_received_by=request.POST.get("donation_received_by"),
             reference_name=request.POST.get("reference_name"),
             description=request.POST.get("description"),
-            payment_method_id=fk(request.POST.get("payment_method")),
-            payment_status_id=fk(request.POST.get("payment_status")),
+            payment_method_id=payment_method_id,
+            payment_status_id=payment_status_id,
             name_of_bank=request.POST.get("name_of_bank"),
             branch=request.POST.get("branch"),
-            transaction_id=request.POST.get("transaction_id"),
+            transaction_id=transaction_id,
             check_no=request.POST.get("check_no"),
-            created_by=request.user,)
+            created_by=request.user,
+        )
         messages.success(request, "Donation added successfully!")
         return redirect("adddonation")
 
@@ -1327,7 +1574,8 @@ def adddonation(request):
         "donation_sub_categories": donation_sub_categories,
         "payment_methods": payment_methods,
         "payment_statuses": payment_statuses,
-        "today": today
+        "today": today,
+        "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID,
     })
 
 def donation_summary(request, id):
@@ -1887,16 +2135,12 @@ import json
 
 @login_required
 def add_donation_payment(request):
-
     payment_mode = None
-
-    # FIX: LookupType uses type_name
     payment_type = LookupType.objects.filter(
         type_name__iexact="payment_mode",
         is_deleted=False
     ).first()
 
-    # Fetch payment modes
     payment_modes = Lookup.objects.filter(
         lookup_type=payment_type,
         is_deleted=False
@@ -1992,30 +2236,57 @@ def add_donation_payment(request):
 
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from .models import DonationBox
+
+
 @login_required
 def add_donation_box(request):
     if request.method == "POST":
         key_id = request.POST.get("key_id")
         box_size = request.POST.get("box_size")  
         status = request.POST.get("status")
-        qr_code = request.FILES.get("qr_code")  
+        qr_code = request.FILES.get("qr_code")
+        box_owner = request.POST.get("box_owner")
+        box_percentage = request.POST.get("box_percentage")
+
+        if not box_owner or not box_percentage:
+            messages.error(request, "Box Owner and Box % are required!")
+            return redirect("add_donation_box")
+
+        try:
+            box_percentage = float(box_percentage)
+            if box_percentage < 0 or box_percentage > 100:
+                messages.error(request, "Box % must be between 0 and 100!")
+                return redirect("add_donation_box")
+        except ValueError:
+            messages.error(request, "Invalid Box % value!")
+            return redirect("add_donation_box")
+
         box = DonationBox(
             key_id=key_id,
             box_size=box_size,
             status=status,
             qr_code=qr_code if qr_code else None,
+            box_owner=box_owner,
+            box_percentage=box_percentage,
             uploaded_by=request.user,
             created_by=request.user,
             created_at=timezone.now(),
         )
-        box.save() 
+
+        box.save()
+
         messages.success(request, "Donation Box Added Successfully!")
-        return redirect("welcome") 
+        return redirect("welcome")
+
     context = {
         "status_choices": DonationBox.status_choices,
     }
     return render(request, "add_donation_box.html", context)
-
 def all_donations(request):
     q = request.GET.get('q', '').strip()
     donations = Donation.objects.filter(is_deleted=False)
@@ -2029,8 +2300,6 @@ def all_donations(request):
             Q(payment_method__icontains=q) |
             Q(transaction_id__icontains=q)
         ).distinct()
-
-    # If no results found
     message = None
     if q and not donations.exists():
         message = f'No matching records found for "{q}".'
@@ -2188,7 +2457,6 @@ def edit_user(request, id):
         }
     )
 
-
 def edit_usermoduleaccess(request, id):
     record = get_object_or_404(UserModuleAccess, id=id)
     if request.method == 'POST':
@@ -2205,130 +2473,239 @@ def edit_usermoduleaccess(request, id):
 
 from .models import DonationBox
 
+# @login_required
+# def edit_donor(request, donor_id):
+#     donor = get_object_or_404(DonorVolunteer, id=donor_id)
+#     donors = DonorVolunteer.objects.filter(is_deleted=False)
+#     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
+#     id_types = Lookup.objects.filter(
+#         lookup_type__type_name="ID Type",
+#         is_deleted=False
+#     )
+
+#     occupation_types = Lookup.objects.filter(
+#         lookup_type__type_name="Occupation Type",
+#         is_deleted=False
+#     )
+
+#     occupation_natures = Lookup.objects.filter(
+#         lookup_type__type_name="Occupation Nature",
+#         is_deleted=False
+#     )
+
+#     departments = Lookup.objects.filter(
+#         lookup_type__type_name="Department",
+#         is_deleted=False
+#     )
+
+#     positions = Lookup.objects.filter(
+#         lookup_type__type_name="Position",
+#         is_deleted=False
+#     )
+
+#     designations = Lookup.objects.filter(
+#         lookup_type__type_name="Designation",
+#         is_deleted=False
+#     )
+
+#     business_types = Lookup.objects.filter(
+#         lookup_type__type_name="Business Type",
+#         is_deleted=False
+#     )
+
+#     business_natures = Lookup.objects.filter(
+#         lookup_type__type_name="Business Nature",
+#         is_deleted=False
+#     )
+
+#     org_types = Lookup.objects.filter(
+#         lookup_type__type_name="Organization Type",
+#         is_deleted=False
+#     )
+
+#     nature_of_services = Lookup.objects.filter(
+#         lookup_type__type_name="Nature of Service",
+#         is_deleted=False
+#     )
+#     person_type_id = request.POST.get("person_type")
+
+#     person_type = Lookup.objects.filter(id=person_type_id).first()
+
+#     donor_box_id = (
+#     request.POST.get("donor_box")
+#     if person_type and person_type.lookup_name == "Donor-Box-Owner"
+#     else None
+# )
+#     donation_boxes = DonationBox.objects.filter(is_deleted=False)
+
+#     # ---------------- SAVE ----------------
+#     if request.method == "POST":
+#         donor.person_type_id = request.POST.get("person_type") or None
+#         donor.referred_by_id = request.POST.get("referred_by") or None
+#         donor.salutation = request.POST.get("salutation")
+#         donor.first_name = request.POST.get("first_name")
+#         donor.middle_name = request.POST.get("middle_name")
+#         donor.last_name = request.POST.get("last_name")
+#         donor.gender = request.POST.get("gender")
+#         donor.date_of_birth = request.POST.get("date_of_birth") or None
+#         donor.age = request.POST.get("age") or None
+#         donor.blood_group = request.POST.get("blood_group")
+#         donor.contact_number = request.POST.get("contact_number")
+#         donor.whatsapp_number = request.POST.get("whatsapp_number")
+#         donor.email = request.POST.get("email")
+#         donor.doa = request.POST.get("doa") or None
+#         donor.years_to_marriage = request.POST.get("years_to_marriage") or None
+#         donor.house_number = request.POST.get("house_number")
+#         donor.building_name = request.POST.get("building_name")
+#         donor.landmark = request.POST.get("landmark")
+#         donor.area = request.POST.get("area")
+#         donor.city = request.POST.get("city")
+#         donor.state = request.POST.get("state")
+#         donor.country = request.POST.get("country")
+#         donor.postal_code = request.POST.get("postal_code")
+#         donor.native_place = request.POST.get("native_place")
+#         donor.native_postal_code = request.POST.get("native_postal_code")
+#         donor.occupation_type_id = request.POST.get("occupation_type") or None
+#         donor.occupation_nature_id = request.POST.get("occupation_nature") or None
+#         donor.department_id = request.POST.get("department") or None
+#         donor.position_id = request.POST.get("position") or None
+#         donor.designation_id = request.POST.get("designation") or None
+#         donor.business_type_id = request.POST.get("business_type") or None
+#         donor.business_salutation = request.POST.get("business_salutation")
+#         donor.business_name = request.POST.get("business_name")
+#         donor.business_nature_id = request.POST.get("business_nature") or None
+#         donor.org_name = request.POST.get("org_name")
+#         donor.org_type_id = request.POST.get("org_type") or None
+#         donor.nature_of_service_id = request.POST.get("nature_of_service") or None
+#         donor.id_type_id = request.POST.get("id_type") or None
+#         donor.id_number = request.POST.get("id_number")
+#         donor.pan_number = request.POST.get("pan_number")
+
+#         if request.FILES.get("id_proof_image"):
+#             donor.id_proof_image = request.FILES["id_proof_image"]
+
+#         if request.FILES.get("pan_card_image"):
+#             donor.pan_card_image = request.FILES["pan_card_image"]
+
+#         donor.updated_by = request.user
+#         donor.donor_box_id = donor_box_id
+#         donor.save()
+#         return redirect("welcome")
+
+#     # ---------------- RENDER ----------------
+#     return render(request, "edit_donor.html", {
+#         "donor": donor,
+#         "donors": donors,
+#         "donor_box_id":donor_box_id,
+#         "person_type_options": person_type_options,
+#         "id_types": id_types,
+#         "donation_boxes": donation_boxes,
+#         "occupation_types": occupation_types,
+#         "occupation_natures": occupation_natures,
+#         "departments": departments,
+#         "positions": positions,
+#         "designations": designations,
+#         "business_types": business_types,
+#         "business_natures": business_natures,
+#         "org_types": org_types,
+#         "nature_of_services": nature_of_services,
+#         "blood_groups": DonorVolunteer.BLOOD_GROUP_CHOICES,
+#     })
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 @login_required
 def edit_donor(request, donor_id):
     donor = get_object_or_404(DonorVolunteer, id=donor_id)
+
     donors = DonorVolunteer.objects.filter(is_deleted=False)
+
     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
-    id_types = Lookup.objects.filter(
-        lookup_type__type_name="ID Type",
-        is_deleted=False
-    )
+    id_types = Lookup.objects.filter(lookup_type__type_name="ID Type", is_deleted=False)
 
-    occupation_types = Lookup.objects.filter(
-        lookup_type__type_name="Occupation Type",
-        is_deleted=False
-    )
+    occupation_types = Lookup.objects.filter(lookup_type__type_name="Occupation Type", is_deleted=False)
+    occupation_natures = Lookup.objects.filter(lookup_type__type_name="Occupation Nature", is_deleted=False)
 
-    occupation_natures = Lookup.objects.filter(
-        lookup_type__type_name="Occupation Nature",
-        is_deleted=False
-    )
+    departments = Lookup.objects.filter(lookup_type__type_name="Department", is_deleted=False)
+    positions = Lookup.objects.filter(lookup_type__type_name="Position", is_deleted=False)
+    designations = Lookup.objects.filter(lookup_type__type_name="Designation", is_deleted=False)
 
-    departments = Lookup.objects.filter(
-        lookup_type__type_name="Department",
-        is_deleted=False
-    )
-
-    positions = Lookup.objects.filter(
-        lookup_type__type_name="Position",
-        is_deleted=False
-    )
-
-    designations = Lookup.objects.filter(
-        lookup_type__type_name="Designation",
-        is_deleted=False
-    )
-
-    business_types = Lookup.objects.filter(
-        lookup_type__type_name="Business Type",
-        is_deleted=False
-    )
-
-    business_natures = Lookup.objects.filter(
-        lookup_type__type_name="Business Nature",
-        is_deleted=False
-    )
-
-    org_types = Lookup.objects.filter(
-        lookup_type__type_name="Organization Type",
-        is_deleted=False
-    )
-
-    nature_of_services = Lookup.objects.filter(
-        lookup_type__type_name="Nature of Service",
-        is_deleted=False
-    )
-    person_type_id = request.POST.get("person_type")
-
-    person_type = Lookup.objects.filter(id=person_type_id).first()
-
-    donor_box_id = (
-    request.POST.get("donor_box")
-    if person_type and person_type.lookup_name == "Donor-Box-Owner"
-    else None
-)
     donation_boxes = DonationBox.objects.filter(is_deleted=False)
 
-    # ---------------- SAVE ----------------
     if request.method == "POST":
-        donor.person_type_id = request.POST.get("person_type") or None
-        donor.referred_by_id = request.POST.get("referred_by") or None
-        donor.salutation = request.POST.get("salutation")
-        donor.first_name = request.POST.get("first_name")
-        donor.middle_name = request.POST.get("middle_name")
-        donor.last_name = request.POST.get("last_name")
-        donor.gender = request.POST.get("gender")
-        donor.date_of_birth = request.POST.get("date_of_birth") or None
-        donor.age = request.POST.get("age") or None
-        donor.blood_group = request.POST.get("blood_group")
-        donor.contact_number = request.POST.get("contact_number")
-        donor.whatsapp_number = request.POST.get("whatsapp_number")
-        donor.email = request.POST.get("email")
-        donor.doa = request.POST.get("doa") or None
-        donor.years_to_marriage = request.POST.get("years_to_marriage") or None
-        donor.house_number = request.POST.get("house_number")
-        donor.building_name = request.POST.get("building_name")
-        donor.landmark = request.POST.get("landmark")
-        donor.area = request.POST.get("area")
-        donor.city = request.POST.get("city")
-        donor.state = request.POST.get("state")
-        donor.country = request.POST.get("country")
-        donor.postal_code = request.POST.get("postal_code")
-        donor.native_place = request.POST.get("native_place")
-        donor.native_postal_code = request.POST.get("native_postal_code")
-        donor.occupation_type_id = request.POST.get("occupation_type") or None
-        donor.occupation_nature_id = request.POST.get("occupation_nature") or None
-        donor.department_id = request.POST.get("department") or None
-        donor.position_id = request.POST.get("position") or None
-        donor.designation_id = request.POST.get("designation") or None
-        donor.business_type_id = request.POST.get("business_type") or None
-        donor.business_salutation = request.POST.get("business_salutation")
-        donor.business_name = request.POST.get("business_name")
-        donor.business_nature_id = request.POST.get("business_nature") or None
-        donor.org_name = request.POST.get("org_name")
-        donor.org_type_id = request.POST.get("org_type") or None
-        donor.nature_of_service_id = request.POST.get("nature_of_service") or None
-        donor.id_type_id = request.POST.get("id_type") or None
-        donor.id_number = request.POST.get("id_number")
-        donor.pan_number = request.POST.get("pan_number")
+        try:
+            donor.person_type_id = request.POST.get("person_type") or None
+            donor.referred_by_id = request.POST.get("referred_by") or None
+            donor.donor_box_id = request.POST.get("donor_box") or None
+            donor.old_box_id = request.POST.get("old_box_id") or None
 
-        if request.FILES.get("id_proof_image"):
-            donor.id_proof_image = request.FILES["id_proof_image"]
+            donor.salutation = request.POST.get("salutation")
+            donor.first_name = request.POST.get("first_name")
+            donor.middle_name = request.POST.get("middle_name")
+            donor.last_name = request.POST.get("last_name")
+            donor.gender = request.POST.get("gender")
+            donor.blood_group = request.POST.get("blood_group")
 
-        if request.FILES.get("pan_card_image"):
-            donor.pan_card_image = request.FILES["pan_card_image"]
+            contact_code = request.POST.get("contact_country_code")
+            contact_number = request.POST.get("contact_number")
+            donor.contact_number = f"{contact_code}{contact_number}" if contact_code and contact_number else None
 
-        donor.updated_by = request.user
-        donor.donor_box_id = donor_box_id
-        donor.save()
-        return redirect("welcome")
+            whatsapp_code = request.POST.get("whatsapp_country_code")
+            whatsapp_number = request.POST.get("whatsapp_number")
+            donor.whatsapp_number = f"{whatsapp_code}{whatsapp_number}" if whatsapp_code and whatsapp_number else None
 
-    # ---------------- RENDER ----------------
+            donor.email = request.POST.get("email")
+            donor.date_of_birth = request.POST.get("date_of_birth") or None
+            donor.age = request.POST.get("age") or None
+            donor.doa = request.POST.get("doa") or None
+            donor.years_to_marriage = request.POST.get("years_to_marriage") or None
+
+            donor.house_number = request.POST.get("house_number")
+            donor.building_name = request.POST.get("building_name")
+            donor.street_name = request.POST.get("street_name")
+            donor.landmark = request.POST.get("landmark")
+            donor.area = request.POST.get("area")
+            donor.city = request.POST.get("city")
+            donor.state = request.POST.get("state")
+            donor.country = request.POST.get("country") or "India"
+            donor.postal_code = request.POST.get("postal_code")
+            donor.native_place = request.POST.get("native_place")
+
+            donor.occupation_salutation = request.POST.get("occupation_salutation")
+            donor.occupation_type_id = request.POST.get("occupation_type") or None
+            donor.occupation_name = request.POST.get("occupation_name")
+            donor.occupation_nature_id = request.POST.get("occupation_nature") or None
+            donor.gst_number = request.POST.get("gst_number")
+
+            donor.department_id = request.POST.get("department") or None
+            donor.position_id = request.POST.get("position") or None
+            donor.designation_id = request.POST.get("designation") or None
+
+            donor.id_type_id = request.POST.get("id_type") or None
+            donor.id_number = request.POST.get("id_number")
+            donor.pan_number = request.POST.get("pan_number")
+
+            if request.FILES.get("id_proof_image"):
+                donor.id_proof_image = request.FILES["id_proof_image"]
+
+            if request.FILES.get("pan_card_image"):
+                donor.pan_card_image = request.FILES["pan_card_image"]
+
+            donor.updated_by = request.user
+            donor.save()
+
+            messages.success(request, "Updated successfully!")
+            return redirect("welcome")
+
+        except Exception as e:
+            print("ERROR:", e)
+            messages.error(request, str(e))
+
     return render(request, "edit_donor.html", {
         "donor": donor,
         "donors": donors,
-        "donor_box_id":donor_box_id,
         "person_type_options": person_type_options,
         "id_types": id_types,
         "donation_boxes": donation_boxes,
@@ -2337,12 +2714,11 @@ def edit_donor(request, donor_id):
         "departments": departments,
         "positions": positions,
         "designations": designations,
-        "business_types": business_types,
-        "business_natures": business_natures,
-        "org_types": org_types,
-        "nature_of_services": nature_of_services,
+        "gst_number": donor.gst_number,
         "blood_groups": DonorVolunteer.BLOOD_GROUP_CHOICES,
     })
+
+
 
 def edit_donation(request, id):
     donation = get_object_or_404(Donation, id=id)
@@ -2446,15 +2822,28 @@ def edit_box_payment(request, id):
         'donors': DonorVolunteer.objects.filter(is_deleted=False)
     })
 
+from decimal import Decimal
+
 def edit_donation_box(request, id):
     box = get_object_or_404(DonationBox, id=id)
+
     if request.method == 'POST':
         box.key_id = request.POST.get('key_id')
         box.box_size = request.POST.get('box_size')
+        box.box_owner = request.POST.get('box_owner')
+
+        percentage = request.POST.get('box_percentage')
+        if percentage:
+            box.box_percentage = Decimal(percentage)
+        else:
+            box.box_percentage = None
+
         box.status = request.POST.get('status')
+
         qr_file = request.FILES.get('qr_code')
         if qr_file:
             box.qr_code = qr_file
+
         box.save()
         messages.success(request, "Donation Box updated successfully!")
         return redirect('welcome')
@@ -2464,7 +2853,6 @@ def edit_donation_box(request, id):
         'status_choices': DonationBox.status_choices,
         'box_sizes': DonationBox.BOX_SIZES
     })
-
 # ************* End Edit Data Start *************
 
 # ************* delete Data Start *************
@@ -2553,8 +2941,7 @@ from .models import DonationPaymentBox
 @login_required
 def delete_box_payment(request, id):
     if request.method == "POST":
-        payment = get_object_or_404(
-            DonationPaymentBox,id=id,is_deleted=False)
+        payment = get_object_or_404(DonationPaymentBox,id=id,is_deleted=False)
         payment.is_deleted = True
         payment.deleted_at = now()
         payment.updated_by = request.user
@@ -2593,25 +2980,6 @@ def edit_box_payment(request, id):
 
 # donationbox eidt view------------------------------
 
-def edit_donation_box(request, id):
-    box = get_object_or_404(DonationBox, id=id)
-    if request.method == 'POST':
-        box.key_id = request.POST.get('key_id')
-        box.box_size = request.POST.get('box_size')
-        box.location = request.POST.get('location')
-        box.status = request.POST.get('status')
-        qr_file = request.FILES.get('qr_code')
-        if qr_file:
-            box.qr_code = qr_file
-        box.save()
-        messages.success(request, "Donation Box updated successfully!")
-        return redirect('welcome')
-    return render(request, 'DonationBoxedit.html', {
-        'box': box,
-        'status_choices': DonationBox.status_choices,
-        'box_sizes': DonationBox.BOX_SIZES
-    })
-
 @login_required
 def verify_donation(request, donation_id):
     donation = get_object_or_404(Donation, id=donation_id)
@@ -2643,8 +3011,7 @@ def select_donation_box(request):
 
         if not donation_box_id:
             messages.error(
-                request,
-                "Please scan the QR code or enter a valid Donation Box ID."
+                request,"Please scan the QR code or enter a valid Donation Box ID."
             )
             return redirect("select_donation_box")
 
@@ -2661,14 +3028,12 @@ def select_donation_box(request):
 
         except DonationBox.DoesNotExist:
             messages.error(
-                request,
-                "Invalid Donation Box ID. Please scan the correct QR code or re-enter the ID."
+                request,"Invalid Donation Box ID. Please scan the correct QR code or re-enter the ID."
             )
             return redirect("select_donation_box")
 
     return render(request, "donation_box_input.html")
 
-# ✅ AJAX ENDPOINTS FOR PAYMENT MODAL AUTO-FILL
 from django.http import JsonResponse
 
 def get_donation_boxes_data(request):
@@ -2685,14 +3050,11 @@ def get_donation_box_details(request, box_id):
     """Returns auto-fill data for a selected donation box"""
     try:
         box = DonationBox.objects.get(id=box_id, is_deleted=False)
-        
-        # Get last payment for this box to auto-fill payment method & status
         last_payment = DonationPaymentBox.objects.filter(
             donation_box=box,
             is_deleted=False
         ).order_by('-created_at').first()
         
-        # Get last donation for payment method preferences
         last_donation = Donation.objects.filter(
             is_deleted=False
         ).order_by('-created_at').first()
@@ -2774,3 +3136,52 @@ def create_order(request):
         "order_id": payment["id"],
         "amount": payment["amount"]
     })
+
+
+from django.shortcuts import render
+
+def add_leave(request):
+    return render(request, "add_leave.html")
+
+
+def add_timesheet(request):
+    return render(request,"add_timesheet.html")
+
+def add_visitor(request):
+    return render(request,"add_visitor.html")
+
+def add_vendor(request):
+    return render(request, "add_vendor.html")
+
+def add_request(request):
+    return render(request, "add_request.html")
+
+def add_inventory(request):
+    return render(request, "add_inventory.html")
+
+def add_assets(request):
+    return render(request, "add_assets.html")
+
+def add_fleet(request):
+    return render(request, "add_fleet.html")
+
+def add_financial_asset(request):
+    return render(request, "add_financial_asset.html")
+
+def add_expense(request):
+    return render(request, "add_expense.html")
+
+def add_medical(request):
+    return render(request, "add_medical.html")
+
+def add_rehabilitation(request):
+    return render(request, "add_rehabilitation.html")
+
+def add_adoption(request):
+    return render(request, "add_adoption.html")   
+
+def add_trees(request):
+    return render(request, "add_trees.html")
+
+def add_seeds(request):
+    return render(request, "add_seeds.html") 

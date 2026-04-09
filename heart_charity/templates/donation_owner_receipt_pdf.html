@@ -6,8 +6,7 @@
 <meta charset="UTF-8">
 <title>Danpeti Receipt</title>
 <head>
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <style>
 @page {
@@ -85,7 +84,6 @@ body {
     font-weight: bold;
     font-size: 13px;
 }
-/* ================= TABLE ================= */
 table {
     width: 100%;
        border-collapse: collapse;
@@ -169,7 +167,7 @@ table {
     .buttons, .mini-btn { 
         display: none !important; 
     }
-        body {
+    body {
         margin: 0;
         padding: 0;
     }
@@ -178,7 +176,7 @@ table {
     border: 1px solid #000;
     border-collapse: collapse;
     background: #fff;
-        table-layout: fixed;
+    table-layout: fixed;
 }
 }
 </style>
@@ -215,7 +213,7 @@ table {
             <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,
             Borivali (E), Mumbai 400066
             <br>
-                <b>Contact :</b> 97264 75555 / 97264 85555 | <b>Email :</b> mumbai@ahinsadham.org
+            <b>Contact :</b> 97264 75555 / 97264 85555 | <b>Email :</b> mumbai@ahinsadham.org
         </td>
         <td style="width:35%; text-align:right; vertical-align:top;"><b>Receipt No : {{ payment.receipt_id }}</b></td>
     </tr>
@@ -229,7 +227,7 @@ table {
 </tr>
 <tr>
 <td rowspan="2"><b>Address :</b> 
-    {% if donor.house_number %}{{ donor.house_number }}, {% endif %}
+  {% if donor.house_number %}{{ donor.house_number }}, {% endif %}
   {% if donor.building_name %}{{ donor.building_name }}, {% endif %}
   {% if donor.landmark %}{{ donor.landmark }}, {% endif %}
   {% if donor.area %}{{ donor.area }}, {% endif %}

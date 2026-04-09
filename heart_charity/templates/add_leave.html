@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Leave Application</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+font-family: Arial, sans-serif;
+background:#cfd9cf;
+}
+
+.form-container{
+width:1000px;
+margin:50px auto;
+background:#e8efe8;
+padding:30px;
+border-radius:12px;
+box-shadow:0 6px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+color:#1d6b3c;
+margin-bottom:5px;
+}
+
+.subtitle{
+text-align:center;
+font-size:13px;
+color:#666;
+margin-bottom:25px;
+}
+
+.section-title{
+font-weight:bold;
+color:#1d6b3c;
+margin:20px 0 12px;
+border-bottom:1px solid #c8d5c8;
+padding-bottom:5px;
+}
+
+.form-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-bottom:12px;
+}
+
+.form-group{
+display:flex;
+flex-direction:column;
+}
+
+label{
+font-size:14px;
+margin-bottom:4px;
+}
+
+input,select,textarea{
+width:100%;
+padding:9px;
+border:1px solid #c6c6c6;
+border-radius:6px;
+background:#f7f7f7;
+font-size:14px;
+}
+
+textarea{
+resize:none;
+grid-column: span 2;
+}
+
+.buttons{
+text-align:center;
+margin-top:25px;
+}
+
+.save-btn{
+background:#1d8f4a;
+color:white;
+border:none;
+padding:10px 22px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.back-btn{
+background:#6b7280;
+color:white;
+border:none;
+padding:10px 22px;
+border-radius:6px;
+cursor:pointer;
+margin-left:10px;
+}
+
+.save-btn:hover{
+background:#157a3b;
+}
+
+.back-btn:hover{
+background:#555;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="form-container">
+
+<h2>Apply Leave</h2>
+<p class="subtitle">Fill the required details</p>
+
+<form>
+
+<div class="section-title">Employee Information</div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Employee ID</label>
+<input type="text">
+</div>
+
+<div class="form-group">
+<label>Employee Type</label>
+<select>
+<option>Employee</option>
+<option>Intern</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Department</label>
+<input type="text">
+</div>
+
+<div class="form-group">
+<label>Leave Type</label>
+<select>
+<option>Casual</option>
+<option>Sick</option>
+<option>Earned</option>
+</select>
+</div>
+
+</div>
+
+<div class="section-title">Leave Details</div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Start Date</label>
+<input type="date">
+</div>
+
+<div class="form-group">
+<label>End Date</label>
+<input type="date">
+</div>
+
+<div class="form-group">
+<label>Total Days</label>
+<input type="number">
+</div>
+
+<div class="form-group">
+<label>Half Day</label>
+<select>
+<option>No</option>
+<option>Yes</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Leave Balance Before</label>
+<input type="number">
+</div>
+
+<div class="form-group">
+<label>Leave Balance After</label>
+<input type="number">
+</div>
+
+<div class="form-group">
+<label>Holiday Overlap</label>
+<select>
+<option>No</option>
+<option>Yes</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Leave Category</label>
+<select>
+<option>Planned</option>
+<option>Unplanned</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Supervisor ID</label>
+<input type="text">
+</div>
+
+<div class="form-group">
+<label>Supervisor Name</label>
+<input type="text">
+</div>
+
+<div class="form-group">
+<label>Frequency of Leaves</label>
+<input type="number">
+</div>
+
+<div class="form-group">
+<label>Salary Deducted</label>
+<select>
+<option>No</option>
+<option>Yes</option>
+</select>
+</div>
+
+<div class="form-group" style="grid-column: span 2;">
+<label>Leave Reason</label>
+<textarea rows="3"></textarea>
+</div>
+
+<div class="form-group" style="grid-column: span 2;">
+<label>HR Remarks</label>
+<textarea rows="2"></textarea>
+</div>
+
+</div>
+
+<div class="buttons">
+<button class="save-btn">✔ Save</button>
+<button type="button" onclick="history.back()" class="back-btn">← Back</button>
+</div>
+
+</form>
+
+</div>
+
+</body>
+</html>

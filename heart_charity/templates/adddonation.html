@@ -64,7 +64,7 @@
       <h3 class="fw-bold text-success">Add New Donation</h3>
       <p class="text-muted">Fill out the details to record a new donation</p>
     </div>
-        <div class="text-center mb-4">
+    <div class="text-center mb-4">
 <div id="donation-summary" class="card mt-3" style="display:none; color: black;">
    <div class="card-body" style="color: black;">
     <h6 class="fw-bold mb-3">Donation Summary</h6>
@@ -95,7 +95,7 @@
         </div>
     {% endfor %}
 {% endif %}
-    <form method="POST" action="{% url 'adddonation' %}">
+    <form id="donationForm" method="POST" action="{% url 'adddonation' %}">
       {% csrf_token %}
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>
       <hr>
@@ -225,7 +225,8 @@
       </div>
 </div>
     <div class="action-buttons">
-        <button type="submit" class="action-btn btn btn-submit">✔ Save</button>
+        <input type="hidden" name="transaction_id" id="transaction_id">
+        <button type="button" id="saveBtn" class="action-btn btn btn-submit">✔ Save</button>
         <a href="/welcome/?tab=Donation Module" class="action-btn back-btn"> ← Back</a>
     </div>
     </form>
@@ -278,6 +279,82 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     togglePaymentFields();
     paymentSelect.addEventListener("change", togglePaymentFields);
+});
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const saveBtn = document.getElementById("saveBtn");
+    const donationForm = document.getElementById("donationForm");
+    const paymentSelect = document.getElementById("payment_method");
+    const amountInput = document.querySelector("input[name='donation_amount_paid']");
+    const transactionInput = document.getElementById("transaction_id");
+
+    if (!saveBtn || !donationForm || !paymentSelect) return;
+
+    saveBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        const method = paymentSelect.options[paymentSelect.selectedIndex].text.trim().toLowerCase();
+        const amountValue = parseFloat(amountInput.value || "0");
+
+        if (method !== "razorpay") {
+            donationForm.submit();
+            return;
+        }
+
+        if (!amountValue || amountValue <= 0) {
+            alert("Please enter paid amount before making Razorpay payment.");
+            return;
+        }
+
+        fetch(`/create-order/?amount=${amountValue}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.order_id || !data.amount) {
+                    throw new Error("Unable to create Razorpay order.");
+                }
+
+                const options = {
+                    key: "{{ RAZORPAY_KEY_ID }}",
+                    amount: data.amount,
+                    currency: "INR",
+                    name: "Donation",
+                    description: "Razorpay donation payment",
+                    order_id: data.order_id,
+                    handler: function(response) {
+                        transactionInput.value = response.razorpay_payment_id;
+                        const statusSelect = document.querySelector("select[name='payment_status']");
+                        if (statusSelect) {
+                            const completedOption = Array.from(statusSelect.options).find(o =>
+                                ["completed", "paid", "success"].includes(o.text.trim().toLowerCase())
+                            );
+                            if (completedOption) {
+                                statusSelect.value = completedOption.value;
+                            }
+                        }
+                        donationForm.submit();
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            alert("Razorpay payment was not completed.");
+                        }
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    }
+                };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function(response){
+                    alert('Payment failed: ' + response.error.description); 
+                });
+                rzp.open();
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Error creating Razorpay order. Please try again.");
+            });
+    });
 });
 </script>
 <script>

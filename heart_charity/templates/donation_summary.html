@@ -160,7 +160,7 @@
     {% endfor %}
 </select>
         </div>
-                <div class="col-md-6">
+        <div class="col-md-6">
           <label class="form-label fw-semibold">Declared Amount (₹) <span style="color: #d9534f;">*</span></label>
           <input type="number" step="0.01" name="donation_amount_declared" class="form-control" required aria-required="true">
         </div>
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $("#donor").val(data.donor).trigger("change");
             $("#display_name").val(data.display_name);
             $("input[name='reference_name']").val(data.reference_name);
-$("select[name='donation_category']").val(data.donation_category);
+            $("select[name='donation_category']").val(data.donation_category);
             $("select[name='donation_sub_category']").val(data.donation_sub_category);
             $("input[name='donation_amount_declared']").val(data.declared_amount);
             $("input[name='donation_amount_paid']").val(data.paid_amount);
@@ -286,8 +286,8 @@ $(document).ready(function () {
     const lockCheckbox = $("#lock_display_name");
     const paymentSelect = $("#payment_method");
     const paymentFields = $(".payment-field");
-const transactionInput = $("input[name='transaction_id']");
-const checkInput = $("input[name='check_no']");
+    const transactionInput = $("input[name='transaction_id']");
+    const checkInput = $("input[name='check_no']");
 
     let remainingAmount = 0;
     let lastCategory = "";
@@ -301,8 +301,8 @@ const checkInput = $("input[name='check_no']");
                 remainingAmount = parseFloat(data.remaining) || 0;
                 lastCategory = data.last_category || "";
                 lastSubCategory = data.last_sub_category || "";
-    transactionInput.val(data.transaction_id || "");
-    checkInput.val(data.check_no || "");
+                transactionInput.val(data.transaction_id || "");
+                checkInput.val(data.check_no || "");
                 $("#total-declared").text(data.total_declared || 0);
                 $("#total-paid").text(data.total_paid || 0);
                 $("#remaining-amount").text(remainingAmount);
