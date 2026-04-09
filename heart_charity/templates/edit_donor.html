@@ -1,297 +1,831 @@
 {% extends "base.html" %}
-{% block title %}Edit Donor / Volunteer{% endblock %}
+{% block title %}Add Donor / Volunteer{% endblock %}
 {% block content %}
 <style>
-.card { background: #f2fff4 !important; border-radius: 12px; }
-.form-control, .form-select { border-radius: 8px; }
-h3.fw-bold, h5.section-title { color: #0d7a34; }
-hr { border-top: 2px solid #bae6c6; }
+.btn-submit {
+    background: linear-gradient(90deg, #1a7a42, #2aa85b);
+    color: white;
+    box-shadow: 0 4px 12px rgba(32, 129, 70, 0.25);
+}
+.row {
+    margin-left: -12px;
+    margin-right: -12px;
+}
+[class*="col-"] {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+@media (min-width: 768px) {
+    .col-md-3 {  float: left; }
+    .col-md-4 {  float: left; }
+    .col-md-6 { width: 50%; float: left; }
+}
+.row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.form-control,
+.form-select {
+    width: 100%;
+}
+#department[style*="display: none"],
+#business[style*="display: none"],
+#designation[style*="display: none"],
+#occupation[style*="display: none"],
+#address[style*="display: none"],
+#idproof[style*="display: none"],
+#donor_box_wrapper[style*="display: none"],
+#org[style*="display: none"] {
+    display: none !important;
+}
 </style>
-<div class="container mt-4 mb-5">
-<div class="card shadow-lg">
-<div class="text-center mb-4 pt-3">
-    <h3 class="fw-bold">Edit Donor / Volunteer</h3>
-    <p class="text-muted">Update donor / volunteer details</p>
+<style>
+    .card { background: #f2fff4 !important; border-radius: 12px; }
+    .form-control, .form-select { border-radius: 8px; }
+    h3.fw-bold { color: #0d7a34; }
+    h5.section-title { color: #0d7a34; font-weight: 600; }
+    hr { border-top: 2px solid #bae6c6; }
+</style>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show text-center">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
 </div>
-<div class="card-body px-4">
-<form method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-<!-- ================= PERSON TYPE ================= -->
-<h5 class="section-title">Person Type</h5>
-<hr>
-<div class="row g-3 mb-3" id="persontype">
-   <div class="col-md-6">
-                        <label class="form-label">Person Type</label>
-                        <select name="person_type" id="person_type" class="form-select">
+{% endif %}
+<div class="container mt-4 mb-5">
+    <div class="card shadow-lg">
+        <div class="text-center mb-4 pt-3">
+            <h3 class="fw-bold">Edit Donor / Volunteer</h3>
+            <!-- <p class="text-muted">Fill out details to create a donor/volunteer record</p> -->
+        </div>
+        <div class="card-body px-4">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h5 class="section-title">Person Type</h5>
+                <hr>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Person Type <span style="color: #d9534f;">*</span></label>
+                        <select name="person_type" id="person_type" class="form-select" required aria-required="true">
                             <option value="">Select</option>
                             {% for option in person_type_options %}
-                                <option value="{{ option.id }}">{{ option.lookup_name }}</option>
+                                <option value="{{ option.id }}" {% if donor.person_type_id == option.id %}selected{% endif %}>
+                                    {{ option.lookup_name }}
+                                </option>                            
                             {% endfor %}
                         </select>
                     </div>
-<div class="col-md-6">
-<label class="form-label">Referred By</label>
-<select name="referred_by" class="form-select">
-<option value="">-- Select Person --</option>
-{% for d in donors %}
-<option value="{{ d.id }}"{% if donor.referred_by_id == d.id %}selected{% endif %}>{{ d.first_name }} {{ d.last_name }}</option>
-{% endfor %}
-</select>
-</div>
-</div>
-<!-- ================= PERSONAL DETAILS ================= -->
+                    <div class="col-md-3" id="donor_box_wrapper">
+                        <label class="form-label">Donor Box</label>
+                        <select name="donor_box">
+                            {% for box in donation_boxes %}
+                                <option value="{{ box.id }}"
+                                {% if donor.donor_box_id == box.id %}selected{% endif %}>
+                                    {{ box.donation_id }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3" id="old_box_id_wrapper" style="margin-top: 1.7%;">
+                        <label class="form-label">Old Box Id</label>
+                        <input type="text" value="{{ donor.old_box_id }}" name="old_box_id" class="form-control" placeholder="Enter old box id">
+                    </div>
+                    <div class="col-md-3" style="margin-top: 1.7%;">
+                        <label class="form-label">Referred By</label>
+                        <select name="referred_by" id="referred_by" class="form-select select2-search">
+                            <option value="">-- Select Person --</option>
+                            {% for person in donors %}
+                            <option value="{{ person.id }}" {% if donor.referred_by_id == person.id %}selected{% endif %}>
+                                {{ person.first_name }} {{ person.last_name }}
+                            </option>                            
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 <h5 class="section-title">Personal Details</h5>
 <hr>
-<div class="row g-3 mb-4">
-<div class="col-md-3">
-<label>Salutation</label>
-<input name="salutation" class="form-control" value="{{ donor.salutation }}">
-</div>
-<div class="col-md-3">
-<label>First Name</label>
-<input name="first_name" class="form-control" value="{{ donor.first_name }}">
-</div>
-<div class="col-md-3">
-<label>Middle Name</label>
-<input name="middle_name" class="form-control" value="{{ donor.middle_name }}">
-</div>
-<div class="col-md-3">
-<label>Last Name</label>
-<input name="last_name" class="form-control" value="{{ donor.last_name }}">
-</div>
-<div class="col-md-3">
-<label>Gender</label>
-<select name="gender" class="form-select">
-<option value="">Select</option>
-<option {% if donor.gender == "Male" %}selected{% endif %}>Male</option>
-<option {% if donor.gender == "Female" %}selected{% endif %}>Female</option>
-<option {% if donor.gender == "Other" %}selected{% endif %}>Other</option>
-</select>
-</div>
-<div class="col-md-3">
-<label>Date of Birth</label>
-<input type="date" name="date_of_birth" class="form-control"value="{{ donor.date_of_birth|date:'Y-m-d' }}">
-</div>
-<div class="col-md-3">
-<label>Age</label>
-<input name="age" class="form-control" value="{{ donor.age }}">
-</div>
-<div class="col-md-3">
-<label>Blood Group</label>
-<select name="blood_group" class="form-select">
-<option value="">Select</option>
-{% for bg,val in blood_groups %}
-<option value="{{ bg }}"{% if donor.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
-{% endfor %}
-</select>
-</div>
-<div class="col-md-3">
-<label>Contact Number</label>
-<input name="contact_number" class="form-control" value="{{ donor.contact_number }}">
-</div>
-<div class="col-md-3">
-<label>WhatsApp Number</label>
-<input name="whatsapp_number" class="form-control" value="{{ donor.whatsapp_number }}">
-</div>
-<div class="col-md-3">
-<label>Email</label>
-<input name="email" class="form-control" value="{{ donor.email }}">
-</div>
-<div class="col-md-3" id="donor_box_row2">
-    <label class="form-label">Donor Box</label>
-    <select name="donor_box"class="form-select">
-        <option value="">Select Donor Box</option>
-        {% for box in donation_boxes %}
-            <option value="{{ box.id }}">{{ box.donation_id }}</option>
-        {% endfor %}
-    </select>
-</div>
-<div class="col-md-3">
-<label>Date of Anniversary</label>
-<input type="date" name="doa" class="form-control"value="{{ donor.doa|date:'Y-m-d' }}">
-</div>
-<div class="col-md-3">
-<label>Years to Marriage</label>
-<input name="years_to_marriage" class="form-control"value="{{ donor.years_to_marriage }}">
-</div>
-</div>
-<h5 class="section-title">Address Details</h5>
-<hr>
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">House Number</label>
-        <input type="text" name="house_number" class="form-control"value="{{ donor.house_number }}">
+<div class="row g-3 mb-4 align-items-end" >
+    <div class="col-md-1" style="margin: -1.0%; margin-left: 0">
+        <label class="form-label">Sal.</label>
+        <select name="salutation" class="form-select">
+            <!-- <option value="">—</option> -->
+            <option value="Mr." {% if donor.salutation == "Mr." %}selected{% endif %}>Mr.</option>
+            <option value="Mrs." {% if donor.salutation == "Mrs." %}selected{% endif %}>Mrs.</option>
+            <option value="Ms." {% if donor.salutation == "Ms." %}selected{% endif %}>Ms.</option>
+            <option value="Dr." {% if donor.salutation == "Dr." %}selected{% endif %}>Dr.</option>
+            <option value="Prof." {% if donor.salutation == "Prof." %}selected{% endif %}>Prof.</option>
+            <option value="CEO" {% if donor.salutation == "CEO" %}selected{% endif %}>CEO</option>
+            <option value="Director" {% if donor.salutation == "Director" %}selected{% endif %}>Director</option>
+        </select>
     </div>
     <div class="col-md-3">
-        <label class="form-label">Building Name</label>
-        <input type="text" name="building_name" class="form-control"value="{{ donor.building_name }}">
+        <label class="form-label">First Name <span class="text-danger">*</span></label>
+        <input type="text" name="first_name" value="{{ donor.first_name }}" class="form-control" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
     </div>
-
     <div class="col-md-3">
-        <label class="form-label">Landmark</label>
-        <input type="text" name="landmark" class="form-control"value="{{ donor.landmark }}">
+        <label class="form-label">Middle Name</label>
+        <input type="text" name="middle_name" value="{{ donor.middle_name }}" class="form-control" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')">
     </div>
-
     <div class="col-md-3">
-        <label class="form-label">Area</label>
-        <input type="text" name="area" class="form-control"value="{{ donor.area }}">
+        <label class="form-label">Last Name <span class="text-danger">*</span></label>
+        <input type="text" name="last_name" value="{{ donor.last_name }}" class="form-control" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
     </div>
-
-    <div class="col-md-3">
-        <label class="form-label">City</label>
-        <input type="text" name="city" class="form-control"value="{{ donor.city }}">
-    </div>
-
-    <div class="col-md-3">
-        <label class="form-label">State</label>
-        <input type="text" name="state" class="form-control"value="{{ donor.state }}">
-    </div>
-
-    <div class="col-md-3">
-        <label class="form-label">Country</label>
-        <input type="text" name="country" class="form-control"value="{{ donor.country }}">
-    </div>
-
-    <div class="col-md-3">
-        <label class="form-label">Postal Code</label>
-        <input type="text" name="postal_code" class="form-control"value="{{ donor.postal_code }}">
-    </div>
-</div>
-<h5 class="section-title">Occupation & Business</h5>
-<hr>
-<div class="row g-3" id="business-sal">
-<div class="col-md-4 hidden-by-default business-field org-field">
-    <label class="form-label">Business/Org Salutation</label>
-    <select name="business_salutation" class="form-select">
-        <option value="">-- Select Salutation --</option>
-        <option value="Mr.">Mr.</option>
-        <option value="Mrs.">Mrs.</option>
-        <option value="Ms.">Ms.</option>
-        <option value="Dr.">Dr.</option>
-        <option value="Prof.">Prof.</option>
-        <option value="CEO">CEO</option>
-        <option value="Director">Director</option>
-    </select>
-</div>
+    <div class="col-md-2"></div>
 </div>
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">Occupation Type</label>
-        <select name="occupation_type" class="form-select">
+    <div class="col-md-4">
+        <label class="form-label">Gender</label>
+        <select name="gender" class="form-select">
             <option value="">Select</option>
-            {% for o in occupation_types %}
-                <option value="{{ o.id }}"
-                {% if donor.occupation_type_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
+            <option value="Male" {% if donor.gender == "Male" %}selected{% endif %}>Male</option>
+            <option value="Female" {% if donor.gender == "Female" %}selected{% endif %}>Female</option>        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Blood Group</label>
+        <select name="blood_group" class="form-select text-dark">
+        <option value="">Select</option>
+            {% for bg, val in blood_groups %}
+                <option value="{{ bg }}" {% if donor.blood_group == bg %}selected{% endif %}>
+                     {{ bg }}
+                </option>           
             {% endfor %}
         </select>
     </div>
+</div>
+<div class="row g-3 mb-4">
+<div class="col-md-3">
+  <label class="form-label">Contact Number <span style="color:#d9534f">*</span></label>  
+      <div class="input-group">
+        <span>  
+            <select style="margin-top: 0%;" class="input-group-text"  name="contact_country_code" required>
+            <option value="+91" selected>+91</option>
+            <option value="+1">+1</option>
+            <option value="+44">+44</option>
+            <option value="+971">+971</option>
+            <option value="+61">+61</option>
+            <option value="+93">+93</option>
+            <option value="+355">+355</option>
+            <option value="+213">+213</option>
+            <option value="+376">+376</option>
+            <option value="+244">+244</option>
+            <option value="+54">+54</option>
+            <option value="+374">+374</option>
+            <option value="+43">+43</option>
+            <option value="+994">+994</option>
+            <option value="+973">+973</option>
+            <option value="+880">+880</option>
+            <option value="+375">+375</option>
+            <option value="+32">+32</option>
+            <option value="+501">+501</option>
+            <option value="+229">+229</option>
+            <option value="+975">+975</option>
+            <option value="+591">+591</option>
+            <option value="+387">+387</option>
+            <option value="+267">+267</option>
+            <option value="+55">+55</option>
+            <option value="+855">+855</option>
+            <option value="+237">+237</option>
+            <option value="+56">+56</option>
+            <option value="+86">+86</option>
+            <option value="+57">+57</option>
+            <option value="+506">+506</option>
+            <option value="+385">+385</option>
+            <option value="+53">+53</option>
+            <option value="+357">+357</option>
+            <option value="+420">+420</option>
+            <option value="+45">+45</option>
+            <option value="+253">+253</option>
+            <option value="+213">+213</option>
+            <option value="+20">+20</option>
+            <option value="+503">+503</option>
+            <option value="+372">+372</option>
+            <option value="+251">+251</option>
+            <option value="+358">+358</option>
+            <option value="+33">+33</option>
+            <option value="+995">+995</option>
+            <option value="+49">+49</option>
+            <option value="+233">+233</option>
+            <option value="+30">+30</option>
+            <option value="+852">+852</option>
+            <option value="+36">+36</option>
+            <option value="+354">+354</option>
+            <option value="+62">+62</option>
+            <option value="+98">+98</option>
+            <option value="+964">+964</option>
+            <option value="+353">+353</option>
+            <option value="+972">+972</option>
+            <option value="+39">+39</option>
+            <option value="+81">+81</option>
+            <option value="+962">+962</option>
+            <option value="+7">+7</option>
+            <option value="+254">+254</option>
+            <option value="+965">+965</option>
+            <option value="+856">+856</option>
+            <option value="+371">+371</option>
+            <option value="+961">+961</option>
+            <option value="+370">+370</option>
+            <option value="+352">+352</option>
+            <option value="+60">+60</option>
+            <option value="+960">+960</option>
+            <option value="+356">+356</option>
+            <option value="+52">+52</option>
+            <option value="+976">+976</option>
+            <option value="+977">+977</option>
+            <option value="+31">+31</option>
+            <option value="+64">+64</option>
+            <option value="+234">+234</option>
+            <option value="+47">+47</option>
+            <option value="+968">+968</option>
+            <option value="+92">+92</option>
+            <option value="+63">+63</option>
+            <option value="+48">+48</option>
+            <option value="+351">+351</option>
+            <option value="+974">+974</option>
+            <option value="+40">+40</option>
+            <option value="+7">+7</option>
+            <option value="+966">+966</option>
+            <option value="+65">+65</option>
+            <option value="+27">+27</option>
+            <option value="+34">+34</option>
+            <option value="+94">+94</option>
+            <option value="+46">+46</option>
+            <option value="+41">+41</option>
+            <option value="+886">+886</option>
+            <option value="+66">+66</option>
+            <option value="+90">+90</option>
+            <option value="+380">+380</option>
+            <option value="+58">+58</option>
+            <option value="+84">+84</option>
+            <option value="+967">+967</option>
+            <option value="+263">+263</option>
+        </select></span>
+        <input type="text" name="contact_number" value="{{ donor.contact_number|slice:'3:' }}" class="form-control" placeholder="Enter phone number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+    </div>
+</div>
+<div class="col-md-3">
+    <label class="form-label">WhatsApp Number</label>
+    <div class="input-group">
+        <span >  
+            <select style="margin-top: 0%;" class="input-group-text" name="whatsapp_country_code" required>
+            <option value="+91" selected>+91</option>
+            <option value="+1">+1</option>
+            <option value="+44">+44</option>
+            <option value="+971">+971</option>
+            <option value="+61">+61</option>
+            <option value="+93">+93</option>
+            <option value="+355">+355</option>
+            <option value="+213">+213</option>
+            <option value="+376">+376</option>
+            <option value="+244">+244</option>
+            <option value="+54">+54</option>
+            <option value="+374">+374</option>
+            <option value="+43">+43</option>
+            <option value="+994">+994</option>
+            <option value="+973">+973</option>
+            <option value="+880">+880</option>
+            <option value="+375">+375</option>
+            <option value="+32">+32</option>
+            <option value="+501">+501</option>
+            <option value="+229">+229</option>
+            <option value="+975">+975</option>
+            <option value="+591">+591</option>
+            <option value="+387">+387</option>
+            <option value="+267">+267</option>
+            <option value="+55">+55</option>
+            <option value="+855">+855</option>
+            <option value="+237">+237</option>
+            <option value="+56">+56</option>
+            <option value="+86">+86</option>
+            <option value="+57">+57</option>
+            <option value="+506">+506</option>
+            <option value="+385">+385</option>
+            <option value="+53">+53</option>
+            <option value="+357">+357</option>
+            <option value="+420">+420</option>
+            <option value="+45">+45</option>
+            <option value="+253">+253</option>
+            <option value="+213">+213</option>
+            <option value="+20">+20</option>
+            <option value="+503">+503</option>
+            <option value="+372">+372</option>
+            <option value="+251">+251</option>
+            <option value="+358">+358</option>
+            <option value="+33">+33</option>
+            <option value="+995">+995</option>
+            <option value="+49">+49</option>
+            <option value="+233">+233</option>
+            <option value="+30">+30</option>
+            <option value="+852">+852</option>
+            <option value="+36">+36</option>
+            <option value="+354">+354</option>
+            <option value="+62">+62</option>
+            <option value="+98">+98</option>
+            <option value="+964">+964</option>
+            <option value="+353">+353</option>
+            <option value="+972">+972</option>
+            <option value="+39">+39</option>
+            <option value="+81">+81</option>
+            <option value="+962">+962</option>
+            <option value="+7">+7</option>
+            <option value="+254">+254</option>
+            <option value="+965">+965</option>
+            <option value="+856">+856</option>
+            <option value="+371">+371</option>
+            <option value="+961">+961</option>
+            <option value="+370">+370</option>
+            <option value="+352">+352</option>
+            <option value="+60">+60</option>
+            <option value="+960">+960</option>
+            <option value="+356">+356</option>
+            <option value="+52">+52</option>
+            <option value="+976">+976</option>
+            <option value="+977">+977</option>
+            <option value="+31">+31</option>
+            <option value="+64">+64</option>
+            <option value="+234">+234</option>
+            <option value="+47">+47</option>
+            <option value="+968">+968</option>
+            <option value="+92">+92</option>
+            <option value="+63">+63</option>
+            <option value="+48">+48</option>
+            <option value="+351">+351</option>
+            <option value="+974">+974</option>
+            <option value="+40">+40</option>
+            <option value="+7">+7</option>
+            <option value="+966">+966</option>
+            <option value="+65">+65</option>
+            <option value="+27">+27</option>
+            <option value="+34">+34</option>
+            <option value="+94">+94</option>
+            <option value="+46">+46</option>
+            <option value="+41">+41</option>
+            <option value="+886">+886</option>
+            <option value="+66">+66</option>
+            <option value="+90">+90</option>
+            <option value="+380">+380</option>
+            <option value="+58">+58</option>
+            <option value="+84">+84</option>
+            <option value="+967">+967</option>
+            <option value="+263">+263</option>
+        </select></span>
+        <input type="text" name="whatsapp_number" value="{{ donor.whatsapp_number|slice:'3:' }}" class="form-control" maxlength="10" pattern="[0-9]{10}" placeholder="Enter whatsapp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div>
+</div>
+<div class="form-check mt-1">
+  <input class="form-check-input" type="checkbox" id="different_whatsapp">
+  <label class="form-check-label" for="different_whatsapp">Use different WhatsApp number</label>
+</div>
+    <div class="col-md-4">
+        <label class="form-label">Email </label>
+        <input type="email"  name="email" value="{{ donor.email }}" class="form-control">
+    </div>
+</div>
+<div class="row g-3 mb-4" id="doa">
+    <div class="col-md-3">
+        <label class="form-label">Date of Birth <span style="color: #d9534f;">*</span></label>
+        <input type="date" name="date_of_birth" value="{{ donor.date_of_birth|date:'Y-m-d' }}" id="date_of_birth" class="form-control" required aria-required="true">
+    </div>
 
     <div class="col-md-3">
+        <label class="form-label">Age</label>
+        <input type="number"  name="age" value="{{ donor.age }}" id="age" class="form-control" readonly>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Date of Anniversary</label>
+        <input type="date" name="doa" value="{{ donor.doa }}" id="doa_input" class="form-control">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Years to Marriage</label>
+        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
+    </div>
+</div>
+<hr>
+<!-- ===================================== OCCUPATION ===================================== -->
+<div class="row g-3 mb-4" id="occupation">
+<h5 class="section-title">Occupation Details</h5>
+<hr>
+    <div class="col-md-2">
+        <label class="form-label">Occupation/Org Salutation</label>
+    
+    <select name="occupation_salutation" class="form-select">
+    <option value="">-- Select --</option>
+    <option value="Mr." {% if donor.occupation_salutation == "M/S" %}selected{% endif %}>M/S</option>
+    <option value="Mrs." {% if donor.occupation_salutation == "Messrs." %}selected{% endif %}>Messrs.</option>
+    <option value="Ms." {% if donor.occupation_salutation == "The." %}selected{% endif %}>The.</option>
+    </select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Occupation Type</label>   
+    <select name="occupation_type" class="form-select">
+    <option value="">Select</option>
+    {% for item in occupation_types %}
+        <option value="{{ item.id }}"
+        {% if donor.occupation_type_id == item.id %}selected{% endif %}>
+            {{ item.lookup_name }}
+        </option>
+    {% endfor %}
+</select>
+</div>
+
+
+    <div class="col-md-4">
         <label class="form-label">Occupation Nature</label>
         <select name="occupation_nature" class="form-select">
             <option value="">Select</option>
-            {% for o in occupation_natures %}
-                <option value="{{ o.id }}"
-                {% if donor.occupation_nature_id == o.id %}selected{% endif %}> {{ o.lookup_name }}</option>
+            {% for item in occupation_natures %}
+                <option value="{{ item.id }}"
+                    {% if donor.occupation_nature_id == item.id %}selected{% endif %}>
+                    {{ item.lookup_name }}
+                </option>
             {% endfor %}
         </select>
     </div>
-
-    <div class="col-md-3">
+    <div class="col-md-4" style="margin-bottom: 1.0%;">
+      <label class="form-label">Occupation Name</label>
+      <input type="text" name="occupation_name" value="{{ donor.occupation_name }}" class="form-control" placeholder="Enter occupation name">
+    </div>
+</div>
+<div class="row g-3 mb-4" id="occupation">
+    <div class="col-md-4" style="margin-bottom: 1.0%;">
+      <label class="form-label">GST Number</label>
+      <input type="text" name="gst_number" value="{{ donor.gst_number }}" class="form-control" maxlength="15" placeholder="Enter GST Number (e.g. 22AAAAA0000A1Z5)">
+    </div>
+</div>
+<!-- ===================================== DEPARTMENT ===================================== -->
+<div class="row g-3 mb-4" id="department">
+<h5 class="section-title">Department Details</h5>
+<hr>
+    <div class="col-md-4">
         <label class="form-label">Department</label>
         <select name="department" class="form-select">
             <option value="">Select</option>
-            {% for o in departments %}
-                <option value="{{ o.id }}"
-                {% if donor.department_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
+            {% for item in departments %}
+                <option value="{{ item.id }}"
+                    {% if donor.department_id == item.id %}selected{% endif %}>
+                    {{ item.lookup_name }}
+                </option>
             {% endfor %}
         </select>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <label class="form-label">Position</label>
         <select name="position" class="form-select">
             <option value="">Select</option>
-            {% for o in positions %}
-                <option value="{{ o.id }}"
-                {% if donor.position_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
+            {% for item in positions %}
+                <option value="{{ item.id }}"
+                    {% if donor.position_id == item.id %}selected{% endif %}>
+                    {{ item.lookup_name }}
+                </option>
             {% endfor %}
         </select>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Designation</label>
-        <select name="designation" class="form-select">
-            <option value="">Select</option>
-            {% for o in designations %}
-                <option value="{{ o.id }}"
-                {% if donor.designation_id == o.id %}selected{% endif %}>{{ o.lookup_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Business Type</label>
-        <select name="business_type" class="form-select">
-            <option value="">Select</option>
-            {% for o in business_types %}
-                <option value="{{ o.id }}"
-                {% if donor.business_type_id == o.id %}selected{% endif %}> {{ o.lookup_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Business Name</label>
-        <input type="text" name="business_name" class="form-control"value="{{ donor.business_name }}">
-    </div>
-
-    <div class="col-md-3">
-        <label class="form-label">Organization Name</label>
-        <input type="text" name="org_name" class="form-control"value="{{ donor.org_name }}">
     </div>
 </div>
-<h5 class="section-title">ID & PAN Details</h5>
+<!-- ===================================== BUSINESS ===================================== -->
+<!-- <div id="business" style="display: none;">
+    <h5 class="section-title">Business Details</h5>
+    <hr>
+    <div class="row g-3 mb-4 align-items-end">        
+        <div class="col-md-2">
+            <label class="form-label">Business/Org Salutation</label>
+            <select name="business_salutation" class="form-select">
+                <option value="">-- Select --</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Dr.">Dr.</option>
+                <option value="Prof.">Prof.</option>
+                <option value="CEO">CEO</option>
+                <option value="Director">Director</option>
+            </select>
+        </div>
+        <div class="col-md-3" style="margin-bottom: 1.0%;">
+            <label class="form-label">Business Name</label>
+            <input type="text" name="business_name" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Business Type</label>
+            <select name="business_type" class="form-select">
+                <option value="">Select</option>
+                {% for item in business_types %}
+                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4" style="margin-bottom: 1.0%;">
+            <label class="form-label">Business Nature</label>
+            <input type="text" name="business_nature" class="form-control" placeholder="Enter business nature">
+        </div>
+    </div>
+</div> -->
+<!-- ===================================== ORGANIZATION ===================================== -->
 <hr>
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">ID Type</label>
-        <select name="id_type" class="form-select">
+<!-- <div class="row g-3 mb-4" id="org">
+    <div class="col-md-4">
+        <label class="form-label">Organization Name</label>
+        <input type="text" name="org_name" class="form-control">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Organization Type</label>
+        <select name="org_type" class="form-select">
             <option value="">Select</option>
-            {% for idt in id_types %}
-                <option value="{{ idt.id }}"
-                {% if donor.id_type_id == idt.id %}selected{% endif %}>{{ idt.lookup_name }}</option>
+            {% for item in org_types %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Nature of Service</label>
+        <input type="text" name="nature_of_service" class="form-control">
+    </div>
+</div> -->
+<div class="row g-3 mb-4" id="designation">
+    <div class="col-md-4">
+        <label class="form-label">Designation</label>
+        <select name="designation"  class="form-select">
+            <option value="">Select</option>
+            {% for item in designations %}
+                <option value="{{ item.id }}"
+                    {% if donor.designation_id == item.id %}selected{% endif %}>
+                    {{ item.lookup_name }}
+                </option>
             {% endfor %}
         </select>
     </div>
 </div>
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">ID Number</label>
-        <input type="text" name="id_number" class="form-control"value="{{ donor.id_number }}">
+<hr>
+
+<div id="businessAddressAlert" style="display:none; color:#d82424; background:#f2d2d2; padding:8px; margin-bottom:8px; border-radius:4px;">
+    You should enter business address
+</div>
+
+<h5 class="section-title">Address Details</h5>
+<hr>
+<div class="row g-3 mb-4" id="address">
+    <div class="col-md-4">
+        <label class="form-label">House Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="house_number" value="{{ donor.house_number }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Building Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="building_name" value="{{ donor.building_name }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Street Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="street_name" value="{{ donor.street_name }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Landmark <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="landmark" value="{{ donor.landmark }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Area <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="area" value="{{ donor.area }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">City <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="city" value="{{ donor.city }}" class="form-control" required aria-required="true">
     </div>
 
-    <div class="col-md-3">
+<div class="col-md-4">
+<label class="form-label">Country</label>
+<select id="country" name="country" class="form-select">
+<option value="">Select</option>
+<option value="India" {% if donor.country == "India" %}selected{% endif %}>India</option>
+<option value="Afghanistan" {% if donor.country == "Afghanistan" %}selected{% endif %}>Afghanistan</option>
+<option value="Albania" {% if donor.country == "Albania" %}selected{% endif %}>Albania</option>
+<option value="Algeria" {% if donor.country == "Algeria" %}selected{% endif %}>Algeria</option>
+<option value="Andorra" {% if donor.country == "Andorra" %}selected{% endif %}>Andorra</option>
+<option value="Angola" {% if donor.country == "Angola" %}selected{% endif %}>Angola</option>
+<option value="Argentina" {% if donor.country == "Argentina" %}selected{% endif %}>Argentina</option>
+<option value="Armenia" {% if donor.country == "Armenia" %}selected{% endif %}>Armenia</option>
+<option value="Australia" {% if donor.country == "Australia" %}selected{% endif %}>Australia</option>
+<option value="Austria" {% if donor.country == "Austria" %}selected{% endif %}>Austria</option>
+<option value="Azerbaijan" {% if donor.country == "Azerbaijan" %}selected{% endif %}>Azerbaijan</option>
+<option value="Bahamas" {% if donor.country == "Bahamas" %}selected{% endif %}>Bahamas</option>
+<option value="Bahrain" {% if donor.country == "Bahrain" %}selected{% endif %}>Bahrain</option>
+<option value="Bangladesh" {% if donor.country == "Bangladesh" %}selected{% endif %}>Bangladesh</option>
+<option value="Belgium" {% if donor.country == "Belgium" %}selected{% endif %}>Belgium</option>
+<option value="Belize" {% if donor.country == "Belize" %}selected{% endif %}>Belize</option>
+<option value="Bhutan" {% if donor.country == "Bhutan" %}selected{% endif %}>Bhutan</option>
+<option value="Bolivia" {% if donor.country == "Bolivia" %}selected{% endif %}>Bolivia</option>
+<option value="Brazil" {% if donor.country == "Brazil" %}selected{% endif %}>Brazil</option>
+<option value="Cambodia" {% if donor.country == "Cambodia" %}selected{% endif %}>Cambodia</option>
+<option value="Canada" {% if donor.country == "Canada" %}selected{% endif %}>Canada</option>
+<option value="China" {% if donor.country == "China" %}selected{% endif %}>China</option>
+<option value="Colombia" {% if donor.country == "Colombia" %}selected{% endif %}>Colombia</option>
+<option value="Croatia" {% if donor.country == "Croatia" %}selected{% endif %}>Croatia</option>
+<option value="Denmark" {% if donor.country == "Denmark" %}selected{% endif %}>Denmark</option>
+<option value="Egypt" {% if donor.country == "Egypt" %}selected{% endif %}>Egypt</option>
+<option value="France" {% if donor.country == "France" %}selected{% endif %}>France</option>
+<option value="Germany" {% if donor.country == "Germany" %}selected{% endif %}>Germany</option>
+<option value="Greece" {% if donor.country == "Greece" %}selected{% endif %}>Greece</option>
+<option value="Hong Kong" {% if donor.country == "Hong Kong" %}selected{% endif %}>Hong Kong</option>
+<option value="Hungary" {% if donor.country == "Hungary" %}selected{% endif %}>Hungary</option>
+<option value="Indonesia" {% if donor.country == "Indonesia" %}selected{% endif %}>Indonesia</option>
+<option value="Iran" {% if donor.country == "Iran" %}selected{% endif %}>Iran</option>
+<option value="Ireland" {% if donor.country == "Ireland" %}selected{% endif %}>Ireland</option>
+<option value="Israel" {% if donor.country == "Israel" %}selected{% endif %}>Israel</option>
+<option value="Italy" {% if donor.country == "Italy" %}selected{% endif %}>Italy</option>
+<option value="Japan" {% if donor.country == "Japan" %}selected{% endif %}>Japan</option>
+<option value="Kenya" {% if donor.country == "Kenya" %}selected{% endif %}>Kenya</option>
+<option value="Kuwait" {% if donor.country == "Kuwait" %}selected{% endif %}>Kuwait</option>
+<option value="Malaysia" {% if donor.country == "Malaysia" %}selected{% endif %}>Malaysia</option>
+<option value="Maldives" {% if donor.country == "Maldives" %}selected{% endif %}>Maldives</option>
+<option value="Mexico" {% if donor.country == "Mexico" %}selected{% endif %}>Mexico</option>
+<option value="Nepal" {% if donor.country == "Nepal" %}selected{% endif %}>Nepal</option>
+<option value="Netherlands" {% if donor.country == "Netherlands" %}selected{% endif %}>Netherlands</option>
+<option value="New Zealand" {% if donor.country == "New Zealand" %}selected{% endif %}>New Zealand</option>
+<option value="Nigeria" {% if donor.country == "Nigeria" %}selected{% endif %}>Nigeria</option>
+<option value="Pakistan" {% if donor.country == "Pakistan" %}selected{% endif %}>Pakistan</option>
+<option value="Philippines" {% if donor.country == "Philippines" %}selected{% endif %}>Philippines</option>
+<option value="Poland" {% if donor.country == "Poland" %}selected{% endif %}>Poland</option>
+<option value="Portugal" {% if donor.country == "Portugal" %}selected{% endif %}>Portugal</option>
+<option value="Qatar" {% if donor.country == "Qatar" %}selected{% endif %}>Qatar</option>
+<option value="Romania" {% if donor.country == "Romania" %}selected{% endif %}>Romania</option>
+<option value="Russia" {% if donor.country == "Russia" %}selected{% endif %}>Russia</option>
+<option value="Saudi Arabia" {% if donor.country == "Saudi Arabia" %}selected{% endif %}>Saudi Arabia</option>
+<option value="Singapore" {% if donor.country == "Singapore" %}selected{% endif %}>Singapore</option>
+<option value="South Africa" {% if donor.country == "South Africa" %}selected{% endif %}>South Africa</option>
+<option value="Spain" {% if donor.country == "Spain" %}selected{% endif %}>Spain</option>
+<option value="Sri Lanka" {% if donor.country == "Sri Lanka" %}selected{% endif %}>Sri Lanka</option>
+<option value="Sweden" {% if donor.country == "Sweden" %}selected{% endif %}>Sweden</option>
+<option value="Switzerland" {% if donor.country == "Switzerland" %}selected{% endif %}>Switzerland</option>
+<option value="Thailand" {% if donor.country == "Thailand" %}selected{% endif %}>Thailand</option>
+<option value="Turkey" {% if donor.country == "Turkey" %}selected{% endif %}>Turkey</option>
+<option value="United Arab Emirates" {% if donor.country == "United Arab Emirates" %}selected{% endif %}>United Arab Emirates</option>
+<option value="United Kingdom" {% if donor.country == "United Kingdom" %}selected{% endif %}>United Kingdom</option>
+<option value="United States" {% if donor.country == "United States" %}selected{% endif %}>United States</option>
+<option value="Vietnam" {% if donor.country == "Vietnam" %}selected{% endif %}>Vietnam</option>
+<option value="Zimbabwe" {% if donor.country == "Zimbabwe" %}selected{% endif %}>Zimbabwe</option>
+</select>
+</div>
+<div class="col-md-4" id="stateDropdownBox">
+<label class="form-label">State</label>
+<select id="state" name="state" class="form-select">
+</select>
+</div>
+<div class="col-md-4" id="stateTextboxBox" style="display: none;">
+    <label class="form-label">State</label>
+    <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
+</div>
+<div class="col-md-4">
+    <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
+    <input type="text" name="postal_code" class="form-control" value="{{ donor.postal_code }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
+</div>
+
+    <!-- <div class="col-md-4">
+        <label class="form-label">Native Postal Code</label>
+        <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div> -->
+</div>
+<div class="row g-3 mb-3">
+       <div class="col-md-4">
+         <label class="form-label">Native Place</label>
+         <input type="text" name="native_place" value="{{ donor.native_place }}" class="form-control">
+       </div>
+</div>
+<hr>
+               
+<!-- ===================================== ID & PAN ===================================== -->
+<h5 class="section-title">ID & PAN Details</h5>
+<hr>    
+<div class="row g-3 mb-3" id="idproof">
+    <div class="col-md-4">
+        <label class="form-label">ID Type <span style="color: #d9534f;">*</span></label>
+        <select name="id_type" class="form-select" required>
+            <option value="">Select</option>
+            {% for item in id_types %}
+                <option value="{{ item.id }}"
+                    {% if item.id|stringformat:"s" == donor.id_type_id|stringformat:"s" %}
+                        selected
+                    {% endif %}>
+                    {{ item.lookup_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <label class="form-label">ID Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="id_number" value="{{ donor.id_number }}" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
         <label class="form-label">Upload ID Proof</label>
+        {% if donor.id_proof_image %}
+            <div style="margin-bottom:10px;">
+                <img src="{{ donor.id_proof_image.url }}"  alt="ID Proof" style="width:120px; height:auto; border:1px solid #ccc; padding:5px;">
+            </div>
+        {% endif %}
         <input type="file" name="id_proof_image" class="form-control">
     </div>
-
-    <div class="col-md-3">
-        <label class="form-label">PAN Number</label>
-        <input type="text" name="pan_number" class="form-control"value="{{ donor.pan_number }}">
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label">PAN Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="pan_number" value="{{ donor.pan_number }}" class="form-control" required aria-required="true">
     </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Upload PAN Card</label>
+    <div class="col-md-4">
+        <label class="form-label">Upload PAN Card </label>
+        {% if donor.pan_card_image %}
+            <div style="margin-bottom:10px;">
+                <img src="{{ donor.pan_card_image.url }}" alt="Pan Card" style="width:120px; height:auto; border:1px solid #ccc; padding:5px;">
+            </div>
+        {% endif %}    
         <input type="file" name="pan_card_image" class="form-control">
     </div>
 </div>
+<div class="action-buttons">
+    <button type="submit" class="action-btn btn btn-submit">✔ Update</button>
+    <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
+</div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<div class="text-center mt-4">
-<button class="btn btn-success px-4">✔ Update</button>
-<a href="{% url 'welcome' %}" class="btn btn-secondary px-4">← Back</a>
-</div>
-</form>
-</div>
-</div>
-</div>
 
+
+<script>
+
+const contactInput = document.querySelector('input[name="contact_number"]');
+const whatsappInput = document.querySelector('input[name="whatsapp_number"]');
+const checkbox = document.getElementById("different_whatsapp");
+whatsappInput.readOnly = true;
+contactInput.addEventListener("input", function(){
+    if(!checkbox.checked){
+        whatsappInput.value = contactInput.value;
+    }
+});
+checkbox.addEventListener("change", function(){
+
+    if(this.checked){
+        whatsappInput.readOnly = false;
+        whatsappInput.value = "";
+    }else{
+        whatsappInput.readOnly = true;
+        whatsappInput.value = contactInput.value;
+    }
+});
+
+</script>
+<script>
+const indiaStates = [
+  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
+  "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
+  "Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
+  "Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan",
+  "Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh",
+  "Uttarakhand","West Bengal"
+];
+const selectedCountry = "{{ donor.country }}";
+const selectedState = "{{ donor.state }}";
+
+const countryDropdown = document.getElementById('country');
+const stateSelect = document.getElementById('state');
+const dropdownBox = document.getElementById('stateDropdownBox');
+const textboxBox = document.getElementById('stateTextboxBox');
+
+document.addEventListener("DOMContentLoaded", function () {
+    countryDropdown.value = selectedCountry;
+    loadStates();
+});
+function loadStates() {
+    const country = countryDropdown.value;
+
+    if (country === "India") {
+        dropdownBox.style.display = "block";
+        textboxBox.style.display = "none";
+        stateSelect.innerHTML = "";
+        indiaStates.forEach(function(state) {
+            let opt = document.createElement("option");
+            opt.value = state;
+            opt.text = state;
+
+            if (state === selectedState) {
+                opt.selected = true;
+            }
+            stateSelect.appendChild(opt);
+        });
+    } else {
+        dropdownBox.style.display = "none";
+        textboxBox.style.display = "block";
+        const stateTextbox = document.getElementById("state_text");
+        if (stateTextbox) {
+            stateTextbox.value = selectedState;
+        }
+    }
+}
+countryDropdown.addEventListener('change', loadStates);
+</script>
 <!-- ================= AGE AUTO CALCULATION ================= -->
 <script>
 document.getElementById("date_of_birth").addEventListener("change", function () {
@@ -303,7 +837,6 @@ document.getElementById("date_of_birth").addEventListener("change", function () 
     }
 });
 </script>
-
 <!-- ================= YEARS TO MARRIAGE AUTO CALCULATION ================= -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -320,7 +853,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const hasHadAnniversaryThisYear =
             today.getMonth() > doa.getMonth() ||
             (today.getMonth() === doa.getMonth() && today.getDate() >= doa.getDate());
-
         if (!hasHadAnniversaryThisYear) {
             years--;
         }
@@ -330,58 +862,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <!-- ================= SHOW DONOR BOX FOR DONOR-BOX-OWNER ================= -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const personType = document.getElementById("person_type");
-    const baseSections = [
-        "persontype",
-        "personaldetails",
-        "idproof",
-        "address",
-        "occupation",
-        "designation"
-    ];
-    const department = document.getElementById("department");
-    const position = document.getElementById("position") || document.getElementById("department");
-    const business = document.getElementById("business");
-    const donorBox = document.getElementById("donor_box_row");
-    const org = document.getElementById("org");
-    function hideAllConditional() {
-        if (department) department.style.display = "none";
-        if (position) position.style.display = "none";
-        if (business) business.style.display = "none";
-        if (donorBox) donorBox.style.display = "none";
-        if (org) org.style.display = "none"; 
-    }
-    function showBaseSections() {
-        baseSections.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = "block";
-        });
-    }
-    function updateVisibility() {
-        const selectedText = personType.options[personType.selectedIndex]?.text.trim();
-        showBaseSections();
-        hideAllConditional();
-        if (!selectedText) return;
-        if (selectedText === "Employee") {
-            if (department) department.style.display = "block";
-        }
-        else if (selectedText === "Committee Member") {
-            if (position) position.style.display = "block";
-        }
-        else if (selectedText === "Business") {
-            if (business) business.style.display = "block";
-        }
-        else if (selectedText === "Organization") {
-            if (org) org.style.display = "block"; 
-        }
-        else if (selectedText === "Donation Box Owner") {
-            if (business) business.style.display = "block";
-            if (donorBox) donorBox.style.display = "block";
-        }
-    }
-    updateVisibility();
-    personType.addEventListener("change", updateVisibility);
+$(document).ready(function () {
+    $('#referred_by').select2({
+        placeholder: "-- Select or Type Person --",
+        allowClear: true,
+        tags: true,                 
+        width: '100%'
+    });
 });
 </script>
 <script>

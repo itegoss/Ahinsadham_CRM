@@ -182,18 +182,44 @@
         </select>
       </div>
     </div>
-        <label>Box Size <span style="color: #d9534f;">*</span></label>
-        <div class="radio-group">
-            <label class="radio-option">
-                <input type="radio" name="box_size" value="small" required aria-required="true"> Small
-            </label>
-            <label class="radio-option">
-                <input type="radio" name="box_size" value="medium" required aria-required="true"> Medium
-            </label>
-            <label class="radio-option">
-                <input type="radio" name="box_size" value="large" required aria-required="true"> Large
-            </label>
-        </div>
+<div class="row">
+  <div class="col-6">
+    <label>Box Owner <span style="color: #d9534f;">*</span></label>
+    <input 
+      type="text" 
+      name="box_owner" 
+      placeholder="Enter Box Owner Name"
+      class="form-control"
+      required
+    >
+  </div>
+
+  <div class="col-6">
+    <label>Box % <span style="color: #d9534f;">*</span></label>
+    <input 
+      type="number" 
+      name="box_percentage" 
+      placeholder="Enter Percentage"
+      class="form-control"
+      min="0" 
+      max="100"
+      step="0.01"
+      required
+    >
+  </div>
+</div>
+    <label>Box Size <span style="color: #d9534f;">*</span></label>
+    <div class="radio-group">
+        <label class="radio-option">
+            <input type="radio" name="box_size" value="small" required aria-required="true"> Small
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="box_size" value="medium" required aria-required="true"> Medium
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="box_size" value="large" required aria-required="true"> Large
+        </label>
+    </div>
     <label>Upload QR Code</span></label>
     <input type="file" name="qr_code" accept="image/*" onchange="previewQR(event)">
     <div class="qr-preview" id="qrPreview">QR Preview</div>

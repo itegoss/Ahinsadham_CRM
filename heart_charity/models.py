@@ -7,13 +7,12 @@ from io import BytesIO
 from django.core.files import File
 import qrcode
 
-
 class Module(models.Model):
     module_name = models.CharField(max_length=100, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='Module_created')
+    created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='Module_created')
-    created_date = models.DateTimeField(auto_now_add=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     def __str__(self):
         return self.module_name
@@ -27,12 +26,12 @@ class UserModuleAccess(models.Model):
     can_edit = models.BooleanField(default=False)
     can_delete = models.BooleanField(default=False)
     can_view = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_updated')
+    updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_created')
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserModuleAccess_updated')
-    updated_date = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     class Meta:
         unique_together = ("module", "name")
@@ -44,12 +43,12 @@ class UserModuleAccess(models.Model):
 class UserRole(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.ForeignKey(UserModuleAccess, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_users")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_updated')
+    updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_created')
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='UserRole_updated')
-    updated_date = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     def __str__(self):
         return f"{self.user.username} - {self.role.name if self.role else 'No Role'}"
@@ -64,6 +63,18 @@ class DonationBox(models.Model):
         ('large', 'Large'),
     ]
     box_size = models.CharField(max_length=20, choices=BOX_SIZES, default='medium')
+    box_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    box_percentage = models.DecimalField(
+        max_digits=5,   # total digits
+        decimal_places=2,  # 2 digits after decimal
+        blank=True,
+        null=True
+    )
     uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_boxes')
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_boxes')
     status_choices = [
@@ -72,10 +83,10 @@ class DonationBox(models.Model):
         ('return', 'Return')
     ]
     status = models.CharField(max_length=20, choices=status_choices, default='Active')
-    is_deleted = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
     def save(self, *args, **kwargs):
@@ -88,7 +99,7 @@ class DonationBox(models.Model):
                 new_id = "DO_0001"
             self.donation_id = new_id
         if not self.qr_code:
-            qr_data = f"Donation ID: {self.donation_id}\nLocation: {self.location}"
+            qr_data = f"Donation ID: {self.donation_id}"
             qr_img = qrcode.make(qr_data)
             buffer = BytesIO()
             qr_img.save(buffer, format='PNG')
@@ -107,54 +118,66 @@ class DonorVolunteer(models.Model):
         ('O+', 'O+'), ('O-', 'O-'),
     ]
     person_type = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,related_name="person_type_lookup")
+    donor_box = models.ForeignKey(DonationBox,on_delete=models.SET_NULL,null=True,blank=True)
+    old_box_id = models.IntegerField(max_length=50)
     referred_by = models.ForeignKey('self',on_delete=models.SET_NULL,null=True, blank=True,related_name='referrals')
     salutation = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     gender = models.CharField(max_length=10, blank=True, null=True)
-    date_of_birth = models.DateField(blank=True, null=True)
-    age = models.IntegerField(blank=True, null=True)
     blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES,blank=True, null=True)
     contact_number = models.CharField(max_length=20)
     whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(unique=True)
-    donor_box = models.ForeignKey(DonationBox,on_delete=models.SET_NULL,null=True,blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True),
+    date_of_birth = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
     doa = models.DateField(blank=True, null=True)
     years_to_marriage = models.IntegerField(blank=True, null=True)
+
+
     house_number = models.CharField(max_length=50)
     building_name = models.CharField(max_length=100, blank=True, null=True)
+    street_name = models.CharField(max_length=100, blank=True, null=True)
     landmark = models.CharField(max_length=100, blank=True, null=True)
     area = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50, default='India')
     postal_code = models.CharField(max_length=20)
+
     native_place = models.CharField(max_length=200, blank=True, null=True)
-    native_postal_code = models.CharField(max_length=20, blank=True, null=True)
-    id_type = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,related_name="id_type_lookup")
+    # native_postal_code = models.CharField(max_length=20, blank=True, null=True)
+
+    occupation_salutation = models.CharField(max_length=50, null=True, blank=True)
     occupation_type = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True,blank=True,related_name="occupation_type_lookup")
+    occupation_name = models.CharField(max_length=200, null=True, blank=True)
     occupation_nature = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,blank=True,related_name="occupation_nature_lookup")
+    gst_number = models.CharField(
+        max_length=15,
+        blank=True,
+        null=True
+    )
     department = models.ForeignKey("Lookup", on_delete=models.SET_NULL,null=True,blank=True,related_name="department_lookup")
     position = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,blank=True,related_name="position_lookup")
     designation = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True, blank=True,  related_name="designation_lookup")
-    business_type = models.ForeignKey("Lookup", null=True, blank=True,on_delete=models.SET_NULL, related_name="business_type_lookup")
-    business_salutation = models.CharField(max_length=50, null=True, blank=True)
-    business_name = models.CharField(max_length=200, null=True, blank=True)
-    business_nature = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="business_nature_lookup")
-    org_name = models.CharField(max_length=200, null=True, blank=True)
-    org_type = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="org_type_lookup")
-    nature_of_service = models.ForeignKey("Lookup",null=True,blank=True,on_delete=models.SET_NULL,related_name="nature_of_service_lookup")
+    # business_type = models.ForeignKey("Lookup", null=True, blank=True,on_delete=models.SET_NULL, related_name="business_type_lookup")
+    # business_nature = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="business_nature_lookup")
+    # org_name = models.CharField(max_length=200, null=True, blank=True)
+    # org_type = models.ForeignKey("Lookup", null=True, blank=True, on_delete=models.SET_NULL, related_name="org_type_lookup")
+    # nature_of_service = models.ForeignKey("Lookup",null=True,blank=True,on_delete=models.SET_NULL,related_name="nature_of_service_lookup")
+    
+    id_type = models.ForeignKey("Lookup",on_delete=models.SET_NULL,null=True,related_name="id_type_lookup")
     id_number = models.CharField(max_length=20, blank=True, null=True)
     id_proof_image = models.ImageField(upload_to='id_proofs/', blank=True, null=True)
     pan_number = models.CharField(max_length=20, blank=True, null=True)
     pan_card_image = models.ImageField(upload_to='pan_cards/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="donor_created_by")
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="donor_updated_by")
+    updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -163,12 +186,12 @@ class DonorVolunteer(models.Model):
 
 class LookupType(models.Model):
     type_name = models.CharField(max_length=100, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_updated')
+    updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_created')
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='lookup_type_updated')
-    updated_date = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
     @property
@@ -181,12 +204,12 @@ class LookupType(models.Model):
 class Lookup(models.Model):
     lookup_name = models.CharField(max_length=100, unique=True)
     lookup_type = models.ForeignKey(LookupType,on_delete=models.CASCADE,related_name="lookups")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_created")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_updated")
+    updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_created")
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="lookup_updated")
-    updated_date = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
     @property
     def formatted_id(self):
@@ -207,6 +230,7 @@ class DonationOwner(models.Model):
     owner_name = models.ForeignKey(DonorVolunteer,on_delete=models.CASCADE,limit_choices_to={'person_type': 'Donor-Box-Owner'},related_name='donation_owners')
     donation_box = models.ForeignKey('DonationBox',on_delete=models.CASCADE,related_name='donation_owners',to_field='donation_id',db_column='donation_id')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -4,135 +4,133 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit User</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #f4faf4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(4px);
-        }
-        .popup-card {
-            position: relative;
-            width: 85%;
-            max-width: 1100px;
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2);
-            animation: popup 0.4s ease;
-        }
-        @keyframes popup {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .title {
-            text-align: center;
-            font-size: 38px;
-            font-weight: bold;
-            color: #1e7a33;
-            margin-bottom: 6px;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 18px;
-            color: gray;
-            margin-bottom: 35px;
-        }
-        .section-label {
-            font-size: 22px;
-            color: green;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        .line {
-            width: 100%;
-            height: 2px;
-            background: #d1e5d1;
-            margin-bottom: 30px;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: 40px;  /* Increased spacing */
-            row-gap: 25px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .form-group input {
-            color:black;
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 2px solid #cce4cc;
-            font-size: 16px;
-            background: #f8fff8;
-            transition: .3s ease;
-        }
-        .form-group input:focus {
-            background: white;
-            border-color: #2f7d35;
-            outline: none;
-        }
-        .btn-area {
-            margin-top: 40px;
-            text-align: center;
-        }
-        button {
-            padding: 14px 40px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            margin: 0 15px;
-        }
-        .btn-submit {
-            background: #21873b;
-            color: white;
-        }
-        .btn-submit:hover {
-            background: #17612a;
-        }
-        .btn-back {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-back:hover {
-            background: #565e64;
-        }
-        .close-btn {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 22px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: #333;
-        }
-        .close-btn:hover {
-            color: red;
-        }
-
-
-        .styled-select {
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f4faf4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
+}
+.popup-card {
+    position: relative;
+    width: 85%;
+    max-width: 1100px;
+    background: white;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2);
+    animation: popup 0.4s ease;
+}
+@keyframes popup {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.title {
+    text-align: center;
+    font-size: 38px;
+    font-weight: bold;
+    color: #1e7a33;
+    margin-bottom: 6px;
+}
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 35px;
+}
+.section-label {
+    font-size: 22px;
+    color: green;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+.line {
+    width: 100%;
+    height: 2px;
+    background: #d1e5d1;
+    margin-bottom: 30px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px; 
+    row-gap: 25px;
+}
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+.form-group input {
+    color:black;
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 2px solid #cce4cc;
+    font-size: 16px;
+    background: #f8fff8;
+    transition: .3s ease;
+}
+.form-group input:focus {
+    background: white;
+    border-color: #2f7d35;
+    outline: none;
+}
+.btn-area {
+    margin-top: 40px;
+    text-align: center;
+}
+button {
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin: 0 15px;
+}
+.btn-submit {
+    background: #21873b;
+    color: white;
+}
+.btn-submit:hover {
+    background: #17612a;
+}
+.btn-back {
+    background: #6c757d;
+    color: white;
+}
+.btn-back:hover {
+    background: #565e64;
+}
+.close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-size: 22px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+}
+.close-btn:hover {
+    color: red;
+}
+.styled-select {
     width: 100%;
     padding: 14px;
     border-radius: 10px;
@@ -144,17 +142,15 @@
     cursor: pointer;
     transition: .3s ease;
 }
-
 .styled-select:focus {
     background: white;
     border-color: #2f7d35;
     outline: none;
 }
-
 .styled-select:hover {
     border-color: #2f7d35;
 }
-    </style>
+</style>
 </head>
 <body>
 <div class="overlay"></div>
@@ -171,7 +167,7 @@
     <div class="subtitle">Please update the required details below</div>
     <div class="section-label">User Details</div>
     <div class="line"></div>
-  <form method="POST">
+<form method="POST">
     {% csrf_token %}
     <div class="form-grid">
         <div class="form-group">
@@ -192,7 +188,7 @@
         </div>
         <div class="form-group">
     <label>Role</label>
-    <select name="role" class="styled-select">
+<select name="role" class="styled-select">
 <option value="none"
     {% if not user_role.role %}selected{% endif %}>-- No Role --</option>
    {% for r in roles %}

@@ -69,7 +69,7 @@
                 <h5 class="section-title">Person Type</h5>
                 <hr>
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Person Type <span style="color: #d9534f;">*</span></label>
                         <select name="person_type" id="person_type" class="form-select" required aria-required="true">
                             <option value="">Select</option>
@@ -78,16 +78,20 @@
                             {% endfor %}
                         </select>
                     </div>
-<div class="col-md-4" id="donor_box_wrapper" style="display: none;">
-    <label class="form-label">Donor Box</label>
-    <select name="donor_box" class="form-select">
-        <option value="">Select Donor Box</option>
-        {% for box in donation_boxes %}
-            <option value="{{ box.id }}">{{ box.donation_id }}</option>
-        {% endfor %}
-    </select>
-</div>
-                    <div class="col-md-4" style="margin-top: 1.7%;">
+                    <div class="col-md-3" id="donor_box_wrapper" style="display: none;" >
+                        <label class="form-label">Donor Box</label>
+                        <select name="donor_box" class="form-select">
+                            <option value="">Select Donor Box</option>
+                            {% for box in donation_boxes %}
+                                <option value="{{ box.id }}">{{ box.donation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3" id="old_box_id_wrapper" style="margin-top: 1.7%;">
+                        <label class="form-label">Old Box Id</label>
+                        <input type="text" name="old_box_id" class="form-control" placeholder="Enter old box id">
+                    </div>
+                    <div class="col-md-3" style="margin-top: 1.7%;">
                         <label class="form-label">Referred By</label>
                         <select name="referred_by" id="referred_by" class="form-select select2-search">
                             <option value="">-- Select Person --</option>
@@ -97,8 +101,8 @@
                         </select>
                     </div>
                 </div>
-                <h5 class="section-title">Personal Details</h5>
-                <hr>
+<h5 class="section-title">Personal Details</h5>
+<hr>
 <div class="row g-3 mb-4 align-items-end" >
     <div class="col-md-1" style="margin: -1.0%; margin-left: 0">
         <label class="form-label">Sal.</label>
@@ -155,8 +159,6 @@
             <option value="+44">+44</option>
             <option value="+971">+971</option>
             <option value="+61">+61</option>
-
-            <!-- A -->
             <option value="+93">+93</option>
             <option value="+355">+355</option>
             <option value="+213">+213</option>
@@ -166,8 +168,6 @@
             <option value="+374">+374</option>
             <option value="+43">+43</option>
             <option value="+994">+994</option>
-
-            <!-- B -->
             <option value="+973">+973</option>
             <option value="+880">+880</option>
             <option value="+375">+375</option>
@@ -179,8 +179,6 @@
             <option value="+387">+387</option>
             <option value="+267">+267</option>
             <option value="+55">+55</option>
-
-            <!-- C -->
             <option value="+855">+855</option>
             <option value="+237">+237</option>
             <option value="+56">+56</option>
@@ -191,33 +189,21 @@
             <option value="+53">+53</option>
             <option value="+357">+357</option>
             <option value="+420">+420</option>
-
-            <!-- D -->
             <option value="+45">+45</option>
             <option value="+253">+253</option>
             <option value="+213">+213</option>
-
-            <!-- E -->
             <option value="+20">+20</option>
             <option value="+503">+503</option>
             <option value="+372">+372</option>
             <option value="+251">+251</option>
-
-            <!-- F -->
             <option value="+358">+358</option>
             <option value="+33">+33</option>
-
-            <!-- G -->
             <option value="+995">+995</option>
             <option value="+49">+49</option>
             <option value="+233">+233</option>
             <option value="+30">+30</option>
-
-            <!-- H -->
             <option value="+852">+852</option>
             <option value="+36">+36</option>
-
-            <!-- I -->
             <option value="+354">+354</option>
             <option value="+62">+62</option>
             <option value="+98">+98</option>
@@ -225,54 +211,34 @@
             <option value="+353">+353</option>
             <option value="+972">+972</option>
             <option value="+39">+39</option>
-
-            <!-- J -->
             <option value="+81">+81</option>
             <option value="+962">+962</option>
-
-            <!-- K -->
             <option value="+7">+7</option>
             <option value="+254">+254</option>
             <option value="+965">+965</option>
-
-            <!-- L -->
             <option value="+856">+856</option>
             <option value="+371">+371</option>
             <option value="+961">+961</option>
             <option value="+370">+370</option>
             <option value="+352">+352</option>
-
-            <!-- M -->
             <option value="+60">+60</option>
             <option value="+960">+960</option>
             <option value="+356">+356</option>
             <option value="+52">+52</option>
             <option value="+976">+976</option>
-
-            <!-- N -->
             <option value="+977">+977</option>
             <option value="+31">+31</option>
             <option value="+64">+64</option>
             <option value="+234">+234</option>
             <option value="+47">+47</option>
-
-            <!-- O -->
             <option value="+968">+968</option>
-
-            <!-- P -->
             <option value="+92">+92</option>
             <option value="+63">+63</option>
             <option value="+48">+48</option>
             <option value="+351">+351</option>
-
-            <!-- Q -->
             <option value="+974">+974</option>
-
-            <!-- R -->
             <option value="+40">+40</option>
             <option value="+7">+7</option>
-
-            <!-- S -->
             <option value="+966">+966</option>
             <option value="+65">+65</option>
             <option value="+27">+27</option>
@@ -280,23 +246,13 @@
             <option value="+94">+94</option>
             <option value="+46">+46</option>
             <option value="+41">+41</option>
-
-            <!-- T -->
             <option value="+886">+886</option>
             <option value="+66">+66</option>
             <option value="+90">+90</option>
-
-            <!-- U -->
             <option value="+380">+380</option>
-
-            <!-- V -->
             <option value="+58">+58</option>
             <option value="+84">+84</option>
-
-            <!-- Y -->
             <option value="+967">+967</option>
-
-            <!-- Z -->
             <option value="+263">+263</option>
         </select></span>
         <input type="text" name="contact_number" class="form-control" placeholder="Enter phone number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
@@ -306,14 +262,12 @@
     <label class="form-label">WhatsApp Number</label>
     <div class="input-group">
         <span >  
-            <select style="margin-top: 0%;" class="input-group-text" name="contact_country_code" required>
+            <select style="margin-top: 0%;" class="input-group-text" name="whatsapp_country_code" required>
             <option value="+91" selected>+91</option>
             <option value="+1">+1</option>
             <option value="+44">+44</option>
             <option value="+971">+971</option>
             <option value="+61">+61</option>
-
-            <!-- A -->
             <option value="+93">+93</option>
             <option value="+355">+355</option>
             <option value="+213">+213</option>
@@ -323,8 +277,6 @@
             <option value="+374">+374</option>
             <option value="+43">+43</option>
             <option value="+994">+994</option>
-
-            <!-- B -->
             <option value="+973">+973</option>
             <option value="+880">+880</option>
             <option value="+375">+375</option>
@@ -336,8 +288,6 @@
             <option value="+387">+387</option>
             <option value="+267">+267</option>
             <option value="+55">+55</option>
-
-            <!-- C -->
             <option value="+855">+855</option>
             <option value="+237">+237</option>
             <option value="+56">+56</option>
@@ -348,33 +298,21 @@
             <option value="+53">+53</option>
             <option value="+357">+357</option>
             <option value="+420">+420</option>
-
-            <!-- D -->
             <option value="+45">+45</option>
             <option value="+253">+253</option>
             <option value="+213">+213</option>
-
-            <!-- E -->
             <option value="+20">+20</option>
             <option value="+503">+503</option>
             <option value="+372">+372</option>
             <option value="+251">+251</option>
-
-            <!-- F -->
             <option value="+358">+358</option>
             <option value="+33">+33</option>
-
-            <!-- G -->
             <option value="+995">+995</option>
             <option value="+49">+49</option>
             <option value="+233">+233</option>
             <option value="+30">+30</option>
-
-            <!-- H -->
             <option value="+852">+852</option>
             <option value="+36">+36</option>
-
-            <!-- I -->
             <option value="+354">+354</option>
             <option value="+62">+62</option>
             <option value="+98">+98</option>
@@ -382,54 +320,34 @@
             <option value="+353">+353</option>
             <option value="+972">+972</option>
             <option value="+39">+39</option>
-
-            <!-- J -->
             <option value="+81">+81</option>
             <option value="+962">+962</option>
-
-            <!-- K -->
             <option value="+7">+7</option>
             <option value="+254">+254</option>
             <option value="+965">+965</option>
-
-            <!-- L -->
             <option value="+856">+856</option>
             <option value="+371">+371</option>
             <option value="+961">+961</option>
             <option value="+370">+370</option>
             <option value="+352">+352</option>
-
-            <!-- M -->
             <option value="+60">+60</option>
             <option value="+960">+960</option>
             <option value="+356">+356</option>
             <option value="+52">+52</option>
             <option value="+976">+976</option>
-
-            <!-- N -->
             <option value="+977">+977</option>
             <option value="+31">+31</option>
             <option value="+64">+64</option>
             <option value="+234">+234</option>
             <option value="+47">+47</option>
-
-            <!-- O -->
             <option value="+968">+968</option>
-
-            <!-- P -->
             <option value="+92">+92</option>
             <option value="+63">+63</option>
             <option value="+48">+48</option>
             <option value="+351">+351</option>
-
-            <!-- Q -->
             <option value="+974">+974</option>
-
-            <!-- R -->
             <option value="+40">+40</option>
             <option value="+7">+7</option>
-
-            <!-- S -->
             <option value="+966">+966</option>
             <option value="+65">+65</option>
             <option value="+27">+27</option>
@@ -437,27 +355,21 @@
             <option value="+94">+94</option>
             <option value="+46">+46</option>
             <option value="+41">+41</option>
-
-            <!-- T -->
             <option value="+886">+886</option>
             <option value="+66">+66</option>
             <option value="+90">+90</option>
-
-            <!-- U -->
             <option value="+380">+380</option>
-
-            <!-- V -->
             <option value="+58">+58</option>
             <option value="+84">+84</option>
-
-            <!-- Y -->
             <option value="+967">+967</option>
-
-            <!-- Z -->
             <option value="+263">+263</option>
         </select></span>
         <input type="text" name="whatsapp_number" class="form-control" maxlength="10" pattern="[0-9]{10}" placeholder="Enter whatsapp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
     </div>
+</div>
+<div class="form-check mt-1">
+  <input class="form-check-input" type="checkbox" id="different_whatsapp">
+  <label class="form-check-label" for="different_whatsapp">Use different WhatsApp number</label>
 </div>
     <div class="col-md-4">
         <label class="form-label">Email </label>
@@ -465,15 +377,6 @@
     </div>
 </div>
 <div class="row g-3 mb-4" id="doa">
-    <div class="col-md-3">
-        <label class="form-label">Date of Anniversary</label>
-        <input type="date" name="doa" id="doa_input" class="form-control">
-    </div>
-
-    <div class="col-md-3">
-        <label class="form-label">Years to Marriage</label>
-        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
-    </div>
     <div class="col-md-3">
         <label class="form-label">Date of Birth <span style="color: #d9534f;">*</span></label>
         <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required aria-required="true">
@@ -483,56 +386,85 @@
         <label class="form-label">Age</label>
         <input type="number" name="age" id="age" class="form-control" readonly>
     </div>
+    <div class="col-md-3">
+        <label class="form-label">Date of Anniversary</label>
+        <input type="date" name="doa" id="doa_input" class="form-control">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Years to Marriage</label>
+        <input type="number" name="years_to_marriage" id="years_to_marriage" class="form-control" readonly>
+    </div>
 </div>
 <hr>
- <!-- ===================================== OCCUPATION ===================================== -->
-                <div class="row g-3 mb-4" id="occupation">
-                                    <h5 class="section-title">Occupation Details</h5>
-                <hr>
-                    <div class="col-md-4">
-                        <label class="form-label">Occupation Type</label>
-                        <select name="occupation_type" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in occupation_types %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Occupation Nature</label>
-                        <select name="occupation_nature" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in occupation_natures %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <!-- ===================================== DEPARTMENT ===================================== -->
-                <div class="row g-3 mb-4" id="department">
-                <h5 class="section-title">Department Details</h5>
-                <hr>
-                    <div class="col-md-4">
-                        <label class="form-label">Department</label>
-                        <select name="department" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in departments %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Position</label>
-                        <select name="position" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in positions %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <!-- ===================================== BUSINESS ===================================== -->
-<div id="business" style="display: none;">
+<!-- ===================================== OCCUPATION ===================================== -->
+<div class="row g-3 mb-4" id="occupation">
+<h5 class="section-title">Occupation Details</h5>
+<hr>
+    <div class="col-md-2">
+        <label class="form-label">Occupation/Org Salutation</label>
+        <select name="occupation_salutation" class="form-select">
+            <option value="">-- Select --</option>
+            <option value="Mr.">M/S.</option>
+            <option value="Mrs.">Messrs.</option>
+            <option value="Ms.">The.</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Occupation Type</label>
+        <select name="occupation_type" class="form-select">
+            <option value="">Select</option>
+            {% for item in occupation_types %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Occupation Nature</label>
+        <select name="occupation_nature" class="form-select">
+            <option value="">Select</option>
+            {% for item in occupation_natures %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4" style="margin-bottom: 1.0%;">
+      <label class="form-label">Occupation Name</label>
+      <input type="text" name="occupation_name" class="form-control" placeholder="Enter occupation name">
+    </div>
+
+</div>
+<div class="row g-3 mb-4" id="occupation">
+    <div class="col-md-4" style="margin-bottom: 1.0%;">
+      <label class="form-label">GST Number</label>
+      <input type="text" name="gst_number" class="form-control" maxlength="15" placeholder="Enter GST Number (e.g. 22AAAAA0000A1Z5)">
+    </div>
+</div>
+<!-- ===================================== DEPARTMENT ===================================== -->
+<div class="row g-3 mb-4" id="department">
+<h5 class="section-title">Department Details</h5>
+<hr>
+    <div class="col-md-4">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+            <option value="">Select</option>
+            {% for item in departments %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Position</label>
+        <select name="position" class="form-select">
+            <option value="">Select</option>
+            {% for item in positions %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<!-- ===================================== BUSINESS ===================================== -->
+<!-- <div id="business" style="display: none;">
     <h5 class="section-title">Business Details</h5>
     <hr>
     <div class="row g-3 mb-4 align-items-end">        
@@ -567,169 +499,176 @@
             <input type="text" name="business_nature" class="form-control" placeholder="Enter business nature">
         </div>
     </div>
+</div> -->
+<!-- ===================================== ORGANIZATION ===================================== -->
+<hr>
+<div class="row g-3 mb-4" id="org">
+    <div class="col-md-4">
+        <label class="form-label">Organization Name</label>
+        <input type="text" name="org_name" class="form-control">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Organization Type</label>
+        <select name="org_type" class="form-select">
+            <option value="">Select</option>
+            {% for item in org_types %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Nature of Service</label>
+        <input type="text" name="nature_of_service" class="form-control">
+    </div>
 </div>
-                <!-- ===================================== ORGANIZATION ===================================== -->
-                <hr>
-                <div class="row g-3 mb-4" id="org">
-                    <div class="col-md-4">
-                        <label class="form-label">Organization Name</label>
-                        <input type="text" name="org_name" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Organization Type</label>
-                        <select name="org_type" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in org_types %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Nature of Service</label>
-                        <input type="text" name="nature_of_service" class="form-control">
-                    </div>
-                </div>
-                <div class="row g-3 mb-4" id="designation">
-                    <div class="col-md-4">
-                        <label class="form-label">Designation</label>
-                        <select name="designation" class="form-select">
-                            <option value="">Select</option>
-                            {% for item in designations %}
-                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <hr>
+<div class="row g-3 mb-4" id="designation">
+    <div class="col-md-4">
+        <label class="form-label">Designation</label>
+        <select name="designation" class="form-select">
+            <option value="">Select</option>
+            {% for item in designations %}
+                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<hr>
 
 <div id="businessAddressAlert" style="display:none; color:#d82424; background:#f2d2d2; padding:8px; margin-bottom:8px; border-radius:4px;">
     You should enter business address
 </div>
 
-                <h5 class="section-title">Address Details</h5>
-                <hr>
-                <div class="row g-3 mb-4" id="address">
-                    <div class="col-md-4">
-                        <label class="form-label">House Number <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="house_number" class="form-control" required aria-required="true">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Building Name <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="building_name" class="form-control" required aria-required="true">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Landmark <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="landmark" class="form-control" required aria-required="true">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Area <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="area" class="form-control" required aria-required="true">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">City <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="city" class="form-control" required aria-required="true">
-                    </div>
-                
+<h5 class="section-title">Address Details</h5>
+<hr>
+<div class="row g-3 mb-4" id="address">
+    <div class="col-md-4">
+        <label class="form-label">House Number <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="house_number" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Building Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="building_name" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Street Name <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="street_name" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Landmark <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="landmark" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Area <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="area" class="form-control" required aria-required="true">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">City <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="city" class="form-control" required aria-required="true">
+    </div>
+
 <div class="col-md-4">
-    <label class="form-label">Country</label>
-    <select id="country" name="country" class="form-select">
-        <option value="">Select</option>
- <option value="India">India</option>
-        <option value="Afghanistan">Afghanistan</option>
-        <option value="Albania">Albania</option>
-        <option value="Algeria">Algeria</option>
-        <option value="Andorra">Andorra</option>
-        <option value="Angola">Angola</option>
-        <option value="Argentina">Argentina</option>
-        <option value="Armenia">Armenia</option>
-        <option value="Australia">Australia</option>
-        <option value="Austria">Austria</option>
-        <option value="Azerbaijan">Azerbaijan</option>
-        <option value="Bahamas">Bahamas</option>
-        <option value="Bahrain">Bahrain</option>
-        <option value="Bangladesh">Bangladesh</option>
-        <option value="Belgium">Belgium</option>
-        <option value="Belize">Belize</option>
-        <option value="Bhutan">Bhutan</option>
-        <option value="Bolivia">Bolivia</option>
-        <option value="Brazil">Brazil</option>
-        <option value="Cambodia">Cambodia</option>
-        <option value="Canada">Canada</option>
-        <option value="China">China</option>
-        <option value="Colombia">Colombia</option>
-        <option value="Croatia">Croatia</option>
-        <option value="Denmark">Denmark</option>
-        <option value="Egypt">Egypt</option>
-        <option value="France">France</option>
-        <option value="Germany">Germany</option>
-        <option value="Greece">Greece</option>
-        <option value="Hong Kong">Hong Kong</option>
-        <option value="Hungary">Hungary</option>
-        <option value="Indonesia">Indonesia</option>
-        <option value="Iran">Iran</option>
-        <option value="Ireland">Ireland</option>
-        <option value="Israel">Israel</option>
-        <option value="Italy">Italy</option>
-        <option value="Japan">Japan</option>
-        <option value="Kenya">Kenya</option>
-        <option value="Kuwait">Kuwait</option>
-        <option value="Malaysia">Malaysia</option>
-        <option value="Maldives">Maldives</option>
-        <option value="Mexico">Mexico</option>
-        <option value="Nepal">Nepal</option>
-        <option value="Netherlands">Netherlands</option>
-        <option value="New Zealand">New Zealand</option>
-        <option value="Nigeria">Nigeria</option>
-        <option value="Pakistan">Pakistan</option>
-        <option value="Philippines">Philippines</option>
-        <option value="Poland">Poland</option>
-        <option value="Portugal">Portugal</option>
-        <option value="Qatar">Qatar</option>
-        <option value="Romania">Romania</option>
-        <option value="Russia">Russia</option>
-        <option value="Saudi Arabia">Saudi Arabia</option>
-        <option value="Singapore">Singapore</option>
-        <option value="South Africa">South Africa</option>
-        <option value="Spain">Spain</option>
-        <option value="Sri Lanka">Sri Lanka</option>
-        <option value="Sweden">Sweden</option>
-        <option value="Switzerland">Switzerland</option>
-        <option value="Thailand">Thailand</option>
-        <option value="Turkey">Turkey</option>
-        <option value="United Arab Emirates">United Arab Emirates</option>
-        <option value="United Kingdom">United Kingdom</option>
-        <option value="United States">United States</option>
-        <option value="Vietnam">Vietnam</option>
-        <option value="Zimbabwe">Zimbabwe</option>
-    </select>
+<label class="form-label">Country</label>
+<select id="country" name="country" class="form-select">
+<option value="">Select</option>
+<option value="India">India</option>
+<option value="Afghanistan">Afghanistan</option>
+<option value="Albania">Albania</option>
+<option value="Algeria">Algeria</option>
+<option value="Andorra">Andorra</option>
+<option value="Angola">Angola</option>
+<option value="Argentina">Argentina</option>
+<option value="Armenia">Armenia</option>
+<option value="Australia">Australia</option>
+<option value="Austria">Austria</option>
+<option value="Azerbaijan">Azerbaijan</option>
+<option value="Bahamas">Bahamas</option>
+<option value="Bahrain">Bahrain</option>
+<option value="Bangladesh">Bangladesh</option>
+<option value="Belgium">Belgium</option>
+<option value="Belize">Belize</option>
+<option value="Bhutan">Bhutan</option>
+<option value="Bolivia">Bolivia</option>
+<option value="Brazil">Brazil</option>
+<option value="Cambodia">Cambodia</option>
+<option value="Canada">Canada</option>
+<option value="China">China</option>
+<option value="Colombia">Colombia</option>
+<option value="Croatia">Croatia</option>
+<option value="Denmark">Denmark</option>
+<option value="Egypt">Egypt</option>
+<option value="France">France</option>
+<option value="Germany">Germany</option>
+<option value="Greece">Greece</option>
+<option value="Hong Kong">Hong Kong</option>
+<option value="Hungary">Hungary</option>
+<option value="Indonesia">Indonesia</option>
+<option value="Iran">Iran</option>
+<option value="Ireland">Ireland</option>
+<option value="Israel">Israel</option>
+<option value="Italy">Italy</option>
+<option value="Japan">Japan</option>
+<option value="Kenya">Kenya</option>
+<option value="Kuwait">Kuwait</option>
+<option value="Malaysia">Malaysia</option>
+<option value="Maldives">Maldives</option>
+<option value="Mexico">Mexico</option>
+<option value="Nepal">Nepal</option>
+<option value="Netherlands">Netherlands</option>
+<option value="New Zealand">New Zealand</option>
+<option value="Nigeria">Nigeria</option>
+<option value="Pakistan">Pakistan</option>
+<option value="Philippines">Philippines</option>
+<option value="Poland">Poland</option>
+<option value="Portugal">Portugal</option>
+<option value="Qatar">Qatar</option>
+<option value="Romania">Romania</option>
+<option value="Russia">Russia</option>
+<option value="Saudi Arabia">Saudi Arabia</option>
+<option value="Singapore">Singapore</option>
+<option value="South Africa">South Africa</option>
+<option value="Spain">Spain</option>
+<option value="Sri Lanka">Sri Lanka</option>
+<option value="Sweden">Sweden</option>
+<option value="Switzerland">Switzerland</option>
+<option value="Thailand">Thailand</option>
+<option value="Turkey">Turkey</option>
+<option value="United Arab Emirates">United Arab Emirates</option>
+<option value="United Kingdom">United Kingdom</option>
+<option value="United States">United States</option>
+<option value="Vietnam">Vietnam</option>
+<option value="Zimbabwe">Zimbabwe</option>
+</select>
 </div>
 <div class="col-md-4" id="stateDropdownBox">
-    <label class="form-label">State</label>
-    <select id="state" name="state" class="form-select">
-    </select>
+<label class="form-label">State</label>
+<select id="state" name="state" class="form-select">
+</select>
 </div>
 <div class="col-md-4" id="stateTextboxBox" style="display: none;">
-    <label class="form-label">State</label>
-    <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
+<label class="form-label">State</label>
+<input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
 </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
-                        <input type="text" name="postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Native Place</label>
-                        <input type="text" name="native_place" class="form-control">
-                    </div>
-                    <!-- <div class="col-md-4">
-                        <label class="form-label">Native Postal Code</label>
-                        <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    </div> -->
-                </div>
-                <hr>
+<div class="col-md-4">
+    <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
+    <input type="text" name="postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
+</div>
+
+    <!-- <div class="col-md-4">
+        <label class="form-label">Native Postal Code</label>
+        <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div> -->
+</div>
+<div class="row g-3 mb-3">
+       <div class="col-md-4">
+         <label class="form-label">Native Place</label>
+         <input type="text" name="native_place" class="form-control">
+        </div>
+</div>
+<hr>
                
-                <!-- ===================================== ID & PAN ===================================== -->
-                <h5 class="section-title">ID & PAN Details</h5>
-                <hr>
+<!-- ===================================== ID & PAN ===================================== -->
+<h5 class="section-title">ID & PAN Details</h5>
+<hr>
 <div class="row g-3 mb-3" id="idproof">
     <div class="col-md-4">
         <label class="form-label">ID Type <span style="color: #d9534f;">*</span></label>
@@ -762,14 +701,40 @@
         <input type="file" name="pan_card_image" class="form-control">
     </div>
 </div>
-                <div class="action-buttons">
-        <button type="submit" class="action-btn btn btn-submit">✔ Save</button>
-        <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
-    </div>
+<div class="action-buttons">
+<button type="submit" class="action-btn btn btn-submit">✔ Save</button>
+<a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
+</div>
             </form>
         </div>
     </div>
 </div>
+
+
+
+<script>
+
+const contactInput = document.querySelector('input[name="contact_number"]');
+const whatsappInput = document.querySelector('input[name="whatsapp_number"]');
+const checkbox = document.getElementById("different_whatsapp");
+whatsappInput.readOnly = true;
+contactInput.addEventListener("input", function(){
+    if(!checkbox.checked){
+        whatsappInput.value = contactInput.value;
+    }
+});
+checkbox.addEventListener("change", function(){
+
+    if(this.checked){
+        whatsappInput.readOnly = false;
+        whatsappInput.value = "";
+    }else{
+        whatsappInput.readOnly = true;
+        whatsappInput.value = contactInput.value;
+    }
+});
+
+</script>
 <script>
 const indiaStates = [
   "Andhra Pradesh",
@@ -838,8 +803,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const position = document.getElementById("position");
     const business = document.getElementById("business");
     const donorBox = document.getElementById("donor_box_wrapper");
+    const oldBoxIdWrapper = document.getElementById("old_box_id_wrapper");
     const org = document.getElementById("org");
     const employee = document.getElementById("employee");
+    const occupation = document.getElementById("occupation");
     function normalize(text) {
         return text.toLowerCase().replace(/[\s\-_]/g, "");
     }
@@ -850,7 +817,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (donorBox) donorBox.style.display = "none";
         if (org) org.style.display = "none";
         if (businessAddressAlert) businessAddressAlert.style.display = "none";
-        if (occupation) occupation.style.display = "block";
+        if (occupation) occupation.style.display = "none";
+        if (oldBoxIdWrapper) oldBoxIdWrapper.style.display = "none";
     }
     function showBaseSections() {
         baseSections.forEach(id => {
@@ -879,10 +847,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (org) org.style.display = "block";
         }
         else if (text === "donationboxowner" || text === "donorboxowner") {
-            if (business) business.style.display = "block";
+            if (occupation) occupation.style.display = "block";
             if (donorBox) donorBox.style.display = "block";
+            if (oldBoxIdWrapper) oldBoxIdWrapper.style.display = "block";
             if (businessAddressAlert) businessAddressAlert.style.display = "block";
-            if (occupation) occupation.style.display = "none";
+            if (occupation) occupation.style.display = "block";
         }
     }
     updateVisibility();
