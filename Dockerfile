@@ -1,10 +1,10 @@
-FROM node:18
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY requirements.txt .
 
-RUN npm install
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
@@ -12,4 +12,4 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "firstattempthost3.wsgi:application"]
