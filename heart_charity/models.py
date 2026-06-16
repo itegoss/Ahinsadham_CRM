@@ -129,18 +129,14 @@ class DonorVolunteer(models.Model):
     blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES,blank=True, null=True)
     contact_number = models.CharField(max_length=20)
     whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(unique=True, null=True, blank=True),
+    email = models.EmailField(unique=True, null=True, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     doa = models.DateField(blank=True, null=True)
     years_to_marriage = models.IntegerField(blank=True, null=True)
 
 
-    house_number = models.CharField(max_length=50)
-    building_name = models.CharField(max_length=100, blank=True, null=True)
-    street_name = models.CharField(max_length=100, blank=True, null=True)
-    landmark = models.CharField(max_length=100, blank=True, null=True)
-    area = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=255)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50, default='India')

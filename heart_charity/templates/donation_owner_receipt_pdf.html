@@ -227,10 +227,7 @@ table {
 </tr>
 <tr>
 <td rowspan="2"><b>Address :</b> 
-  {% if donor.house_number %}{{ donor.house_number }}, {% endif %}
-  {% if donor.building_name %}{{ donor.building_name }}, {% endif %}
-  {% if donor.landmark %}{{ donor.landmark }}, {% endif %}
-  {% if donor.area %}{{ donor.area }}, {% endif %}
+  {% if donor.address %}{{ donor.address }}, {% endif %}
   {% if donor.city %}{{ donor.city }}, {% endif %}
   {% if donor.state %}{{ donor.state }}, {% endif %}
   {% if donor.country %}{{ donor.country }}, {% endif %}
@@ -238,8 +235,12 @@ table {
 </td>
 <td width="50%"><b>PAN No :</b> {{ donor.pan_number|default:"-" }}</td>
 </tr>
-<tr><td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td></tr>
-<tr><td><b>Area :</b> {{ donor.area }}</td><td><b>Collector :</b> {{ payment.verified_by }}</td></tr>
+<tr>
+<td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td>
+</tr>
+<tr>
+<td></td>
+<td><b>Collector :</b> {{ payment.verified_by }}</td></tr>
 <tr>
 <td><b>Village :</b> {{ donor.city }}</td>
 <td width="35%"><b>Mobile :</b> {{ donor.contact_number }}</td>

@@ -450,8 +450,8 @@ def search_roles(request):
             Q(module__module_name__icontains=query1) |
             Q(created_by__username__icontains=query1) |
             Q(updated_by__username__icontains=query1) |
-            Q(created_date__icontains=query1) |
-            Q(updated_date__icontains=query1) |
+            # Q(created_date__icontains=query1) |
+            # Q(updated_date__icontains=query1) |
             Q(deleted_at__icontains=query1)
         )
         if query1.isdigit():
@@ -625,16 +625,13 @@ def search_donor_volunteer(request):
                 Q(donor_box__donation_id__icontains=query2) |
                 Q(donor_box__key_id__icontains=query2) |
                 Q(donor_box__location__icontains=query2) |
-                Q(house_number__icontains=query2) |
-                Q(building_name__icontains=query2) |
-                Q(landmark__icontains=query2) |
-                Q(area__icontains=query2) |
+                Q(address__icontains=query2) |
                 Q(city__icontains=query2) |
                 Q(state__icontains=query2) |
                 Q(country__icontains=query2) |
                 Q(postal_code__icontains=query2) |
                 Q(native_place__icontains=query2) |
-                Q(native_postal_code__icontains=query2) |
+                # Q(native_postal_code__icontains=query2) |
                 Q(id_type__lookup_name__icontains=query2) |
                 Q(id_number__icontains=query2) |
                 Q(pan_number__icontains=query2) |
@@ -697,8 +694,7 @@ def search_donor_volunteer(request):
         writer = csv.writer(response)
         writer.writerow([
             'Person Type', 'First Name', 'Middle Name', 'Last Name', 
-            'Gender', 'DOB', 'Email', 'Contact Number','Blood Group','WhatsApp Number','Donor Box', 'House Number', 'Building Name',
-            'Landmark', 'Area', 'City', 'State', 'Country','Postal Code', 'Native Place', 'Native Postal Code',
+            'Gender', 'DOB', 'Email', 'Contact Number','Blood Group','WhatsApp Number','Donor Box', 'Address', 'City', 'State', 'Country','Postal Code', 'Native Place', 'Native Postal Code',
              'occupation_type','occupation_nature','department','position','designation','business_type', 'ID Type', 'ID Number', 
             'PAN Number', 'Age', 'Created By', 'Created At', 'Updated By', 'Updated At', 'Deleted At', 'Is Deleted',   
         
@@ -717,23 +713,19 @@ def search_donor_volunteer(request):
                 dv.blood_group,
                 dv.whatsapp_number,
                 dv.donor_box.donation_id if dv.donor_box else '',
-                dv.house_number,
-                dv.building_name,
-                dv.landmark,
-                dv.area,
+                dv.address,
                 dv.city,
                 dv.state,
                 dv.country,
                 dv.postal_code,
                 dv.native_place,
-                dv.native_postal_code,
                 dv.occupation_type,
                 dv.occupation_nature,
                 dv.department,
                 dv.position,
                 dv.designation,
-                dv.business_type,
-                dv.id_type.lookup_name if dv.id_type else '',
+                # dv.business_type,
+                # dv.id_type.lookup_name if dv.id_type else '',
                 dv.id_number,
                 dv.pan_number,
                 dv.age,
@@ -1413,11 +1405,7 @@ def add_donor_volunteer(request):
                 years_to_marriage=request.POST.get("years_to_marriage") or None,
 
                 # ADDRESS
-                house_number=request.POST.get("house_number"),
-                building_name=request.POST.get("building_name"),
-                street_name=request.POST.get("street_name"),
-                landmark=request.POST.get("landmark"),
-                area=request.POST.get("area"),
+                address=request.POST.get("address"),
                 city=request.POST.get("city"),
                 state=request.POST.get("state"),
                 country=request.POST.get("country") or "India",
@@ -2165,9 +2153,7 @@ def add_donation_payment(request):
 
     for owner in owners:
         address = ", ".join(filter(None, [
-            owner.house_number,
-            owner.building_name,
-            owner.area,
+            owner.address,
             owner.city,
             owner.state,
             owner.postal_code
@@ -2662,11 +2648,7 @@ def edit_donor(request, donor_id):
             donor.doa = request.POST.get("doa") or None
             donor.years_to_marriage = request.POST.get("years_to_marriage") or None
 
-            donor.house_number = request.POST.get("house_number")
-            donor.building_name = request.POST.get("building_name")
-            donor.street_name = request.POST.get("street_name")
-            donor.landmark = request.POST.get("landmark")
-            donor.area = request.POST.get("area")
+            donor.address = request.POST.get("address")
             donor.city = request.POST.get("city")
             donor.state = request.POST.get("state")
             donor.country = request.POST.get("country") or "India"

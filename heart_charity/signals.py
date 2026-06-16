@@ -104,9 +104,9 @@ def userrole_history_create(sender, instance, created, **kwargs):
         is_deleted=instance.is_deleted,
         deleted_at=instance.deleted_at,
         created_by=instance.created_by,
-        created_date=instance.created_date,
+        created_date=instance.created_at,
         updated_by=instance.updated_by,
-        updated_date=instance.updated_date,
+        updated_date=instance.updated_at,
         action=action
     )
 
@@ -124,7 +124,7 @@ def userrole_soft_delete(sender, instance, **kwargs):
             is_deleted=True,
             deleted_at=timezone.now(),
             created_by=old.created_by,
-            created_date=old.created_date,
+            created_date=old.created_at,
             updated_by=old.updated_by,
             updated_date=timezone.now(),
             action="DELETE"

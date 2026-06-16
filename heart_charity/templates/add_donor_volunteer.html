@@ -541,25 +541,9 @@
 <h5 class="section-title">Address Details</h5>
 <hr>
 <div class="row g-3 mb-4" id="address">
-    <div class="col-md-4">
-        <label class="form-label">House Number <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="house_number" class="form-control" required aria-required="true">
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Building Name <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="building_name" class="form-control" required aria-required="true">
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Street Name <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="street_name" class="form-control" required aria-required="true">
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Landmark <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="landmark" class="form-control" required aria-required="true">
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Area <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="area" class="form-control" required aria-required="true">
+    <div class="col-md-12">
+        <label class="form-label">Address <span style="color: #d9534f;">*</span></label>
+        <input type="text" name="address" class="form-control" placeholder="Enter full address" required aria-required="true">
     </div>
     <div class="col-md-4">
         <label class="form-label">City <span style="color: #d9534f;">*</span></label>
@@ -567,7 +551,7 @@
     </div>
 
 <div class="col-md-4">
-<label class="form-label">Country</label>
+<label class="form-label">Country <span style="color: #d9534f;">*</span></label>
 <select id="country" name="country" class="form-select">
 <option value="">Select</option>
 <option value="India">India</option>
@@ -640,12 +624,12 @@
 </select>
 </div>
 <div class="col-md-4" id="stateDropdownBox">
-<label class="form-label">State</label>
+<label class="form-label">State <span style="color: #d9534f;">*</span></label>
 <select id="state" name="state" class="form-select">
 </select>
 </div>
 <div class="col-md-4" id="stateTextboxBox" style="display: none;">
-<label class="form-label">State</label>
+<label class="form-label">State <span style="color: #d9534f;">*</span></label>
 <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
 </div>
 <div class="col-md-4">
@@ -653,17 +637,17 @@
     <input type="text" name="postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
 </div>
 
-    <!-- <div class="col-md-4">
+    <div class="col-md-4">
         <label class="form-label">Native Postal Code</label>
         <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-    </div> -->
+    </div> 
 </div>
-<div class="row g-3 mb-3">
+<!-- <div class="row g-3 mb-3">
        <div class="col-md-4">
          <label class="form-label">Native Place</label>
          <input type="text" name="native_place" class="form-control">
         </div>
-</div>
+</div> -->
 <hr>
                
 <!-- ===================================== ID & PAN ===================================== -->
