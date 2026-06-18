@@ -10,6 +10,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
+    'ahinsadham.itegoss.in',
+    'ahinsadham-crm-856395380155.us-central1.run.app',
 ]
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 
