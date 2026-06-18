@@ -25,4 +25,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "firstattempthost3.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "ngo.wsgi:application"]
