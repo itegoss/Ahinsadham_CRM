@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-87jejs-3pq9phwv^0u4p!_-3tx_xw&7fsd!l3!wqo6l4f5ct2o')
 DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
