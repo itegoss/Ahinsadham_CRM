@@ -21,12 +21,18 @@ def home(req):
     return render(req,'home.html')
 
 def signin_view(request):
+    # try:
+    #     user = User.objects.get(username="username")
+    #     login(request, user)
+    #     return redirect('welcome') 
+    # except User.DoesNotExist:
+    #     return render(request, 'signin.html', {"errmsg": """"""})
     try:
         user = User.objects.get(username="username")
-        login(request, user)
-        return redirect('welcome') 
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('welcome')
     except User.DoesNotExist:
-        return render(request, 'signin.html', {"errmsg": """"""})
+        return render(request, 'signin.html', {"errmsg": ""})
 
 def access_control(request):
     modules = Module.objects.all()
@@ -73,6 +79,188 @@ def show_lookup_data(request):
     })
 from django.core.paginator import Paginator
 from .helpers import get_user_permissions
+
+def apply_column_filters(queryset, request, prefix, mapping):
+    for key, fields in mapping.items():
+        param_name = f"{prefix}_col_{key}"
+        val = request.GET.get(param_name, "").strip()
+        if val:
+            if isinstance(fields, list):
+                q_obj = Q()
+                for field in fields:
+                    if field.endswith('__is_deleted') or field == 'is_deleted' or field.endswith('__is_active') or field == 'is_active' or field == 'is_superuser':
+                        if val.lower() in ['yes', 'true', '1']:
+                            q_obj |= Q(**{field: True})
+                        elif val.lower() in ['no', 'false', '0']:
+                            q_obj |= Q(**{field: False})
+                    else:
+                        q_obj |= Q(**{field + "__icontains": val})
+                queryset = queryset.filter(q_obj)
+            else:
+                field = fields
+                if field.endswith('__is_deleted') or field == 'is_deleted' or field.endswith('__is_active') or field == 'is_active' or field == 'is_superuser' or field == 'can_access' or field == 'can_add' or field == 'can_edit' or field == 'can_delete' or field == 'can_view':
+                    if val.lower() in ['yes', 'true', '1']:
+                        queryset = queryset.filter(**{field: True})
+                    elif val.lower() in ['no', 'false', '0']:
+                        queryset = queryset.filter(**{field: False})
+                else:
+                    if '__icontains' not in field and not field.endswith('__year') and not field.endswith('__month') and not field.endswith('__day'):
+                        queryset = queryset.filter(**{field + "__icontains": val})
+                    else:
+                        queryset = queryset.filter(**{field: val})
+    return queryset
+
+donor_mapping = {
+    '2': 'id',
+    '3': 'person_type__lookup_name',
+    '4': 'first_name',
+    '5': 'middle_name',
+    '6': 'last_name',
+    '7': 'gender',
+    '8': 'date_of_birth',
+    '9': 'contact_number',
+    '10': 'email',
+    '11': 'donor_box__donation_id',
+    '12': 'id_type__lookup_name',
+    '13': 'id_number',
+    '14': 'occupation_name',
+    '15': 'occupation_nature__lookup_name',
+    '16': 'occupation_type__lookup_name',
+    '17': 'gst_number',
+    '18': 'address',
+    '19': 'city',
+    '20': 'state',
+    '21': 'country',
+    '22': 'postal_code',
+    '23': 'native_place',
+    '24': 'created_by__username',
+    '25': 'created_at',
+    '26': 'updated_by__username',
+    '27': 'updated_at',
+    '28': 'is_deleted',
+    '29': 'deleted_by__username',
+    '30': 'deleted_at',
+}
+
+donation_mapping = {
+    '1': 'id',
+    '2': 'receipt_id',
+    '3': ['donor__first_name', 'donor__last_name'],
+    '4': 'donor__city',
+    '5': 'donation_amount_declared',
+    '6': 'donation_amount_paid',
+    '7': 'donation_date',
+    '8': 'donation_category__lookup_name',
+    '9': 'payment_method__lookup_name',
+    '10': 'transaction_id',
+    '11': 'payment_status__lookup_name',
+    '12': 'check_no',
+    '13': 'place_of_donation',
+    '14': 'description',
+    '15': 'name_of_bank',
+    '16': 'branch',
+    '17': 'created_by__username',
+    '18': 'created_at',
+    '19': 'updated_by__username',
+    '20': 'updated_at',
+    '21': 'is_deleted',
+    '22': 'deleted_by__username',
+    '23': 'deleted_at',
+    '24': 'verified_by__username',
+}
+
+user_mapping = {
+    '1': 'userrole__role__name',
+    '2': 'id',
+    '3': 'username',
+    '4': 'first_name',
+    '5': 'last_name',
+    '6': 'email',
+    '7': 'is_active',
+    '8': 'is_superuser',
+    '9': 'date_joined',
+}
+
+roles_mapping = {
+    '1': 'id',
+    '2': 'module__id',
+    '3': 'module__module_name',
+    '4': 'description',
+    '5': 'name',
+    '6': 'can_access',
+    '7': 'can_add',
+    '8': 'can_delete',
+    '9': 'can_edit',
+    '10': 'can_view',
+    '11': 'created_by__username',
+    '12': 'created_at',
+    '13': 'updated_by__username',
+    '14': 'updated_at',
+}
+
+lt_mapping = {
+    '1': 'id',
+    '2': 'type_name',
+    '3': 'created_by__username',
+    '4': 'created_at',
+    '5': 'updated_by__username',
+    '6': 'updated_at',
+    '7': 'is_deleted',
+    '8': 'deleted_by__username',
+    '9': 'deleted_at',
+}
+
+lu_mapping = {
+    '1': 'id',
+    '2': 'lookup_name',
+    '3': 'lookup_type__type_name',
+    '4': 'created_by__username',
+    '5': 'created_at',
+    '6': 'updated_by__username',
+    '7': 'updated_at',
+    '8': 'is_deleted',
+    '9': 'deleted_by__username',
+    '10': 'deleted_at',
+}
+
+payments_mapping = {
+    '1': 'id',
+    '2': 'receipt_id',
+    '3': ['owner__first_name', 'owner__last_name'],
+    '4': 'donation_box__donation_id',
+    '5': 'amount',
+    '6': 'payment_mode__lookup_name',
+    '7': ['opened_by__first_name', 'opened_by__last_name'],
+    '8': ['received_by__first_name', 'received_by__last_name'],
+    '9': 'i_witness',
+    '10': 'name_of_bank',
+    '11': 'branch',
+    '12': 'transaction_id',
+    '13': 'created_by__username',
+    '14': 'created_at',
+    '15': 'updated_by__username',
+    '16': 'updated_at',
+    '17': 'deleted_by__username',
+    '18': 'is_deleted',
+    '19': 'deleted_at',
+}
+
+box_mapping = {
+    '1': 'donation_id',
+    '3': 'key_id',
+    '4': 'box_size',
+    '5': 'status',
+    '6': 'box_owner',
+    '7': 'box_percentage',
+    '8': 'created_by__username',
+    '9': 'created_at',
+    '10': 'updated_by__username',
+    '11': 'updated_at',
+    '12': 'is_deleted',
+    '13': 'deleted_by__username',
+    '14': 'deleted_at',
+}
+
 def welcome_view(request):
     user = request.user
     permissions = get_user_permissions(user)
@@ -97,6 +285,16 @@ def welcome_view(request):
     lookups = Lookup.objects.select_related("lookup_type").order_by("id")
     donation_boxes = DonationBox.objects.all()
     donation_payment = DonationPaymentBox.objects.all().select_related("owner", "donation_box")
+
+    users = apply_column_filters(users, request, 'user', user_mapping)
+    roles_qs = apply_column_filters(roles_qs, request, 'roles', roles_mapping)
+    donations = apply_column_filters(donations, request, 'donation', donation_mapping)
+    donors = apply_column_filters(donors, request, 'donor', donor_mapping)
+    lookup_types = apply_column_filters(lookup_types, request, 'lt', lt_mapping)
+    lookups = apply_column_filters(lookups, request, 'lu', lu_mapping)
+    donation_boxes = apply_column_filters(donation_boxes, request, 'box', box_mapping)
+    donation_payment = apply_column_filters(donation_payment, request, 'payments', payments_mapping)
+
     # Pagination
     page_obj = Paginator(donors.order_by('id'), 10).get_page(request.GET.get('donor_page'))
     donation_page_obj = Paginator(donations.order_by('id'), 10).get_page(request.GET.get('donation_page'))
@@ -187,6 +385,15 @@ def welcome_view(request):
         'box_page_obj': box_page_obj,
     }
     context['icon_map'] = icon_map
+
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
 
     if user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
@@ -284,17 +491,27 @@ def search_lookup_type(request):
         return response
 
     # ✅ Pagination
+    lookup_types = apply_column_filters(lookup_types, request, 'lt', lt_mapping)
     paginator = Paginator(lookup_types, 5)
     page_number = request.GET.get("lt_page")
     lookup_types_page = paginator.get_page(page_number)
     permissions = get_user_permissions(request.user)
 
-    return render(request, "welcome.html", {
+    context = {
         "lookup_page_obj": lookup_types_page,
         "lookup_query": lookup_query,
         "active_tab": active_tab,
-        "permissions":permissions
-    })
+        "permissions": permissions
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
@@ -369,16 +586,26 @@ def search_lookup_table(request):
             ])
 
         return response
+    lookups = apply_column_filters(lookups, request, 'lu', lu_mapping)
     paginator = Paginator(lookups, 5)
     lookup_table_obj = paginator.get_page(request.GET.get("lookup_table_page"))
     permissions = get_user_permissions(request.user)
 
-    return render(request, "welcome.html", {
+    context = {
         "lookup_table_obj": lookup_table_obj,
         "sub_lookup_query": sub_lookup_query,
         "active_tab": active_tab,
-        "permissions":permissions
-    })
+        "permissions": permissions
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 from django.contrib.auth.models import User
 
@@ -412,17 +639,27 @@ def search_users(request):
         return response  # ⬅️ No redirect, download starts directly
 
     # 🟩 Pagination
+    users = apply_column_filters(users, request, 'user', user_mapping)
     paginator = Paginator(users, 10)
     page = request.GET.get("user_page")
     user_page_obj = paginator.get_page(page)
     permissions = get_user_permissions(request.user)
 
-    return render(request, "welcome.html", {
+    context = {
         "user_page_obj": user_page_obj,
         "user_query": query,
         "active_tab": active_tab,
-        "permissions":permissions
-    })
+        "permissions": permissions
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 def search_roles(request):
     query1 = request.GET.get('query1', '').strip()
@@ -506,18 +743,28 @@ def search_roles(request):
             ])
 
         return response
+    roles = apply_column_filters(roles, request, 'roles', roles_mapping)
     role_paginator = Paginator(roles, 10)
     page_number = request.GET.get('roles_page')
     roles_page_obj = role_paginator.get_page(page_number)
     roles_page_obj.query = query1
     permissions = get_user_permissions(request.user)
 
-    return render(request, 'welcome.html', {
+    context = {
         'roles_page_obj': roles_page_obj,
         'query1': query1,
         'active_tab': active_tab,
-        "permissions":permissions
-    })
+        "permissions": permissions
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, 'welcome.html', context)
 
 def manage_user_roles(request):
     users = User.objects.all()
@@ -739,15 +986,25 @@ def search_donor_volunteer(request):
             ])
 
         return response
+    donorvolunteer = apply_column_filters(donorvolunteer, request, 'donor', donor_mapping)
     paginator = Paginator(donorvolunteer, 10)
     page_obj = paginator.get_page(request.GET.get('donor_page'))
     permissions = get_user_permissions(request.user)
 
-    return render(request, "welcome.html", {
+    context = {
         "page_obj": page_obj,
         "query2": query2 if query2 else "",
         "permissions": permissions
-    })
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 from django.db.models import Value
 from django.db.models.functions import Concat
@@ -834,15 +1091,25 @@ def search_donation(request):
         return response
 
     # ---- PAGINATION ----
+    donations = apply_column_filters(donations, request, 'donation', donation_mapping)
     paginator = Paginator(donations, 10)
-    donation_page_obj = paginator.get_page(request.GET.get('page'))
+    donation_page_obj = paginator.get_page(request.GET.get('donation_page') or request.GET.get('page'))
     permissions = get_user_permissions(request.user)
 
-    return render(request, 'welcome.html', {
+    context = {
         'donation_page_obj': donation_page_obj,
         'query3': query3,
         'permissions': permissions,
-    })
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, 'welcome.html', context)
 
 @login_required
 def search_donation_payment(request):
@@ -978,16 +1245,26 @@ def search_donation_payment(request):
                 p.verified_at,
             ])
         return response
+    payments = apply_column_filters(payments, request, 'payments', payments_mapping)
     paginator = Paginator(payments, 5)
     page_number = request.GET.get("payments_page")
     payments_page_obj = paginator.get_page(page_number)
     permissions = get_user_permissions(request.user)
 
-    return render(request, "welcome.html", {
+    context = {
         "payments_page_obj": payments_page_obj,
         "payments_query": payments_query,
         "permissions": permissions,
- })
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 @login_required
 def search_donation_box(request):
@@ -1094,15 +1371,26 @@ def search_donation_box(request):
                 b.is_deleted,
             ])
         return response
+    boxes = apply_column_filters(boxes, request, 'box', box_mapping)
     paginator = Paginator(boxes, 5)
     page_number = request.GET.get("box_page")
     box_page_obj = paginator.get_page(page_number)
     permissions = get_user_permissions(request.user)
-    return render(request, "welcome.html", {
+
+    context = {
         "box_page_obj": box_page_obj,
         "box_query": box_query,
         "permissions": permissions,
-    })
+    }
+    # Pass column filter parameters back to the context
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+        for col_idx in range(1, 35):
+            param_name = f"{prefix}_col_{col_idx}"
+            val = request.GET.get(param_name, "")
+            if val:
+                context[param_name] = val
+
+    return render(request, "welcome.html", context)
 
 #----------------Globle End Search--------------
 from django.core.files.storage import default_storage
@@ -1407,6 +1695,7 @@ def add_donor_volunteer(request):
                 # ADDRESS
                 address=request.POST.get("address"),
                 city=request.POST.get("city"),
+                area=request.POST.get("area"),
                 state=request.POST.get("state"),
                 country=request.POST.get("country") or "India",
                 postal_code=request.POST.get("postal_code"),
@@ -2650,6 +2939,7 @@ def edit_donor(request, donor_id):
 
             donor.address = request.POST.get("address")
             donor.city = request.POST.get("city")
+            donor.area = request.POST.get("area")
             donor.state = request.POST.get("state")
             donor.country = request.POST.get("country") or "India"
             donor.postal_code = request.POST.get("postal_code")

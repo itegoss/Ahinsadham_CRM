@@ -1,0 +1,83 @@
+20: def home(req):
+23: def signin_view(request):
+37: def access_control(request):
+72: def show_lookup_data(request):
+82: def welcome_view(request):
+219: def logout_view(req):
+223: def send_otp(request):
+237: def send_otp(request):
+255: def search_lookup_type(request):
+305: def search_lookup_table(request):
+391: def search_users(request):
+433: def search_roles(request):
+528: def manage_user_roles(request):
+558: def assign_role(request):
+595: def search_donor_volunteer(request):
+761: def search_donation(request):
+854: def search_donation_payment(request):
+999: def search_donation_box(request):
+1333: def add_donor_volunteer(request):
+1357: def get_lookup(field):
+1361: def get_donor(field):
+1365: def get_box(field):
+1470: def adddonation(request):
+1495: def fk(val):
+1576: def donation_summary(request, id):
+1597: def fk(val):
+1633: def donation_detail_ajax(request, donation_id):
+1651: def donation_summary_ajax(request, donor_id):
+1678: def donation_list(request):
+1685: def link_callback(uri, rel):
+1707: def donation_receipt_preview(request, id):
+1736: def download_receipt_pdf(request, id):
+1781: def donation_payment_receipt_view(request, id):
+1809: def donation_payment_receipt_pdf(request, id):
+1860: def download_donor_report(request):
+1901: def user_list(request):
+1908: def donation_receipt_view(request, donation_id):
+2132: def add_donation_payment(request):
+2240: def add_donation_box(request):
+2283: def all_donations(request):
+2306: def donation_list(request):
+2313: def lookup_type_create(request):
+2341: def lookup_create(request):
+2379: def edit_lookup_type(request, id):
+2394: def edit_lookup(request, id):
+2409: def edit_user(request, id):
+2453: def edit_usermoduleaccess(request, id):
+2613: def edit_donor(request, donor_id):
+2713: def edit_donation(request, id):
+2763: def edit_box_payment(request, id):
+2817: def edit_donation_box(request, id):
+2850: def delete_user(request, user_id):
+2859: def delete_lookup_type(request, lookup_type_id):
+2874: def delete_lookup(request, lookup_id):
+2887: def delete_user_module_access(request, access_id):
+2901: def delete_donor_volunteer(request, donor_id):
+2915: def delete_donation(request, donation_id):
+2932: def delete_box_payment(request, id):
+2943: def delete_donation_box(request, id):
+2954: def edit_box_payment(request, id):
+2974: def verify_donation(request, donation_id):
+2984: def verify_payment(request, payment_id):
+2998: def select_donation_box(request):
+3029: def get_donation_boxes_data(request):
+3039: def get_donation_box_details(request, box_id):
+3069: def get_donation_data(request, donation_id):
+3095: def add_event(request):
+3117: def create_order(request):
+3133: def add_leave(request):
+3137: def add_timesheet(request):
+3140: def add_visitor(request):
+3143: def add_vendor(request):
+3146: def add_request(request):
+3149: def add_inventory(request):
+3152: def add_assets(request):
+3155: def add_fleet(request):
+3158: def add_financial_asset(request):
+3161: def add_expense(request):
+3164: def add_medical(request):
+3167: def add_rehabilitation(request):
+3170: def add_adoption(request):
+3173: def add_trees(request):
+3176: def add_seeds(request):
