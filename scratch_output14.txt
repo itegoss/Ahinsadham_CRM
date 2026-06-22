@@ -1,0 +1,30 @@
+donation_page_obj context:
+       </div>
+        <div class="card-body">
+          <div class="search-container">
+            <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100"
+              role="search">
+              <input type="text" name="q" data-target="alldonations"
+                class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
+                value="{{ query3|default:'' }}">
+            </form>
+          </div>
+          {% if donation_page_obj %}
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle paginated-table">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="2">Donor <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="3">Address<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="4">Amount declared<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="5">Amount Paid<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="6">Date<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="7">Category<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="8">Payment Method<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="9">Transaction ID<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="10">payment_status<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="11">Check number<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="12">Place of donation

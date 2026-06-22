@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from . import views
 urlpatterns = [
     path("", views.home, name="home"),
@@ -75,4 +75,5 @@ urlpatterns = [
     path('add-adoption/', views.add_adoption, name="add_adoption"),
     path('add-trees/', views.add_trees, name="add_trees"),
     path('add-seeds/', views.add_seeds, name="add_seeds"),
+    path('auth/', include('social_django.urls', namespace='social'))
     ]

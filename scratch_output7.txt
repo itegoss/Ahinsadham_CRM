@@ -1,0 +1,25 @@
+=== TABLE 13 SURROUNDINGS ===
+f query %}
+              <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
+              {% endif %}
+            </form>
+          </div>
+          {% if query2 %}
+          <h5>Showing results for: "<span ">{{ query2 }}</span>" </h5>
+              <hr>
+              {% endif %}
+              {% if page_obj %}
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle paginated-table">
+=== TABLE 14 SURROUNDINGS ===
+  <td colspan="14" class="text-center text-muted py-4">No donors found.</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% elif query %}
+              <p class="text-danger mt-3">No data found for "<strong>{{ query2 }}</strong>".</p>
+              {% else %}
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle paginated-table">

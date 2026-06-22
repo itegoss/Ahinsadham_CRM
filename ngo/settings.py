@@ -14,11 +14,12 @@ ALLOWED_HOSTS = [
     'ahinsadham-crm-856395380155.us-central1.run.app',
 ]
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
-
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 CSRF_TRUSTED_ORIGINS = [
-
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 INSTALLED_APPS = [
@@ -69,17 +70,30 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 
-DATABASES = {
+
+if ENV == "PROD":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DATABASE_NAME'),
+            'USER': os.environ.get('DATABASE_USER'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+            'HOST': os.environ.get('DATABASE_HOST'),
+            'PORT': os.environ.get('DATABASE_PORT'),
+        }
+    }
+
+else:
+   DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.environ.get('DATABASE_HOST'),
-        'PORT': os.environ.get('DATABASE_PORT'),
+        'NAME': 'Ahinsadhamm',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
