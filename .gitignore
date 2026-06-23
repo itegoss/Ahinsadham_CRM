@@ -21,3 +21,6 @@ Thumbs.db
 
 # Ignore migration caches
 */migrations/__pycache__/
+full_data.json
+data_new.json
+data.json
