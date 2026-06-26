@@ -340,8 +340,8 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
 
     context = {
         'user': user,
-        'username': user.username,
-        'first_name': user.first_name,
+        'username': user.username if user.is_authenticated else "",
+        'first_name': user.first_name if user.is_authenticated else "",
         'donation_payment': donation_payment,
         'permissions': permissions,  
         'donation_owners': donation_owners,
@@ -373,10 +373,10 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
             if val:
                 context[param_name] = val
 
-    if user.is_superuser:
+    if user.is_authenticated and user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
         context['allowed_modules'] = list(all_modules)
-    else:
+    elif user.is_authenticated:
         user_role = UserRole.objects.filter(user=user).select_related('role').first()
         if user_role and user_role.role:
             allowed_modules = (
@@ -390,12 +390,15 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         else:
             context['allowed_modules'] = []
             messages.warning(request, "⚠️ No role assigned. Contact admin.")
+    else:
+        context['allowed_modules'] = []
 
     if extra_context:
         context.update(extra_context)
 
     return context
 
+@login_required
 def welcome_view(request):
     user = request.user
     permissions = get_user_permissions(user)
@@ -476,6 +479,7 @@ def send_otp(request):
 
 # ------------Globle All Search-------------------
 
+@login_required
 def search_lookup_type(request):
     lookup_query = request.GET.get('lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')
@@ -485,8 +489,8 @@ def search_lookup_type(request):
             Q(type_name__icontains=lookup_query) |
             Q(created_by__username__icontains=lookup_query) |
             Q(updated_by__username__icontains=lookup_query) |
-            Q(created_date__icontains=lookup_query) |
-            Q(updated_date__icontains=lookup_query) |
+            Q(created_at__icontains=lookup_query) |
+            Q(updated_at__icontains=lookup_query) |
             Q(deleted_at__icontains=lookup_query)
         )
 
@@ -506,10 +510,10 @@ def search_lookup_type(request):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(['ID', 'Type Name', 'Created By', 'Created Date','Updated By','Updated Date','Deleted At','Is Deleted'])
+        writer.writerow(['ID', 'Type Name', 'Created By', 'Created At','Updated By','Updated At','Deleted At','Is Deleted'])
 
         for lookup in lookup_types:
-            writer.writerow([lookup.id, lookup.type_name, lookup.created_by, lookup.created_date,lookup.updated_by,lookup.updated_date,lookup.deleted_at,lookup.is_deleted])
+            writer.writerow([lookup.id, lookup.type_name, lookup.created_by, lookup.created_at,lookup.updated_by,lookup.updated_at,lookup.deleted_at,lookup.is_deleted])
 
         return response
 
@@ -519,6 +523,7 @@ def search_lookup_type(request):
     })
     return render(request, "welcome.html", context)
 
+@login_required
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')
@@ -544,8 +549,8 @@ def search_lookup_table(request):
             Q(lookup_type__type_name__icontains=sub_lookup_query) |
             Q(created_by__username__icontains=sub_lookup_query) |
             Q(updated_by__username__icontains=sub_lookup_query) |
-            Q(created_date__icontains=sub_lookup_query) |
-            Q(updated_date__icontains=sub_lookup_query) |
+            Q(created_at__icontains=sub_lookup_query) |
+            Q(updated_at__icontains=sub_lookup_query) |
             Q(deleted_at__icontains=sub_lookup_query)
         )
 
@@ -562,8 +567,8 @@ def search_lookup_table(request):
         if q_lower in month_map:
             month = month_map[q_lower]
             filters |= (
-                Q(created_date__month=month) |
-                Q(updated_date__month=month) |
+                Q(created_at__month=month) |
+                Q(updated_at__month=month) |
                 Q(deleted_at__month=month)
             )
 
@@ -576,7 +581,7 @@ def search_lookup_table(request):
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(["ID", "Lookup Name", "Lookup Type", "Created By", "Created Date", "Updated By", "Updated Date", "Deleted At", "Is Deleted"])
+        writer.writerow(["ID", "Lookup Name", "Lookup Type", "Created By", "Created At", "Updated By", "Updated At", "Deleted At", "Is Deleted"])
 
         for l in lookups:
             writer.writerow([
@@ -584,9 +589,9 @@ def search_lookup_table(request):
                 l.lookup_name,
                 l.lookup_type.type_name if l.lookup_type else "",
                 l.created_by.username if l.created_by else "",
-                l.created_date,
+                l.created_at,
                 l.updated_by.username if l.updated_by else "",
-                l.updated_date,
+                l.updated_at,
                 l.deleted_at,
                 l.is_deleted,
             ])
@@ -600,6 +605,7 @@ def search_lookup_table(request):
 
 from django.contrib.auth.models import User
 
+@login_required
 def search_users(request):
     query = request.GET.get("user_query", "")
     active_tab = request.GET.get("active_tab", "user")
@@ -635,6 +641,7 @@ def search_users(request):
     })
     return render(request, "welcome.html", context)
 
+@login_required
 def search_roles(request):
     query1 = request.GET.get('query1', '').strip()
     active_tab = "roles"
@@ -661,8 +668,8 @@ def search_roles(request):
             Q(module__module_name__icontains=query1) |
             Q(created_by__username__icontains=query1) |
             Q(updated_by__username__icontains=query1) |
-            # Q(created_date__icontains=query1) |
-            # Q(updated_date__icontains=query1) |
+            # Q(created_at__icontains=query1) |
+            # Q(updated_at__icontains=query1) |
             Q(deleted_at__icontains=query1)
         )
         if query1.isdigit():
@@ -687,8 +694,8 @@ def search_roles(request):
         if qlow in month_map:
             month_num = month_map[qlow]
             filters |= (
-                Q(created_date__month=month_num) |
-                Q(updated_date__month=month_num) |
+                Q(created_at__month=month_num) |
+                Q(updated_at__month=month_num) |
                 Q(deleted_at__month=month_num)
             )
         roles = roles.filter(filters)
@@ -697,7 +704,7 @@ def search_roles(request):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         writer = csv.writer(response)
-        writer.writerow(['Role', 'Description', 'Can Access', 'Can Add', 'Can Edit', 'Can Delete', 'Can View', 'Created By', 'Created Date', 'Updated By', 'Updated Date', 'Deleted At', 'Is Deleted'])
+        writer.writerow(['Role', 'Description', 'Can Access', 'Can Add', 'Can Edit', 'Can Delete', 'Can View', 'Created By', 'Created At', 'Updated By', 'Updated At', 'Deleted At', 'Is Deleted'])
 
         for role in roles:
             writer.writerow([
@@ -709,9 +716,9 @@ def search_roles(request):
                 role.can_delete,
                 role.can_view,
                 role.created_by,
-                role.created_date,
+                role.created_at,
                 role.updated_by,
-                role.updated_date,
+                role.updated_at,
                 role.deleted_at,
                 role.is_deleted,
             ])

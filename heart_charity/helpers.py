@@ -7,6 +7,14 @@ def get_user_permissions(user):
     (can_update maps to can_edit in your model)
     """
 
+    # 0️⃣ Unauthenticated/Anonymous User → No permissions
+    if not user or not user.is_authenticated:
+        return {
+            "can_add": False,
+            "can_edit": False,
+            "can_delete": False,
+        }
+
     # 1️⃣ Superuser → Full Access
     if user.is_superuser:
         return {
