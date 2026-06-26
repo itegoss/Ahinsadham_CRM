@@ -13,8 +13,9 @@ from heart_charity.models import Donation, DonationPaymentBox, DonorVolunteer
 
 def generate_test_pdf():
     # Fetch a dummy or actual donation to render
-    donation = Donation.objects.first()
+    donation = Donation.objects.filter(receipt_id='ACH-0005').first()
     if not donation:
+        print("No donation found for ACH-0005.")
         print("No donation found in the database. Please add one or mock it.")
         return
 

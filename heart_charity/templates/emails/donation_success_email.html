@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Confirmation</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #2b2b2b;
+            line-height: 1.6;
+        }
+        .content h2 {
+            font-size: 18px;
+            margin-top: 0;
+            color: #1b4332;
+        }
+        .receipt-card {
+            background-color: #f8faf9;
+            border: 1px solid #e8f0ec;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-bottom: 1px dashed #e8f0ec;
+            padding-bottom: 8px;
+        }
+        .receipt-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .receipt-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .receipt-value {
+            color: #081c15;
+            font-weight: 600;
+        }
+        .receipt-value.amount {
+            color: #2d6a4f;
+            font-size: 16px;
+        }
+        .thank-you-msg {
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 30px;
+        }
+        .footer {
+            background-color: #081c15;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid #1b4332;
+        }
+        .footer a {
+            color: #52b788;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer p {
+            margin: 6px 0;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                width: 100%;
+            }
+            .content, .header, .footer {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>BHAGWAN MAHAVIR PASHU RAKSHA KENDRA</h1>
+            <p>Anchorwala Ahinsadham</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <h2>Dear {{ donor_name }},</h2>
+            <p class="thank-you-msg">
+                Thank you for your generous contribution to Bhagwan Mahavir Pashu Raksha Kendra (Ahinsadham). Your support allows us to continue providing medical care, rehabilitation, and a safe sanctuary for vulnerable animals. We are truly grateful for your kindness.
+            </p>
+
+            <h2>Donation Summary</h2>
+            <div class="receipt-card">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px dashed #e8f0ec;">
+                        <td style="padding: 10px 0; color: #6b7280; font-weight: 500; font-size: 14px;">Receipt ID</td>
+                        <td style="padding: 10px 0; text-align: right; color: #081c15; font-weight: 600; font-size: 14px;">{{ receipt_id }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed #e8f0ec;">
+                        <td style="padding: 10px 0; color: #6b7280; font-weight: 500; font-size: 14px;">Transaction ID</td>
+                        <td style="padding: 10px 0; text-align: right; color: #081c15; font-weight: 600; font-size: 14px;">{{ transaction_id }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed #e8f0ec;">
+                        <td style="padding: 10px 0; color: #6b7280; font-weight: 500; font-size: 14px;">Date</td>
+                        <td style="padding: 10px 0; text-align: right; color: #081c15; font-weight: 600; font-size: 14px;">{{ donation_date }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #6b7280; font-weight: 500; font-size: 14px;">Amount Paid</td>
+                        <td style="padding: 10px 0; text-align: right; color: #2d6a4f; font-weight: 700; font-size: 16px;">₹ {{ donation_amount }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p style="font-size: 13px; color: #6b7280; margin-top: 20px;">
+                Note: Donors are exempted u/s 80G of the Income Tax Act. A formal PDF receipt will be sent shortly, or you can download it directly from your dashboard.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><b>Bhagwan Mahavir Pashu Raksha Kendra</b></p>
+            <p>Pragpur Road Junction, Taluka Mundra – Kutch, Gujarat 370415</p>
+            <p>Contact: 070699 88555 / 070692 88555 | Email: <a href="mailto:kutch@ahinsadham.org">kutch@ahinsadham.org</a></p>
+            <p style="margin-top: 15px; font-size: 11px;">
+                Visit us at <a href="https://www.ahinsadham.org" target="_blank">www.ahinsadham.org</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

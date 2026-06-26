@@ -1181,15 +1181,16 @@
                 <i class="fas fa-exchange-alt me-1"></i> Change
             </a>
         </div>
-        <input type="hidden" name="scheme_id" id="scheme_id" value="{{ selected_scheme.id }}">
-        <input type="hidden" name="scheme_name" id="scheme_name" value="{{ selected_scheme.name }}">
-        <input type="hidden" name="scheme_image" id="scheme_image" value="{{ selected_scheme.image }}">
-        <input type="hidden" name="scheme_amount" id="scheme_amount" value="{{ selected_scheme.amount }}">
         {% endif %}
-
         <!-- Form Body -->
         <form id="donationForm" method="POST" action="{% url 'donation_form' %}" novalidate>
             {% csrf_token %}
+            {% if selected_scheme %}
+            <input type="hidden" name="scheme_id" id="scheme_id" value="{{ selected_scheme.id }}">
+            <input type="hidden" name="scheme_name" id="scheme_name" value="{{ selected_scheme.name }}">
+            <input type="hidden" name="scheme_image" id="scheme_image" value="{{ selected_scheme.image }}">
+            <input type="hidden" name="scheme_amount" id="scheme_amount" value="{{ selected_scheme.amount }}">
+            {% endif %}
 
             <div class="form-body">
 
@@ -1204,15 +1205,37 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <label class="form-label-top" for="id_name">Full Name<span class="asterisk">*</span></label>
-                            <div class="custom-input-group" id="group_name">
+                        <div class="col-md-4">
+                            <label class="form-label-top" for="id_first_name">First Name<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_first_name">
                                 <div class="input-wrapper">
                                     <div class="input-icon-box"><i class="fas fa-user"></i></div>
-                                    <input type="text" name="name" id="id_name" class="form-control custom-input" placeholder="John Doe" value="{{ form_data.name|default:'' }}">
+                                    <input type="text" name="first_name" id="id_first_name" class="form-control custom-input" placeholder="John" value="{{ form_data.first_name|default:'' }}">
                                     <div class="input-focus-highlight"></div>
                                 </div>
-                                <div class="invalid-feedback" id="name_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                                <div class="invalid-feedback" id="first_name_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-top" for="id_middle_name">Middle Name</label>
+                            <div class="custom-input-group" id="group_middle_name">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-user"></i></div>
+                                    <input type="text" name="middle_name" id="id_middle_name" class="form-control custom-input" placeholder="David" value="{{ form_data.middle_name|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="middle_name_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-top" for="id_last_name">Last Name<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_last_name">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-user"></i></div>
+                                    <input type="text" name="last_name" id="id_last_name" class="form-control custom-input" placeholder="Doe" value="{{ form_data.last_name|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="last_name_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -1270,11 +1293,11 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <label class="form-label-top" for="id_address">Street Address<span class="asterisk">*</span></label>
+                            <label class="form-label-top" for="id_address">Address<span class="asterisk">*</span></label>
                             <div class="custom-input-group" id="group_address">
                                 <div class="input-wrapper">
                                     <div class="input-icon-box textarea-icon"><i class="fas fa-home"></i></div>
-                                    <textarea name="address" id="id_address" class="form-control custom-input" rows="2" placeholder="Street address">{{ form_data.address|default:'' }}</textarea>
+                                    <textarea name="address" id="id_address" class="form-control custom-input" rows="2" placeholder="Address">{{ form_data.address|default:'' }}</textarea>
                                     <div class="input-focus-highlight"></div>
                                 </div>
                                 <div class="invalid-feedback" id="address_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
@@ -1511,7 +1534,7 @@
         input.addEventListener('blur', function() {
             const group = this.closest('.custom-input-group');
             const name = this.id.replace('id_', '');
-            const requiredFields = ['name','address','area','city','state','country','postal_code','mobile_number'];
+            const requiredFields = ['first_name','last_name','address','area','city','state','country','postal_code','mobile_number'];
             if (requiredFields.includes(name) && this.value.trim()) {
                 group.classList.add('has-success');
                 setTimeout(() => group.classList.remove('has-success'), 1500);
@@ -1594,8 +1617,8 @@ function validateField(fieldId, fieldName) {
 
 function validateStep(step) {
     let valid = true;
-    const s1Fields = ['id_name', 'id_mobile_number'];
-    const s1Names = ['name', 'mobile_number'];
+    const s1Fields = ['id_first_name', 'id_last_name', 'id_mobile_number'];
+    const s1Names = ['first_name', 'last_name', 'mobile_number'];
     const s2Fields = ['id_address', 'id_area', 'id_city', 'id_state', 'id_country', 'id_postal_code'];
     const s2Names = ['address', 'area', 'city', 'state', 'country', 'postal_code'];
 
@@ -1776,7 +1799,7 @@ document.getElementById('donationForm').addEventListener('submit', function(e) {
             },
             modal: { ondismiss: function() { loader.classList.remove('active'); } },
             prefill: {
-                name: document.getElementById('id_name') ? document.getElementById('id_name').value : '',
+                name: `${document.getElementById('id_first_name')?.value || ''} ${document.getElementById('id_middle_name')?.value || ''} ${document.getElementById('id_last_name')?.value || ''}`.replace(/\s+/g, ' ').trim(),
                 email: document.getElementById('id_email') ? document.getElementById('id_email').value : '',
                 contact: document.getElementById('id_mobile_number') ? document.getElementById('id_mobile_number').value : ''
             },
