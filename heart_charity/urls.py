@@ -1,5 +1,13 @@
 from django.urls import include, path
 from . import views
+from .views import (
+    donation_view,
+    payment_failed,
+    payment_success,
+    payment_view,
+    payment_verify,
+    schemes_view,
+)
 urlpatterns = [
     path("", views.home, name="home"),
     path('login/', views.signin_view, name='login'),
@@ -75,5 +83,13 @@ urlpatterns = [
     path('add-adoption/', views.add_adoption, name="add_adoption"),
     path('add-trees/', views.add_trees, name="add_trees"),
     path('add-seeds/', views.add_seeds, name="add_seeds"),
+    path('donate/',  views.donation_view, name='donation_form'),
+    path('', schemes_view, name='schemes_home'),
+    path('payment/', payment_view, name='payment'),
+    path('payment/verify/', payment_verify, name='payment_verify'),
+    path('payment/success/', payment_success, name='payment_success'),
+    path('payment/failed/', payment_failed, name='payment_failed'),
+    path('schemes/', schemes_view, name='schemes'),
     path('auth/', include('social_django.urls', namespace='social'))
+
     ]

@@ -14,7 +14,7 @@ from django.contrib import messages
 import csv
 from django.http import HttpResponse
 import json
-from .utils import generate_receipt_id
+from .utils import generate_receipt_id, generate_ach_receipt_id
 
 
 def home(req):
@@ -261,30 +261,39 @@ box_mapping = {
     '14': 'deleted_at',
 }
 
-def welcome_view(request):
+def get_welcome_context(request, donors=None, donations=None, roles_qs=None, users=None, lookup_types=None, lookups=None, donation_boxes=None, donation_payment=None, extra_context=None):
     user = request.user
     permissions = get_user_permissions(user)
     if user.is_superuser:
-            class SuperPerm:
-                can_add = True
-                can_edit = True
-                can_delete = True
-                can_view = True
-                can_access = True
-            permissions = SuperPerm()
+        class SuperPerm:
+            can_add = True
+            can_edit = True
+            can_delete = True
+            can_view = True
+            can_access = True
+        permissions = SuperPerm()
 
-    users = User.objects.all().order_by('id')
+    if users is None:
+        users = User.objects.all().order_by('id')
+    if roles_qs is None:
+        roles_qs = UserModuleAccess.objects.all()
+    if donations is None:
+        donations = Donation.objects.all().select_related('donor')
+    if donors is None:
+        donors = DonorVolunteer.objects.all()
+    if lookup_types is None:
+        lookup_types = LookupType.objects.all().order_by("id")
+    if lookups is None:
+        lookups = Lookup.objects.select_related("lookup_type").order_by("id")
+    if donation_boxes is None:
+        donation_boxes = DonationBox.objects.all()
+    if donation_payment is None:
+        donation_payment = DonationPaymentBox.objects.all().select_related("owner", "donation_box")
+
     donation_owners = DonationOwner.objects.all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
     clean_roles = sorted(set(roles_qss))
-    roles_qs = UserModuleAccess.objects.all()
-
-    donations = Donation.objects.all().select_related('donor')
-    donors = DonorVolunteer.objects.all()
-    lookup_types = LookupType.objects.all().order_by("id")
-    lookups = Lookup.objects.select_related("lookup_type").order_by("id")
-    donation_boxes = DonationBox.objects.all()
-    donation_payment = DonationPaymentBox.objects.all().select_related("owner", "donation_box")
+    role_names = roles_qs.values_list("name", flat=True).distinct()
 
     users = apply_column_filters(users, request, 'user', user_mapping)
     roles_qs = apply_column_filters(roles_qs, request, 'roles', roles_mapping)
@@ -304,36 +313,6 @@ def welcome_view(request):
     lookup_table_obj = Paginator(lookups, 5).get_page(request.GET.get("lu_page"))
     payments_page_obj = Paginator(donation_payment.order_by('id'), 5).get_page(request.GET.get("payments_page"))
     box_page_obj = Paginator(donation_boxes.order_by('id'), 5).get_page(request.GET.get("box_page"))
-    
-    if request.method == "POST" and "save_user_role" in request.POST:
-        user_id = request.POST.get("user_id")
-        role_name = request.POST.get("role")
-
-        if not user_id or not role_name:
-            messages.error(request, "❌ Please select both user and role.")
-            return redirect("welcome")
-        selected_user = get_object_or_404(User, id=user_id)
-        previous_super_state = selected_user.is_superuser
-
-        selected_role = UserModuleAccess.objects.filter(name=role_name).first()
-        if not selected_role:
-            messages.error(request, "❌ Invalid role selected.")
-            return redirect("welcome")
-
-        user_role, created = UserRole.objects.get_or_create(user=selected_user)
-        user_role.role = selected_role
-        user_role.save()
-
-        if selected_user.is_superuser != previous_super_state:
-            selected_user.is_superuser = previous_super_state
-            selected_user.save(update_fields=["is_superuser"])
-
-        messages.success(
-            request,
-            f"✅ Role '{role_name}' has been assigned to {selected_user.username}."
-        )
-        return redirect("welcome")
-    role_names = roles_qs.values_list("name", flat=True).distinct()
 
     icon_map = {
         "User": "bi bi-person",
@@ -363,7 +342,7 @@ def welcome_view(request):
         'user': user,
         'username': user.username,
         'first_name': user.first_name,
-        'donation_payment':donation_payment,
+        'donation_payment': donation_payment,
         'permissions': permissions,  
         'donation_owners': donation_owners,
         'roles_qss': roles_qss,
@@ -383,8 +362,8 @@ def welcome_view(request):
         'donation_boxes': donation_boxes,
         'payments_page_obj': payments_page_obj,
         'box_page_obj': box_page_obj,
+        'icon_map': icon_map,
     }
-    context['icon_map'] = icon_map
 
     # Pass column filter parameters back to the context
     for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
@@ -394,11 +373,9 @@ def welcome_view(request):
             if val:
                 context[param_name] = val
 
-
     if user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
         context['allowed_modules'] = list(all_modules)
-
     else:
         user_role = UserRole.objects.filter(user=user).select_related('role').first()
         if user_role and user_role.role:
@@ -410,12 +387,58 @@ def welcome_view(request):
                 .values_list('module__module_name', flat=True)
             )
             context['allowed_modules'] = list(allowed_modules)
-
         else:
             context['allowed_modules'] = []
             messages.warning(request, "⚠️ No role assigned. Contact admin.")
 
-    return render(request, 'welcome.html', context)
+    if extra_context:
+        context.update(extra_context)
+
+    return context
+
+def welcome_view(request):
+    user = request.user
+    permissions = get_user_permissions(user)
+    if user.is_superuser:
+        class SuperPerm:
+            can_add = True
+            can_edit = True
+            can_delete = True
+            can_view = True
+            can_access = True
+        permissions = SuperPerm()
+
+    if request.method == "POST" and "save_user_role" in request.POST:
+        user_id = request.POST.get("user_id")
+        role_name = request.POST.get("role")
+
+        if not user_id or not role_name:
+            messages.error(request, "❌ Please select both user and role.")
+            return redirect("welcome")
+        selected_user = get_object_or_404(User, id=user_id)
+        previous_super_state = selected_user.is_superuser
+
+        selected_role = UserModuleAccess.objects.filter(name=role_name).first()
+        if not selected_role:
+            messages.error(request, "❌ Invalid role selected.")
+            return redirect("welcome")
+
+        user_role, created = UserRole.objects.get_or_create(user=selected_user)
+        user_role.role = selected_role
+        user_role.save()
+
+        if selected_user.is_superuser != previous_super_state:
+            selected_user.is_superuser = previous_super_state
+            selected_user.save(update_fields=["is_superuser"])
+
+        messages.success(
+            request,
+            f"✅ Role '{role_name}' has been assigned to {selected_user.username}."
+        )
+        return redirect("welcome")
+
+    context = get_welcome_context(request)
+    return render(request, "welcome.html", context)
 
 def logout_view(req):
     logout(req)
@@ -490,27 +513,10 @@ def search_lookup_type(request):
 
         return response
 
-    # ✅ Pagination
-    lookup_types = apply_column_filters(lookup_types, request, 'lt', lt_mapping)
-    paginator = Paginator(lookup_types, 5)
-    page_number = request.GET.get("lt_page")
-    lookup_types_page = paginator.get_page(page_number)
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        "lookup_page_obj": lookup_types_page,
+    context = get_welcome_context(request, lookup_types=lookup_types, extra_context={
         "lookup_query": lookup_query,
         "active_tab": active_tab,
-        "permissions": permissions
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 def search_lookup_table(request):
@@ -586,25 +592,10 @@ def search_lookup_table(request):
             ])
 
         return response
-    lookups = apply_column_filters(lookups, request, 'lu', lu_mapping)
-    paginator = Paginator(lookups, 5)
-    lookup_table_obj = paginator.get_page(request.GET.get("lookup_table_page"))
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        "lookup_table_obj": lookup_table_obj,
+    context = get_welcome_context(request, lookups=lookups, extra_context={
         "sub_lookup_query": sub_lookup_query,
         "active_tab": active_tab,
-        "permissions": permissions
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 from django.contrib.auth.models import User
@@ -638,27 +629,10 @@ def search_users(request):
 
         return response  # ⬅️ No redirect, download starts directly
 
-    # 🟩 Pagination
-    users = apply_column_filters(users, request, 'user', user_mapping)
-    paginator = Paginator(users, 10)
-    page = request.GET.get("user_page")
-    user_page_obj = paginator.get_page(page)
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        "user_page_obj": user_page_obj,
+    context = get_welcome_context(request, users=users, extra_context={
         "user_query": query,
         "active_tab": active_tab,
-        "permissions": permissions
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 def search_roles(request):
@@ -743,28 +717,11 @@ def search_roles(request):
             ])
 
         return response
-    roles = apply_column_filters(roles, request, 'roles', roles_mapping)
-    role_paginator = Paginator(roles, 10)
-    page_number = request.GET.get('roles_page')
-    roles_page_obj = role_paginator.get_page(page_number)
-    roles_page_obj.query = query1
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        'roles_page_obj': roles_page_obj,
-        'query1': query1,
-        'active_tab': active_tab,
-        "permissions": permissions
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
-    return render(request, 'welcome.html', context)
+    context = get_welcome_context(request, roles_qs=roles, extra_context={
+        "query1": query1,
+        "active_tab": active_tab,
+    })
+    return render(request, "welcome.html", context)
 
 def manage_user_roles(request):
     users = User.objects.all()
@@ -871,7 +828,6 @@ def search_donor_volunteer(request):
                 Q(whatsapp_number__icontains=query2) |
                 Q(donor_box__donation_id__icontains=query2) |
                 Q(donor_box__key_id__icontains=query2) |
-                Q(donor_box__location__icontains=query2) |
                 Q(address__icontains=query2) |
                 Q(city__icontains=query2) |
                 Q(state__icontains=query2) |
@@ -986,24 +942,10 @@ def search_donor_volunteer(request):
             ])
 
         return response
-    donorvolunteer = apply_column_filters(donorvolunteer, request, 'donor', donor_mapping)
-    paginator = Paginator(donorvolunteer, 10)
-    page_obj = paginator.get_page(request.GET.get('donor_page'))
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        "page_obj": page_obj,
+    context = get_welcome_context(request, donors=donorvolunteer, extra_context={
+        "query": query2 if query2 else "",
         "query2": query2 if query2 else "",
-        "permissions": permissions
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 from django.db.models import Value
@@ -1090,25 +1032,9 @@ def search_donation(request):
                 d.verified_at,    ])
         return response
 
-    # ---- PAGINATION ----
-    donations = apply_column_filters(donations, request, 'donation', donation_mapping)
-    paginator = Paginator(donations, 10)
-    donation_page_obj = paginator.get_page(request.GET.get('donation_page') or request.GET.get('page'))
-    permissions = get_user_permissions(request.user)
-
-    context = {
-        'donation_page_obj': donation_page_obj,
+    context = get_welcome_context(request, donations=donations, extra_context={
         'query3': query3,
-        'permissions': permissions,
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, 'welcome.html', context)
 
 @login_required
@@ -1135,7 +1061,6 @@ def search_donation_payment(request):
         filters = (
             Q(donation_box__donation_id__icontains=payments_query) |
             Q(donation_box__key_id__icontains=payments_query) |
-            Q(donation_box__location__icontains=payments_query) |
             Q(donation_box__box_size__icontains=payments_query) |
             Q(donation_box__status__icontains=payments_query) |
             Q(opened_by__first_name__icontains=payments_query) |
@@ -1146,7 +1071,8 @@ def search_donation_payment(request):
             Q(received_by__contact_number__icontains=payments_query) |
             Q(address__icontains=payments_query) |
             Q(i_witness__icontains=payments_query) |
-            Q(owner__username__icontains=payments_query) |
+            Q(owner__first_name__icontains=payments_query) |
+            Q(owner__last_name__icontains=payments_query) |
             Q(created_by__username__icontains=payments_query) |
             Q(updated_by__username__icontains=payments_query)
         )
@@ -1210,7 +1136,7 @@ def search_donation_payment(request):
             "Owner",
             "Opened By",
             "Amount",
-            "Payment Method",
+            "Payment Mode",
             "Address",
             "Witness",
             "Bank Name",
@@ -1230,7 +1156,7 @@ def search_donation_payment(request):
                 f"{p.owner.first_name} {p.owner.last_name}" if p.owner else "",
                 p.opened_by,
                 p.amount,
-                p.payment_method.lookup_name if p.payment_method else "",
+                p.payment_mode.lookup_name if p.payment_mode else "",
                 p.address,
                 p.i_witness,
                 p.name_of_bank,
@@ -1245,25 +1171,10 @@ def search_donation_payment(request):
                 p.verified_at,
             ])
         return response
-    payments = apply_column_filters(payments, request, 'payments', payments_mapping)
-    paginator = Paginator(payments, 5)
-    page_number = request.GET.get("payments_page")
-    payments_page_obj = paginator.get_page(page_number)
-    permissions = get_user_permissions(request.user)
 
-    context = {
-        "payments_page_obj": payments_page_obj,
+    context = get_welcome_context(request, donation_payment=payments, extra_context={
         "payments_query": payments_query,
-        "permissions": permissions,
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 @login_required
@@ -1289,7 +1200,6 @@ def search_donation_box(request):
         }
         filters = (
             Q(donation_id__icontains=box_query) |
-            Q(location__icontains=box_query) |
             Q(key_id__icontains=box_query) |
             Q(box_size__icontains=box_query) |
             Q(status__icontains=box_query) |
@@ -1342,7 +1252,7 @@ def search_donation_box(request):
         writer.writerow([
             "ID",
             "Donation ID",
-            "Location",
+            # "Location",
             "Key ID",
             "Box Size",
                "Status",
@@ -1359,7 +1269,7 @@ def search_donation_box(request):
             writer.writerow([
                 b.id,
                 b.donation_id,
-                b.location,
+                # b.location,
                 b.key_id or "",
                 b.box_size,
                  b.status,
@@ -1371,25 +1281,10 @@ def search_donation_box(request):
                 b.is_deleted,
             ])
         return response
-    boxes = apply_column_filters(boxes, request, 'box', box_mapping)
-    paginator = Paginator(boxes, 5)
-    page_number = request.GET.get("box_page")
-    box_page_obj = paginator.get_page(page_number)
-    permissions = get_user_permissions(request.user)
 
-    context = {
-        "box_page_obj": box_page_obj,
+    context = get_welcome_context(request, donation_boxes=boxes, extra_context={
         "box_query": box_query,
-        "permissions": permissions,
-    }
-    # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
-        for col_idx in range(1, 35):
-            param_name = f"{prefix}_col_{col_idx}"
-            val = request.GET.get(param_name, "")
-            if val:
-                context[param_name] = val
-
+    })
     return render(request, "welcome.html", context)
 
 #----------------Globle End Search--------------
@@ -2004,7 +1899,7 @@ def donation_receipt_preview(request, id):
         "preview": True,
         "logo_url": logo_url,
     })
-
+from django.template.loader import render_to_string
 from reportlab.lib.colors import HexColor, black
 from xhtml2pdf import pisa
 from reportlab.lib.pagesizes import A5, landscape
@@ -2062,7 +1957,7 @@ def download_receipt_pdf(request, id):
 
 def donation_payment_receipt_view(request, id):
     payment = get_object_or_404(DonationPaymentBox,id=id,is_deleted=False)
-    donor = DonorVolunteer.objects.filter(created_by=payment.owner).first()
+    donor = payment.owner
     owner = payment.owner
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
     signature_url = request.build_absolute_uri(settings.STATIC_URL + "images/signature.png")
@@ -2090,7 +1985,7 @@ def donation_payment_receipt_view(request, id):
 
 def donation_payment_receipt_pdf(request, id):
     payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
-    donor = DonorVolunteer.objects.filter(created_by=payment.owner).first()
+    donor = payment.owner
     owner = payment.owner
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
     signature_url = request.build_absolute_uri(settings.STATIC_URL + "images/signature.png")
@@ -3311,7 +3206,7 @@ from django.http import JsonResponse
 def get_donation_boxes_data(request):
     """Returns all donation boxes for the modal dropdown"""
     boxes = DonationBox.objects.filter(is_deleted=False).values(
-        'id', 'donation_id', 'location', 'box_size'
+        'id', 'donation_id', 'key_id', 'box_size', 'box_owner'
     ).order_by('-created_at')
     
     return JsonResponse({
@@ -3333,7 +3228,8 @@ def get_donation_box_details(request, box_id):
         
         data = {
             'donation_id': box.donation_id,
-            'location': box.location,
+            'key_id': box.key_id or '',
+            'box_owner': box.box_owner or '',
             'box_size': box.box_size,
             'payment_id': f"PAY_{box.donation_id}_{DonationPaymentBox.objects.filter(donation_box=box).count() + 1:03d}",
             'last_payment_method': last_payment.payment_method_id if last_payment else (last_donation.payment_method_id if last_donation else None),
@@ -3457,3 +3353,481 @@ def add_trees(request):
 
 def add_seeds(request):
     return render(request, "add_seeds.html") 
+
+
+import os
+import json
+import uuid
+from decimal import Decimal, InvalidOperation
+
+import razorpay
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.db import IntegrityError
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.templatetags.static import static as static_url
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
+from .models import Donation, DonorVolunteer
+
+def _validate_donation_post(post_data):
+    """Validate and normalize the plain HTML donation form."""
+    field_names = (
+        'name', 'pan_number', 'mobile_number', 'email', 'address', 'area',
+        'city', 'state', 'country', 'postal_code', 'native_place',
+        'donation_amount', 'reference',
+    )
+    cleaned_data = {
+        field: (post_data.get(field) or '').strip()
+        for field in field_names
+    }
+    errors = {}
+
+    for field in ('name', 'mobile_number', 'country', 'donation_amount'):
+        if not cleaned_data[field]:
+            errors[field] = ['This field is required.']
+
+    mobile = cleaned_data['mobile_number']
+    if mobile and (not mobile.isdigit() or not 10 <= len(mobile) <= 15):
+        errors['mobile_number'] = [
+            'Enter a valid mobile number between 10 and 15 digits.'
+        ]
+
+    email = cleaned_data['email']
+    if email:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors['email'] = ['Enter a valid email address.']
+
+    if cleaned_data['country'] and cleaned_data['country'] not in ('India', 'Other'):
+        errors['country'] = ['Select a valid choice.']
+
+    amount = cleaned_data['donation_amount']
+    if amount:
+        try:
+            amount_decimal = Decimal(amount)
+            if not amount_decimal.is_finite() or amount_decimal <= 0:
+                raise InvalidOperation
+            if len(amount_decimal.as_tuple().digits) > 12:
+                errors['donation_amount'] = [
+                    'Ensure that there are no more than 12 digits in total.'
+                ]
+            elif abs(amount_decimal.as_tuple().exponent) > 2:
+                errors['donation_amount'] = [
+                    'Ensure that there are no more than 2 decimal places.'
+                ]
+            else:
+                cleaned_data['donation_amount'] = amount_decimal
+        except (InvalidOperation, ValueError):
+            errors['donation_amount'] = ['Enter a valid amount.']
+
+    return cleaned_data, errors
+
+
+def _is_ajax(request):
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+
+def _get_razorpay_credentials():
+    key_id = getattr(settings, 'RAZORPAY_KEY_ID', None) or os.getenv(
+        'RAZORPAY_KEY_ID'
+    )
+    key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', None) or os.getenv(
+        'RAZORPAY_KEY_SECRET'
+    )
+    return key_id, key_secret
+
+
+def donation_view(request):
+    form_data = {}
+    initial_amount = ''
+
+    if request.method == 'POST':
+        donation_data, errors = _validate_donation_post(request.POST)
+        form_data = request.POST.dict()
+        if not errors:
+            try:
+                # Don't save yet. Store cleaned data in session and create Razorpay order.
+                # Decimal to string for serialization
+                if 'donation_amount' in donation_data:
+                    donation_data['donation_amount'] = str(donation_data['donation_amount'])
+
+                # Include selected scheme info from POST (hidden inputs) if present
+                scheme_id = request.POST.get('scheme_id')
+                scheme_name = request.POST.get('scheme_name')
+                if scheme_id:
+                    donation_data['scheme_id'] = scheme_id
+                if scheme_name:
+                    donation_data['scheme_name'] = scheme_name
+
+                # Persist selected scheme in session for later (payment) pages
+                if scheme_id or scheme_name:
+                    request.session['selected_scheme'] = {'id': scheme_id, 'name': scheme_name}
+                request.session['donation_data'] = donation_data
+
+                # Validate minimum donation amount if scheme amount provided
+                scheme_min = request.POST.get('scheme_amount') or (request.session.get('selected_scheme') or {}).get('amount')
+                try:
+                    if scheme_min:
+                        min_val = float(scheme_min)
+                        if float(donation_data.get('donation_amount', 0)) < min_val:
+                            return JsonResponse({'success': False, 'errors': {'donation_amount': [f'Minimum donation amount for this scheme is ₹{int(min_val)}']}}, status=400)
+                except Exception:
+                    pass
+
+
+                key_id, key_secret = _get_razorpay_credentials()
+
+                amount_paise = int(float(donation_data['donation_amount']) * 100)
+                receipt = donation_data.get('reference') or f"donation_{timezone.now().timestamp()}"
+
+                # Mock mode if keys are not configured
+                if not key_id or not key_secret:
+                    mock_order_id = f"mock_order_{uuid.uuid4().hex[:10]}"
+                    order = {
+                        'id': mock_order_id,
+                        'amount': amount_paise,
+                        'currency': 'INR',
+                        'receipt': receipt
+                    }
+                    request.session['razorpay_order'] = order
+                    if _is_ajax(request):
+                        return JsonResponse({'success': True, 'order': order, 'is_mock': True})
+                    return redirect('payment')
+
+                # Real Razorpay flow
+                client = razorpay.Client(auth=(key_id, key_secret))
+                try:
+                    order = client.order.create({
+                        'amount': amount_paise,
+                        'currency': 'INR',
+                        'receipt': receipt,
+                        'payment_capture': '1'
+                    })
+                except Exception:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Unable to create the payment order. Please try again.'
+                    }, status=500)
+
+                # Store order in session for verification later
+                request.session['razorpay_order'] = order
+
+                # If AJAX request, return order details and key so frontend opens Razorpay
+                if _is_ajax(request):
+                    return JsonResponse({'success': True, 'order': order, 'key_id': key_id, 'is_mock': False})
+
+                # non-AJAX fallback: redirect to payment page
+                return redirect('payment')
+            
+            except Exception:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Unable to process the donation. Please try again.'
+                }, status=500)
+        else:
+            if _is_ajax(request):
+                return JsonResponse({'success': False, 'errors': errors}, status=400)
+    else:
+        # If scheme info passed via query params, prefill and show selected scheme
+        scheme_id = request.GET.get('scheme_id')
+        scheme_name = request.GET.get('scheme_name')
+        scheme_image = request.GET.get('image')
+        amount = request.GET.get('amount')
+        if amount:
+            try:
+                initial_amount = str(float(amount))
+            except Exception:
+                pass
+        if scheme_id or scheme_name or scheme_image:
+            selected_scheme = {'id': scheme_id, 'name': scheme_name, 'amount': amount, 'image': scheme_image}
+            # store temporarily in session so it persists across POST if JS navigation occurs
+            request.session['selected_scheme'] = selected_scheme
+
+    context = {
+        'form_data': form_data,
+        'initial_amount': initial_amount,
+    }
+    # attach selected scheme from session if available (prefer query params over session)
+    if 'selected_scheme' in request.session:
+        context['selected_scheme'] = request.session.get('selected_scheme')
+
+    # Resolve scheme image (use absolute/https if provided, otherwise use static helper)
+    scheme_image_url = None
+    selected = context.get('selected_scheme')
+    if selected and selected.get('image'):
+        img = selected.get('image')
+        try:
+            if isinstance(img, str) and (img.startswith('http://') or img.startswith('https://') or img.startswith('/')):
+                scheme_image_url = img
+            else:
+                scheme_image_url = static_url(img)
+        except Exception:
+            scheme_image_url = None
+
+    if not scheme_image_url:
+        scheme_image_url = '/static/donation_app/images/s1.svg'
+
+    context['scheme_image'] = scheme_image_url
+    return render(request, 'ACHdonation.html', context)
+
+
+def payment_view(request):
+    donation_data = request.session.get('donation_data')
+    order = request.session.get('razorpay_order')
+    if not donation_data or not order:
+        return redirect(reverse('donation_form'))
+
+    key_id, _ = _get_razorpay_credentials()
+    context = {
+        'donation': donation_data,
+        'order': json.dumps(order),
+        'key_id': key_id or 'mock_key',
+    }
+    return render(request, 'payment.html', context)
+
+
+@require_POST
+def payment_verify(request):
+    payload = request.POST
+    razorpay_payment_id = payload.get('razorpay_payment_id')
+    razorpay_order_id = payload.get('razorpay_order_id')
+    razorpay_signature = payload.get('razorpay_signature')
+    is_mock = payload.get('is_mock') == 'true'
+
+    donation_data = request.session.get('donation_data')
+    order = request.session.get('razorpay_order')
+    if not donation_data or not order:
+        return JsonResponse({'success': False, 'error': 'Session expired.', 'redirect_url': reverse('payment_failed')}, status=400)
+
+    key_id, key_secret = _get_razorpay_credentials()
+
+    if not is_mock and key_id and key_secret:
+        client = razorpay.Client(auth=(key_id, key_secret))
+        # Verify signature
+        try:
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': razorpay_payment_id,
+                'razorpay_signature': razorpay_signature
+            }
+            client.utility.verify_payment_signature(params_dict)
+        except Exception:
+            # Verification failed
+            request.session.pop('donation_data', None)
+            request.session.pop('razorpay_order', None)
+            return JsonResponse({'success': False, 'redirect_url': reverse('payment_failed')})
+    else:
+        # Mock verification
+        razorpay_payment_id = f"mock_payment_{uuid.uuid4().hex[:10]}"
+
+    # Save donation: create or find DonorVolunteer, then create Donation using new model fields
+    try:
+        # Extract donor info from session-stored donation_data
+        full_name = donation_data.get('name', '') or None
+        # Requirement: save Full Name into `first_name` field
+        first_name = full_name
+        last_name = None
+
+        email = donation_data.get('email')
+        mobile = donation_data.get('mobile_number')
+
+        # Normalize and try to find existing donor by email (case-insensitive) or mobile
+        email_norm = email.strip().lower() if isinstance(email, str) and email.strip() else None
+        mobile_norm = mobile.strip() if isinstance(mobile, str) and mobile.strip() else None
+
+        donor = None
+        try:
+            if email_norm:
+                donor = DonorVolunteer.objects.filter(email__iexact=email_norm).first()
+            if not donor and mobile_norm:
+                donor = DonorVolunteer.objects.filter(contact_number=mobile_norm).first()
+
+            if not donor:
+                # Attempt to create; handle possible race-condition duplicate insert
+                try:
+                    donor = DonorVolunteer.objects.create(
+                        first_name=first_name or None,
+                        last_name=last_name or None,
+                        email=email_norm or None,
+                        contact_number=mobile_norm or None,
+                        address=donation_data.get('address') or None,
+                        area=donation_data.get('area') or None,
+                        city=donation_data.get('city') or None,
+                        state=donation_data.get('state') or None,
+                        country=donation_data.get('country') or None,
+                        postal_code=donation_data.get('postal_code') or None,
+                        native_place=donation_data.get('native_place') or None,
+                        pan_number=donation_data.get('pan_number') or None,
+                    )
+                except IntegrityError:
+                    # Another process may have created the donor concurrently; fetch existing
+                    donor = None
+                    if email_norm:
+                        donor = DonorVolunteer.objects.filter(email__iexact=email_norm).first()
+                    if not donor and mobile_norm:
+                        donor = DonorVolunteer.objects.filter(contact_number=mobile_norm).first()
+                    if not donor:
+                        raise
+        except Exception:
+            donor = None
+
+        # Compose donation fields
+        declared_amount = donation_data.get('donation_amount')
+        try:
+            declared_amount_decimal = None
+            if declared_amount is not None:
+                declared_amount_decimal = float(declared_amount)
+        except Exception:
+            declared_amount_decimal = None
+
+        # Build description including scheme info if present
+        description_parts = []
+        if donation_data.get('scheme_name'):
+            description_parts.append(f"Scheme: {donation_data.get('scheme_name')}")
+        if donation_data.get('reference'):
+            description_parts.append(f"Reference: {donation_data.get('reference')}")
+        description = '\n'.join(description_parts) if description_parts else donation_data.get('description')
+
+        # Determine numeric IDs for category/method/status if available; avoid writing strings into *_id columns
+        def safe_int(val):
+            try:
+                return int(val)
+            except Exception:
+                return None
+
+        # Resolve the "Schemes" Category lookup under the "Donation Category" lookup type
+        donation_category_id = None
+        try:
+            category_type = LookupType.objects.filter(type_name__iexact="Donation Category").first()
+            if category_type:
+                schemes_cat_lookup, _ = Lookup.objects.get_or_create(
+                    lookup_name="Schemes",
+                    lookup_type=category_type
+                )
+                donation_category_id = schemes_cat_lookup.id
+        except Exception:
+            pass
+
+        donation_sub_category_id = safe_int(donation_data.get('scheme_id'))
+        payment_method_id = safe_int(donation_data.get('payment_method'))
+        # For payment_status, prefer to leave None; set to an integer only if provided numerically
+        payment_status_id = safe_int(donation_data.get('payment_status'))
+
+        # Create Donation record (fields map to existing DB columns)
+        Donation.objects.create(
+            donor=donor,
+            display_name=donation_data.get('name') or None,
+            donation_date=timezone.now(),
+            donation_category_id=donation_category_id,
+            donation_sub_category_id=donation_sub_category_id,
+            payment_method_id=payment_method_id,
+            payment_status_id=payment_status_id,
+            transaction_id=razorpay_payment_id,
+            receipt_id=generate_ach_receipt_id(),
+            place_of_donation=None,
+            check_no=None,
+            donation_received_by=None,
+            reference_name=donation_data.get('reference') or None,
+            description=description or None,
+            donation_amount_declared=declared_amount_decimal,
+            donation_amount_paid=declared_amount_decimal,
+            name_of_bank=None,
+            branch=None,
+            created_by=(request.user if request.user and request.user.is_authenticated else None),
+            updated_by=(request.user if request.user and request.user.is_authenticated else None),
+            verified=True,
+        )
+    except Exception:
+        return JsonResponse({
+            'success': False,
+            'error_msg': 'Unable to save the donation.',
+            'redirect_url': reverse('payment_failed')
+        }, status=500)
+
+    # Clear session
+    request.session.pop('donation_data', None)
+    request.session.pop('razorpay_order', None)
+    request.session.pop('selected_scheme', None)
+
+    return JsonResponse({'success': True, 'redirect_url': reverse('payment_success')})
+
+
+def payment_success(request):
+    return render(request, 'ACHdonation.html', {'payment_result': 'success'})
+
+
+def payment_failed(request):
+    return render(request, 'ACHdonation.html', {'payment_result': 'failed'})
+
+
+from heart_charity.models import Lookup
+
+def schemes_view(request):
+
+    foundation_scheme = Lookup.objects.filter(id=12).first()
+    icu_scheme = Lookup.objects.filter(id=13).first()
+    sanctuary_scheme = Lookup.objects.filter(id=14).first()
+    medical_scheme = Lookup.objects.filter(id=15).first()
+    special_day_scheme = Lookup.objects.filter(id=16).first()
+    fresh_grass_scheme = Lookup.objects.filter(id=17).first()
+    adopt_cow_scheme = Lookup.objects.filter(id=18).first()
+    plant_tree_scheme = Lookup.objects.filter(id=19).first()
+
+    schemes = [
+        {
+            'id': 's1',
+            'name': foundation_scheme.lookup_name if foundation_scheme else 'FOUNDATION PILLAR SUPPORT',
+            'amount': 500,
+            'image': 'images/FOUNDATION.png'
+        },
+        {
+            'id': 's2',
+            'name': icu_scheme.lookup_name if icu_scheme else 'ICU ANIMAL CARE - ONE MONTH',
+            'amount': 1000,
+            'image': 'images/ICU_ANIMAL_CARE.png'
+        },
+        {
+            'id': 's3',
+            'name': sanctuary_scheme.lookup_name if sanctuary_scheme else 'SANCTUARY ABHYARANYA SUPPORT',
+            'amount': 1500,
+            'image': 'images/SANCTUARY_ABHYARANYA.png'
+        },
+        {
+            'id': 's4',
+            'name': medical_scheme.lookup_name if medical_scheme else 'MEDICAL AID - ONE MONTH',
+            'amount': 2000,
+            'image': 'images/MEDICAL_AID.png'
+        },
+        {
+            'id': 's5',
+            'name': special_day_scheme.lookup_name if special_day_scheme else 'SPECIAL DAY TRIBUTE (KAYMITITHI)',
+            'amount': 750,
+            'image': 'images/SPECIAL_DAY.png'
+        },
+        {
+            'id': 's6',
+            'name': fresh_grass_scheme.lookup_name if fresh_grass_scheme else 'ONE TRUCK OF FRESH GRASS',
+            'amount': 1200,
+            'image': 'images/ONE_TRUCK.png'
+        },
+        {
+            'id': 's7',
+            'name': adopt_cow_scheme.lookup_name if adopt_cow_scheme else 'ADOPT A COW - 1 YEAR',
+            'amount': 300,
+            'image': 'images/ADOPTCOW.png'
+        },
+        {
+            'id': 's8',
+            'name': plant_tree_scheme.lookup_name if plant_tree_scheme else 'PLANT A TREE',
+            'amount': 2500,
+            'image': 'images/PLANT.png'
+        },
+    ]
+
+    return render(request, 'ACHschemas.html', {'schemes': schemes})

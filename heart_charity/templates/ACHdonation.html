@@ -1,0 +1,1829 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if payment_result == "success" %}Payment Successful{% elif payment_result == "failed" %}Payment Failed{% else %}Make a Donation{% endif %} | Ahinsadham</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --brand-green: #1B4332;
+        --brand-green-light: #2D6A4F;
+        --brand-accent: #52B788;
+        --brand-bg: #F8FAF9;
+        --brand-card-bg: #FFFFFF;
+        --brand-text: #081C15;
+        --brand-text-muted: #495057;
+        --brand-error: #D90429;
+        --input-bg: #F0F4F2;
+        --input-border: #D8E2DC;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--brand-bg);
+        color: var(--brand-text);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .top-header {
+        background-color: var(--brand-green);
+        color: white;
+        padding: 12px 0;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .top-header a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        margin-left: 18px;
+        transition: color 0.3s ease;
+    }
+
+    .top-header a:hover {
+        color: #ffffff;
+    }
+
+    .top-header i {
+        margin-right: 6px;
+        color: var(--brand-accent);
+    }
+
+    .social-icons a {
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
+        margin-left: 8px;
+    }
+
+    .social-icons a:hover {
+        background: var(--brand-accent);
+        color: var(--brand-green);
+        transform: translateY(-2px);
+    }
+
+    .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .btn-brand {
+        background: linear-gradient(135deg, var(--brand-green-light) 0%, var(--brand-green) 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px rgba(27, 67, 50, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-brand:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(27, 67, 50, 0.3);
+        color: white;
+    }
+
+    .btn-brand:active {
+        transform: translateY(0);
+    }
+
+    .btn-outline-brand {
+        border: 2px solid var(--brand-green);
+        color: var(--brand-green);
+        padding: 10px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-brand:hover {
+        background-color: var(--brand-green);
+        color: white;
+    }
+
+    .custom-input {
+        background-color: var(--input-bg) !important;
+        color: var(--brand-text) !important;
+        border: 1px solid var(--input-border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .custom-input:focus {
+        background-color: #ffffff !important;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 4px rgba(82, 183, 136, 0.15);
+        outline: none;
+    }
+
+    .custom-input::placeholder {
+        color: #ADB5BD;
+        font-weight: 400;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+    }
+
+    .footer {
+        background-color: #081C15;
+        color: rgba(255,255,255,0.7);
+        padding: 20px 0;
+        text-align: center;
+        font-size: 14px;
+        margin-top: auto;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+
+    .slide-up {
+        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --brand-green: #1B4332;
+        --brand-green-light: #2D6A4F;
+        --brand-accent: #D4A373;
+        --brand-text-muted: #6B7280;
+        --brand-card-bg: #FFFFFF;
+        --brand-error: #EF4444;
+        --input-border: #E2E8F0;
+        --input-bg: #F8FAF9;
+    }
+
+    /* ══════════ HERO ══════════ */
+    .donation-hero {
+        position: relative;
+        padding: 120px 0 200px;
+        background: linear-gradient(160deg, #071A12 0%, #0B2618 25%, #1B4332 55%, #2D6A4F 100%);
+        color: white;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .donation-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 600px 400px at 25% 60%, rgba(212,163,115,0.08) 0%, transparent 70%),
+            radial-gradient(ellipse 500px 500px at 80% 30%, rgba(82,183,136,0.1) 0%, transparent 60%);
+        animation: heroGlow 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroGlow {
+        0% { opacity: 0.6; transform: scale(1); }
+        100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .hero-particles {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .h-particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0;
+        animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(100%) scale(0); opacity: 0; }
+        15% { opacity: 0.8; }
+        85% { opacity: 0.8; }
+        100% { transform: translateY(-120%) scale(1); opacity: 0; }
+    }
+
+    /* Geometric shapes */
+    .geo-shape {
+        position: absolute;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 12px;
+        animation: geoFloat 15s ease-in-out infinite;
+    }
+
+    .geo-1 { width: 120px; height: 120px; top: 15%; left: 8%; animation-delay: 0s; transform: rotate(15deg); }
+    .geo-2 { width: 80px; height: 80px; top: 60%; right: 12%; animation-delay: -5s; transform: rotate(-20deg); border-radius: 50%; }
+    .geo-3 { width: 60px; height: 60px; bottom: 20%; left: 20%; animation-delay: -8s; transform: rotate(45deg); }
+
+    @keyframes geoFloat {
+        0%, 100% { transform: translateY(0) rotate(15deg); opacity: 0.3; }
+        50% { transform: translateY(-20px) rotate(25deg); opacity: 0.6; }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .hero-icon-ring {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid rgba(212,163,115,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        position: relative;
+        opacity: 0;
+        transform: scale(0.5);
+        animation: popIn 0.6s 0.2s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .hero-icon-ring::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px solid rgba(212,163,115,0.1);
+        animation: ringPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.15); opacity: 0; }
+    }
+
+    .hero-icon-ring i {
+        font-size: 1.8rem;
+        color: var(--brand-accent);
+    }
+
+    @keyframes popIn {
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .hero-content h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        opacity: 0;
+        transform: translateY(25px);
+        animation: slideReveal 0.8s 0.4s forwards;
+    }
+
+    .hero-content h1 .gold { color: var(--brand-accent); }
+
+    .hero-content p {
+        font-size: 1.1rem;
+        opacity: 0;
+        color: rgba(255,255,255,0.65);
+        font-weight: 300;
+        line-height: 1.7;
+        transform: translateY(20px);
+        animation: slideReveal 0.8s 0.6s forwards;
+    }
+
+    @keyframes slideReveal {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Wave */
+    .hero-wave {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        z-index: 3;
+    }
+
+    .hero-wave svg { display: block; width: 100%; height: 100px; }
+
+    /* ══════════ FORM WRAPPER ══════════ */
+    .form-wrapper {
+        margin-top: -120px;
+        position: relative;
+        z-index: 10;
+        margin-bottom: 80px;
+        padding: 0 15px;
+    }
+
+    .glass-form-container {
+        max-width: 860px;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.98);
+        border-radius: 28px;
+        box-shadow:
+            0 30px 80px rgba(27,67,50,0.12),
+            0 4px 20px rgba(0,0,0,0.04);
+        border: 1px solid rgba(255,255,255,0.9);
+        padding: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(40px);
+        animation: formRise 0.9s 0.8s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    @keyframes formRise {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Step Indicator ── */
+    .step-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 30px 40px 25px;
+        background: linear-gradient(135deg, #F0F4F2 0%, #E8F0EC 100%);
+        border-bottom: 1px solid rgba(27,67,50,0.06);
+    }
+
+    .step-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 6px 14px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .step-item:hover { background: rgba(27,67,50,0.04); }
+
+    .step-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        border: 2px solid #D1D5DB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: #9CA3AF;
+        transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+        position: relative;
+    }
+
+    .step-circle i { font-size: 0.8rem; }
+
+    .step-item.active .step-circle {
+        background: var(--brand-green);
+        border-color: var(--brand-green);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(27,67,50,0.3);
+        transform: scale(1.08);
+    }
+
+    .step-item.completed .step-circle {
+        background: #52B788;
+        border-color: #52B788;
+        color: #fff;
+    }
+
+    .step-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #9CA3AF;
+        transition: color 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .step-item.active .step-label { color: var(--brand-green); }
+    .step-item.completed .step-label { color: #52B788; }
+
+    .step-connector {
+        width: 50px;
+        height: 2px;
+        background: #D1D5DB;
+        border-radius: 2px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .step-connector::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        background: #52B788;
+        border-radius: 2px;
+        transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .step-connector.filled::after { width: 100%; }
+
+    /* ── Selected Scheme Banner ── */
+    .selected-scheme-banner {
+        margin: 28px 35px 0;
+        background: linear-gradient(135deg, #F0F7F4 0%, #E6F4EC 50%, #D8F3DC 100%);
+        border-radius: 16px;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        border: 1px solid rgba(82,183,136,0.2);
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeSlide 0.5s 1.2s forwards;
+    }
+
+    .selected-scheme-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 150px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(82,183,136,0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    @keyframes fadeSlide {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scheme-thumb {
+        width: 65px;
+        height: 65px;
+        border-radius: 14px;
+        object-fit: cover;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        flex-shrink: 0;
+        border: 3px solid #fff;
+    }
+
+    .scheme-thumb-placeholder {
+        width: 65px;
+        height: 65px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--brand-green), var(--brand-green-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        flex-shrink: 0;
+        border: 3px solid #fff;
+    }
+
+    .scheme-thumb-placeholder i { font-size: 1.5rem; color: var(--brand-accent); }
+
+    .scheme-details { flex: 1; }
+    .scheme-details h4 { margin: 0; font-weight: 700; color: var(--brand-green); font-size: 1.1rem; }
+    .scheme-details p { margin: 4px 0 0; color: var(--brand-text-muted); font-weight: 600; font-size: 0.9rem; }
+
+    .scheme-change-btn {
+        background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(27,67,50,0.1);
+        color: var(--brand-green);
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .scheme-change-btn:hover { background: var(--brand-green); color: #fff; }
+
+    /* ── Form Body ── */
+    .form-body {
+        padding: 35px;
+    }
+
+    .form-section {
+        display: none;
+        animation: sectionFadeIn 0.5s ease forwards;
+    }
+
+    .form-section.active { display: block; }
+
+    @keyframes sectionFadeIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .section-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--brand-green), var(--brand-green-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: 0 4px 12px rgba(27,67,50,0.2);
+    }
+
+    .section-header-text h3 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--brand-green);
+        font-size: 1.15rem;
+    }
+
+    .section-header-text p {
+        margin: 2px 0 0;
+        font-size: 0.8rem;
+        color: var(--brand-text-muted);
+    }
+
+    /* ── Input Groups ── */
+    .custom-input-group {
+        position: relative;
+        margin-bottom: 22px;
+    }
+
+    .form-label-top {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        font-size: 0.88rem;
+    }
+
+    .asterisk { color: var(--brand-error); margin-left: 2px; }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-icon-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--input-bg);
+        border-right: 1px solid var(--input-border);
+        border-radius: 12px 0 0 12px;
+        color: var(--brand-accent);
+        font-size: 0.95rem;
+        z-index: 5;
+        transition: all 0.3s ease;
+    }
+
+    .input-icon-box.textarea-icon { align-items: flex-start; padding-top: 16px; }
+
+    .custom-input-group .form-control,
+    .custom-input-group select {
+        padding-left: 58px;
+        height: 52px;
+        background: #fff !important;
+        border: 2px solid var(--input-border);
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        color: #1F2937;
+        transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+        width: 100%;
+    }
+
+    .custom-input-group textarea.form-control {
+        padding-top: 15px;
+        height: 110px;
+        resize: vertical;
+    }
+
+    .custom-input-group .form-control:focus,
+    .custom-input-group select:focus {
+        border-color: var(--brand-green);
+        box-shadow: 0 0 0 4px rgba(27,67,50,0.08);
+        outline: none;
+    }
+
+    .custom-input-group .form-control:focus + .input-focus-highlight,
+    .custom-input-group select:focus + .input-focus-highlight {
+        transform: scaleX(1);
+    }
+
+    .input-focus-highlight {
+        position: absolute;
+        bottom: 0;
+        left: 12px;
+        right: 12px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--brand-green), #52B788);
+        border-radius: 2px;
+        transform: scaleX(0);
+        transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+        z-index: 6;
+    }
+
+    .custom-input-group.has-error .form-control,
+    .custom-input-group.has-error select {
+        border-color: var(--brand-error);
+        box-shadow: 0 0 0 4px rgba(239,68,68,0.06);
+    }
+
+    .custom-input-group.has-error .input-icon-box {
+        color: var(--brand-error);
+        background: #FEF2F2;
+        border-color: var(--brand-error);
+    }
+
+    .custom-input-group.has-success .form-control {
+        border-color: #52B788;
+    }
+
+    .custom-input-group.has-success .input-icon-box {
+        color: #52B788;
+        background: #ECFDF5;
+        border-color: #52B788;
+    }
+
+    .invalid-feedback {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 6px;
+        color: var(--brand-error);
+        font-size: 0.78rem;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+
+    .invalid-feedback.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ── Amount Quick Select ── */
+    .amount-quick-picks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .amount-chip {
+        padding: 8px 20px;
+        border-radius: 50px;
+        border: 2px solid var(--input-border);
+        background: #fff;
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--brand-green);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+        user-select: none;
+    }
+
+    .amount-chip:hover {
+        border-color: var(--brand-green-light);
+        background: #F0F7F4;
+        transform: translateY(-2px);
+    }
+
+    .amount-chip.selected {
+        background: var(--brand-green);
+        border-color: var(--brand-green);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(27,67,50,0.25);
+        transform: translateY(-2px);
+    }
+
+    /* ── Navigation Buttons ── */
+    .form-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 25px;
+        border-top: 1px solid var(--input-border);
+        margin-top: 35px;
+    }
+
+    .btn-prev {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        border: 2px solid var(--input-border);
+        color: var(--brand-text-muted);
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.92rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-prev:hover {
+        border-color: var(--brand-green);
+        color: var(--brand-green);
+        background: #F0F7F4;
+    }
+
+    .btn-next, .btn-submit-donation {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-light) 100%);
+        color: #fff;
+        border: none;
+        padding: 14px 36px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+        box-shadow: 0 6px 20px rgba(27,67,50,0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-next:hover, .btn-submit-donation:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(27,67,50,0.35);
+    }
+
+    .btn-next:active, .btn-submit-donation:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    .btn-submit-donation {
+        background: linear-gradient(135deg, var(--brand-accent) 0%, #C68B59 100%);
+        box-shadow: 0 6px 20px rgba(212,163,115,0.35);
+        padding: 16px 44px;
+        font-size: 1.05rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-submit-donation:hover {
+        box-shadow: 0 10px 30px rgba(212,163,115,0.45);
+    }
+
+    .btn-submit-donation .lock-icon {
+        margin-right: 4px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    /* Secure badge in footer */
+    .secure-footer {
+        text-align: center;
+        padding: 20px 35px 28px;
+        border-top: 1px solid rgba(27,67,50,0.06);
+        background: #FAFCFB;
+    }
+
+    .secure-badges {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .secure-badge-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: var(--brand-text-muted);
+        font-weight: 500;
+    }
+
+    .secure-badge-item i {
+        color: #52B788;
+        font-size: 0.9rem;
+    }
+
+    /* ══════════ LOADER ══════════ */
+    .loader-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(15px);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.4s ease;
+    }
+
+    .loader-overlay.active { visibility: visible; opacity: 1; }
+
+    .loader-animation {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 28px;
+    }
+
+    .loader-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: var(--brand-green);
+        animation: loaderSpin 1s linear infinite;
+    }
+
+    .loader-ring:nth-child(2) {
+        inset: 8px;
+        border-top-color: var(--brand-accent);
+        animation-duration: 1.5s;
+        animation-direction: reverse;
+    }
+
+    .loader-ring:nth-child(3) {
+        inset: 16px;
+        border-top-color: #52B788;
+        animation-duration: 2s;
+    }
+
+    .loader-center-icon {
+        position: absolute;
+        inset: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-green);
+        font-size: 1.1rem;
+        animation: loaderPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes loaderSpin { to { transform: rotate(360deg); } }
+    @keyframes loaderPulse {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .loader-text {
+        color: var(--brand-green);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+    }
+
+    .loader-subtext {
+        color: var(--brand-text-muted);
+        font-size: 0.85rem;
+    }
+
+    .loader-dots::after {
+        content: '';
+        animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+        0% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75% { content: '...'; }
+    }
+
+    /* ══════════ RESPONSIVE ══════════ */
+    @media (max-width: 768px) {
+        .donation-hero { padding: 80px 0 160px; }
+        .hero-content h1 { font-size: 2rem; }
+        .hero-content p { font-size: 0.95rem; }
+        .hero-icon-ring { width: 64px; height: 64px; }
+        .hero-icon-ring i { font-size: 1.4rem; }
+        .form-wrapper { margin-top: -90px; }
+        .glass-form-container { border-radius: 20px; }
+        .step-indicator { padding: 20px 15px; gap: 0; }
+        .step-label { display: none; }
+        .step-connector { width: 30px; }
+        .form-body { padding: 24px 18px; }
+        .selected-scheme-banner { margin: 20px 18px 0; flex-wrap: wrap; }
+        .form-nav { flex-direction: column-reverse; gap: 12px; }
+        .btn-prev, .btn-next { width: 100%; justify-content: center; }
+        .geo-shape { display: none; }
+    }
+
+    @media (max-width: 480px) {
+        .hero-content h1 { font-size: 1.65rem; }
+        .step-circle { width: 30px; height: 30px; font-size: 0.75rem; }
+        .step-connector { width: 20px; }
+        .amount-quick-picks { gap: 8px; }
+        .amount-chip { padding: 6px 14px; font-size: 0.82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    .result-card {
+        max-width: 450px;
+        margin: 80px auto;
+        background: var(--brand-card-bg);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        text-align: center;
+        padding: 50px 40px;
+    }
+
+    .result-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 30px;
+    }
+
+    .result-icon-wrapper.success {
+        background: rgba(82, 183, 136, 0.15);
+        color: var(--brand-accent);
+        animation: resultScaleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+    }
+
+    .result-icon-wrapper.failed {
+        background: rgba(217, 4, 41, 0.1);
+        color: var(--brand-error);
+        animation: resultShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    .result-title {
+        color: var(--brand-green);
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .result-icon-wrapper.failed + .result-title {
+        color: var(--brand-text);
+    }
+
+    .result-text {
+        color: var(--brand-text-muted);
+        margin-bottom: 30px;
+    }
+
+    @keyframes resultScaleIn {
+        0% { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes resultShake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+</style>
+</head>
+<body>
+
+<!-- Top Header -->
+<div class="top-header">
+    <div class="container px-4">
+        <div class="row align-items-center">
+            <div class="col-md-5 text-center text-md-start mb-2 mb-md-0">
+                <i class="fas fa-phone-alt"></i>
+                70691 88555 | 70693 88555
+            </div>
+
+            <div class="col-md-3 text-center mb-2 mb-md-0">
+                <i class="fas fa-envelope"></i>
+                info@ahinsadham.org
+            </div>
+
+            <div class="col-md-4 text-center text-md-end social-icons">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-wrapper">
+{% if payment_result %}
+<div class="container fade-in">
+    <div class="result-card slide-up">
+        {% if payment_result == "success" %}
+        <div class="result-icon-wrapper success">
+            <i class="fas fa-check"></i>
+        </div>
+        <h2 class="result-title">Donation Successful!</h2>
+        <p class="result-text">Thank you for your generous contribution. Your support means a lot to us and helps bring positive change.</p>
+        <a href="{% url 'schemes_home' %}" class="btn btn-brand w-100">Back to Home</a>
+        {% else %}
+        <div class="result-icon-wrapper failed">
+            <i class="fas fa-times"></i>
+        </div>
+        <h2 class="result-title">Payment Failed</h2>
+        <p class="result-text">We're sorry, but your payment could not be completed. Please check your details and try again.</p>
+        <a href="{% url 'schemes_home' %}" class="btn btn-outline-brand w-100 mb-2">Return Home</a>
+        <a href="{% url 'donation_form' %}" class="btn btn-brand w-100">Try Again</a>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+
+<!-- Loader -->
+<div class="loader-overlay" id="loaderOverlay">
+    <div class="loader-animation">
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-center-icon"><i class="fas fa-heart"></i></div>
+    </div>
+    <div class="loader-text" id="loaderText">Processing your generous gift</div>
+    <div class="loader-subtext"><span class="loader-dots"></span></div>
+</div>
+
+<!-- Hero -->
+<section class="donation-hero">
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="geo-shape geo-1"></div>
+    <div class="geo-shape geo-2"></div>
+    <div class="geo-shape geo-3"></div>
+
+    <div class="container px-4">
+        <div class="hero-content">
+            <div class="hero-icon-ring">
+                <i class="fas fa-hand-holding-heart"></i>
+            </div>
+            <h1>Complete Your <span class="gold">Donation</span></h1>
+            <p>Your generosity fuels real change. Securely fill in the details below and join hundreds of supporters making a difference.</p>
+        </div>
+    </div>
+
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" fill="none">
+            <path d="M0,50 C240,100 480,0 720,50 C960,100 1200,0 1440,50 L1440,100 L0,100 Z" fill="#F8FAF9"/>
+        </svg>
+    </div>
+</section>
+
+<!-- Form -->
+<section class="form-wrapper">
+    <div class="glass-form-container">
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-item active" data-step="1">
+                <div class="step-circle"><i class="fas fa-user"></i></div>
+                <span class="step-label">Personal</span>
+            </div>
+            <div class="step-connector" id="conn1"></div>
+            <div class="step-item" data-step="2">
+                <div class="step-circle"><i class="fas fa-map-marker-alt"></i></div>
+                <span class="step-label">Address</span>
+            </div>
+            <div class="step-connector" id="conn2"></div>
+            <div class="step-item" data-step="3">
+                <div class="step-circle"><i class="fas fa-rupee-sign"></i></div>
+                <span class="step-label">Payment</span>
+            </div>
+        </div>
+
+        <!-- Selected Scheme -->
+        {% if selected_scheme %}
+        <div class="selected-scheme-banner">
+            {% if selected_scheme.image %}
+            <img class="scheme-thumb" src="#" alt="{{ selected_scheme.name }}"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="scheme-thumb-placeholder" style="display:none;"><i class="fas fa-hand-holding-heart"></i></div>
+            {% else %}
+            <div class="scheme-thumb-placeholder"><i class="fas fa-hand-holding-heart"></i></div>
+            {% endif %}
+            <div class="scheme-details">
+                <h4>{{ selected_scheme.name }}</h4>
+                <p>Suggested: ₹{{ selected_scheme.amount }}</p>
+            </div>
+            <a href="{% url 'schemes' %}" class="scheme-change-btn">
+                <i class="fas fa-exchange-alt me-1"></i> Change
+            </a>
+        </div>
+        <input type="hidden" name="scheme_id" id="scheme_id" value="{{ selected_scheme.id }}">
+        <input type="hidden" name="scheme_name" id="scheme_name" value="{{ selected_scheme.name }}">
+        <input type="hidden" name="scheme_image" id="scheme_image" value="{{ selected_scheme.image }}">
+        <input type="hidden" name="scheme_amount" id="scheme_amount" value="{{ selected_scheme.amount }}">
+        {% endif %}
+
+        <!-- Form Body -->
+        <form id="donationForm" method="POST" action="{% url 'donation_form' %}" novalidate>
+            {% csrf_token %}
+
+            <div class="form-body">
+
+                <!-- STEP 1: Personal Info -->
+                <div class="form-section active" id="step1">
+                    <div class="form-section-header">
+                        <div class="section-icon"><i class="fas fa-user"></i></div>
+                        <div class="section-header-text">
+                            <h3>Personal Information</h3>
+                            <p>Tell us a bit about yourself</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_name">Full Name<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_name">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-user"></i></div>
+                                    <input type="text" name="name" id="id_name" class="form-control custom-input" placeholder="John Doe" value="{{ form_data.name|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="name_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_pan_number">PAN Number</label>
+                            <div class="custom-input-group" id="group_pan_number">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-id-card"></i></div>
+                                    <input type="text" name="pan_number" id="id_pan_number" class="form-control custom-input" value="{{ form_data.pan_number|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="pan_number_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_mobile_number">Mobile Number<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_mobile_number">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-phone"></i></div>
+                                    <input type="text" name="mobile_number" id="id_mobile_number" class="form-control custom-input" placeholder="e.g. 9876543210" value="{{ form_data.mobile_number|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="mobile_number_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_email">Email Address</label>
+                            <div class="custom-input-group" id="group_email">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-envelope"></i></div>
+                                    <input type="email" name="email" id="id_email" class="form-control custom-input" placeholder="john@example.com" value="{{ form_data.email|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="email_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-nav">
+                        <div></div>
+                        <button type="button" class="btn-next" onclick="goToStep(2)">
+                            Continue <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Address -->
+                <div class="form-section" id="step2">
+                    <div class="form-section-header">
+                        <div class="section-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <div class="section-header-text">
+                            <h3>Address & Location</h3>
+                            <p>Where can we reach you?</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="form-label-top" for="id_address">Street Address<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_address">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box textarea-icon"><i class="fas fa-home"></i></div>
+                                    <textarea name="address" id="id_address" class="form-control custom-input" rows="2" placeholder="Street address">{{ form_data.address|default:'' }}</textarea>
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="address_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_area">Area<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_area">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-map-signs"></i></div>
+                                    <input type="text" name="area" id="id_area" class="form-control custom-input" value="{{ form_data.area|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="area_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_city">City<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_city">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-city"></i></div>
+                                    <input type="text" name="city" id="id_city" class="form-control custom-input" value="{{ form_data.city|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="city_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_state">State<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_state">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-map"></i></div>
+                                    <input type="text" name="state" id="id_state" class="form-control custom-input" value="{{ form_data.state|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="state_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_country">Country<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_country">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-globe"></i></div>
+                                    <select name="country" id="id_country" class="form-control custom-input">
+                                        <option value="India" {% if form_data.country != "Other" %}selected{% endif %}>India</option>
+                                        <option value="Other" {% if form_data.country == "Other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="country_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_postal_code">Postal Code<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_postal_code">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-mail-bulk"></i></div>
+                                    <input type="text" name="postal_code" id="id_postal_code" class="form-control custom-input" value="{{ form_data.postal_code|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="postal_code_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_native_place">Native Place</label>
+                            <div class="custom-input-group" id="group_native_place">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-tree"></i></div>
+                                    <input type="text" name="native_place" id="id_native_place" class="form-control custom-input" value="{{ form_data.native_place|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="native_place_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-nav">
+                        <button type="button" class="btn-prev" onclick="goToStep(1)">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button type="button" class="btn-next" onclick="goToStep(3)">
+                            Continue <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Donation -->
+                <div class="form-section" id="step3">
+                    <div class="form-section-header">
+                        <div class="section-icon"><i class="fas fa-rupee-sign"></i></div>
+                        <div class="section-header-text">
+                            <h3>Donation Details</h3>
+                            <p>Choose your contribution amount</p>
+                        </div>
+                    </div>
+
+                    <div class="amount-quick-picks" id="amountChips">
+                        {% if selected_scheme %}
+                        <div class="amount-chip" data-amount="{{ selected_scheme.amount }}">₹{{ selected_scheme.amount }}</div>
+                        <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"500" }}">₹{{ selected_scheme.amount|add:"500" }}</div>
+                        <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"1000" }}">₹{{ selected_scheme.amount|add:"1000" }}</div>
+                        <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"2500" }}">₹{{ selected_scheme.amount|add:"2500" }}</div>
+                        <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"5000" }}">₹{{ selected_scheme.amount|add:"5000" }}</div>
+                        {% else %}
+                        <div class="amount-chip" data-amount="500">₹500</div>
+                        <div class="amount-chip" data-amount="1000">₹1,000</div>
+                        <div class="amount-chip" data-amount="2500">₹2,500</div>
+                        <div class="amount-chip" data-amount="5000">₹5,000</div>
+                        <div class="amount-chip" data-amount="10000">₹10,000</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_donation_amount">Custom Amount (₹)<span class="asterisk">*</span></label>
+                            <div class="custom-input-group" id="group_donation_amount">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-coins"></i></div>
+                                    <input type="number" name="donation_amount" id="id_donation_amount" class="form-control custom-input" step="0.01" value="{{ form_data.donation_amount|default:initial_amount|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="donation_amount_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-top" for="id_reference">Reference Note</label>
+                            <div class="custom-input-group" id="group_reference">
+                                <div class="input-wrapper">
+                                    <div class="input-icon-box"><i class="fas fa-sticky-note"></i></div>
+                                    <input type="text" name="reference" id="id_reference" class="form-control custom-input" value="{{ form_data.reference|default:'' }}">
+                                    <div class="input-focus-highlight"></div>
+                                </div>
+                                <div class="invalid-feedback" id="reference_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-nav" style="border-top: none; margin-top: 25px; flex-direction: column; gap: 16px;">
+                        <button type="button" class="btn-prev" onclick="goToStep(2)" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button type="submit" class="btn-submit-donation" id="submitBtn">
+                            <i class="fas fa-lock lock-icon"></i>
+                            <span>Proceed to Payment</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+        <!-- Secure Footer -->
+        <div class="secure-footer">
+            <div class="secure-badges">
+                <div class="secure-badge-item">
+                    <i class="fas fa-shield-alt"></i> SSL Encrypted
+                </div>
+                <div class="secure-badge-item">
+                    <i class="fas fa-lock"></i> Razorpay Secure
+                </div>
+                <div class="secure-badge-item">
+                    <i class="fas fa-check-circle"></i> PCI DSS Compliant
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endif %}
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p class="mb-0">&copy; {% now "Y" %} Ahinsadham. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% if not payment_result %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+(function() {
+    // ── Hero Particles ──
+    const pc = document.getElementById('heroParticles');
+    if (pc) {
+        const colors = ['rgba(255,255,255,0.12)', 'rgba(212,163,115,0.15)', 'rgba(82,183,136,0.15)'];
+        for (let i = 0; i < 18; i++) {
+            const p = document.createElement('div');
+            p.classList.add('h-particle');
+            const s = Math.random() * 5 + 2;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 8) + 's';
+            pc.appendChild(p);
+        }
+    }
+
+    // ── Amount Chips ──
+    const chips = document.querySelectorAll('.amount-chip');
+    const amountInput = document.getElementById('id_donation_amount');
+
+    chips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            chips.forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            if (amountInput) amountInput.value = this.dataset.amount;
+            clearFieldError('donation_amount');
+        });
+    });
+
+    if (amountInput) {
+        amountInput.addEventListener('input', function() {
+            chips.forEach(c => {
+                c.classList.toggle('selected', c.dataset.amount === this.value);
+            });
+        });
+    }
+
+    // ── Real-time field validation feedback ──
+    document.querySelectorAll('.custom-input-group .form-control, .custom-input-group select').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.closest('.custom-input-group').classList.remove('has-error');
+            const errEl = this.closest('.custom-input-group').querySelector('.invalid-feedback');
+            if (errEl) errEl.classList.remove('show');
+        });
+
+        input.addEventListener('blur', function() {
+            const group = this.closest('.custom-input-group');
+            const name = this.id.replace('id_', '');
+            const requiredFields = ['name','address','area','city','state','country','postal_code','mobile_number'];
+            if (requiredFields.includes(name) && this.value.trim()) {
+                group.classList.add('has-success');
+                setTimeout(() => group.classList.remove('has-success'), 1500);
+            }
+        });
+    });
+})();
+
+// ── Step Navigation ──
+let currentStep = 1;
+
+function goToStep(step) {
+    if (step > currentStep) {
+        if (!validateStep(currentStep)) return;
+    }
+
+    // Update sections
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('step' + step);
+    if (target) target.classList.add('active');
+
+    // Update step indicators
+    document.querySelectorAll('.step-item').forEach(item => {
+        const s = parseInt(item.dataset.step);
+        item.classList.remove('active', 'completed');
+        if (s === step) item.classList.add('active');
+        else if (s < step) item.classList.add('completed');
+    });
+
+    // Update connectors
+    document.getElementById('conn1').classList.toggle('filled', step > 1);
+    document.getElementById('conn2').classList.toggle('filled', step > 2);
+
+    currentStep = step;
+
+    // Scroll to top of form
+    const formTop = document.querySelector('.form-wrapper').offsetTop - 40;
+    window.scrollTo({ top: formTop, behavior: 'smooth' });
+}
+
+// Clickable step indicators (only go back to completed steps)
+document.querySelectorAll('.step-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const step = parseInt(this.dataset.step);
+        if (step < currentStep) goToStep(step);
+    });
+});
+
+// ── Validation ──
+function clearFieldError(fieldName) {
+    const group = document.getElementById('group_' + fieldName);
+    const errEl = document.getElementById(fieldName + '_error');
+    if (group) group.classList.remove('has-error');
+    if (errEl) {
+        errEl.querySelector('span').textContent = '';
+        errEl.classList.remove('show');
+    }
+}
+
+function showFieldError(fieldName, msg) {
+    const group = document.getElementById('group_' + fieldName);
+    const errEl = document.getElementById(fieldName + '_error');
+    if (group) group.classList.add('has-error');
+    if (errEl) {
+        errEl.querySelector('span').textContent = msg;
+        errEl.classList.add('show');
+    }
+}
+
+function validateField(fieldId, fieldName) {
+    const field = document.getElementById(fieldId);
+    if (!field) return true;
+    clearFieldError(fieldName);
+    if (!field.value.trim()) {
+        showFieldError(fieldName, 'This field is required.');
+        return false;
+    }
+    return true;
+}
+
+function validateStep(step) {
+    let valid = true;
+    const s1Fields = ['id_name', 'id_mobile_number'];
+    const s1Names = ['name', 'mobile_number'];
+    const s2Fields = ['id_address', 'id_area', 'id_city', 'id_state', 'id_country', 'id_postal_code'];
+    const s2Names = ['address', 'area', 'city', 'state', 'country', 'postal_code'];
+
+    let fields, names;
+    if (step === 1) { fields = s1Fields; names = s1Names; }
+    else if (step === 2) { fields = s2Fields; names = s2Names; }
+    else return true;
+
+    fields.forEach((fId, i) => {
+        if (!validateField(fId, names[i])) valid = false;
+    });
+
+    // Mobile check
+    if (step === 1) {
+        const mob = document.getElementById('id_mobile_number');
+        if (mob && mob.value.trim()) {
+            const digits = mob.value.replace(/\D/g, '');
+            if (digits.length < 10) {
+                showFieldError('mobile_number', 'Enter a valid 10-digit number.');
+                valid = false;
+            }
+        }
+        const email = document.getElementById('id_email');
+        if (email && email.value.trim() && !/^\S+@\S+\.\S+$/.test(email.value.trim())) {
+            showFieldError('email', 'Enter a valid email address.');
+            valid = false;
+        }
+    }
+
+    if (!valid) {
+        const firstErr = document.querySelector('.form-section.active .has-error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return valid;
+}
+
+function validateForm() {
+    let valid = true;
+
+    // Validate all steps
+    for (let s = 1; s <= 2; s++) {
+        if (!validateStep(s)) valid = false;
+    }
+
+    // Amount
+    clearFieldError('donation_amount');
+    const amountEl = document.getElementById('id_donation_amount');
+    const amountVal = amountEl && amountEl.value ? parseFloat(amountEl.value) : NaN;
+
+    if (isNaN(amountVal) || amountVal <= 0) {
+        showFieldError('donation_amount', 'Please enter a valid amount.');
+        valid = false;
+    } else {
+        const schemeMinEl = document.getElementById('scheme_amount');
+        if (schemeMinEl && schemeMinEl.value) {
+            const minVal = parseFloat(schemeMinEl.value);
+            if (!isNaN(minVal) && amountVal < minVal) {
+                showFieldError('donation_amount', 'Minimum amount is ₹' + minVal);
+                valid = false;
+            }
+        }
+    }
+
+    if (!valid) {
+        goToStep(3);
+        const firstErr = document.querySelector('#step3 .has-error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return valid;
+}
+
+// ── Form Submit ──
+document.getElementById('donationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const loader = document.getElementById('loaderOverlay');
+    const loaderText = document.getElementById('loaderText');
+    loaderText.textContent = 'Processing your generous gift';
+    loader.classList.add('active');
+
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data || !data.success) {
+            loader.classList.remove('active');
+            if (data && data.errors) {
+                Object.keys(data.errors).forEach(k => {
+                    showFieldError(k, data.errors[k][0]);
+                });
+                window.scrollTo({ top: document.querySelector('.form-wrapper').offsetTop - 50, behavior: 'smooth' });
+            } else if (data && data.error) {
+                showToast(data.error, 'error');
+            } else {
+                showToast('Unexpected server response. Please try again.', 'error');
+            }
+            return;
+        }
+
+        // Mock flow
+        if (data.is_mock) {
+            loaderText.textContent = 'Confirming your donation...';
+            const pv = new FormData();
+            pv.append('is_mock', 'true');
+            pv.append('razorpay_order_id', data.order.id);
+            const csrftoken = (function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            })('csrftoken');
+
+            fetch('{% url "payment_verify" %}', { method: 'POST', body: pv, headers: { 'X-CSRFToken': csrftoken } })
+            .then(r => { if (!r.ok) throw new Error('Server returned ' + r.status); return r.json(); })
+            .then(resp => {
+                if (resp && resp.success && resp.redirect_url) {
+                    window.location.href = resp.redirect_url;
+                } else {
+                    window.location.href = '{% url "payment_failed" %}';
+                }
+            })
+            .catch(() => { window.location.href = '{% url "payment_failed" %}'; });
+            return;
+        }
+
+        // Real Razorpay flow
+        const order = data.order;
+        const options = {
+            key: data.key_id,
+            amount: order.amount,
+            currency: order.currency,
+            name: 'Ahinsadham',
+            description: 'Donation',
+            order_id: order.id,
+            handler: function(response) {
+                loaderText.textContent = 'Verifying your payment...';
+                loader.classList.add('active');
+                const pv = new FormData();
+                pv.append('razorpay_payment_id', response.razorpay_payment_id);
+                pv.append('razorpay_order_id', response.razorpay_order_id);
+                pv.append('razorpay_signature', response.razorpay_signature);
+                const csrftoken = (function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                })('csrftoken');
+
+                fetch('{% url "payment_verify" %}', { method: 'POST', body: pv, headers: { 'X-CSRFToken': csrftoken } })
+                .then(r => { if (!r.ok) throw new Error('Server returned ' + r.status); return r.json(); })
+                .then(resp => {
+                    window.location.href = (resp && resp.success) ? resp.redirect_url : '{% url "payment_failed" %}';
+                }).catch(() => { window.location.href = '{% url "payment_failed" %}'; });
+            },
+            modal: { ondismiss: function() { loader.classList.remove('active'); } },
+            prefill: {
+                name: document.getElementById('id_name') ? document.getElementById('id_name').value : '',
+                email: document.getElementById('id_email') ? document.getElementById('id_email').value : '',
+                contact: document.getElementById('id_mobile_number') ? document.getElementById('id_mobile_number').value : ''
+            },
+            theme: { color: '#1B4332' }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function(response) {
+            loader.classList.remove('active');
+            showToast('Payment failed: ' + response.error.description, 'error');
+        });
+        loader.classList.remove('active');
+        rzp.open();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        loader.classList.remove('active');
+        showToast('A network error occurred. Please try again.', 'error');
+    });
+});
+
+// ── Toast ──
+function showToast(message, type) {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = 'position:fixed;bottom:30px;right:30px;z-index:3000;display:flex;flex-direction:column;gap:10px;';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const bgColor = type === 'error' ? '#FEF2F2' : '#F0FDF4';
+    const borderColor = type === 'error' ? '#EF4444' : '#52B788';
+    const textColor = type === 'error' ? '#991B1B' : '#1B4332';
+    const icon = type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+    const iconColor = type === 'error' ? '#EF4444' : '#52B788';
+
+    toast.style.cssText = `background:${bgColor};border-radius:12px;padding:14px 20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);display:flex;align-items:center;gap:12px;font-size:0.88rem;color:${textColor};font-weight:500;transform:translateX(120%);transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);min-width:280px;max-width:400px;border-left:4px solid ${borderColor};`;
+    toast.innerHTML = `<i class="fas ${icon}" style="font-size:1.1rem;color:${iconColor};flex-shrink:0;"></i><span>${message}</span>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.style.transform = 'translateX(0)'));
+    setTimeout(() => {
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+}
+</script>
+{% endif %}
+</body>
+</html>
