@@ -3377,7 +3377,7 @@ from .models import Donation, DonorVolunteer
 def _validate_donation_post(post_data):
     """Validate and normalize the plain HTML donation form."""
     field_names = (
-        'name', 'pan_number', 'mobile_number', 'email', 'address', 'area',
+        'first_name', 'middle_name', 'last_name', 'pan_number', 'mobile_number', 'email', 'address', 'area',
         'city', 'state', 'country', 'postal_code', 'native_place',
         'donation_amount', 'reference',
     )
@@ -3387,7 +3387,7 @@ def _validate_donation_post(post_data):
     }
     errors = {}
 
-    for field in ('name', 'mobile_number', 'country', 'donation_amount'):
+    for field in ('first_name', 'last_name', 'mobile_number', 'country', 'donation_amount'):
         if not cleaned_data[field]:
             errors[field] = ['This field is required.']
 
@@ -3583,13 +3583,19 @@ def payment_view(request):
     if not donation_data or not order:
         return redirect(reverse('donation_form'))
 
+    # Reconstruct name for template compatibility
+    first_name = donation_data.get('first_name', '')
+    middle_name = donation_data.get('middle_name', '')
+    last_name = donation_data.get('last_name', '')
+    donation_data['name'] = ' '.join(filter(None, [first_name, middle_name, last_name]))
+
     key_id, _ = _get_razorpay_credentials()
     context = {
         'donation': donation_data,
         'order': json.dumps(order),
         'key_id': key_id or 'mock_key',
     }
-    return render(request, 'payment.html', context)
+    return render(request, 'ACHpayment.html', context)
 
 
 @require_POST
@@ -3629,10 +3635,9 @@ def payment_verify(request):
     # Save donation: create or find DonorVolunteer, then create Donation using new model fields
     try:
         # Extract donor info from session-stored donation_data
-        full_name = donation_data.get('name', '') or None
-        # Requirement: save Full Name into `first_name` field
-        first_name = full_name
-        last_name = None
+        first_name = donation_data.get('first_name', '') or None
+        middle_name = donation_data.get('middle_name', '') or None
+        last_name = donation_data.get('last_name', '') or None
 
         email = donation_data.get('email')
         mobile = donation_data.get('mobile_number')
@@ -3653,6 +3658,7 @@ def payment_verify(request):
                 try:
                     donor = DonorVolunteer.objects.create(
                         first_name=first_name or None,
+                        middle_name=middle_name or None,
                         last_name=last_name or None,
                         email=email_norm or None,
                         contact_number=mobile_norm or None,
@@ -3676,6 +3682,35 @@ def payment_verify(request):
                         raise
         except Exception:
             donor = None
+
+        if donor:
+            try:
+                updated = False
+                new_pan = (donation_data.get('pan_number') or '').strip()
+                if new_pan and getattr(donor, 'pan_number', None) != new_pan:
+                    donor.pan_number = new_pan
+                    updated = True
+                
+                if first_name and not getattr(donor, 'first_name', None):
+                    donor.first_name = first_name
+                    updated = True
+                if middle_name and not getattr(donor, 'middle_name', None):
+                    donor.middle_name = middle_name
+                    updated = True
+                if last_name and not getattr(donor, 'last_name', None):
+                    donor.last_name = last_name
+                    updated = True
+
+                for field in ['address', 'area', 'city', 'state', 'country', 'postal_code', 'native_place']:
+                    val = donation_data.get(field) or None
+                    if val and not getattr(donor, field, None):
+                        setattr(donor, field, val)
+                        updated = True
+                
+                if updated:
+                    donor.save()
+            except Exception:
+                pass
 
         # Compose donation fields
         declared_amount = donation_data.get('donation_amount')
@@ -3714,15 +3749,31 @@ def payment_verify(request):
         except Exception:
             pass
 
-        donation_sub_category_id = safe_int(donation_data.get('scheme_id'))
+        scheme_id = donation_data.get('scheme_id')
+        s_mapping = {
+            's1': 12,
+            's2': 13,
+            's3': 14,
+            's4': 15,
+            's5': 16,
+            's6': 17,
+            's7': 18,
+            's8': 19,
+        }
+        if scheme_id in s_mapping:
+            donation_sub_category_id = s_mapping[scheme_id]
+        else:
+            donation_sub_category_id = safe_int(scheme_id)
         payment_method_id = safe_int(donation_data.get('payment_method'))
         # For payment_status, prefer to leave None; set to an integer only if provided numerically
         payment_status_id = safe_int(donation_data.get('payment_status'))
 
+        # Reconstruct display name from first, middle, last name fields
+        display_name = ' '.join(filter(None, [first_name, middle_name, last_name])) or None
         # Create Donation record (fields map to existing DB columns)
-        Donation.objects.create(
+        donation = Donation.objects.create(
             donor=donor,
-            display_name=donation_data.get('name') or None,
+            display_name=display_name,
             donation_date=timezone.now(),
             donation_category_id=donation_category_id,
             donation_sub_category_id=donation_sub_category_id,
@@ -3743,6 +3794,10 @@ def payment_verify(request):
             updated_by=(request.user if request.user and request.user.is_authenticated else None),
             verified=True,
         )
+
+        if email_norm:
+            from .email_utils import send_donation_success_email
+            send_donation_success_email(donation)
     except Exception:
         return JsonResponse({
             'success': False,
@@ -3781,49 +3836,49 @@ def schemes_view(request):
 
     schemes = [
         {
-            'id': 's1',
+            'id': foundation_scheme.id if foundation_scheme else 12,
             'name': foundation_scheme.lookup_name if foundation_scheme else 'FOUNDATION PILLAR SUPPORT',
             'amount': 500,
             'image': 'images/FOUNDATION.png'
         },
         {
-            'id': 's2',
+            'id': icu_scheme.id if icu_scheme else 13,
             'name': icu_scheme.lookup_name if icu_scheme else 'ICU ANIMAL CARE - ONE MONTH',
             'amount': 1000,
             'image': 'images/ICU_ANIMAL_CARE.png'
         },
         {
-            'id': 's3',
+            'id': sanctuary_scheme.id if sanctuary_scheme else 14,
             'name': sanctuary_scheme.lookup_name if sanctuary_scheme else 'SANCTUARY ABHYARANYA SUPPORT',
             'amount': 1500,
             'image': 'images/SANCTUARY_ABHYARANYA.png'
         },
         {
-            'id': 's4',
+            'id': medical_scheme.id if medical_scheme else 15,
             'name': medical_scheme.lookup_name if medical_scheme else 'MEDICAL AID - ONE MONTH',
             'amount': 2000,
             'image': 'images/MEDICAL_AID.png'
         },
         {
-            'id': 's5',
+            'id': special_day_scheme.id if special_day_scheme else 16,
             'name': special_day_scheme.lookup_name if special_day_scheme else 'SPECIAL DAY TRIBUTE (KAYMITITHI)',
             'amount': 750,
             'image': 'images/SPECIAL_DAY.png'
         },
         {
-            'id': 's6',
+            'id': fresh_grass_scheme.id if fresh_grass_scheme else 17,
             'name': fresh_grass_scheme.lookup_name if fresh_grass_scheme else 'ONE TRUCK OF FRESH GRASS',
             'amount': 1200,
             'image': 'images/ONE_TRUCK.png'
         },
         {
-            'id': 's7',
+            'id': adopt_cow_scheme.id if adopt_cow_scheme else 18,
             'name': adopt_cow_scheme.lookup_name if adopt_cow_scheme else 'ADOPT A COW - 1 YEAR',
             'amount': 300,
             'image': 'images/ADOPTCOW.png'
         },
         {
-            'id': 's8',
+            'id': plant_tree_scheme.id if plant_tree_scheme else 19,
             'name': plant_tree_scheme.lookup_name if plant_tree_scheme else 'PLANT A TREE',
             'amount': 2500,
             'image': 'images/PLANT.png'

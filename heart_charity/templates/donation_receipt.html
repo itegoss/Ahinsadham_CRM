@@ -254,7 +254,7 @@ table {
     <th  width="35%" style="text-align:right;">Amount (Rs.)</th>
 </tr>
 <tr>
-    <td>{{ donation.donation_category.lookup_name }}/{{ donation.donation_sub_category.lookup_name }}</td>
+    <td>{{ donation.donation_category.lookup_name }}{% if donation.donation_sub_category %} / {{ donation.donation_sub_category.lookup_name }}{% endif %}</td>
     <td class="amount"> <b> Rs. {{ donation.donation_amount_paid }}</b></td>
 </tr>
 <tr class="total-row">
