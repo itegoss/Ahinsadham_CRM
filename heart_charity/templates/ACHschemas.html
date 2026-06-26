@@ -1,0 +1,1049 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose a Scheme | Ahinsadham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root { --brand-green:#1B4332; --brand-green-light:#2D6A4F; --brand-accent:#52B788; --brand-bg:#F8FAF9; --brand-card-bg:#FFFFFF; --brand-text:#081C15; --brand-text-muted:#495057; --brand-error:#D90429; --input-bg:#F0F4F2; --input-border:#D8E2DC; }
+    body { font-family:'Inter',sans-serif; background-color:var(--brand-bg); color:var(--brand-text); margin:0; padding:0; display:flex; flex-direction:column; min-height:100vh; }
+    .top-header { background-color:var(--brand-green); color:white; padding:12px 0; font-size:14px; font-weight:500; box-shadow:0 4px 12px rgba(0,0,0,.1); position:sticky; top:0; z-index:1000; }
+    .top-header a { color:rgba(255,255,255,.9); text-decoration:none; margin-left:18px; transition:color .3s ease; }
+    .top-header a:hover { color:#fff; }
+    .top-header i { margin-right:6px; color:var(--brand-accent); }
+    .social-icons a { font-size:16px; display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.1); transition:all .3s ease; margin-left:8px; }
+    .social-icons a:hover { background:var(--brand-accent); color:var(--brand-green); transform:translateY(-2px); }
+    .main-wrapper { flex:1; display:flex; flex-direction:column; }
+    .btn-brand { background:linear-gradient(135deg,var(--brand-green-light) 0%,var(--brand-green) 100%); color:white; border:none; padding:12px 30px; border-radius:8px; font-weight:600; letter-spacing:.5px; transition:all .3s cubic-bezier(.4,0,.2,1); box-shadow:0 4px 6px rgba(27,67,50,.2); position:relative; overflow:hidden; }
+    .btn-brand:hover { transform:translateY(-2px); box-shadow:0 6px 12px rgba(27,67,50,.3); color:white; }
+    .btn-brand:active { transform:translateY(0); }
+    .btn-outline-brand { border:2px solid var(--brand-green); color:var(--brand-green); padding:10px 28px; border-radius:8px; font-weight:600; background:transparent; transition:all .3s ease; }
+    .btn-outline-brand:hover { background-color:var(--brand-green); color:white; }
+    .custom-input { background-color:var(--input-bg)!important; color:var(--brand-text)!important; border:1px solid var(--input-border); border-radius:8px; padding:12px 16px; transition:all .3s ease; font-weight:500; }
+    .custom-input:focus { background-color:#fff!important; border-color:var(--brand-accent); box-shadow:0 0 0 4px rgba(82,183,136,.15); outline:none; }
+    .custom-input::placeholder { color:#ADB5BD; font-weight:400; }
+    .glass-card { background:rgba(255,255,255,.95); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.2); box-shadow:0 8px 32px rgba(0,0,0,.05); border-radius:16px; }
+    .footer { background-color:#081C15; color:rgba(255,255,255,.7); padding:20px 0; text-align:center; font-size:14px; margin-top:auto; }
+    .fade-in { animation:fadeIn .6s cubic-bezier(.16,1,.3,1) forwards; opacity:0; }
+    .slide-up { animation:slideUp .6s cubic-bezier(.16,1,.3,1) forwards; opacity:0; transform:translateY(20px); }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+</style>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --brand-green: #1B4332;
+        --brand-green-light: #2D6A4F;
+        --brand-accent: #D4A373;
+        --brand-text-muted: #6B7280;
+        --brand-card-bg: #FFFFFF;
+        --glow-green: rgba(27, 67, 50, 0.15);
+        --glow-accent: rgba(212, 163, 115, 0.3);
+    }
+
+    /* ── Hero Section ── */
+    .schemes-hero {
+        position: relative;
+        padding: 5rem 0 3rem;
+        text-align: center;
+        overflow: hidden;
+        background: linear-gradient(170deg, #0B2618 0%, #1B4332 35%, #2D6A4F 65%, #40916C 100%);
+    }
+
+    .schemes-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(ellipse at 30% 50%, rgba(212,163,115,0.12) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 20%, rgba(64,145,108,0.2) 0%, transparent 40%);
+        animation: heroShift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroShift {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(-3%, 2%) rotate(2deg); }
+    }
+
+    /* Floating particles */
+    .particles-container {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0;
+        animation: floatParticle linear infinite;
+    }
+
+    @keyframes floatParticle {
+        0% { transform: translateY(100vh) scale(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 8px 20px;
+        border-radius: 50px;
+        color: rgba(255,255,255,0.85);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeSlideUp 0.8s 0.2s forwards;
+    }
+
+    .hero-badge .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #52B788;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(82,183,136,0.5); }
+        50% { box-shadow: 0 0 0 8px rgba(82,183,136,0); }
+    }
+
+    .schemes-hero h2 {
+        font-family: 'Playfair Display', serif;
+        color: #FFFFFF;
+        font-weight: 800;
+        font-size: 3.2rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeSlideUp 0.9s 0.4s forwards;
+    }
+
+    .schemes-hero h2 .accent-word {
+        color: var(--brand-accent);
+        position: relative;
+    }
+
+    .schemes-hero h2 .accent-word::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--brand-accent);
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: left;
+        animation: lineReveal 0.8s 1.2s forwards;
+    }
+
+    @keyframes lineReveal {
+        to { transform: scaleX(1); }
+    }
+
+    .schemes-hero p {
+        color: rgba(255,255,255,0.7);
+        font-size: 1.15rem;
+        max-width: 560px;
+        margin: 0 auto;
+        line-height: 1.7;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeSlideUp 0.9s 0.6s forwards;
+    }
+
+    @keyframes fadeSlideUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats bar */
+    .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 2.5rem;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeSlideUp 0.9s 0.8s forwards;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        display: block;
+    }
+
+    .stat-number .rupee {
+        color: var(--brand-accent);
+        font-size: 1.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.5);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-top: 4px;
+    }
+
+    .stat-divider {
+        width: 1px;
+        background: rgba(255,255,255,0.15);
+        align-self: stretch;
+    }
+
+    /* Wave separator */
+    .wave-separator {
+        position: relative;
+        margin-top: -1px;
+    }
+
+    .wave-separator svg {
+        display: block;
+        width: 100%;
+        height: 80px;
+    }
+
+    /* ── Scheme Cards Grid ── */
+    .schemes-grid-section {
+        padding: 4rem 0 5rem;
+        background: linear-gradient(180deg, #F8FAF9 0%, #FFFFFF 100%);
+        position: relative;
+    }
+
+    .section-label {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-label span {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(27,67,50,0.08), rgba(45,106,79,0.06));
+        color: var(--brand-green);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 8px 24px;
+        border-radius: 50px;
+        border: 1px solid rgba(27,67,50,0.1);
+    }
+
+    /* Card */
+    .scheme-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--brand-card-bg);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.03);
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+    }
+
+    .scheme-card.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .scheme-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        padding: 2px;
+        background: linear-gradient(135deg, transparent 40%, rgba(27,67,50,0.15) 50%, transparent 60%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .scheme-card:hover::before {
+        opacity: 1;
+    }
+
+    .scheme-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 60px rgba(27,67,50,0.12), 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .scheme-card:active {
+        transform: translateY(-6px) scale(1.01);
+    }
+
+    /* Card shimmer effect on hover */
+    .scheme-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent 40%,
+            rgba(255,255,255,0.1) 45%,
+            rgba(255,255,255,0.2) 50%,
+            rgba(255,255,255,0.1) 55%,
+            transparent 60%
+        );
+        transform: translateX(-100%);
+        transition: none;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .scheme-card:hover::after {
+        animation: shimmer 0.8s ease forwards;
+    }
+
+    @keyframes shimmer {
+        to { transform: translateX(100%); }
+    }
+
+    /* Image area */
+    .card-img-wrapper {
+        position: relative;
+        padding-top: 62%;
+        overflow: hidden;
+        background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
+    }
+
+    .card-img-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0,0,0,0.25), transparent);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .scheme-card img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scheme-card:hover img {
+        transform: scale(1.08);
+    }
+
+    /* Category badge on image */
+    .card-category-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--brand-green);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        z-index: 3;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.4s 0.1s ease;
+    }
+
+    .scheme-card:hover .card-category-badge {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Heart / Like icon */
+    .card-heart {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #CBD5E1;
+        font-size: 0.85rem;
+        z-index: 3;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .card-heart:hover,
+    .card-heart.liked {
+        color: #EF4444;
+        background: #FFFFFF;
+        transform: scale(1.15);
+    }
+
+    .card-heart.liked {
+        animation: heartBeat 0.5s ease;
+    }
+
+    @keyframes heartBeat {
+        0% { transform: scale(1.15); }
+        25% { transform: scale(1.35); }
+        50% { transform: scale(1.1); }
+        75% { transform: scale(1.25); }
+        100% { transform: scale(1.15); }
+    }
+
+    /* Card body */
+    .card-body {
+        padding: 1.4rem 1.4rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    .card-title {
+        color: var(--brand-green);
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: color 0.3s ease;
+    }
+
+    .scheme-card:hover .card-title {
+        color: var(--brand-green-light);
+    }
+
+    .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .card-amount {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: linear-gradient(135deg, rgba(27,67,50,0.07), rgba(45,106,79,0.04));
+        padding: 6px 14px;
+        border-radius: 8px;
+        color: var(--brand-green);
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    .card-amount i {
+        color: var(--brand-accent);
+        font-size: 0.85rem;
+    }
+
+    .card-donors {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        color: var(--brand-text-muted);
+    }
+
+    .card-donors .avatar-stack {
+        display: flex;
+    }
+
+    .card-donors .avatar-stack span {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        margin-left: -6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .card-donors .avatar-stack span:first-child { margin-left: 0; }
+    .avatar-stack .av1 { background: #40916C; }
+    .avatar-stack .av2 { background: #D4A373; }
+    .avatar-stack .av3 { background: #52B788; }
+
+    /* Progress bar */
+    .card-progress {
+        margin-bottom: 1.2rem;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: var(--brand-text-muted);
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    .progress-info .raised {
+        color: var(--brand-green);
+        font-weight: 600;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 5px;
+        background: #E8F5E9;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--brand-green), #52B788);
+        border-radius: 10px;
+        width: 0;
+        transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Donate button */
+    .btn-donate-card {
+        margin-top: auto;
+        width: 100%;
+        background: linear-gradient(135deg, var(--brand-green), var(--brand-green-light));
+        color: #FFFFFF;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-donate-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--brand-accent), #C68B59);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .btn-donate-card span,
+    .btn-donate-card i {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-donate-card i {
+        transition: transform 0.3s ease;
+    }
+
+    .scheme-card:hover .btn-donate-card::before {
+        opacity: 1;
+    }
+
+    .scheme-card:hover .btn-donate-card i {
+        transform: translateX(4px);
+    }
+
+    .btn-donate-card:active {
+        transform: scale(0.97);
+    }
+
+    /* Ripple effect */
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: scale(0);
+        animation: rippleEffect 0.6s ease-out;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    @keyframes rippleEffect {
+        to { transform: scale(4); opacity: 0; }
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: var(--brand-green);
+    }
+
+    .empty-state h4 {
+        color: var(--brand-green);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: var(--brand-text-muted);
+    }
+
+    /* ── Floating CTA ── */
+    .floating-cta {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+        pointer-events: none;
+    }
+
+    .floating-cta.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    .floating-cta a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, var(--brand-green), #40916C);
+        color: #fff;
+        padding: 14px 24px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 8px 30px rgba(27,67,50,0.35);
+        transition: all 0.3s ease;
+    }
+
+    .floating-cta a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(27,67,50,0.45);
+    }
+
+    .floating-cta a i {
+        font-size: 1.1rem;
+        animation: bounceArrow 2s ease-in-out infinite;
+    }
+
+    @keyframes bounceArrow {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(4px); }
+    }
+
+    /* ── Toast notification ── */
+    .toast-container {
+        position: fixed;
+        bottom: 90px;
+        right: 30px;
+        z-index: 1100;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toast {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 14px 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.88rem;
+        color: var(--brand-green);
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        min-width: 260px;
+        border-left: 4px solid var(--brand-green);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast i {
+        font-size: 1.1rem;
+        color: var(--brand-accent);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 991px) {
+        .schemes-hero h2 { font-size: 2.4rem; }
+        .stats-bar { gap: 1.5rem; }
+        .stat-number { font-size: 1.4rem; }
+    }
+
+    @media (max-width: 767px) {
+        .schemes-hero { padding: 3.5rem 0 2rem; }
+        .schemes-hero h2 { font-size: 2rem; }
+        .schemes-hero p { font-size: 1rem; }
+        .stats-bar { gap: 1rem; flex-wrap: wrap; }
+        .stat-divider { display: none; }
+        .stat-item { min-width: 100px; }
+        .floating-cta { bottom: 20px; right: 20px; }
+        .floating-cta a { padding: 12px 18px; font-size: 0.82rem; }
+    }
+
+    @media (max-width: 575px) {
+        .schemes-hero h2 { font-size: 1.7rem; }
+        .card-body { padding: 1.1rem; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="top-header">
+    <div class="container px-4">
+        <div class="row align-items-center">
+            <div class="col-md-5 text-center text-md-start mb-2 mb-md-0"><i class="fas fa-phone-alt"></i> 70691 88555 | 70693 88555</div>
+            <div class="col-md-3 text-center mb-2 mb-md-0"><i class="fas fa-envelope"></i> info@ahinsadham.org</div>
+            <div class="col-md-4 text-center text-md-end social-icons">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main-wrapper">
+
+<!-- ═══ Hero Section ═══ -->
+<section class="schemes-hero">
+    <div class="particles-container" id="particles"></div>
+    <div class="container position-relative" style="z-index:2;">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            Active Donation Schemes
+        </div>
+        <h2>Make a <span class="accent-word">Difference</span> Today</h2>
+        <p>Choose a scheme that resonates with you. Every contribution, no matter the size, creates ripples of positive change.</p>
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number"><span class="rupee">₹</span>24L+</span>
+                <span class="stat-label">Raised</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">3,200+</span>
+                <span class="stat-label">Donors</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">{{ schemes|length }}</span>
+                <span class="stat-label">Schemes</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Wave Separator -->
+<div class="wave-separator">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" fill="none">
+        <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#F8FAF9"/>
+    </svg>
+</div>
+
+<!-- ═══ Schemes Grid ═══ -->
+<section class="schemes-grid-section">
+    <div class="container">
+        <div class="section-label">
+            <span><i class="fas fa-hand-holding-heart me-2"></i>Select a Cause</span>
+        </div>
+
+        <div class="row g-4" id="schemesGrid">
+            {% for s in schemes %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card scheme-card"
+                     data-id="{{ s.id }}"
+                     data-name="{{ s.name|escapejs }}"
+                     data-amount="{{ s.amount }}"
+                     data-image="{{ s.image }}"
+                     onclick="goToForm(this)">
+
+                    <div class="card-img-wrapper">
+                        {% if s.image %}
+                        <img src="{% static s.image %}"
+                             alt="{{ s.name }}"
+                             loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop'">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop"
+                             alt="{{ s.name }}">
+                        {% endif %}
+                        <div class="card-category-badge">Donate</div>
+                        <div class="card-heart" onclick="event.stopPropagation(); toggleHeart(this)">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ s.name }}</h5>
+
+                        <div class="card-meta">
+                            <div class="card-amount">
+                                <i class="fas fa-rupee-sign"></i>
+                                {{ s.amount }}
+                            </div>
+                            <!-- <div class="card-donors">
+                                <div class="avatar-stack">
+                                    <span class="av1">A</span>
+                                    <span class="av2">R</span>
+                                    <span class="av3">S</span>
+                                </div>
+                                Supported
+                            </div> -->
+                        </div>
+
+                        <!-- <div class="card-progress">
+                            <div class="progress-info">
+                                <span class="raised">{{ s.amount|add:"5000" }} raised</span>
+                                <span>Goal: {{ s.amount|add:"15000" }}</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" data-width="{{ s.amount }}"></div>
+                            </div>
+                        </div> -->
+
+                        <a class="btn-donate-card"
+                           href="{% url 'donation_form' %}?scheme_id={{ s.id }}&scheme_name={{ s.name|urlencode }}&amount={{ s.amount }}&image={{ s.image|urlencode }}"
+                           onclick="event.stopPropagation(); goToForm(this.closest('.scheme-card'))">
+                            <span>Donate Now</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h4>No Schemes Available</h4>
+                    <p>New donation schemes will appear here once they're launched. Check back soon!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Floating CTA -->
+<div class="floating-cta" id="floatingCta">
+    <a href="{% url 'donation_form' %}">
+        <span>Quick Donate</span>
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+</div>
+<footer class="footer">
+    <div class="container">
+        <p class="mb-0">&copy; {% now "Y" %} Ahinsadham. All rights reserved.</p>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function() {
+    // ── Generate Particles ──
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        const colors = ['rgba(255,255,255,0.15)', 'rgba(212,163,115,0.2)', 'rgba(82,183,136,0.2)'];
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 6 + 3;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = (Math.random() * 8 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 6) + 's';
+            particlesContainer.appendChild(p);
+        }
+    }
+
+    // ── Scroll-triggered card animations ──
+    const cards = document.querySelectorAll('.scheme-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                const card = entry.target;
+                const delay = Array.from(cards).indexOf(card) * 100;
+                setTimeout(() => {
+                    card.classList.add('visible');
+                    // Animate progress bar
+                    const fill = card.querySelector('.progress-fill');
+                    if (fill) {
+                        const width = Math.min(parseInt(fill.dataset.width) / 150, 85);
+                        setTimeout(() => { fill.style.width = width + '%'; }, 300);
+                    }
+                }, delay);
+                observer.unobserve(card);
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    cards.forEach(card => observer.observe(card));
+
+    // ── Floating CTA visibility ──
+    const floatingCta = document.getElementById('floatingCta');
+    if (floatingCta) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                floatingCta.classList.add('show');
+            } else {
+                floatingCta.classList.remove('show');
+            }
+        });
+    }
+
+    // ── Ripple effect on donate buttons ──
+    document.querySelectorAll('.btn-donate-card').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+})();
+
+// ── Navigate to form ──
+function goToForm(cardEl) {
+    const id = cardEl.dataset.id;
+    const name = cardEl.dataset.name;
+    const amount = cardEl.dataset.amount;
+    const image = cardEl.dataset.image || '';
+
+    const url = "{% url 'donation_form' %}?scheme_id=" +
+        encodeURIComponent(id) +
+        "&scheme_name=" + encodeURIComponent(name) +
+        "&amount=" + encodeURIComponent(amount) +
+        "&image=" + encodeURIComponent(image);
+
+    window.location.href = url;
+}
+
+// ── Toggle heart ──
+function toggleHeart(el) {
+    el.classList.toggle('liked');
+    if (el.classList.contains('liked')) {
+        showToast('Added to your favorites!');
+    } else {
+        showToast('Removed from favorites');
+    }
+}
+
+// ── Toast notification ──
+function showToast(message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = '<i class="fas fa-heart"></i><span>' + message + '</span>';
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => toast.classList.add('show'));
+    });
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 2500);
+}
+</script>
+</body>
+</html>

@@ -5,18 +5,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Danpeti Receipt</title>
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <style>
 @page {
     size: A5 landscape;
-    margin: 6mm 4mm 5mm 4mm;
-}
-html, body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
+    @frame content {
+        left: 15mm;
+        top: 15mm;
+        width: 180mm;
+        height: 118mm;
+    }
 }
 body {
     font-family: Arial, Helvetica, sans-serif;
@@ -25,21 +23,19 @@ body {
     padding: 0;
     color: #000;
     background: #fff;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 .receipt-container {
-    max-width: 100%;
-    margin: auto;
+    width: 100%;
 }
 .receipt-box {
-    width: 100%;
     border: 1px solid #000;
     border-collapse: collapse;
     background: #fff;
 }
-.receipt-box td { padding: 2px; }
+.receipt-box td { padding: 1.5px; }
 .bi {
-    font-size: 13px;
+    font-size: 11px;
     vertical-align: middle;
     margin-right: 2px;
 }
@@ -47,30 +43,30 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
-.header-table td { border: 1px solid #000; padding:3px; vertical-align:middle; }
+.header-table td { border: 1px solid #000; padding:2px; vertical-align:middle; }
 .logo {
-    height: 75px;
-    width: 114%;
+    height: 60px;
+    width: 60px;
     display: block;
     margin: 0 auto;}
 .header-title {
-    font-size: 17px;
+    font-size: 13px;
     font-weight: bold;
     color: #000;
     text-align: center;
     margin-bottom: 1px;
 }
 .header-sub {
-    font-size: 15px;
+    font-size: 10.5px;
     text-align: center;
 }
 .info-line {
-    font-size: 12px;
-    margin-top: 2px;
+    font-size: 10px;
+    margin-top: 1px;
     overflow: hidden;
 }
 .info-line table { width:100%; border-collapse:collapse; }
-.info-line td { border: 1px solid #000; padding:3px; vertical-align:top; }
+.info-line td { border: 1px solid #000; padding:2px; vertical-align:top; }
 .info-line span {
     float: right;
 }
@@ -78,19 +74,19 @@ body {
     color: #0c6d34;
 }
 .section-title {
-    margin-top: 4px;
+    margin-top: 2px;
     padding: 2px 4px;
     background: #a0dcb7;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 10.5px;
 }
 table {
     width: 100%;
-       border-collapse: collapse;
-       font-size: 12px;
+    border-collapse: collapse;
+    font-size: 9.5px;
 }
 .table td, .table th {
-    padding: 2px;
+    padding: 1.5px;
     border: 1px solid #000;
     vertical-align: top;
     line-height: 1.0;
@@ -110,11 +106,11 @@ table {
 /* ================= FOOTER ================= */
 .footer-text {
     text-align: center;
-    margin-top: 4px;
-    font-size: 10px;
+    margin-top: 3px;
+    font-size: 8px;
     font-weight: bold;
     color: #0c6d34;
-    padding: 2px 0;
+    padding: 1.5px 0;
     border-top: 1px solid #0c6d34;
 }
 .signature {
@@ -196,54 +192,49 @@ table {
 </td>
 </tr>
 </table>
-<table class="info-line1" style="width:100%; border-collapse:collapse;">
+<table class="table" style="width:100%; margin-top: 2px; margin-bottom: 2px;">
     <tr>
-        <td style="width:65%; vertical-align:top;">
+        <td width="65%" style="vertical-align:top;">
             <b>INSTITUTION :</b> Pragpur Road Junction, Taluka Mundra – Kutch, Gujarat 370415
             <br>
             <b>Contact :</b> 070699 88555 / 070692 88555 | <b>Email :</b> kutch@ahinsadham.org
         </td>
-        <td style="width:35%; text-align:right; vertical-align:top;"><b>Date : {{ payment.date_time|date:"d-M-y" }}</b></td>
+        <td width="35%" style="text-align:right; vertical-align:top;"><b>Date : {{ payment.date_time|date:"d-M-y" }}</b></td>
     </tr>
-</table>
-<div class="info-line1">
-<table style="width:100%; border-collapse:collapse;">
     <tr>
-        <td style="width:65%; vertical-align:top;">
-            <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,
+        <td width="65%" style="vertical-align:top;">
+            <b>MUMBAI OFFICE :</b> 5, Gurukrupa Apartment, Kasturba Cross Road No.1,<br>
             Borivali (E), Mumbai 400066
             <br>
             <b>Contact :</b> 97264 75555 / 97264 85555 | <b>Email :</b> mumbai@ahinsadham.org
         </td>
-        <td style="width:35%; text-align:right; vertical-align:top;"><b>Receipt No : {{ payment.receipt_id }}</b></td>
+        <td width="35%" style="text-align:right; vertical-align:top;"><b>Receipt No : {{ payment.receipt_id }}</b></td>
     </tr>
 </table>
-</div>
 <div class="section-title">Donor Details</div>
 <table class="table">
 <tr>
-<td width="65%"><b>Name :</b> {{ donor.first_name }} {{ donor.last_name }}</td>
-<td width="35%"><b>Box_Id :</b> {{ payment.donation_box.donation_id }}</td>
+    <td width="55%"><b>Name :</b> {{ donor.first_name }} {{ donor.last_name }}</td>
+    <td width="45%"><b>Box ID :</b> {{ payment.donation_box.donation_id }}</td>
 </tr>
 <tr>
-<td rowspan="2"><b>Address :</b> 
-  {% if donor.address %}{{ donor.address }}, {% endif %}
-  {% if donor.city %}{{ donor.city }}, {% endif %}
-  {% if donor.state %}{{ donor.state }}, {% endif %}
-  {% if donor.country %}{{ donor.country }}, {% endif %}
-  {% if donor.postal_code %}{{ donor.postal_code }}{% endif %}
-</td>
-<td width="50%"><b>PAN No :</b> {{ donor.pan_number|default:"-" }}</td>
+    <td>
+        <b>Address :</b> 
+        {% if donor.address %}{{ donor.address }}, {% endif %}
+        {% if donor.city %}{{ donor.city }}, {% endif %}
+        {% if donor.state %}{{ donor.state }}, {% endif %}
+        {% if donor.country %}{{ donor.country }}, {% endif %}
+        {% if donor.postal_code %}{{ donor.postal_code }}{% endif %}
+    </td>
+    <td><b>PAN No :</b> {{ donor.pan_number|default:"-" }}</td>
 </tr>
 <tr>
-<td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td>
+    <td><b>Village :</b> {{ donor.city }}</td>
+    <td><b>Aadhar No :</b> {{ donor.id_number|default:"-" }}</td>
 </tr>
 <tr>
-<td></td>
-<td><b>Collector :</b> {{ payment.verified_by }}</td></tr>
-<tr>
-<td><b>Village :</b> {{ donor.city }}</td>
-<td width="35%"><b>Mobile :</b> {{ donor.contact_number }}</td>
+    <td><b>Collector :</b> {{ payment.verified_by|default:"-" }}</td>
+    <td><b>Mobile :</b> {{ donor.contact_number }}</td>
 </tr>
 </table>
 <div class="section-title">Detail Of Donation</div>
@@ -253,7 +244,7 @@ table {
     <th  width="35%" style="text-align:right;">Amount (Rs.)</th>
 </tr>
 <tr>
-    <td>{{ donation.donation_category.lookup_name }}/{{ donation.donation_sub_category.lookup_name }}</td>
+    <td>Danpeti/{{ payment.donation_box.donation_id }}</td>
     <td class="amount"> <b> Rs. {{ payment.amount }}</b></td>
 </tr>
 <tr class="total-row">
@@ -263,14 +254,14 @@ table {
 </table>
 <table class="table">
 <tr>
- <th  width="35%" style="text-align:left;">Amount in Words : {{ payment.amount|number_to_words }}</th>
-        <th  width="30%" style="text-align:left;">Mode Of Receipt :{{ payment.payment_method.lookup_name }}  </th>
-    <th  width="35%" style="text-align:left;">Type of Donation :Danpeti</th>
+    <td width="35%"><b>Amount in Words :</b> {{ payment.amount|number_to_words }}</td>
+    <td width="30%"><b>Mode Of Receipt :</b> {{ payment.payment_mode.lookup_name }}</td>
+    <td width="35%"><b>Type of Donation :</b> Danpeti</td>
 </tr>
 <tr>
-    <th style="text-align:left;">Name of Bank : </th>
-        <th style="text-align:left;">Branch :{{ donation.bank_name|default:"-" }}  </th>
-    <th style="text-align:left;">Cheque / TXN :{{ donation.transaction_id|default:"-" }}</th>
+    <td><b>Name of Bank :</b> {{ payment.name_of_bank|default:"-" }}</td>
+    <td><b>Branch :</b> {{ payment.branch|default:"-" }}</td>
+    <td><b>Cheque / TXN :</b> {{ payment.transaction_id|default:"-" }}</td>
 </tr>
 </table>
 <table width="100%" style="font-size:10px; line-height:1.2;">
@@ -286,7 +277,7 @@ table {
                 URN : <b>AAAJB0003AF20213</b> (AY 2022-23 to 2026-27)
             </div>
         </td>
-        <td width="30%" valign="middle" align="right"><img src="{{ signature_url }}" width="100" style="display:block; margin-bottom:2px;">
+        <td width="30%" valign="middle" align="right"><img src="{{ signature_url }}" width="80" style="display:block; margin-bottom:2px;">
             <b>Trustee</b>
         </td>
     </tr>
