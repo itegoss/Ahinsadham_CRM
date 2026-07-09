@@ -3714,6 +3714,11 @@ def payment_verify(request):
                         setattr(donor, field, val)
                         updated = True
                 
+                if email_norm and getattr(donor, 'email', None) != email_norm:
+                    if not DonorVolunteer.objects.filter(email__iexact=email_norm).exists():
+                        donor.email = email_norm
+                        updated = True
+
                 if updated:
                     donor.save()
             except Exception:
@@ -3803,8 +3808,90 @@ def payment_verify(request):
         )
 
         if email_norm:
-            from .email_utils import send_donation_success_email
-            send_donation_success_email(donation)
+            try:
+                from io import BytesIO
+                from django.core.mail import EmailMultiAlternatives
+                from django.template.loader import render_to_string
+                from xhtml2pdf import pisa
+                from django.conf import settings
+
+                # Absolute URLs for images
+                logo_url = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/alogo.png"
+                )
+                signature_url = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/signature.png"
+                )
+                facebook_icon = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/facebook.png"
+                )
+                instagram_icon = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/instagram.png"
+                )
+                youtube_icon = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/youtube.png"
+                )
+                globe_icon = request.build_absolute_uri(
+                    settings.STATIC_URL + "images/globe.png"
+                )
+
+                # HTML for email body
+                html_content = render_to_string(
+                    "donation_receipt.html",
+                    {
+                        "donation": donation,
+                        "donor_name": display_name,
+                        "amount": declared_amount_decimal,
+                        "transaction_id": razorpay_payment_id,
+                        "logo_url": logo_url,
+                        "signature_url": signature_url,
+                        "facebook_icon": facebook_icon,
+                        "instagram_icon": instagram_icon,
+                        "youtube_icon": youtube_icon,
+                        "globe_icon": globe_icon,
+                        "preview": False,
+                    },
+                )
+
+                email = EmailMultiAlternatives(
+                    subject="Payment Successful - Ahinsadham",
+                    body="Thank you for your donation. Your donation receipt is attached with this email.",
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[email_norm],
+                )
+
+                # email.attach_alternative(html_content, "text/html")
+
+                # # Generate PDF in memory
+                # pdf_buffer = BytesIO()
+                # pisa.CreatePDF(html_content, dest=pdf_buffer)
+                # pdf_buffer.seek(0)
+                pdf_buffer = BytesIO()
+
+                result = pisa.CreatePDF(
+                    html_content,
+                    dest=pdf_buffer,
+                )
+
+                if result.err:
+                    print("PDF Generation Error")
+                    return
+
+                pdf_buffer.seek(0)
+
+                # Attach PDF
+                email.attach(
+                    f"Donation_Receipt_{donation.receipt_id or donation.id}.pdf",
+                    pdf_buffer.read(),
+                    "application/pdf",
+                )
+
+                email.send()
+
+            except Exception as e:
+                print("Email Error:", e)
+
+        
     except Exception:
         return JsonResponse({
             'success': False,
