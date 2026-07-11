@@ -1,0 +1,257 @@
+{% if payments_page_obj %}
+<div class="table-responsive scrollable-table1">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead class="sticky-top">
+      <tr>
+        <th>Actions</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Received by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Branch <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+      </tr>
+      <tr class="column-search-row">
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            {% if permissions.can_add %}
+            <a href="#" class="add-payment-btn"
+              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; display: none;"><i
+                class="fa-solid fa-plus"></i></a>
+            {% endif %}
+            {% if permissions.can_add %}
+            <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+              <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+              <input type="hidden" name="download" value="1">
+              <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                  class="bi bi-download"></i></button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+        <td><input class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_15" value="{{ payments_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_16" value="{{ payments_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_17" value="{{ payments_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_18" value="{{ payments_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_19" value="{{ payments_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
+      </tr>
+    </thead>
+    <tbody id="donation">
+      {% for owner in payments_page_obj.object_list %}
+      <tr>
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            {% if not owner.is_deleted %}
+            {% if permissions.can_edit %}
+            <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1"
+              style="font-size: 15px; color:black ; text-decoration: none;"><i
+                class="bi bi-pencil-square"></i></a>
+            {% endif %}
+            {% if permissions.can_delete %}
+            <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
+              {% csrf_token %}
+              <button type="submit" class="btn-sm p-1"
+                style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
+                onclick="return confirm('Are you sure you want to deactivate this donation owner?')"> <i
+                  class="bi bi-trash"></i></button>
+            </form>
+            {% if owner.verified %}
+            <a href="{% url 'donation_payment_receipt_view' owner.id %}" style="font-size: 17px;"
+              title="View Receipt"><i class="fa-solid fa-eye"></i></a>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            {% if owner and owner.id %}
+            {% if owner.verified %}
+            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;"
+              title="Verified by Admin"></i>
+            {% else %}
+            <a href="{% url 'verify_payment' owner.id %}" onclick="return confirm('Verify this donation?')">
+              <i class="fa-regular fa-circle-check" style="font-size: 17px; color:red;"
+                title="Click to Verify"></i></a>
+            {% endif %}
+            {% else %}
+            <span class="text-muted" title="No payment found">—</span>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% else %}
+            <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban"
+                title="Deactivate"></i></span>
+            {% endif %}
+          </div>
+        </td>
+        <td>{{ owner.id }}</td>
+        <td>{{ owner.receipt_id }}</td>
+        <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+        <td>
+          {% if owner.donation_box %}
+          {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+          {% else %}
+          <span class="text-muted">N/A</span>
+          {% endif %}
+        </td>
+        <td>₹{{ owner.amount }}</td>
+        <td>{{ owner.payment_method }}</td>
+        <td>{{ owner.opened_by }}</td>
+        <td>{{ owner.verified_by }}</td>
+        <td>{{ owner.i_witness }}</td>
+        <td>{{ owner.name_of_bank }}</td>
+        <td>{{ owner.branch }}</td>
+        <td>{{ owner.transaction_id }}</td>
+        <td>{{ owner.created_by }}</td>
+        <td>{{ owner.created_at|date:"d M Y" }}</td>
+        <td>{{ owner.updated_by }}</td>
+        <td>{{ owner.updated_at|date:"d M Y" }}</td>
+        <td>
+          {% if owner.is_deleted %}
+          Yes
+          {% else %}
+          No
+          {% endif %}
+        </td>
+        <td>{{ owner.deleted_by }}</td>
+        <td>{{ owner.deleted_at|date:"d M Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="20" class="text-muted py-4">No donation payment owner found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination component inside the include -->
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <div>
+    Page <span class="fw-bold">{{ payments_page_obj.number }}</span> of <span class="fw-bold">{{ payments_page_obj.paginator.num_pages }}</span>
+  </div>
+  <div class="d-flex align-items-center">
+    {% if payments_page_obj.has_previous %}
+    <a href="?payments_page=1&payments_query={{ payments_query }}"
+      class="btn btn-outline-primary btn-sm ms-2">⏮</a>
+    <a href="?payments_page={{ payments_page_obj.previous_page_number }}&payments_query={{ payments_query }}"
+      class="btn btn-outline-primary btn-sm ms-2">◀</a>
+    {% endif %}
+
+    <form method="get" class="d-inline-block pagination-form ms-2">
+      <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+      <select name="payments_page" class="form-select form-select-sm d-inline-block w-auto"
+        onchange="this.form.submit()">
+        {% for p in payments_page_obj.paginator.page_range %}
+        <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+        {% endfor %}
+      </select>
+      <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+    </form>
+
+    {% if payments_page_obj.has_next %}
+    <a href="?payments_page={{ payments_page_obj.next_page_number }}&payments_query={{ payments_query }}"
+      class="btn btn-outline-primary btn-sm ms-2">▶</a>
+    <a href="?payments_page={{ payments_page_obj.paginator.num_pages }}&payments_query={{ payments_query }}"
+      class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+    {% endif %}
+  </div>
+</div>
+{% elif payments_query %}
+<p class="text-danger mt-3">No data found for "<strong>{{ payments_query }}</strong>".</p>
+{% else %}
+<div class="table-responsive scrollable-table1">
+  <table class="table table-hover table-bordered align-middle paginated-table">
+    <thead class="sticky-top">
+      <tr>
+        <th>Actions</th>
+        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Received by <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Branch <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+      </tr>
+      <tr class="column-search-row">
+        <td>
+          <div class="d-inline-flex align-items-center gap-1">
+            {% if permissions.can_add %}
+            <a href="#" class="add-payment-btn"
+              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; display: none;"><i
+                class="fa-solid fa-plus"></i></a>
+            {% endif %}
+            {% if permissions.can_add %}
+            <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+              <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
+              <input type="hidden" name="download" value="1">
+              <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                  class="bi bi-download"></i></button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+        <td><input class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_15" value="{{ payments_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_16" value="{{ payments_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_17" value="{{ payments_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_18" value="{{ payments_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+        <td><input class="column-search" name="payments_col_19" value="{{ payments_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="20" class="text-muted py-4">No donation payment owner found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endif %}

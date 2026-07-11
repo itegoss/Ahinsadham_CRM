@@ -231,7 +231,13 @@
       <div class="row mb-3">
         <div class="col-md-6">
           <label class="form-label fw-semibold">Place of Donation</label>
-          <input type="text" name="place_of_donation" class="form-control">
+          <select name="place_of_donation" class="form-control">
+              <option value="">-- Select Place --</option>
+              <option value="KO">KO</option>
+              <option value="MO">MO</option>
+              <option value="KDP">KDP</option>
+              <option value="MDP">MDP</option>
+          </select>
         </div>
         <div class="col-md-6">
           <label class="form-label fw-semibold">Donation Collected By </label>
@@ -269,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $("select[name='payment_method']").val(data.payment_method).trigger("change");
             $("select[name='payment_status']").val(data.payment_status);
             $("input[name='donation_date']").val(data.donation_date);
-            $("input[name='place_of_donation']").val(data.place_of_donation);
+            $("select[name='place_of_donation']").val(data.place_of_donation);
             $("input[name='donation_received_by']").val(data.donation_received_by);
             $("textarea[name='description']").val(data.description);
         });

@@ -209,6 +209,10 @@ table {
         </td>
         <td width="35%" style="text-align:right; vertical-align:top;">
             <b>Receipt No : {{ donation.receipt_id }}</b>
+            {% if donation.place_of_donation %}
+            <br>
+            <b>({{ donation.place_of_donation }})</b>
+            {% endif %}
         </td>
     </tr>
 </table>

@@ -121,6 +121,11 @@
         {% if errmsg %}
         <div class="alert alert-warning mt-2 mb-3">{{ errmsg }}</div>
         {% endif %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger mt-2 mb-3">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
         <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Google</a>
         <hr>
           <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Mobile Number</a>

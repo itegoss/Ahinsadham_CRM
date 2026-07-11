@@ -4,16 +4,22 @@ from .models import ReceiptSequence
 
 def generate_receipt_id():
     prefix = "RCPT"
-    year = timezone.now().year
+    now = timezone.now()
+    if now.month >= 4:
+        start_year = now.year
+    else:
+        start_year = now.year - 1
+    end_year = start_year + 1
+    fy_str = f"{str(start_year)[2:]}-{str(end_year)[2:]}"
 
     with transaction.atomic():
         seq, created = ReceiptSequence.objects.select_for_update().get_or_create(
-            year=year
+            year=start_year
         )
         seq.last_number += 1
         seq.save()
 
-        return f"{prefix}-{year}-{seq.last_number:04d}"
+        return f"{prefix}-{fy_str}-{seq.last_number:04d}"
 
 def generate_ach_receipt_id():
     import re

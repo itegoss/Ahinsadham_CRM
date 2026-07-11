@@ -274,21 +274,36 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         permissions = SuperPerm()
 
     if users is None:
-        users = User.objects.all().order_by('id')
+        users = User.objects.all()
+    users = users.select_related('userrole__role').order_by('id')
+
     if roles_qs is None:
         roles_qs = UserModuleAccess.objects.all()
+    roles_qs = roles_qs.select_related('module', 'created_by', 'updated_by', 'deleted_by')
+
     if donations is None:
-        donations = Donation.objects.all().select_related('donor')
+        donations = Donation.objects.all()
+    donations = donations.select_related('donor', 'donation_category', 'donation_sub_category', 'payment_method', 'payment_status', 'created_by', 'updated_by', 'deleted_by', 'verified_by')
+
     if donors is None:
         donors = DonorVolunteer.objects.all()
+    donors = donors.select_related("person_type", "donor_box", "id_type", "occupation_nature", "occupation_type", "created_by", "updated_by", "deleted_by")
+
     if lookup_types is None:
-        lookup_types = LookupType.objects.all().order_by("id")
+        lookup_types = LookupType.objects.all()
+    lookup_types = lookup_types.select_related('created_by', 'updated_by', 'deleted_by').order_by("id")
+
     if lookups is None:
-        lookups = Lookup.objects.select_related("lookup_type").order_by("id")
+        lookups = Lookup.objects.all()
+    lookups = lookups.select_related("lookup_type", "created_by", "updated_by", "deleted_by").order_by("id")
+
     if donation_boxes is None:
         donation_boxes = DonationBox.objects.all()
+    donation_boxes = donation_boxes.select_related('uploaded_by', 'created_by', 'deleted_by')
+
     if donation_payment is None:
-        donation_payment = DonationPaymentBox.objects.all().select_related("owner", "donation_box")
+        donation_payment = DonationPaymentBox.objects.all()
+    donation_payment = donation_payment.select_related("owner", "donation_box", "opened_by", "received_by", "payment_mode", "verified_by", "created_by", "updated_by", "deleted_by")
 
     donation_owners = DonationOwner.objects.all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
@@ -1745,7 +1760,7 @@ def adddonation(request):
             created_by=request.user,
         )
         messages.success(request, "Donation added successfully!")
-        return redirect("adddonation")
+        return redirect("welcome")
 
     return render(request, "adddonation.html", {
         "donors": donors,
@@ -2132,7 +2147,12 @@ def donation_receipt_view(request, donation_id):
     c.setFont("Helvetica", 9)
     c.drawString(margin, y, f"Receipt No : {donation.receipt_id}")
     c.drawRightString(width - margin, y, f"Date : {donation.donation_date}")
-    y -= line * 1.5
+    if donation.place_of_donation:
+        y -= 10
+        c.drawString(margin, y, f"({donation.place_of_donation})")
+        y -= (line * 1.5 - 10)
+    else:
+        y -= line * 1.5
     # ================= SECTION: DONOR =================
     c.setFillColor(LIGHT_GREEN)
     c.rect(margin, y - 12, width - 2 * margin, 14, stroke=0, fill=1)
@@ -2923,6 +2943,7 @@ def edit_donation(request, id):
         donation.transaction_id = request.POST.get("transaction_id")
         donation.receipt_id = request.POST.get("receipt_id")
         donation.check_no = request.POST.get("check_no")
+        donation.place_of_donation = request.POST.get("place_of_donation")
         donation.description = request.POST.get("description")
 
         donation.donation_amount_declared = request.POST.get("donation_amount_declared") or 0
