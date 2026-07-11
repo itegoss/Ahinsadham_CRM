@@ -203,6 +203,16 @@
                 <input type="text" name="check_no" value="{{ donation.check_no }}">
             </div>
             <div class="form-group">
+                <label>Place of Donation</label>
+                <select name="place_of_donation">
+                    <option value="">-- Select Place --</option>
+                    <option value="KO" {% if donation.place_of_donation == "KO" %}selected{% endif %}>KO</option>
+                    <option value="MO" {% if donation.place_of_donation == "MO" %}selected{% endif %}>MO</option>
+                    <option value="KDP" {% if donation.place_of_donation == "KDP" %}selected{% endif %}>KDP</option>
+                    <option value="MDP" {% if donation.place_of_donation == "MDP" %}selected{% endif %}>MDP</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Declared Amount</label>
                 <input type="number" name="donation_amount_declared" value="{{ donation.donation_amount_declared }}" step="0.01">
             </div>

@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Access Restricted | Ahinsadham {% endblock %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        background-color: #f3f7f9;
+    }
+    .forbidden-container {
+        font-family: 'Outfit', sans-serif;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+    }
+    .forbidden-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(87, 116, 141, 0.15);
+        width: 100%;
+        max-width: 550px;
+        padding: 3rem 2.5rem;
+        box-sizing: border-box;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .forbidden-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #dc2626 0%, #f59e0b 100%);
+    }
+    .icon-wrapper {
+        width: 100px;
+        height: 100px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        animation: pulseGlow 2s infinite ease-in-out;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .icon-wrapper i {
+        font-size: 3rem;
+        color: #ef4444;
+    }
+    h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        font-size: 1.1rem;
+        color: #f59e0b;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+    }
+    .message-box {
+        background: rgba(248, 250, 252, 0.9);
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+        text-align: left;
+    }
+    .message-eng {
+        color: #475569;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    .message-hin {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        border-top: 1px dashed #cbd5e1;
+        padding-top: 1rem;
+        font-weight: 500;
+    }
+    .domain-badge {
+        background: linear-gradient(135deg, #012a1d 0%, #09e6c1 100%);
+        color: white;
+        padding: 2px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-block;
+        margin: 0 4px;
+        font-family: monospace;
+    }
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    .btn-primary-custom {
+        flex: 1;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, #184d61 0%, #0d3342 100%);
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(24, 77, 97, 0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(24, 77, 97, 0.4);
+        color: white;
+    }
+    .btn-secondary-custom {
+        padding: 14px 24px;
+        background: #e2e8f0;
+        border: none;
+        color: #475569;
+        font-size: 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    .btn-secondary-custom:hover {
+        background: #cbd5e1;
+        color: #334155;
+    }
+
+    @keyframes pulseGlow {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px 8px rgba(239, 68, 68, 0.2);
+        }
+    }
+</style>
+
+<div class="forbidden-container">
+    <div class="forbidden-card">
+        <div class="icon-wrapper">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h2>Access Restricted</h2>
+        <div class="subtitle">प्रवेश निषेध</div>
+
+        <div class="message-box">
+            <div class="message-eng">
+                <i class="fa-solid fa-circle-info text-primary me-2"></i>
+                Only Google Accounts belonging to the <span class="domain-badge">@ahinsadham.org</span> domain are authorized to access this CRM portal.
+            </div>
+            <div class="message-hin">
+                <i class="fa-solid fa-circle-info text-warning me-2"></i>
+                इस CRM पोर्टल का उपयोग करने के लिए केवल <span class="domain-badge">@ahinsadham.org</span> डोमेन वाले Google खाते ही अधिकृत हैं।
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="{% url 'login' %}" class="btn-primary-custom">
+                <i class="fa-solid fa-arrow-rotate-left me-2"></i> Try Another Account
+            </a>
+            <a href="/" class="btn-secondary-custom">
+                Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

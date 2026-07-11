@@ -46,7 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "social_django.middleware.SocialAuthExceptionMiddleware",
+    "heart_charity.middleware.CustomSocialAuthExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "ngo.urls"
@@ -72,8 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -84,6 +82,7 @@ DATABASES = {
         'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -116,6 +115,7 @@ AUTHENTICATION_BACKENDS = (
 # Social auth keys
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['ahinsadham.org']
 
 # URLs
 LOGIN_URL = 'login'
