@@ -77,7 +77,39 @@ def show_lookup_data(request):
         "lookup_types": lookup_types,
         "lookups": lookups
     })
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator as DjangoPaginator
+import hashlib
+import time
+
+_counts_cache = {}
+
+class FastPaginator(DjangoPaginator):
+    def __init__(self, object_list, per_page, orphans=0, allow_empty_first_page=True, ttl=10):
+        self.ttl = ttl
+        super().__init__(object_list, per_page, orphans, allow_empty_first_page)
+
+    @property
+    def count(self):
+        c = getattr(self, '_count', None)
+        if c is None:
+            try:
+                # Generate unique key based on SQL query
+                sql = str(self.object_list.query)
+                cache_key = hashlib.md5(sql.encode('utf-8')).hexdigest()
+                now = time.time()
+                cached_val, expiry = _counts_cache.get(cache_key, (None, 0))
+                if cached_val is not None and now < expiry:
+                    self._count = cached_val
+                else:
+                    self._count = self.object_list.count()
+                    _counts_cache[cache_key] = (self._count, now + self.ttl)
+            except Exception:
+                # Fallback to default behavior if query cannot be stringified
+                self._count = self.object_list.count()
+            c = self._count
+        return c
+
+Paginator = FastPaginator
 from .helpers import get_user_permissions
 
 def apply_column_filters(queryset, request, prefix, mapping):
@@ -305,7 +337,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         donation_payment = DonationPaymentBox.objects.all()
     donation_payment = donation_payment.select_related("owner", "donation_box", "opened_by", "received_by", "payment_mode", "verified_by", "created_by", "updated_by", "deleted_by")
 
-    donation_owners = DonationOwner.objects.all()
+    donation_owners = DonationOwner.objects.select_related('owner_name', 'donation_box').all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
     clean_roles = sorted(set(roles_qss))
     role_names = roles_qs.values_list("name", flat=True).distinct()
@@ -498,7 +530,7 @@ def send_otp(request):
 def search_lookup_type(request):
     lookup_query = request.GET.get('lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')
-    lookup_types = LookupType.objects.all().order_by('id')
+    lookup_types = LookupType.objects.select_related('created_by', 'updated_by', 'deleted_by').all().order_by('id')
     if lookup_query:
         filters = (
             Q(type_name__icontains=lookup_query) |
@@ -542,7 +574,7 @@ def search_lookup_type(request):
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
     active_tab = request.GET.get('active_tab', 'mdm')
-    lookups = Lookup.objects.select_related("lookup_type").all().order_by('id')
+    lookups = Lookup.objects.select_related("lookup_type", "created_by", "updated_by", "deleted_by").all().order_by('id')
     if sub_lookup_query:
         month_map = {
             "jan": 1, "january": 1,
@@ -747,8 +779,8 @@ def search_roles(request):
 
 def manage_user_roles(request):
     users = User.objects.all()
-    roles = UserModuleAccess.objects.select_related('role', 'module').all()
-    user_roles = {ur.user.id: ur for ur in UserRole.objects.select_related('role', 'role__role')}
+    roles = UserModuleAccess.objects.select_related('module').all()
+    user_roles = {ur.user_id: ur for ur in UserRole.objects.select_related('user', 'role__module').all()}
 
     if request.method == "POST":
         user_id = request.POST.get('user_id')
@@ -815,7 +847,8 @@ from datetime import datetime, date
 def search_donor_volunteer(request):
     donorvolunteer = DonorVolunteer.objects.select_related(
         "person_type", "id_type", "donor_box",
-        "created_by", "updated_by"
+        "created_by", "updated_by", "occupation_nature", "occupation_type",
+        "department", "position", "designation", "deleted_by"
     ).all()
 
     query2 = request.GET.get('q')
@@ -974,7 +1007,11 @@ from django.db.models import Value
 from django.db.models.functions import Concat
 
 def search_donation(request):
-    donations = Donation.objects.all()
+    donations = Donation.objects.select_related(
+        'donor', 'donation_category', 'donation_sub_category',
+        'payment_method', 'payment_status', 'created_by', 'updated_by',
+        'deleted_by', 'verified_by'
+    ).all()
     query3 = request.GET.get('q', '').strip()
 
     if query3:
@@ -1062,7 +1099,10 @@ def search_donation(request):
 @login_required
 def search_donation_payment(request):
     payments_query = request.GET.get("payments_query", "").strip()
-    payments = DonationPaymentBox.objects.filter(is_deleted=False)
+    payments = DonationPaymentBox.objects.select_related(
+        'owner', 'donation_box', 'opened_by', 'received_by', 'payment_mode',
+        'verified_by', 'created_by', 'updated_by', 'deleted_by'
+    ).filter(is_deleted=False)
     if payments_query:
         q = payments_query.lower()
         month_map = {
@@ -1203,7 +1243,9 @@ def search_donation_payment(request):
 def search_donation_box(request):
 
     box_query = request.GET.get("box_query", "").strip()
-    boxes = DonationBox.objects.filter(is_deleted=False).order_by("id")
+    boxes = DonationBox.objects.select_related(
+        'uploaded_by', 'created_by', 'deleted_by'
+    ).filter(is_deleted=False).order_by("id")
     if box_query:
         qlow = box_query.lower()
         month_map = {
@@ -1544,7 +1586,7 @@ def add_donor_volunteer(request):
     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
 
     donation_boxes = DonationBox.objects.filter(is_deleted=False)
-    all_donors = DonorVolunteer.objects.filter(is_deleted=False)
+    all_donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
 
     blood_groups = [
         ("A+", "A+"), ("A-", "A-"),
@@ -1667,7 +1709,7 @@ from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Sum
 
 def adddonation(request):
-    donors = DonorVolunteer.objects.all()
+    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
     today = now().date()
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name__iexact="Donation Category",
@@ -1773,8 +1815,14 @@ def adddonation(request):
     })
 
 def donation_summary(request, id):
-    donation = get_object_or_404(Donation, id=id)
-    donors = DonorVolunteer.objects.all()
+    donation = get_object_or_404(
+        Donation.objects.select_related(
+            'donor', 'donation_category', 'donation_sub_category',
+            'payment_method', 'payment_status', 'created_by', 'updated_by'
+        ),
+        id=id
+    )
+    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
     today = timezone.now().date()
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name__iexact="Donation Category",
@@ -1849,8 +1897,12 @@ def donation_detail_ajax(request, donation_id):
 
 def donation_summary_ajax(request, donor_id):
     donations = Donation.objects.filter(donor_id=donor_id)
-    total_declared = donations.aggregate(total=Sum("donation_amount_declared"))["total"] or 0
-    total_paid = donations.aggregate(total=Sum("donation_amount_paid"))["total"] or 0
+    totals = donations.aggregate(
+        total_declared=Sum("donation_amount_declared"),
+        total_paid=Sum("donation_amount_paid")
+    )
+    total_declared = totals["total_declared"] or 0
+    total_paid = totals["total_paid"] or 0
     remaining = total_declared - total_paid
     last_donation = donations.order_by("-id").first()
 
@@ -1904,7 +1956,13 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 
 def donation_receipt_preview(request, id):
-    donation = get_object_or_404(Donation, id=id)
+    donation = get_object_or_404(
+        Donation.objects.select_related(
+            'donor', 'donation_category', 'donation_sub_category',
+            'payment_method', 'payment_status', 'created_by', 'updated_by'
+        ),
+        id=id
+    )
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
     signature_url = request.build_absolute_uri(settings.STATIC_URL + "images/signature.png")
     facebook_icon = request.build_absolute_uri(settings.STATIC_URL + "images/facebook.png")
@@ -1933,7 +1991,13 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 
 def download_receipt_pdf(request, id):
-    donation = get_object_or_404(Donation, id=id)
+    donation = get_object_or_404(
+        Donation.objects.select_related(
+            'donor', 'donation_category', 'donation_sub_category',
+            'payment_method', 'payment_status', 'created_by', 'updated_by'
+        ),
+        id=id
+    )
 
     logo_url = request.build_absolute_uri(
         settings.STATIC_URL + "images/alogo.png"
@@ -1978,7 +2042,14 @@ def download_receipt_pdf(request, id):
     return response
 
 def donation_payment_receipt_view(request, id):
-    payment = get_object_or_404(DonationPaymentBox,id=id,is_deleted=False)
+    payment = get_object_or_404(
+        DonationPaymentBox.objects.select_related(
+            "owner", "donation_box", "opened_by", "received_by", "payment_mode",
+            "verified_by", "created_by", "updated_by"
+        ),
+        id=id,
+        is_deleted=False
+    )
     donor = payment.owner
     owner = payment.owner
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
@@ -2006,7 +2077,14 @@ def donation_payment_receipt_view(request, id):
     )
 
 def donation_payment_receipt_pdf(request, id):
-    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+    payment = get_object_or_404(
+        DonationPaymentBox.objects.select_related(
+            "owner", "donation_box", "opened_by", "received_by", "payment_mode",
+            "verified_by", "created_by", "updated_by"
+        ),
+        id=id,
+        is_deleted=False
+    )
     donor = payment.owner
     owner = payment.owner
     logo_url = request.build_absolute_uri(settings.STATIC_URL + "images/alogo.png")
@@ -2353,14 +2431,14 @@ def add_donation_payment(request):
     donor_volunteers = DonorVolunteer.objects.filter(
         is_deleted=False,
         person_type__lookup_name__iexact="Employee"
-    )
+    ).only('id', 'first_name', 'last_name')
 
     box_owner_map = []
 
     owners = DonorVolunteer.objects.filter(
         is_deleted=False,
         donor_box__isnull=False
-    )
+    ).select_related('donor_box').only('id', 'first_name', 'last_name', 'address', 'city', 'state', 'postal_code', 'donor_box__id')
 
     for owner in owners:
         address = ", ".join(filter(None, [
@@ -2817,7 +2895,7 @@ from django.contrib import messages
 def edit_donor(request, donor_id):
     donor = get_object_or_404(DonorVolunteer, id=donor_id)
 
-    donors = DonorVolunteer.objects.filter(is_deleted=False)
+    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
 
     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
     id_types = Lookup.objects.filter(lookup_type__type_name="ID Type", is_deleted=False)
@@ -2918,7 +2996,7 @@ def edit_donation(request, id):
     donation = get_object_or_404(Donation, id=id)
     donors = DonorVolunteer.objects.filter(
         person_type__lookup_name__icontains='donor'
-    )
+    ).only('id', 'first_name', 'last_name')
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name="Donation Category"
     )
@@ -3014,7 +3092,7 @@ def edit_box_payment(request, id):
             lookup_type__type_name__iexact='Payment Method',
             is_deleted=False
         ),
-        'donors': DonorVolunteer.objects.filter(is_deleted=False)
+        'donors': DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
     })
 
 from decimal import Decimal
