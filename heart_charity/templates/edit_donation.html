@@ -140,7 +140,28 @@
         .full-width {
             grid-column: 1 / -1;
         }
+        .select2-container--default .select2-selection--single {
+            border: 2px solid #cce4cc !important;
+            border-radius: 10px !important;
+            height: 48px !important;
+            background: #f8fff8 !important;
+            font-size: 16px !important;
+            padding: 8px 14px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 44px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px !important;
+            color: black !important;
+            padding-left: 0 !important;
+        }
     </style>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
 <div class="overlay"></div>
@@ -155,11 +176,10 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>Donor</label>
-                <select name="donor" required>
-                    <option value="">Select Donor</option>
-                    {% for donor in donors %}
-                        <option value="{{ donor.id }}" {% if donation.donor_id == donor.id %}selected{% endif %}>{{ donor.first_name }} {{ donor.last_name }}</option>
-                    {% endfor %}
+                <select name="donor" id="donor" class="form-select select2-search" required>
+                    {% if donation.donor %}
+                        <option value="{{ donation.donor.id }}" selected>{{ donation.donor.first_name }} {{ donation.donor.last_name }}</option>
+                    {% endif %}
                 </select>
             </div>
             <div class="form-group">
@@ -231,5 +251,31 @@
         </div>
     </form>
 </div>
+<script>
+$(document).ready(function() {
+    $('#donor').select2({
+        placeholder: "Search Donor...",
+        allowClear: true,
+        width: '100%',
+        ajax: {
+            url: "{% url 'donor_autocomplete_ajax' %}?person_type=donor",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1
+    });
+});
+</script>
 </body>
 </html>
