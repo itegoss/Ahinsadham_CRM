@@ -854,8 +854,25 @@ $(document).ready(function () {
     $('#referred_by').select2({
         placeholder: "-- Select or Type Person --",
         allowClear: true,
-        tags: true,                 
-        width: '100%'
+        tags: true,
+        width: '100%',
+        ajax: {
+            url: "{% url 'donor_autocomplete_ajax' %}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1
     });
 });
 </script>

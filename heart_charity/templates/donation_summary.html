@@ -373,7 +373,24 @@ $(document).ready(function () {
         placeholder: "-- Select or Type Donor --",
         allowClear: true,
         tags: true,
-        width: "100%"
+        width: "100%",
+        ajax: {
+            url: "{% url 'donor_autocomplete_ajax' %}?person_type=donor",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1
     });
 });
 </script>

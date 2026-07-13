@@ -90,6 +90,6 @@ urlpatterns = [
     path('payment/success/', payment_success, name='payment_success'),
     path('payment/failed/', payment_failed, name='payment_failed'),
     path('schemes/', schemes_view, name='schemes'),
-    path('auth/', include('social_django.urls', namespace='social'))
-
-    ]
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('donor-autocomplete-ajax/', views.donor_autocomplete_ajax, name='donor_autocomplete_ajax')
+]

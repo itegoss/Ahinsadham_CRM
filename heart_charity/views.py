@@ -1586,7 +1586,7 @@ def add_donor_volunteer(request):
     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
 
     donation_boxes = DonationBox.objects.filter(is_deleted=False)
-    all_donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
+    all_donors = DonorVolunteer.objects.none()
 
     blood_groups = [
         ("A+", "A+"), ("A-", "A-"),
@@ -1709,7 +1709,7 @@ from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Sum
 
 def adddonation(request):
-    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
+    donors = DonorVolunteer.objects.none()
     today = now().date()
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name__iexact="Donation Category",
@@ -1822,7 +1822,7 @@ def donation_summary(request, id):
         ),
         id=id
     )
-    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
+    donors = [donation.donor] if donation.donor else []
     today = timezone.now().date()
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name__iexact="Donation Category",
@@ -2895,7 +2895,7 @@ from django.contrib import messages
 def edit_donor(request, donor_id):
     donor = get_object_or_404(DonorVolunteer, id=donor_id)
 
-    donors = DonorVolunteer.objects.filter(is_deleted=False).only('id', 'first_name', 'last_name')
+    donors = [donor.referred_by] if donor.referred_by and not donor.referred_by.is_deleted else []
 
     person_type_options = Lookup.objects.filter(lookup_type__type_name__iexact='Person Type')
     id_types = Lookup.objects.filter(lookup_type__type_name="ID Type", is_deleted=False)
@@ -2994,9 +2994,7 @@ def edit_donor(request, donor_id):
 
 def edit_donation(request, id):
     donation = get_object_or_404(Donation, id=id)
-    donors = DonorVolunteer.objects.filter(
-        person_type__lookup_name__icontains='donor'
-    ).only('id', 'first_name', 'last_name')
+    donors = [donation.donor] if donation.donor else []
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name="Donation Category"
     )
@@ -4079,3 +4077,33 @@ def schemes_view(request):
     ]
 
     return render(request, 'ACHschemas.html', {'schemes': schemes})
+
+from django.http import JsonResponse
+from django.db.models import Q
+
+def donor_autocomplete_ajax(request):
+    q = request.GET.get('q', '').strip()
+    person_type = request.GET.get('person_type', '').strip()
+    
+    donors = DonorVolunteer.objects.filter(is_deleted=False)
+    if person_type == 'donor':
+        donors = donors.filter(person_type__lookup_name__icontains='donor')
+    elif person_type == 'Employee':
+        donors = donors.filter(person_type__lookup_name__iexact="Employee")
+        
+    if q:
+        donors = donors.filter(
+            Q(first_name__icontains=q) | 
+            Q(last_name__icontains=q) |
+            Q(contact_number__icontains=q) |
+            Q(pan_number__icontains=q)
+        )
+    
+    results = []
+    for d in donors.only('id', 'first_name', 'last_name', 'pan_number')[:30]:
+        pan_suffix = f" - {d.pan_number}" if d.pan_number else ""
+        results.append({
+            "id": d.id,
+            "text": f"{d.first_name} {d.last_name}{pan_suffix}"
+        })
+    return JsonResponse({"results": results})
