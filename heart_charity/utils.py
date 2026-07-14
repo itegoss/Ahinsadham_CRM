@@ -19,7 +19,7 @@ def generate_receipt_id():
         seq.last_number += 1
         seq.save()
 
-        return f"{prefix}-{fy_str}-{seq.last_number:04d}"
+        return f"{prefix}-{fy_str}-{seq.last_number:07d}"
 
 def generate_ach_receipt_id():
     import re
