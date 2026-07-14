@@ -21,14 +21,20 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 SECURE_SSL_REDIRECT = True
 
-
-
 CSRF_TRUSTED_ORIGINS = [
     'https://admin.ahinsadham.org',
+    'https://ahinsadham.org',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'https://ahinsadham-crm-856395380155.us-central1.run.app',
 ]
+
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://admin.ahinsadham.org',
+#     'http://localhost:8000',
+#     'http://127.0.0.1:8000',
+#     'https://ahinsadham-crm-856395380155.us-central1.run.app',
+# ]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
