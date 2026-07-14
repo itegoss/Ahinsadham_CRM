@@ -1047,11 +1047,75 @@
         100% { transform: scale(1); opacity: 1; }
     }
 
-    @keyframes resultShake {
-        10%, 90% { transform: translate3d(-1px, 0, 0); }
-        20%, 80% { transform: translate3d(2px, 0, 0); }
-        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-        40%, 60% { transform: translate3d(4px, 0, 0); }
+    /* ── Footer Styling ── */
+    .custom-footer {
+        width: 100%;
+        margin-top: auto;
+    }
+
+    .custom-footer-green-bar {
+        background-color: #1B4332;
+        padding: 15px 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.85rem;
+    }
+
+    .custom-footer-green-bar .footer-links {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .custom-footer-green-bar .footer-links li {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .custom-footer-green-bar .footer-links li:not(:last-child)::after {
+        content: '|';
+        margin-left: 15px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .custom-footer-green-bar .footer-links a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .custom-footer-green-bar .footer-links a:hover {
+        color: var(--brand-accent);
+    }
+
+    .custom-footer-white-bar {
+        background-color: #ffffff;
+        padding: 20px 0;
+        color: #495057;
+        font-size: 0.85rem;
+        text-align: center;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .custom-footer-white-bar p {
+        margin: 0;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    @media (max-width: 767px) {
+        .custom-footer-green-bar .footer-links {
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .custom-footer-green-bar .footer-links li:not(:last-child)::after {
+            display: none;
+        }
     }
 </style>
 </head>
@@ -1072,9 +1136,10 @@
             </div>
 
             <div class="col-md-4 text-center text-md-end social-icons">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.facebook.com/ahinsadham/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ahinsadham_official" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://x.com/ahinsadham_PRK" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="16" height="16" fill="currentColor" style="display: block;"><path d="M21.17 17.74L30.79 4H26.32l-6.58 9.72L13.11 4H7.53l10.15 14.19L6 32h4.49l7.28-10.69L25.8 32h5.58z"></path></svg></a>
+                <a href="https://www.youtube.com/@ahinsadham" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
             </div>
         </div>
     </div>
@@ -1471,9 +1536,20 @@
 </div>
 
 <!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <p class="mb-0">&copy; {% now "Y" %} Ahinsadham. All rights reserved.</p>
+<footer class="custom-footer">
+    <div class="custom-footer-green-bar">
+        <div class="container px-4">
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Refunds/Cancellations Policy</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="custom-footer-white-bar">
+        <div class="container px-4">
+            <p>Copyright &copy; 2022. Bhagwan Mahavir Pashu Raksha Kendra &ndash; Ahinsadham | All rights reserved | Powered by</p>
+        </div>
     </div>
 </footer>
 

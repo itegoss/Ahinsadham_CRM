@@ -49,24 +49,61 @@
     }
 
     /* ── Hero Section ── */
-    .schemes-hero {
+    /* ── Hero Carousel Section ── */
+    .schemes-carousel-section {
         position: relative;
-        padding: 5rem 0 3rem;
-        text-align: center;
         overflow: hidden;
-        background: linear-gradient(170deg, #0B2618 0%, #1B4332 35%, #2D6A4F 65%, #40916C 100%);
+        background: #0B2618;
     }
 
-    .schemes-hero::before {
+    .schemes-carousel-section .carousel-item {
+        height: 80vh;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .schemes-carousel-section .carousel-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.05);
+        transition: transform 10s ease-in-out;
+    }
+
+    .schemes-carousel-section .carousel-item.active .carousel-image {
+        transform: scale(1);
+    }
+
+    /* Carousel overlay for better visibility */
+    .schemes-carousel-section .carousel-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(8, 28, 21, 0.4) 0%, rgba(8, 28, 21, 0.1) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* ── Slide 1 Green Gradient Banner styling ── */
+    .schemes-hero-slide-bg {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(170deg, #0B2618 0%, #1B4332 35%, #2D6A4F 65%, #40916C 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+    }
+
+    .schemes-hero-slide-bg::before {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
+        inset: 0;
         background: radial-gradient(ellipse at 30% 50%, rgba(212,163,115,0.12) 0%, transparent 50%),
                     radial-gradient(ellipse at 70% 20%, rgba(64,145,108,0.2) 0%, transparent 40%);
         animation: heroShift 12s ease-in-out infinite alternate;
+        pointer-events: none;
     }
 
     @keyframes heroShift {
@@ -112,9 +149,6 @@
         margin-bottom: 1.5rem;
         position: relative;
         z-index: 2;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeSlideUp 0.8s 0.2s forwards;
     }
 
     .hero-badge .pulse-dot {
@@ -130,7 +164,7 @@
         50% { box-shadow: 0 0 0 8px rgba(82,183,136,0); }
     }
 
-    .schemes-hero h2 {
+    .schemes-carousel-section h2 {
         font-family: 'Playfair Display', serif;
         color: #FFFFFF;
         font-weight: 800;
@@ -139,17 +173,14 @@
         margin-bottom: 1rem;
         position: relative;
         z-index: 2;
-        opacity: 0;
-        transform: translateY(30px);
-        animation: fadeSlideUp 0.9s 0.4s forwards;
     }
 
-    .schemes-hero h2 .accent-word {
+    .schemes-carousel-section h2 .accent-word {
         color: var(--brand-accent);
         position: relative;
     }
 
-    .schemes-hero h2 .accent-word::after {
+    .schemes-carousel-section h2 .accent-word::after {
         content: '';
         position: absolute;
         bottom: -4px;
@@ -167,7 +198,7 @@
         to { transform: scaleX(1); }
     }
 
-    .schemes-hero p {
+    .schemes-carousel-section p {
         color: rgba(255,255,255,0.7);
         font-size: 1.15rem;
         max-width: 560px;
@@ -175,26 +206,27 @@
         line-height: 1.7;
         position: relative;
         z-index: 2;
-        opacity: 0;
-        transform: translateY(30px);
-        animation: fadeSlideUp 0.9s 0.6s forwards;
     }
 
-    @keyframes fadeSlideUp {
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Stats bar */
+    /* Floating stats bar inside Slide 1 */
     .stats-bar {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(8, 28, 21, 0.85); /* brand dark green with opacity */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 14px 40px;
+        border-radius: 50px;
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 3rem;
-        margin-top: 2.5rem;
-        position: relative;
-        z-index: 2;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeSlideUp 0.9s 0.8s forwards;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
     }
 
     .stat-item {
@@ -216,16 +248,50 @@
 
     .stat-label {
         font-size: 0.8rem;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255,255,255,0.6);
         text-transform: uppercase;
         letter-spacing: 1.5px;
         margin-top: 4px;
+        font-weight: 500;
     }
 
     .stat-divider {
         width: 1px;
         background: rgba(255,255,255,0.15);
         align-self: stretch;
+    }
+
+    /* Donate Now button overlay on bottom left of slider images (Slides 2-9) */
+    .carousel-donate-btn {
+        position: absolute;
+        bottom: 120px;
+        left: 8%;
+        z-index: 9;
+        background: linear-gradient(135deg, #D4A373 0%, #B8860B 100%);
+        color: #081C15 !important;
+        font-weight: 700;
+        padding: 14px 36px;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(212, 163, 115, 0.4);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .carousel-donate-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(212, 163, 115, 0.6);
+        background: linear-gradient(135deg, #E2B285 0%, #C6951A 100%);
+        color: #081C15 !important;
+    }
+
+    .carousel-donate-btn:active {
+        transform: translateY(-1px) scale(1.02);
     }
 
     /* Wave separator */
@@ -492,9 +558,10 @@
         font-size: 0.95rem;
     }
 
-    .card-amount i {
+    .card-amount .rupee-symbol {
         color: var(--brand-accent);
-        font-size: 0.85rem;
+        font-size: 0.95rem;
+        font-weight: 700;
     }
 
     .card-donors {
@@ -747,32 +814,129 @@
 
     /* ── Responsive ── */
     @media (max-width: 991px) {
-        .schemes-hero h2 { font-size: 2.4rem; }
-        .stats-bar { gap: 1.5rem; }
+        .schemes-carousel-section h2 { font-size: 2.4rem; }
+        .stats-bar { gap: 1.5rem; bottom: 20px; }
         .stat-number { font-size: 1.4rem; }
+        .schemes-carousel-section .carousel-item {
+            height: 60vh;
+        }
+        .carousel-donate-btn {
+            bottom: 90px;
+            padding: 10px 24px;
+            font-size: 0.75rem;
+        }
     }
 
     @media (max-width: 767px) {
-        .schemes-hero { padding: 3.5rem 0 2rem; }
-        .schemes-hero h2 { font-size: 2rem; }
-        .schemes-hero p { font-size: 1rem; }
-        .stats-bar { gap: 1rem; flex-wrap: wrap; }
+        .schemes-carousel-section .carousel-item {
+            height: 50vh;
+        }
+        .schemes-carousel-section h2 { font-size: 2rem; }
+        .schemes-carousel-section p { font-size: 1rem; }
+        .stats-bar {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            transform: none;
+            margin: 20px auto 10px;
+            width: calc(100% - 30px);
+            background: rgba(8, 28, 21, 0.95);
+            border-radius: 16px;
+            padding: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
         .stat-divider { display: none; }
-        .stat-item { min-width: 100px; }
-        .floating-cta { bottom: 20px; right: 20px; }
-        .floating-cta a { padding: 12px 18px; font-size: 0.82rem; }
+        .stat-item { min-width: 80px; }
+        .carousel-donate-btn {
+            bottom: 100px;
+            left: 5%;
+            padding: 8px 20px;
+            font-size: 0.7rem;
+        }
+        .floating-cta {
+            bottom: 20px;
+            right: 20px;
+        }
+        .floating-cta a {
+            padding: 12px 18px;
+            font-size: 0.82rem;
+        }
     }
 
     @media (max-width: 575px) {
-        .schemes-hero h2 { font-size: 1.7rem; }
+        .schemes-carousel-section h2 { font-size: 1.7rem; }
         .card-body { padding: 1.1rem; }
     }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-            animation-duration: 0.01ms !important;
-            transition-duration: 0.01ms !important;
+    /* ── Footer Styling ── */
+    .custom-footer {
+        width: 100%;
+        margin-top: auto;
+    }
+
+    .custom-footer-green-bar {
+        background-color: #1B4332;
+        padding: 15px 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.85rem;
+    }
+
+    .custom-footer-green-bar .footer-links {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .custom-footer-green-bar .footer-links li {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .custom-footer-green-bar .footer-links li:not(:last-child)::after {
+        content: '|';
+        margin-left: 15px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .custom-footer-green-bar .footer-links a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .custom-footer-green-bar .footer-links a:hover {
+        color: var(--brand-accent);
+    }
+
+    .custom-footer-white-bar {
+        background-color: #ffffff;
+        padding: 20px 0;
+        color: #495057;
+        font-size: 0.85rem;
+        text-align: center;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .custom-footer-white-bar p {
+        margin: 0;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    @media (max-width: 767px) {
+        .custom-footer-green-bar .footer-links {
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .custom-footer-green-bar .footer-links li:not(:last-child)::after {
+            display: none;
         }
     }
 </style>
@@ -784,41 +948,90 @@
             <div class="col-md-5 text-center text-md-start mb-2 mb-md-0"><i class="fas fa-phone-alt"></i> 70691 88555 | 70693 88555</div>
             <div class="col-md-3 text-center mb-2 mb-md-0"><i class="fas fa-envelope"></i> info@ahinsadham.org</div>
             <div class="col-md-4 text-center text-md-end social-icons">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.facebook.com/ahinsadham/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ahinsadham_official" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://x.com/ahinsadham_PRK" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="16" height="16" fill="currentColor" style="display: block;"><path d="M21.17 17.74L30.79 4H26.32l-6.58 9.72L13.11 4H7.53l10.15 14.19L6 32h4.49l7.28-10.69L25.8 32h5.58z"></path></svg></a>
+                <a href="https://www.youtube.com/@ahinsadham" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
             </div>
         </div>
     </div>
 </div>
 <div class="main-wrapper">
 
-<!-- ═══ Hero Section ═══ -->
-<section class="schemes-hero">
-    <div class="particles-container" id="particles"></div>
-    <div class="container position-relative" style="z-index:2;">
-        <div class="hero-badge">
-            <span class="pulse-dot"></span>
-            Active Donation Schemes
+<!-- ═══ Hero Carousel Section ═══ -->
+<section class="schemes-carousel-section">
+    <div id="schemesCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#schemesCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            {% for s in schemes %}
+            {% if s.slider_image %}
+            <button type="button" data-bs-target="#schemesCarousel" data-bs-slide-to="{{ forloop.counter }}" aria-label="Slide {{ forloop.counter|add:1 }}"></button>
+            {% endif %}
+            {% endfor %}
         </div>
-        <h2>Make a <span class="accent-word">Difference</span> Today</h2>
-        <p>Choose a scheme that resonates with you. Every contribution, no matter the size, creates ripples of positive change.</p>
-        <div class="stats-bar">
-            <div class="stat-item">
-                <span class="stat-number"><span class="rupee">₹</span>24L+</span>
-                <span class="stat-label">Raised</span>
+
+        <!-- Slides -->
+        <div class="carousel-inner">
+            <!-- Slide 1: Welcome Banner -->
+            <div class="carousel-item active">
+                <div class="schemes-hero-slide-bg">
+                    <div class="particles-container" id="particles"></div>
+                    <div class="container h-100 d-flex flex-column justify-content-center align-items-center position-relative" style="z-index:2; padding-bottom: 80px;">
+                        <div class="hero-badge animate__animated animate__fadeInDown">
+                            <span class="pulse-dot"></span>
+                            Active Donation Schemes
+                        </div>
+                        <h2 class="animate__animated animate__fadeInUp">Make a <span class="accent-word">Difference</span> Today</h2>
+                        <p class="animate__animated animate__fadeInUp" style="max-width: 600px; margin: 0 auto 1.5rem;">Choose a scheme that resonates with you. Every contribution, no matter the size, creates ripples of positive change.</p>
+                        
+                        <!-- Floating Stats Bar inside Slide 1 -->
+                        <div class="stats-bar animate__animated animate__fadeInUp">
+                            <div class="stat-item">
+                                <span class="stat-number"><span class="rupee">₹</span>24L+</span>
+                                <span class="stat-label">Raised</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-number">3,200+</span>
+                                <span class="stat-label">Donors</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ schemes|length }}</span>
+                                <span class="stat-label">Schemes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">3,200+</span>
-                <span class="stat-label">Donors</span>
+
+            <!-- Slides 2-9: Scheme Banners -->
+            {% for s in schemes %}
+            {% if s.slider_image %}
+            <div class="carousel-item">
+                <img src="{% static s.slider_image %}" class="carousel-image" alt="{{ s.name }}">
+                <div class="carousel-overlay"></div>
+                <a class="carousel-donate-btn"
+                   href="{% url 'donation_form' %}?scheme_id={{ s.id }}&scheme_name={{ s.name|urlencode }}&amount={{ s.amount }}&image={{ s.image|urlencode }}"
+                   onclick="event.stopPropagation();">
+                    <span>Donate Now</span>
+                    <i class="fas fa-heart ms-2"></i>
+                </a>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">{{ schemes|length }}</span>
-                <span class="stat-label">Schemes</span>
-            </div>
+            {% endif %}
+            {% endfor %}
         </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#schemesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#schemesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </section>
 
@@ -867,8 +1080,8 @@
 
                         <div class="card-meta">
                             <div class="card-amount">
-                                <i class="fas fa-rupee-sign"></i>
-                                {{ s.amount }}
+                                <span class="rupee-symbol">₹</span>
+                                {{ s.amount_display }}
                             </div>
                             <!-- <div class="card-donors">
                                 <div class="avatar-stack">
@@ -879,6 +1092,12 @@
                                 Supported
                             </div> -->
                         </div>
+
+                        {% if s.description %}
+                        <p class="card-text text-muted small" style="min-height: 60px; line-height: 1.55; font-size: 0.85rem; margin-top: 0.5rem; margin-bottom: 1.2rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ s.description }}
+                        </p>
+                        {% endif %}
 
                         <!-- <div class="card-progress">
                             <div class="progress-info">
@@ -914,21 +1133,26 @@
     </div>
 </section>
 
-<!-- Floating CTA -->
-<div class="floating-cta" id="floatingCta">
-    <a href="{% url 'donation_form' %}">
-        <span>Quick Donate</span>
-        <i class="fas fa-arrow-right"></i>
-    </a>
-</div>
+
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
 </div>
-<footer class="footer">
-    <div class="container">
-        <p class="mb-0">&copy; {% now "Y" %} Ahinsadham. All rights reserved.</p>
+<footer class="custom-footer">
+    <div class="custom-footer-green-bar">
+        <div class="container px-4">
+            <ul class="footer-links">
+                <li><a href="https://darkblue-otter-952727.hostingersite.com/policy.html">Privacy Policy</a></li>
+                <li><a href="https://darkblue-otter-952727.hostingersite.com/refund.html">Refunds/Cancellations Policy</a></li>
+                <li><a href="https://darkblue-otter-952727.hostingersite.com/terms.html">Terms & Conditions</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="custom-footer-white-bar">
+        <div class="container px-4">
+            <p>Copyright &copy; 2022. Bhagwan Mahavir Pashu Raksha Kendra &ndash; Ahinsadham | All rights reserved | Powered by</p>
+        </div>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -975,17 +1199,7 @@
 
     cards.forEach(card => observer.observe(card));
 
-    // ── Floating CTA visibility ──
-    const floatingCta = document.getElementById('floatingCta');
-    if (floatingCta) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 500) {
-                floatingCta.classList.add('show');
-            } else {
-                floatingCta.classList.remove('show');
-            }
-        });
-    }
+
 
     // ── Ripple effect on donate buttons ──
     document.querySelectorAll('.btn-donate-card').forEach(btn => {
