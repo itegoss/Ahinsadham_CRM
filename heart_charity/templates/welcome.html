@@ -2,6 +2,13 @@
 {% load static %}
 {% block content %}
 <style>
+  th.sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+  th.sortable:hover {
+    background-color: #e2e8f0 !important;
+  }
   .dashboard-container {
     display: flex;
     min-height: 100vh;
@@ -4762,36 +4769,74 @@
   }
 </script>
 <script>
+  // Initialize sort icons from URL query parameters on DOM load
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    document.querySelectorAll("th.sortable").forEach(header => {
+      let table = header.closest("table");
+      let searchInput = table.querySelector(".column-search");
+      if (!searchInput) return;
+      let prefix = searchInput.name.split('_')[0];
+      let colIndex = header.dataset.col;
+
+      let currentSort = params.get(`${prefix}_sort`);
+      let currentOrder = params.get(`${prefix}_order`);
+      let sortIcon = header.querySelector(".sort-icon");
+
+      if (sortIcon) {
+        if (currentSort === colIndex) {
+          if (currentOrder === 'desc') {
+            sortIcon.innerText = "⬇";
+            sortIcon.dataset.order = "desc";
+          } else {
+            sortIcon.innerText = "⬆";
+            sortIcon.dataset.order = "asc";
+          }
+        } else {
+          sortIcon.innerText = "⬍";
+          sortIcon.dataset.order = "";
+        }
+      }
+    });
+  });
+
+  // Handle header click to trigger backend sorting across all records
   document.querySelectorAll("th.sortable").forEach(header => {
     header.addEventListener("click", function () {
       let table = header.closest("table");
-      let tbody = table.querySelector("tbody");
-      if (!tbody) return;
-      let rows = Array.from(tbody.querySelectorAll("tr:not(.column-search-row)"));
-      let colIndex = parseInt(header.dataset.col);
-      let sortIcon = header.querySelector(".sort-icon");
-      let ascending = sortIcon.dataset.order !== "asc";
-      rows.sort((a, b) => {
-        if (!a.children[colIndex] || !b.children[colIndex]) return 0;
-        let A = a.children[colIndex].innerText.trim();
-        let B = b.children[colIndex].innerText.trim();
-        if (!isNaN(A) && !isNaN(B)) {
-          return ascending ? A - B : B - A;
+      let searchInput = table.querySelector(".column-search");
+      if (!searchInput) return;
+      let prefix = searchInput.name.split('_')[0];
+      let colIndex = header.dataset.col;
+
+      const params = new URLSearchParams(window.location.search);
+      let currentSort = params.get(`${prefix}_sort`);
+      let currentOrder = params.get(`${prefix}_order`);
+
+      let newOrder = "asc";
+      if (currentSort === colIndex && currentOrder === "asc") {
+        newOrder = "desc";
+      }
+
+      params.set(`${prefix}_sort`, colIndex);
+      params.set(`${prefix}_order`, newOrder);
+
+      // Reset page back to 1 when sorting changes
+      params.delete(`${prefix}_page`);
+      if (prefix === 'donation') {
+        params.delete('page');
+      }
+
+      // Preserve other search input values
+      document.querySelectorAll(".column-search").forEach(inp => {
+        if (inp.value.trim()) {
+          params.set(inp.name, inp.value.trim());
+        } else {
+          params.delete(inp.name);
         }
-        if (!isNaN(Date.parse(A)) && !isNaN(Date.parse(B))) {
-          return ascending
-            ? new Date(A) - new Date(B)
-            : new Date(B) - new Date(A);
-        }
-        return ascending ? A.localeCompare(B) : B.localeCompare(A);
       });
-      rows.forEach(row => tbody.appendChild(row));
-      table.querySelectorAll(".sort-icon").forEach(icon => {
-        icon.innerText = "⬍";
-        icon.dataset.order = "";
-      });
-      sortIcon.innerText = ascending ? "⬆" : "⬇";
-      sortIcon.dataset.order = ascending ? "asc" : "desc";
+
+      window.location.href = window.location.pathname + '?' + params.toString();
     });
   });
 </script>

@@ -143,6 +143,36 @@ def apply_column_filters(queryset, request, prefix, mapping):
                         queryset = queryset.filter(**{field: val})
     return queryset
 
+
+def order_queryset(queryset, request, prefix, mapping, default_order='id'):
+    sort_col = request.GET.get(f"{prefix}_sort")
+    order = request.GET.get(f"{prefix}_order", "asc")
+    
+    if sort_col and sort_col in mapping:
+        fields = mapping[sort_col]
+        if not isinstance(fields, list):
+            fields = [fields]
+            
+        ordering_fields = []
+        for field in fields:
+            if order == "desc":
+                ordering_fields.append("-" + field)
+            else:
+                ordering_fields.append(field)
+        
+        secondary = default_order
+        if secondary.startswith('-'):
+            secondary = secondary[1:]
+        if order == "desc":
+            ordering_fields.append("-" + secondary)
+        else:
+            ordering_fields.append(secondary)
+            
+        return queryset.order_by(*ordering_fields)
+        
+    return queryset.order_by(default_order)
+
+
 donor_mapping = {
     '2': 'id',
     '3': 'person_type__lookup_name',
@@ -353,14 +383,23 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     donation_payment = apply_column_filters(donation_payment, request, 'payments', payments_mapping)
 
     # Pagination
-    page_obj = Paginator(donors.order_by('id'), 10).get_page(request.GET.get('donor_page'))
-    donation_page_obj = Paginator(donations.order_by('id'), 10).get_page(request.GET.get('donation_page'))
+    donors = order_queryset(donors, request, 'donor', donor_mapping, 'id')
+    donations = order_queryset(donations, request, 'donation', donation_mapping, 'id')
+    users = order_queryset(users, request, 'user', user_mapping, 'id')
+    roles_qs = order_queryset(roles_qs, request, 'roles', roles_mapping, 'id')
+    lookup_types = order_queryset(lookup_types, request, 'lt', lt_mapping, 'id')
+    lookups = order_queryset(lookups, request, 'lu', lu_mapping, 'id')
+    donation_payment = order_queryset(donation_payment, request, 'payments', payments_mapping, 'id')
+    donation_boxes = order_queryset(donation_boxes, request, 'box', box_mapping, 'id')
+
+    page_obj = Paginator(donors, 10).get_page(request.GET.get('donor_page'))
+    donation_page_obj = Paginator(donations, 10).get_page(request.GET.get('donation_page'))
     user_page_obj = Paginator(users, 10).get_page(request.GET.get('user_page'))
     roles_page_obj = Paginator(roles_qs, 10).get_page(request.GET.get('roles_page'))
     lookup_page_obj = Paginator(lookup_types, 5).get_page(request.GET.get("lt_page"))
     lookup_table_obj = Paginator(lookups, 5).get_page(request.GET.get("lu_page"))
-    payments_page_obj = Paginator(donation_payment.order_by('id'), 5).get_page(request.GET.get("payments_page"))
-    box_page_obj = Paginator(donation_boxes.order_by('id'), 5).get_page(request.GET.get("box_page"))
+    payments_page_obj = Paginator(donation_payment, 5).get_page(request.GET.get("payments_page"))
+    box_page_obj = Paginator(donation_boxes, 5).get_page(request.GET.get("box_page"))
 
     icon_map = {
         "User": "bi bi-person",
@@ -922,26 +961,93 @@ def search_donor_volunteer(request):
                     Q(deleted_at__month=month_num)
                 )
             try:
-                if len(query2) == 4 and query2.isdigit():
-                    y = int(query2)
-                    filters |= (
-                        Q(date_of_birth__year=y) |
-                        Q(created_at__year=y) |
-                        Q(updated_at__year=y) |
-                        Q(deleted_at__year=y)
-                    )
-                for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y"):
+                import re
+
+                date_parsed = False
+
+                # 1. Date formats with separators (e.g. "15-07-2026", "15.07.26", "15/07/2026", "22 jun 2026")
+                # Normalize separators: dots, slashes, dashes, multiple spaces to a single space
+                clean_query = re.sub(r'[-./\s]+', ' ', query2).strip()
+                for fmt in ("%d %m %Y", "%d %m %y", "%Y %m %d", "%d %b %Y", "%d %B %Y", "%d %b %y", "%d %B %y"):
                     try:
-                        parsed = datetime.strptime(query2, fmt).date()
+                        parsed = datetime.strptime(clean_query, fmt).date()
                         filters |= (
                             Q(date_of_birth=parsed) |
                             Q(created_at__date=parsed) |
                             Q(updated_at__date=parsed) |
                             Q(deleted_at__date=parsed)
                         )
+                        date_parsed = True
                         break
-                    except Exception:
+                    except ValueError:
                         pass
+
+                # If it's a full date, we do not run other partial/year matches to prevent polluting results.
+                if not date_parsed:
+                    # 2. 4-digit year search (e.g. "2026")
+                    if len(query2) == 4 and query2.isdigit():
+                        y = int(query2)
+                        filters |= (
+                            Q(date_of_birth__year=y) |
+                            Q(created_at__year=y) |
+                            Q(updated_at__year=y) |
+                            Q(deleted_at__year=y)
+                        )
+
+                    # 3. Partial dates: DD-MM (e.g. "15-07", "15/07", "15.07")
+                    match_dd_mm = re.match(r'^(\d{1,2})[-/.](\d{1,2})$', query2)
+                    if match_dd_mm:
+                        d = int(match_dd_mm.group(1))
+                        m = int(match_dd_mm.group(2))
+                        if 1 <= d <= 31 and 1 <= m <= 12:
+                            filters |= (
+                                Q(date_of_birth__day=d, date_of_birth__month=m) |
+                                Q(created_at__day=d, created_at__month=m) |
+                                Q(updated_at__day=d, updated_at__month=m) |
+                                Q(deleted_at__day=d, deleted_at__month=m)
+                            )
+
+                    # 4. Partial dates: MM-YYYY (e.g. "07-2026", "07/2026", "07.2026")
+                    match_mm_yyyy = re.match(r'^(\d{1,2})[-/.](\d{4})$', query2)
+                    if match_mm_yyyy:
+                        m = int(match_mm_yyyy.group(1))
+                        y = int(match_mm_yyyy.group(2))
+                        if 1 <= m <= 12:
+                            filters |= (
+                                Q(date_of_birth__month=m, date_of_birth__year=y) |
+                                Q(created_at__month=m, created_at__year=y) |
+                                Q(updated_at__month=m, updated_at__year=y) |
+                                Q(deleted_at__month=m, deleted_at__year=y)
+                            )
+
+                    # 5. Natural month names and combinations (e.g. "July 2026", "15 July")
+                    for month_name, month_num in month_map.items():
+                        if month_name in qlow:
+                            # Extract year
+                            year_match = re.search(r'\b(\d{4})\b', qlow)
+                            y_val = None
+                            if year_match:
+                                y_val = int(year_match.group(1))
+                                filters |= (
+                                    Q(date_of_birth__month=month_num, date_of_birth__year=y_val) |
+                                    Q(created_at__month=month_num, created_at__year=y_val) |
+                                    Q(updated_at__month=month_num, updated_at__year=y_val) |
+                                    Q(deleted_at__month=month_num, deleted_at__year=y_val)
+                                )
+                            # Extract day (excluding the year match digits)
+                            text_to_search_day = qlow
+                            if year_match:
+                                text_to_search_day = qlow.replace(year_match.group(1), '')
+                            day_match = re.search(r'\b(\d{1,2})\b', text_to_search_day)
+                            if day_match:
+                                d_val = int(day_match.group(1))
+                                if 1 <= d_val <= 31:
+                                    filters |= (
+                                        Q(date_of_birth__day=d_val, date_of_birth__month=month_num) |
+                                        Q(created_at__day=d_val, created_at__month=month_num) |
+                                        Q(updated_at__day=d_val, updated_at__month=month_num) |
+                                        Q(deleted_at__day=d_val, deleted_at__month=month_num)
+                                    )
             except Exception:
                 pass
             donorvolunteer = donorvolunteer.filter(filters).distinct().order_by("id")
@@ -3046,9 +3152,17 @@ def _validate_donation_post(post_data):
     }
     errors = {}
 
-    for field in ('first_name', 'last_name', 'mobile_number', 'country', 'donation_amount'):
+    for field in ('first_name', 'last_name', 'pan_number', 'mobile_number', 'country', 'donation_amount'):
         if not cleaned_data[field]:
             errors[field] = ['This field is required.']
+
+    pan = cleaned_data['pan_number']
+    if pan:
+        pan = pan.upper()
+        cleaned_data['pan_number'] = pan
+        import re
+        if not re.match(r'^[A-Z]{5}[0-9]{4}[A-Z]$', pan):
+            errors['pan_number'] = ['Enter a valid 10-character PAN (e.g. ABCDE1234F).']
 
     mobile = cleaned_data['mobile_number']
     if mobile and (not mobile.isdigit() or not 10 <= len(mobile) <= 15):

@@ -1304,11 +1304,11 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label-top" for="id_pan_number">PAN Number</label>
+                            <label class="form-label-top" for="id_pan_number">PAN Number<span class="asterisk">*</span></label>
                             <div class="custom-input-group" id="group_pan_number">
                                 <div class="input-wrapper">
                                     <div class="input-icon-box"><i class="fas fa-id-card"></i></div>
-                                    <input type="text" name="pan_number" id="id_pan_number" class="form-control custom-input" value="{{ form_data.pan_number|default:'' }}">
+                                    <input type="text" name="pan_number" id="id_pan_number" class="form-control custom-input" placeholder="e.g. ABCDE1234F" value="{{ form_data.pan_number|default:'' }}">
                                     <div class="input-focus-highlight"></div>
                                 </div>
                                 <div class="invalid-feedback" id="pan_number_error"><i class="fas fa-exclamation-circle"></i> <span></span></div>
@@ -1599,6 +1599,14 @@
         });
     }
 
+    // ── PAN Uppercase ──
+    const panInput = document.getElementById('id_pan_number');
+    if (panInput) {
+        panInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+
     // ── Real-time field validation feedback ──
     document.querySelectorAll('.custom-input-group .form-control, .custom-input-group select').forEach(input => {
         input.addEventListener('focus', function() {
@@ -1610,7 +1618,7 @@
         input.addEventListener('blur', function() {
             const group = this.closest('.custom-input-group');
             const name = this.id.replace('id_', '');
-            const requiredFields = ['first_name','last_name','address','area','city','state','country','postal_code','mobile_number'];
+            const requiredFields = ['first_name','last_name','pan_number','address','area','city','state','country','postal_code','mobile_number'];
             if (requiredFields.includes(name) && this.value.trim()) {
                 group.classList.add('has-success');
                 setTimeout(() => group.classList.remove('has-success'), 1500);
@@ -1693,11 +1701,10 @@ function validateField(fieldId, fieldName) {
 
 function validateStep(step) {
     let valid = true;
-    const s1Fields = ['id_first_name', 'id_last_name', 'id_mobile_number'];
-    const s1Names = ['first_name', 'last_name', 'mobile_number'];
+    const s1Fields = ['id_first_name', 'id_last_name', 'id_pan_number', 'id_mobile_number'];
+    const s1Names = ['first_name', 'last_name', 'pan_number', 'mobile_number'];
     const s2Fields = ['id_address', 'id_area', 'id_city', 'id_state', 'id_country', 'id_postal_code'];
     const s2Names = ['address', 'area', 'city', 'state', 'country', 'postal_code'];
-
     let fields, names;
     if (step === 1) { fields = s1Fields; names = s1Names; }
     else if (step === 2) { fields = s2Fields; names = s2Names; }
@@ -1709,6 +1716,15 @@ function validateStep(step) {
 
     // Mobile check
     if (step === 1) {
+        // PAN validation
+        const pan = document.getElementById('id_pan_number');
+        if (pan && pan.value.trim()) {
+            const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]$/i;
+            if (!panPattern.test(pan.value.trim())) {
+                showFieldError('pan_number', 'Enter a valid 10-character PAN (e.g. ABCDE1234F).');
+                valid = false;
+            }
+        }
         const mob = document.getElementById('id_mobile_number');
         if (mob && mob.value.trim()) {
             const digits = mob.value.replace(/\D/g, '');
