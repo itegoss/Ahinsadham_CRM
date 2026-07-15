@@ -3373,15 +3373,25 @@ def payment_view(request):
 
 @require_POST
 def payment_verify(request):
+    import logging
+    import traceback
+    logger = logging.getLogger('heart_charity.views.payment_verify')
+
     payload = request.POST
     razorpay_payment_id = payload.get('razorpay_payment_id')
     razorpay_order_id = payload.get('razorpay_order_id')
     razorpay_signature = payload.get('razorpay_signature')
     is_mock = payload.get('is_mock') == 'true'
 
+    logger.info("payment_verify view triggered. is_mock=%s, razorpay_payment_id=%s, razorpay_order_id=%s", is_mock, razorpay_payment_id, razorpay_order_id)
+
     donation_data = request.session.get('donation_data')
     order = request.session.get('razorpay_order')
+    
+    logger.info("Session retrieval check: donation_data is %s, razorpay_order is %s", "present" if donation_data else "absent", "present" if order else "absent")
+
     if not donation_data or not order:
+        logger.error("Session expired or missing required payment/donation details in session.")
         return JsonResponse({'success': False, 'error': 'Session expired.', 'redirect_url': reverse('payment_failed')}, status=400)
 
     key_id, key_secret = _get_razorpay_credentials()
@@ -3395,14 +3405,16 @@ def payment_verify(request):
                 'razorpay_payment_id': razorpay_payment_id,
                 'razorpay_signature': razorpay_signature
             }
+            logger.info("Verifying signature via Razorpay Client API...")
             client.utility.verify_payment_signature(params_dict)
-        except Exception:
-            # Verification failed
+            logger.info("Razorpay payment signature verified successfully.")
+        except Exception as e:
+            logger.error("Razorpay signature verification failed! Traceback:\n%s", traceback.format_exc())
             request.session.pop('donation_data', None)
             request.session.pop('razorpay_order', None)
             return JsonResponse({'success': False, 'redirect_url': reverse('payment_failed')})
     else:
-        # Mock verification
+        logger.info("Using mock/local verification flow.")
         razorpay_payment_id = f"mock_payment_{uuid.uuid4().hex[:10]}"
 
     # Save donation: create or find DonorVolunteer, then create Donation using new model fields
@@ -3419,16 +3431,21 @@ def payment_verify(request):
         email_norm = email.strip().lower() if isinstance(email, str) and email.strip() else None
         mobile_norm = mobile.strip() if isinstance(mobile, str) and mobile.strip() else None
 
+        logger.info("Preparing to save donation. Email: %s, Mobile: %s", email_norm, mobile_norm)
+
         donor = None
         try:
             if email_norm:
+                logger.info("Searching for existing donor by email: %s", email_norm)
                 donor = DonorVolunteer.objects.filter(email__iexact=email_norm).first()
             if not donor and mobile_norm:
+                logger.info("Searching for existing donor by mobile: %s", mobile_norm)
                 donor = DonorVolunteer.objects.filter(contact_number=mobile_norm).first()
 
             if not donor:
                 # Attempt to create; handle possible race-condition duplicate insert
                 try:
+                    logger.info("No matching donor found. Creating new DonorVolunteer...")
                     donor = DonorVolunteer.objects.create(
                         first_name=first_name or None,
                         middle_name=middle_name or None,
@@ -3444,7 +3461,9 @@ def payment_verify(request):
                         native_place=donation_data.get('native_place') or None,
                         pan_number=donation_data.get('pan_number') or None,
                     )
-                except IntegrityError:
+                    logger.info("New DonorVolunteer created successfully with ID: %s", donor.id)
+                except IntegrityError as e:
+                    logger.warning("IntegrityError encountered (race condition during donor creation). Retrying lookup. Details: %s", e)
                     # Another process may have created the donor concurrently; fetch existing
                     donor = None
                     if email_norm:
@@ -3452,8 +3471,11 @@ def payment_verify(request):
                     if not donor and mobile_norm:
                         donor = DonorVolunteer.objects.filter(contact_number=mobile_norm).first()
                     if not donor:
-                        raise
-        except Exception:
+                        raise e
+            else:
+                logger.info("Existing donor found with ID: %s", donor.id)
+        except Exception as e:
+            logger.error("Exception occurred during donor search/creation: %s. Traceback:\n%s", e, traceback.format_exc())
             donor = None
 
         if donor:
@@ -3486,9 +3508,10 @@ def payment_verify(request):
                         updated = True
 
                 if updated:
+                    logger.info("Updating fields for DonorVolunteer ID: %s", donor.id)
                     donor.save()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error("Swallowed exception during DonorVolunteer update/save: %s. Traceback:\n%s", e, traceback.format_exc())
 
         # Compose donation fields
         declared_amount = donation_data.get('donation_amount')
@@ -3496,7 +3519,8 @@ def payment_verify(request):
             declared_amount_decimal = None
             if declared_amount is not None:
                 declared_amount_decimal = float(declared_amount)
-        except Exception:
+        except Exception as e:
+            logger.error("Failed to parse declared_amount: %s. Exception: %s", declared_amount, e)
             declared_amount_decimal = None
 
         # Build description including scheme info if present
@@ -3524,8 +3548,8 @@ def payment_verify(request):
                     lookup_type=category_type
                 )
                 donation_category_id = schemes_cat_lookup.id
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("Error resolving Donation Category: %s. Traceback:\n%s", e, traceback.format_exc())
 
         scheme_id = donation_data.get('scheme_id')
         s_mapping = {
@@ -3548,6 +3572,8 @@ def payment_verify(request):
 
         # Reconstruct display name from first, middle, last name fields
         display_name = ' '.join(filter(None, [first_name, middle_name, last_name])) or None
+        
+        logger.info("Creating Donation record in database...")
         # Create Donation record (fields map to existing DB columns)
         donation = Donation.objects.create(
             donor=donor,
@@ -3572,6 +3598,7 @@ def payment_verify(request):
             updated_by=(request.user if request.user and request.user.is_authenticated else None),
             verified=True,
         )
+        logger.info("Donation record created successfully. ID: %s, Receipt ID: %s", donation.id, donation.receipt_id)
 
         if email_norm:
             try:
@@ -3580,6 +3607,8 @@ def payment_verify(request):
                 from django.template.loader import render_to_string
                 from xhtml2pdf import pisa
                 from django.conf import settings
+
+                logger.info("Starting email receipt sending process. Recipient: %s", email_norm)
 
                 # Use relative static URLs and pass link_callback to resolve them locally
                 logo_url = settings.STATIC_URL + "images/alogo.png"
@@ -3590,6 +3619,7 @@ def payment_verify(request):
                 globe_icon = settings.STATIC_URL + "images/globe.png"
 
                 # HTML for email body
+                logger.info("Rendering HTML template 'donation_receipt.html'...")
                 html_content = render_to_string(
                     "donation_receipt.html",
                     {
@@ -3606,7 +3636,9 @@ def payment_verify(request):
                         "preview": False,
                     },
                 )
+                logger.info("HTML template rendered successfully. size: %d chars", len(html_content))
 
+                logger.info("Initializing EmailMultiAlternatives object...")
                 email = EmailMultiAlternatives(
                     subject="Payment Successful - Ahinsadham",
                     body="Thank you for your donation. Your donation receipt is attached with this email.",
@@ -3614,40 +3646,54 @@ def payment_verify(request):
                     to=[email_norm],
                 )
 
-                # email.attach_alternative(html_content, "text/html")
+                # Validate required variables
+                if not email.to or not email.to[0]:
+                    logger.warning("Warning: Recipient list is empty or invalid.")
+                if not email.from_email:
+                    logger.warning("Warning: from_email is not set/empty.")
+                if not settings.EMAIL_HOST_USER:
+                    logger.warning("Warning: settings.EMAIL_HOST_USER is not configured.")
 
-                # # Generate PDF in memory
-                # pdf_buffer = BytesIO()
-                # pisa.CreatePDF(html_content, dest=pdf_buffer)
-                # pdf_buffer.seek(0)
                 pdf_buffer = BytesIO()
 
+                logger.info("Generating PDF via xhtml2pdf CreatePDF...")
                 result = pisa.CreatePDF(
                     html_content,
                     dest=pdf_buffer,
                     link_callback=link_callback,
                 )
+                logger.info("PDF Generation call complete. result.err: %s", result.err)
 
                 if result.err:
+                    logger.error("PDF Generation error: %s", result.err)
                     print("PDF Generation Error")
                     return
 
                 pdf_buffer.seek(0)
+                pdf_data = pdf_buffer.read()
+                logger.info("PDF buffer size generated: %d bytes", len(pdf_data))
 
                 # Attach PDF
+                attachment_name = f"Donation_Receipt_{donation.receipt_id or donation.id}.pdf"
                 email.attach(
-                    f"Donation_Receipt_{donation.receipt_id or donation.id}.pdf",
-                    pdf_buffer.read(),
+                    attachment_name,
+                    pdf_data,
                     "application/pdf",
                 )
+                logger.info("Receipt PDF successfully attached as: %s", attachment_name)
 
-                email.send()
+                logger.info("Calling email.send()...")
+                sent_count = email.send()
+                logger.info("email.send() call complete. Result code (sent count): %s", sent_count)
 
             except Exception as e:
+                logger.error("Failed to generate PDF or send email! Exception: %s. Traceback:\n%s", e, traceback.format_exc())
                 print("Email Error:", e)
+        else:
+            logger.warning("Skipping email receipt sending because recipient email_norm is empty/None.")
 
-        
-    except Exception:
+    except Exception as e:
+        logger.critical("Critical database save or processing failure in payment_verify view! Exception: %s. Traceback:\n%s", e, traceback.format_exc())
         return JsonResponse({
             'success': False,
             'error_msg': 'Unable to save the donation.',
@@ -3658,6 +3704,7 @@ def payment_verify(request):
     request.session.pop('donation_data', None)
     request.session.pop('razorpay_order', None)
     request.session.pop('selected_scheme', None)
+    logger.info("payment_verify view successfully finished. Session cleared. Redirecting to success page.")
 
     return JsonResponse({'success': True, 'redirect_url': reverse('payment_success')})
 
