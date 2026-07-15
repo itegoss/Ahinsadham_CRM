@@ -1156,14 +1156,14 @@
         </div>
         <h2 class="result-title">Donation Successful!</h2>
         <p class="result-text">Thank you for your generous contribution. Your support means a lot to us and helps bring positive change.</p>
-        <a href="{% url 'schemes_home' %}" class="btn btn-brand w-100">Back to Home</a>
+        <a href="{% url 'welcome' %}" class="btn btn-brand w-100">Back</a>
         {% else %}
         <div class="result-icon-wrapper failed">
             <i class="fas fa-times"></i>
         </div>
         <h2 class="result-title">Payment Failed</h2>
         <p class="result-text">We're sorry, but your payment could not be completed. Please check your details and try again.</p>
-        <a href="{% url 'schemes_home' %}" class="btn btn-outline-brand w-100 mb-2">Return Home</a>
+        <a href="{% url 'welcome' %}" class="btn btn-outline-brand w-100 mb-2">Back</a>
         <a href="{% url 'donation_form' %}" class="btn btn-brand w-100">Try Again</a>
         {% endif %}
     </div>

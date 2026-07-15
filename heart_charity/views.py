@@ -3581,25 +3581,13 @@ def payment_verify(request):
                 from xhtml2pdf import pisa
                 from django.conf import settings
 
-                # Absolute URLs for images
-                logo_url = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/alogo.png"
-                )
-                signature_url = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/signature.png"
-                )
-                facebook_icon = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/facebook.png"
-                )
-                instagram_icon = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/instagram.png"
-                )
-                youtube_icon = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/youtube.png"
-                )
-                globe_icon = request.build_absolute_uri(
-                    settings.STATIC_URL + "images/globe.png"
-                )
+                # Use relative static URLs and pass link_callback to resolve them locally
+                logo_url = settings.STATIC_URL + "images/alogo.png"
+                signature_url = settings.STATIC_URL + "images/signature.png"
+                facebook_icon = settings.STATIC_URL + "images/facebook.png"
+                instagram_icon = settings.STATIC_URL + "images/instagram.png"
+                youtube_icon = settings.STATIC_URL + "images/youtube.png"
+                globe_icon = settings.STATIC_URL + "images/globe.png"
 
                 # HTML for email body
                 html_content = render_to_string(
@@ -3637,6 +3625,7 @@ def payment_verify(request):
                 result = pisa.CreatePDF(
                     html_content,
                     dest=pdf_buffer,
+                    link_callback=link_callback,
                 )
 
                 if result.err:
