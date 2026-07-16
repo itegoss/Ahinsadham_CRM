@@ -101,14 +101,33 @@
                            class="form-control p-2" placeholder="Enter role description">
                 </div>
             </div>
-            <div class="mb-3">
-                <label class="permission-label">Select Module <span style="color:#d9534f;">*</span></label>
-                <select name="selected_module" class="form-select p-2" required aria-required="true">
-                    <option value="">-- Choose Module --</option>
-                    {% for module in modules %}
-                        <option value="{{ module.id }}">{{ module.module_name }}</option>
-                    {% endfor %}
-                </select>
+            <div class="mb-3 position-relative">
+                <label class="permission-label mb-2">Select Module(s) <span style="color:#d9534f;">*</span></label>
+                <div class="dropdown w-100">
+                    <button class="form-control text-start p-2 d-flex justify-content-between align-items-center dropdown-toggle" type="button" id="multiSelectDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="background-color: #fff; border-radius: 10px;">
+                        <span id="selectedModulesText" class="text-muted">-- Choose Module(s) --</span>
+                    </button>
+                    <div class="dropdown-menu w-100 p-3 shadow" aria-labelledby="multiSelectDropdown" style="max-height: 250px; overflow-y: auto; border-radius: 10px; min-width: 100% !important;">
+                        <div class="form-check mb-2 pb-2 border-bottom">
+                            <input class="form-check-input" type="checkbox" id="selectAllModules" style="cursor: pointer;">
+                            <label class="form-check-label fw-bold text-success" for="selectAllModules" style="cursor: pointer;">
+                                Select All
+                            </label>
+                        </div>
+                        <div class="row row-cols-1 g-2">
+                            {% for module in modules %}
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input module-checkbox" type="checkbox" name="selected_modules" value="{{ module.id }}" id="module_{{ module.id }}" style="cursor: pointer;">
+                                        <label class="form-check-label w-100" for="module_{{ module.id }}" style="cursor: pointer;">
+                                            {{ module.module_name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
             <label class="permission-label">Select Permissions</label><br>
             <div class="mt-2">
@@ -144,4 +163,62 @@
     </div>
     </div>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAllModules');
+        const moduleCheckboxes = document.querySelectorAll('.module-checkbox');
+        const selectedModulesText = document.getElementById('selectedModulesText');
+        const form = document.querySelector('form');
+
+        function updateDropdownText() {
+            const checkedBoxes = Array.from(moduleCheckboxes).filter(cb => cb.checked);
+            if (checkedBoxes.length === 0) {
+                selectedModulesText.textContent = '-- Choose Module(s) --';
+                selectedModulesText.classList.add('text-muted');
+            } else {
+                selectedModulesText.classList.remove('text-muted');
+                if (checkedBoxes.length === moduleCheckboxes.length) {
+                    selectedModulesText.textContent = 'All Modules Selected (' + checkedBoxes.length + ')';
+                } else if (checkedBoxes.length <= 2) {
+                    const names = checkedBoxes.map(cb => cb.nextElementSibling.textContent.trim()).join(', ');
+                    selectedModulesText.textContent = names;
+                } else {
+                    selectedModulesText.textContent = checkedBoxes.length + ' Modules Selected';
+                }
+            }
+        }
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                moduleCheckboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                });
+                updateDropdownText();
+            });
+
+            moduleCheckboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const allChecked = Array.from(moduleCheckboxes).every(c => c.checked);
+                    selectAllCheckbox.checked = allChecked;
+                    updateDropdownText();
+                });
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                const anyChecked = Array.from(moduleCheckboxes).some(cb => cb.checked);
+                if (!anyChecked) {
+                    event.preventDefault();
+                    alert('Please select at least one module.');
+                }
+            });
+        }
+
+        // Initialize text on load
+        updateDropdownText();
+    });
+</script>
 {% endblock %}

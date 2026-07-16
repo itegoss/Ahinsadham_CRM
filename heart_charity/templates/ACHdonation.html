@@ -1764,15 +1764,6 @@ function validateForm() {
     if (isNaN(amountVal) || amountVal <= 0) {
         showFieldError('donation_amount', 'Please enter a valid amount.');
         valid = false;
-    } else {
-        const schemeMinEl = document.getElementById('scheme_amount');
-        if (schemeMinEl && schemeMinEl.value) {
-            const minVal = parseFloat(schemeMinEl.value);
-            if (!isNaN(minVal) && amountVal < minVal) {
-                showFieldError('donation_amount', 'Minimum amount is ₹' + minVal);
-                valid = false;
-            }
-        }
     }
 
     if (!valid) {
