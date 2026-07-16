@@ -3577,7 +3577,21 @@ def payment_verify(request):
             donation_sub_category_id = s_mapping[scheme_id]
         else:
             donation_sub_category_id = safe_int(scheme_id)
-        payment_method_id = safe_int(donation_data.get('payment_method'))
+        
+        # Ensure Razorpay is saved as the payment method lookup
+        payment_method_id = None
+        payment_method_lookup_type = LookupType.objects.filter(type_name__iexact="Payment Method").first()
+        if payment_method_lookup_type:
+            razorpay_lookup, created = Lookup.objects.get_or_create(
+                lookup_name="Razorpay",
+                lookup_type=payment_method_lookup_type,
+                defaults={'created_by': (request.user if request.user and request.user.is_authenticated else None)}
+            )
+            payment_method_id = razorpay_lookup.id
+        
+        if not payment_method_id:
+            payment_method_id = safe_int(donation_data.get('payment_method'))
+
         # For payment_status, prefer to leave None; set to an integer only if provided numerically
         payment_status_id = safe_int(donation_data.get('payment_status'))
 
