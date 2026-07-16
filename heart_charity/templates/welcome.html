@@ -1454,12 +1454,121 @@
           Module</span></a>
 
       {% elif allowed_modules and allowed_modules|length > 0 %}
-      {% for module_name in allowed_modules %}
-      <a class="tab-btn" data-tab="{{ module_name }}">
-        <i class="{{ icon_map.module_name|default:'bi bi-dot' }}"></i>
-        <span class="sidebar-text">{{ module_name }}</span>
-      </a>
-      {% endfor %}
+      <a class="tab-btn active" data-tab="default-user"><i class="bi bi-bar-chart-line"></i><span
+          class="sidebar-text">Dashboard</span></a>
+
+      {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules %}
+      <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
+      {% endif %}
+
+      {% if "User" in allowed_modules %}
+      <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
+      {% endif %}
+
+      {% if "Roles" in allowed_modules or "roles" in allowed_modules %}
+      <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
+          class="sidebar-text">Roles</span></a>
+      {% endif %}
+
+      {% if "Donor/Volunteer Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Donor/Volunteer Management System"><i class="bi bi-heart"></i><span
+          class="sidebar-text">Donor/Volunteer</span></a>
+      {% endif %}
+
+      {% if "Donation Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash-coin"></i><span class="sidebar-text">Donation
+          Module</span></a>
+      {% endif %}
+
+      {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
+      <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
+          Box</span></a>
+      {% endif %}
+
+      {% if "Employee Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Employee Management System"><i class="bi bi-person-workspace"></i><span
+          class="sidebar-text">Employee Management</span></a>
+      {% endif %}
+
+      {% if "Event Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Event Management System"><i class="bi bi-calendar-event"></i><span
+          class="sidebar-text">Event Management</span></a>
+      {% endif %}
+
+      {% if "Timesheet System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Timesheet System"><i class="bi bi-clock"></i><span class="sidebar-text">Timesheet
+          System</span></a>
+      {% endif %}
+
+      {% if "Leave Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Leave Management System"><i class="bi bi-calendar-x"></i><span
+          class="sidebar-text">Leave Management</span></a>
+      {% endif %}
+
+      {% if "Visitor Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Visitor Management System"><i class="bi bi-person-badge"></i><span
+          class="sidebar-text">Visitor Management</span></a>
+      {% endif %}
+
+      {% if "Vendor Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Vendor Management System"><i class="bi bi-truck"></i><span
+          class="sidebar-text">Vendor Management</span></a>
+      {% endif %}
+
+      {% if "Request Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Request Management System"><i class="bi bi-clipboard-check"></i><span
+          class="sidebar-text">Request Management</span></a>
+      {% endif %}
+
+      {% if "Inventory Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Inventory Management System"><i class="bi bi-boxes"></i><span
+          class="sidebar-text">Inventory Management</span></a>
+      {% endif %}
+
+      {% if "Asset Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Asset Management System"><i class="bi bi-pc-display"></i><span
+          class="sidebar-text">Asset Management</span></a>
+      {% endif %}
+
+      {% if "Fleet Management System" in allowed_modules %}
+      <a class="tab-btn" data-tab="Fleet Management System"><i class="bi bi-truck"></i><span class="sidebar-text">Fleet
+          Management</span></a>
+      {% endif %}
+
+      {% if "Financial Asset Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Financial Asset Module"><i class="bi bi-graph-up"></i><span
+          class="sidebar-text">Financial Asset</span></a>
+      {% endif %}
+
+      {% if "Expense Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Expense Module"><i class="bi bi-receipt"></i><span class="sidebar-text">Expense
+          Module</span></a>
+      {% endif %}
+
+      {% if "Medical Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Medical Module"><i class="fa-solid fa-syringe"></i><span class="sidebar-text">Medical
+          Module</span></a>
+      {% endif %}
+
+      {% if "Rehabilitation Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Rehabilitation Module"><i class="bi bi-hand-thumbs-up"></i><span
+          class="sidebar-text">Rehabilitation</span></a>
+      {% endif %}
+
+      {% if "Adoption Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Adoption Module"><i class="bi bi-people-fill"></i><span class="sidebar-text">Adoption
+          Module</span></a>
+      {% endif %}
+
+      {% if "Trees Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Trees Module"><i class="bi bi-tree"></i><span class="sidebar-text">Trees
+          Module</span></a>
+      {% endif %}
+
+      {% if "Seeds Module" in allowed_modules %}
+      <a class="tab-btn" data-tab="Seeds Module"><i class="bi bi-flower1"></i><span class="sidebar-text">Seeds
+          Module</span></a>
+      {% endif %}
       {% else %}
       <div class="welcome-wrapper">
         <div class="welcome-card">

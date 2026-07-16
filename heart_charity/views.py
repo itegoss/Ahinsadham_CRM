@@ -40,27 +40,44 @@ def access_control(request):
     if request.method == "POST":
         role_name = request.POST.get("role_name")
         role_desc = request.POST.get("roleDescription")
-        module_id = request.POST.get("selected_module")
+        selected_modules = request.POST.getlist("selected_modules")
+        # Fallback to single selected_module just in case
+        if not selected_modules:
+            single_module = request.POST.get("selected_module")
+            if single_module:
+                selected_modules = [single_module]
+
         can_access = bool(request.POST.get("access_permission"))
         can_add = bool(request.POST.get("add_permission"))
         can_edit = bool(request.POST.get("edit_permission"))
         can_delete = bool(request.POST.get("delete_permission"))
         can_view = bool(request.POST.get("view_permission"))
+
         if not role_name:
             messages.error(request, "Role name is required.")
             return redirect("access_control")
-        if not module_id:
-            messages.error(request, "Select a module.")
+        if not selected_modules:
+            messages.error(request, "Select at least one module.")
             return redirect("access_control")
-        module = Module.objects.get(id=module_id)
-        role_obj, created = UserModuleAccess.objects.get_or_create(name=role_name,module=module)
-        role_obj.description = role_desc
-        role_obj.can_access = can_access
-        role_obj.can_add = can_add
-        role_obj.can_edit = can_edit
-        role_obj.can_delete = can_delete
-        role_obj.can_view = can_view
-        role_obj.save()
+
+        for module_id in selected_modules:
+            try:
+                module = Module.objects.get(id=module_id)
+                role_obj, created = UserModuleAccess.objects.get_or_create(name=role_name, module=module)
+                role_obj.description = role_desc
+                role_obj.can_access = can_access
+                role_obj.can_add = can_add
+                role_obj.can_edit = can_edit
+                role_obj.can_delete = can_delete
+                role_obj.can_view = can_view
+                if request.user.is_authenticated:
+                    if created:
+                        role_obj.created_by = request.user
+                    role_obj.updated_by = request.user
+                role_obj.save()
+            except Module.DoesNotExist:
+                continue
+
         messages.success(request, "Role & Permissions saved successfully!")
         return redirect("access_control")
     return render(request, "access_control.html", {
@@ -371,7 +388,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     donation_owners = DonationOwner.objects.select_related('owner_name', 'donation_box').all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
     clean_roles = sorted(set(roles_qss))
-    role_names = roles_qs.values_list("name", flat=True).distinct()
+    role_names = roles_qs.values_list("name", flat=True).order_by().distinct()
 
     users = apply_column_filters(users, request, 'user', user_mapping)
     roles_qs = apply_column_filters(roles_qs, request, 'roles', roles_mapping)
@@ -851,7 +868,7 @@ def assign_role(request):
     users = User.objects.all()
 
     # Fetch UNIQUE role names only
-    roles = UserModuleAccess.objects.values_list('name', flat=True).distinct()
+    roles = UserModuleAccess.objects.values_list('name', flat=True).order_by().distinct()
 
     if request.method == "POST":
         user_id = request.POST.get("user_id")
@@ -2494,7 +2511,7 @@ def edit_lookup(request, id):
 def edit_user(request, id):
     user_obj = get_object_or_404(User, id=id)
     user_role_obj, created = UserRole.objects.get_or_create(user=user_obj)
-    roles = UserModuleAccess.objects.all()
+    roles = UserModuleAccess.objects.values_list('name', flat=True).order_by().distinct()
 
     if request.method == 'POST':
         new_username = request.POST.get('username')
@@ -2508,8 +2525,8 @@ def edit_user(request, id):
         user_obj.username   = new_username
         user_obj.email      = request.POST.get('email')
 
-        role_id = request.POST.get('role')
-        if role_id in ["", "none", None]:
+        role_name_selected = request.POST.get('role')
+        if role_name_selected in ["", "none", "None", None]:
             user_role_obj.role = None
             user_role_obj.save()
         else:
@@ -2517,7 +2534,10 @@ def edit_user(request, id):
                 messages.error(request, "❌ You are not allowed to assign roles.")
                 return redirect("welcome")
 
-            selected_role = get_object_or_404(UserModuleAccess, id=role_id)
+            selected_role = UserModuleAccess.objects.filter(name=role_name_selected).first()
+            if not selected_role:
+                messages.error(request, "❌ Selected role does not exist.")
+                return redirect("welcome")
             user_role_obj.role = selected_role
             user_role_obj.save()
 
@@ -3243,15 +3263,6 @@ def donation_view(request):
                     request.session['selected_scheme'] = {'id': scheme_id, 'name': scheme_name}
                 request.session['donation_data'] = donation_data
 
-                # Validate minimum donation amount if scheme amount provided
-                scheme_min = request.POST.get('scheme_amount') or (request.session.get('selected_scheme') or {}).get('amount')
-                try:
-                    if scheme_min:
-                        min_val = float(scheme_min)
-                        if float(donation_data.get('donation_amount', 0)) < min_val:
-                            return JsonResponse({'success': False, 'errors': {'donation_amount': [f'Minimum donation amount for this scheme is ₹{int(min_val)}']}}, status=400)
-                except Exception:
-                    pass
 
 
                 key_id, key_secret = _get_razorpay_credentials()

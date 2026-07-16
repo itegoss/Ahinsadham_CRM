@@ -84,15 +84,16 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'Ahinsadhamm'),
-        'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'admin'),
-        'HOST': os.environ.get('DATABASE_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
-    }
+'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'Ahinsadhamm',
+    'USER': 'postgres',
+    'PASSWORD': 'admin',
+    'HOST': '127.0.0.1',
+    'PORT': '5432',
 }
+}
+
 
 
 
@@ -172,5 +173,5 @@ DEFAULT_FILE_STORAGE = os.environ.get("DEFAULT_FILE_STORAGE")
 
 
 # Razorpay Test Keys
-RAZORPAY_KEY_ID = "rzp_test_SPTJRQZDmqknyI"
-RAZORPAY_KEY_SECRET = "63U2Unoiwf6aJh1cV4xuyqd5"
+RAZORPAY_KEY_ID = "rzp_live_VYcozrWng2p4M0"
+RAZORPAY_KEY_SECRET = "qwL7A2iiPT3xMZvNdBFouGzF"
