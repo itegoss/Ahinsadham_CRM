@@ -29,13 +29,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://ahinsadham-crm-856395380155.us-central1.run.app',
 ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://admin.ahinsadham.org',
-#     'http://localhost:8000',
-#     'http://127.0.0.1:8000',
-#     'https://ahinsadham-crm-856395380155.us-central1.run.app',
-# ]
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -84,20 +77,15 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DATABASE_NAME'),
-            'USER': os.environ.get('DATABASE_USER'),
-            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-            'HOST': os.environ.get('DATABASE_HOST'),
-            'PORT': os.environ.get('DATABASE_PORT'),
-        }
-    }
-
-
-
-
-
+'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'Ahinsadhamm',
+    'USER': 'postgres',
+    'PASSWORD': 'admin',
+    'HOST': '127.0.0.1',
+    'PORT': '5432',
+}
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -111,7 +99,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
