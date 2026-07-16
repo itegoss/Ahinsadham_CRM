@@ -77,14 +77,14 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 DATABASES = {
-'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'Ahinsadhamm',
-    'USER': 'postgres',
-    'PASSWORD': 'admin',
-    'HOST': '127.0.0.1',
-    'PORT': '5432',
-}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DATABASE_NAME') or 'Ahinsadhamm',
+        'USER': os.environ.get('DATABASE_USER') or 'postgres',
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD') or 'admin',
+        'HOST': os.environ.get('DATABASE_HOST') or '127.0.0.1',
+        'PORT': os.environ.get('DATABASE_PORT') or '5432',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
