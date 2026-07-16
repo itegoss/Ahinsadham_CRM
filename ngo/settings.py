@@ -79,11 +79,11 @@ ENV = os.getenv("ENV", "DEV")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME') or 'Ahinsadhamm',
-        'USER': os.environ.get('DATABASE_USER') or 'postgres',
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD') or 'admin',
-        'HOST': os.environ.get('DATABASE_HOST') or '127.0.0.1',
-        'PORT': os.environ.get('DATABASE_PORT') or '5432',
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 
