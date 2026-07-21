@@ -3185,10 +3185,12 @@ def _validate_donation_post(post_data):
             errors['pan_number'] = ['Enter a valid 10-character PAN (e.g. ABCDE1234F).']
 
     mobile = cleaned_data['mobile_number']
-    if mobile and (not mobile.isdigit() or not 10 <= len(mobile) <= 15):
-        errors['mobile_number'] = [
-            'Enter a valid mobile number between 10 and 15 digits.'
-        ]
+    if mobile:
+        mobile_to_check = mobile[1:] if mobile.startswith('+') else mobile
+        if not mobile_to_check.isdigit() or not 10 <= len(mobile_to_check) <= 15:
+            errors['mobile_number'] = [
+                'Enter a valid mobile number between 10 and 15 digits.'
+            ]
 
     email = cleaned_data['email']
     if email:
