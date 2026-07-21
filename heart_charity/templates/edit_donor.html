@@ -264,7 +264,7 @@
             <option value="+967">+967</option>
             <option value="+263">+263</option>
         </select></span>
-        <input type="text" name="contact_number" value="{{ donor.contact_number|slice:'3:' }}" class="form-control" placeholder="Enter phone number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        <input type="text" name="contact_number" value="" class="form-control" placeholder="Enter phone number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
     </div>
 </div>
 <div class="col-md-3">
@@ -373,7 +373,7 @@
             <option value="+967">+967</option>
             <option value="+263">+263</option>
         </select></span>
-        <input type="text" name="whatsapp_number" value="{{ donor.whatsapp_number|slice:'3:' }}" class="form-control" maxlength="10" pattern="[0-9]{10}" placeholder="Enter whatsapp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="text" name="whatsapp_number" value="" class="form-control" maxlength="10" pattern="[0-9]{10}" placeholder="Enter whatsapp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
     </div>
 </div>
 <div class="form-check mt-1">
@@ -743,6 +743,58 @@
 
 
 <script>
+
+function parseContactField(rawFieldVal, selectElement, inputElement) {
+    if (!rawFieldVal) return;
+    if (rawFieldVal.startsWith('+')) {
+        let matched = false;
+        const options = Array.from(selectElement.options).sort((a, b) => b.value.length - a.value.length);
+        for (let opt of options) {
+            if (rawFieldVal.startsWith(opt.value)) {
+                selectElement.value = opt.value;
+                inputElement.value = rawFieldVal.substring(opt.value.length);
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) {
+            selectElement.value = "+91";
+            inputElement.value = rawFieldVal.replace(/^\+\d+/, '');
+        }
+    } else {
+        selectElement.value = "+91";
+        if (rawFieldVal.startsWith('91') && rawFieldVal.length === 12) {
+            inputElement.value = rawFieldVal.substring(2);
+        } else {
+            inputElement.value = rawFieldVal;
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const rawContact = "{{ donor.contact_number|default:'' }}";
+    const contactSelect = document.querySelector('select[name="contact_country_code"]');
+    const contactInput = document.querySelector('input[name="contact_number"]');
+    parseContactField(rawContact, contactSelect, contactInput);
+
+    const rawWhatsapp = "{{ donor.whatsapp_number|default:'' }}";
+    const whatsappSelect = document.querySelector('select[name="whatsapp_country_code"]');
+    const whatsappInput = document.querySelector('input[name="whatsapp_number"]');
+    parseContactField(rawWhatsapp, whatsappSelect, whatsappInput);
+    
+    // Trigger input event to sync whatsapp input if different_whatsapp is not checked
+    const checkbox = document.getElementById("different_whatsapp");
+    if (checkbox && !checkbox.checked) {
+        whatsappInput.value = contactInput.value;
+    }
+    // If whatsapp value in DB is different from contact value in DB, check the checkbox and make it editable!
+    if (rawWhatsapp && rawContact && rawWhatsapp !== rawContact) {
+        if (checkbox) {
+            checkbox.checked = true;
+            whatsappInput.readOnly = false;
+        }
+    }
+});
 
 const contactInput = document.querySelector('input[name="contact_number"]');
 const whatsappInput = document.querySelector('input[name="whatsapp_number"]');
