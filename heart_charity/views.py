@@ -3599,12 +3599,12 @@ def payment_verify(request):
 
         # Extract UTM values from session if present
         utm_params = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id']
-        utm_data = {param: request.session.get(param) for param in utm_params if request.session.get(param)}
+        utm_values = [request.session.get(param) for param in utm_params if request.session.get(param)]
         
         place_of_donation = None
-        if utm_data:
-            # Construct formatted string of UTM params
-            place_of_donation = "&".join(f"{k}={v}" for k, v in utm_data.items())
+        if utm_values:
+            # Construct comma-separated string of the UTM values
+            place_of_donation = ", ".join(utm_values)
             
             # If UTM parameters are present and payment is successful, set payment status to Successful
             try:
