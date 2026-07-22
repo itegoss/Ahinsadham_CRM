@@ -137,13 +137,10 @@ class UTMTrackingTestCase(TestCase):
         
         self.assertEqual(response.status_code, 200)
         
-        # Verify donation record was created with UTM string in place_of_donation
+        # Verify donation record was created with UTM values in place_of_donation
         donation = Donation.objects.filter(donor=donor).first()
         self.assertIsNotNone(donation)
-        self.assertIn('utm_source=instagram', donation.place_of_donation)
-        self.assertIn('utm_medium=social', donation.place_of_donation)
-        self.assertIn('utm_campaign=schemes_promotion', donation.place_of_donation)
-        self.assertIn('utm_content=reel', donation.place_of_donation)
+        self.assertEqual(donation.place_of_donation, 'instagram, social, schemes_promotion, reel')
         
         # Verify payment status is set to Successful lookup
         self.assertEqual(donation.payment_status.lookup_name, 'Successful')
