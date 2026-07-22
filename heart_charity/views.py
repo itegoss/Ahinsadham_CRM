@@ -3597,6 +3597,27 @@ def payment_verify(request):
         # For payment_status, prefer to leave None; set to an integer only if provided numerically
         payment_status_id = safe_int(donation_data.get('payment_status'))
 
+        # Extract UTM values from session if present
+        utm_params = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id']
+        utm_data = {param: request.session.get(param) for param in utm_params if request.session.get(param)}
+        
+        place_of_donation = None
+        if utm_data:
+            # Construct formatted string of UTM params
+            place_of_donation = "&".join(f"{k}={v}" for k, v in utm_data.items())
+            
+            # If UTM parameters are present and payment is successful, set payment status to Successful
+            try:
+                status_type = LookupType.objects.filter(type_name__iexact="Payment Status").first()
+                if status_type:
+                    payment_status_lookup, _ = Lookup.objects.get_or_create(
+                        lookup_name="Successful",
+                        lookup_type=status_type
+                    )
+                    payment_status_id = payment_status_lookup.id
+            except Exception as e:
+                logger.error("Failed to resolve 'Successful' payment status lookup: %s", e)
+
         # Reconstruct display name from first, middle, last name fields
         display_name = ' '.join(filter(None, [first_name, middle_name, last_name])) or None
         
@@ -3612,7 +3633,7 @@ def payment_verify(request):
             payment_status_id=payment_status_id,
             transaction_id=razorpay_payment_id,
             receipt_id=generate_ach_receipt_id(),
-            place_of_donation=None,
+            place_of_donation=place_of_donation,
             check_no=None,
             donation_received_by=None,
             reference_name=donation_data.get('reference') or None,
@@ -3731,6 +3752,11 @@ def payment_verify(request):
     request.session.pop('donation_data', None)
     request.session.pop('razorpay_order', None)
     request.session.pop('selected_scheme', None)
+    
+    # Clear UTM parameters from session on successful payment completion
+    for param in ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id']:
+        request.session.pop(param, None)
+
     logger.info("payment_verify view successfully finished. Session cleared. Redirecting to success page.")
 
     return JsonResponse({'success': True, 'redirect_url': reverse('payment_success')})
