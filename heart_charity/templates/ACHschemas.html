@@ -266,7 +266,7 @@
     .carousel-donate-btn {
         position: absolute;
         bottom: 120px;
-        left: 8%;
+        left: 42%;
         z-index: 9;
         background: linear-gradient(135deg, #D4A373 0%, #B8860B 100%);
         color: #081C15 !important;
@@ -850,8 +850,8 @@
         .stat-divider { display: none; }
         .stat-item { min-width: 80px; }
         .carousel-donate-btn {
-            bottom: 100px;
-            left: 5%;
+            bottom: 40px;
+            left: 29%;
             padding: 8px 20px;
             font-size: 0.7rem;
         }
@@ -1013,12 +1013,12 @@
             <div class="carousel-item">
                 <img src="{% static s.slider_image %}" class="carousel-image" alt="{{ s.name }}">
                 <div class="carousel-overlay"></div>
-                <!-- <a class="carousel-donate-btn"
-                   href="{% url 'donation_form' %}?scheme_id={{ s.id }}&scheme_name={{ s.name|urlencode }}&amount={{ s.amount }}&image={{ s.image|urlencode }}"
+                <a class="carousel-donate-btn"
+                   href="{% url 'donation_form' %}?scheme_id={{ schemes.0.id }}&scheme_name={{ schemes.0.name|urlencode }}&amount={{ schemes.0.amount }}&image={{ schemes.0.image|urlencode }}"
                    onclick="event.stopPropagation();">
                     <span>Donate Now</span>
                     <i class="fas fa-heart ms-2"></i>
-                </a> -->
+                </a>
             </div>
             {% endif %}
             {% endfor %}
@@ -1080,10 +1080,12 @@
                         <h5 class="card-title">{{ s.name }}</h5>
 
                         <div class="card-meta">
+                            {% if s.amount|add:0 > 0 %}
                             <div class="card-amount">
                                 <span class="rupee-symbol">₹</span>
                                 {{ s.amount_display }}
                             </div>
+                            {% endif %}
                             <!-- <div class="card-donors">
                                 <div class="avatar-stack">
                                     <span class="av1">A</span>
