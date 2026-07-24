@@ -985,8 +985,8 @@
                         </div>
                         <h2 class="animate__animated animate__fadeInUp">Make a <span class="accent-word">Difference</span> Today</h2>
                         <p class="animate__animated animate__fadeInUp" style="max-width: 600px; margin: 0 auto 1.5rem;">Choose a scheme that resonates with you. Every contribution, no matter the size, creates ripples of positive change.</p>
-                        
-                        <!-- Floating Stats Bar inside Slide 1 
+                       
+                        <!-- Floating Stats Bar inside Slide 1
                         <div class="stats-bar animate__animated animate__fadeInUp">
                             <div class="stat-item">
                                 <span class="stat-number"><span class="rupee">₹</span>24L+</span>
@@ -1013,12 +1013,12 @@
             <div class="carousel-item">
                 <img src="{% static s.slider_image %}" class="carousel-image" alt="{{ s.name }}">
                 <div class="carousel-overlay"></div>
-                <a class="carousel-donate-btn"
+                <!-- <a class="carousel-donate-btn"
                    href="{% url 'donation_form' %}?scheme_id={{ s.id }}&scheme_name={{ s.name|urlencode }}&amount={{ s.amount }}&image={{ s.image|urlencode }}"
                    onclick="event.stopPropagation();">
                     <span>Donate Now</span>
                     <i class="fas fa-heart ms-2"></i>
-                </a>
+                </a> -->
             </div>
             {% endif %}
             {% endfor %}
@@ -1026,17 +1026,17 @@
 
         <!-- Controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#schemesCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
             <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#schemesCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <!-- <span class="carousel-control-next-icon" aria-hidden="true"></span> -->
             <span class="visually-hidden">Next</span>
         </button>
     </div>
 </section>
 
-<!-- Wave Separator 
+<!-- Wave Separator
 <div class="wave-separator">
     <svg viewBox="0 0 1440 80" preserveAspectRatio="none" fill="none">
         <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#F8FAF9"/>
@@ -1047,7 +1047,7 @@
 <section class="schemes-grid-section">
     <div class="container">
         <div class="section-label">
-            <span><i class="fas fa-hand-holding-heart me-2"></i>Select a Cause</span>
+            <span><i class="fas fa-hand-holding-heart me-2"></i>Our Donation Programs</span>
         </div>
 
         <div class="row g-4" id="schemesGrid">
@@ -1152,7 +1152,7 @@
     </div>
     <div class="custom-footer-white-bar">
         <div class="container px-4">
-            <p>Copyright &copy; 2022. Bhagwan Mahavir Pashu Raksha Kendra &ndash; Ahinsadham | All rights reserved | Powered and Managed by <a href="https://www.itegoss.com/" target="_blank" style="color: #6B7280;">Itegoss Technology.</a></p>
+            <p>Copyright &copy; 2022. Bhagwan Mahavir Pashu Raksha Kendra &ndash; Ahinsadham | All rights reserved | Powered and Managed by <a href="https://www.itegoss.in/" target="_blank" style="color: #6B7280;">Itegoss Technology.</a></p>
         </div>
     </div>
 </footer>
