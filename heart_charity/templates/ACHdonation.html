@@ -43,7 +43,7 @@
     }
 
     .top-header {
-        background-color: var(--brand-green);
+        background-color: #243553;
         color: white;
         padding: 12px 0;
         font-size: 14px;
@@ -214,7 +214,7 @@
     .donation-hero {
         position: relative;
         padding: 120px 0 200px;
-        background: linear-gradient(160deg, #071A12 0%, #0B2618 25%, #1B4332 55%, #2D6A4F 100%);
+        background:  linear-gradient(170deg, #0B2618 0%, #243553 35%, #738a3c 65%, #CDE68F 200%);
         color: white;
         text-align: center;
         overflow: hidden;
@@ -1054,7 +1054,7 @@
     }
 
     .custom-footer-green-bar {
-        background-color: #1B4332;
+        background-color: #243553;
         padding: 15px 0;
         color: rgba(255, 255, 255, 0.9);
         font-size: 0.85rem;
@@ -1240,7 +1240,11 @@
             {% endif %}
             <div class="scheme-details">
                 <h4>{{ selected_scheme.name }}</h4>
+                {% if selected_scheme.amount|add:0 > 0 %}
                 <p>Suggested: ₹{{ selected_scheme.amount }}</p>
+                {% else %}
+                <p>Suggested: Any amount</p>
+                {% endif %}
             </div>
             <a href="{% url 'schemes' %}" class="scheme-change-btn">
                 <i class="fas fa-exchange-alt me-1"></i> Change
@@ -1460,7 +1464,7 @@
                     </div>
 
                     <div class="amount-quick-picks" id="amountChips">
-                        {% if selected_scheme %}
+                        {% if selected_scheme and selected_scheme.amount|add:0 > 0 %}
                         <div class="amount-chip" data-amount="{{ selected_scheme.amount }}">₹{{ selected_scheme.amount }}</div>
                         <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"500" }}">₹{{ selected_scheme.amount|add:"500" }}</div>
                         <div class="amount-chip" data-amount="{{ selected_scheme.amount|add:"1000" }}">₹{{ selected_scheme.amount|add:"1000" }}</div>

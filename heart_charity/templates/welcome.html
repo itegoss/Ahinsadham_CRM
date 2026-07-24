@@ -4270,7 +4270,7 @@
                   <td>{{ donation.donation_category.lookup_name }}{% if donation.donation_sub_category %} / {{ donation.donation_sub_category.lookup_name }}{% endif %}</td>
                   <td>{{ donation.payment_method.lookup_name }}</td>
                   <td>{{ donation.transaction_id }}</td>
-                  <td>{{ donation.payment_status }}</td>
+                  <td>{{ donation.payment_status.lookup_name }}</td>
                   <td>{{ donation.check_no }}</td>
                   <td>{{ donation.place_of_donation }}</td>
                   <td>{{ donation.description }}</td>
@@ -4433,7 +4433,7 @@
                   <td>{{ donation.payment_method.lookup_name }}</td>
                   <td>{{ donation.payment_method }}</td>
                   <td>{{ donation.transaction_id }}</td>
-                  <td>{{ donation.payment_status }}</td>
+                  <td>{{ donation.payment_status.lookup_name }}</td>
                   <td>{{ donation.check_no }}</td>
                   <td>{{ donation.place_of_donation }}</td>
                   <td>{{ donation.description }}</td>

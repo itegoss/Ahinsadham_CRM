@@ -3327,7 +3327,10 @@ def donation_view(request):
         amount = request.GET.get('amount')
         if amount:
             try:
-                initial_amount = str(float(amount))
+                if float(amount) == 0:
+                    initial_amount = '0'
+                else:
+                    initial_amount = str(float(amount))
             except Exception:
                 pass
         if scheme_id or scheme_name or scheme_image:
@@ -3774,6 +3777,7 @@ from heart_charity.models import Lookup
 
 def schemes_view(request):
 
+    general_scheme = Lookup.objects.filter(lookup_name="GENERAL SCHEME").first()
     foundation_scheme = Lookup.objects.filter(id=12).first()
     icu_scheme = Lookup.objects.filter(id=13).first()
     sanctuary_scheme = Lookup.objects.filter(id=14).first()
@@ -3784,6 +3788,15 @@ def schemes_view(request):
     plant_tree_scheme = Lookup.objects.filter(id=19).first()
 
     schemes = [
+        {
+            'id': general_scheme.id if general_scheme else 21,
+            'name': general_scheme.lookup_name if general_scheme else 'GENERAL SCHEME',
+            'amount': 0,
+            'amount_display': '0',
+            'image': 'images/hands.png',
+            'slider_image': None,
+            'description': 'Your contribution supports our general fund, enabling emergency rescue operations, veterinary care, and daily shelter needs for all animals.'
+        },
         {
             'id': foundation_scheme.id if foundation_scheme else 12,
             'name': foundation_scheme.lookup_name if foundation_scheme else 'FOUNDATION PILLAR SUPPORT',
