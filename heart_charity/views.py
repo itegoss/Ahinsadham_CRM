@@ -3857,7 +3857,7 @@ def schemes_view(request):
             'description': 'Plant a tree to expand our green habitat-your gift creates shade, shelter, and serenity for all life.'
         },
     ]
-
+    schemes = sorted(schemes, key=lambda x: x['amount'])
     return render(request, 'ACHschemas.html', {'schemes': schemes})
 
 from django.http import JsonResponse
