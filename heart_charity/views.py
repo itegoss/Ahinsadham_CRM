@@ -3624,6 +3624,18 @@ def payment_verify(request):
         # Reconstruct display name from first, middle, last name fields
         display_name = ' '.join(filter(None, [first_name, middle_name, last_name])) or None
         
+        # Resolve creator user (use authenticated user, or fallback to 'Online Donation' system user)
+        creator = None
+        if request.user and request.user.is_authenticated:
+            creator = request.user
+        else:
+            try:
+                from django.contrib.auth.models import User
+                creator, _ = User.objects.get_or_create(username='Online Donation')
+            except Exception as e:
+                logger.error("Failed to get/create 'Online Donation' user: %s", e)
+                creator = None
+
         logger.info("Creating Donation record in database...")
         # Create Donation record (fields map to existing DB columns)
         donation = Donation.objects.create(
@@ -3645,8 +3657,8 @@ def payment_verify(request):
             donation_amount_paid=declared_amount_decimal,
             name_of_bank=None,
             branch=None,
-            created_by=(request.user if request.user and request.user.is_authenticated else None),
-            updated_by=(request.user if request.user and request.user.is_authenticated else None),
+            created_by=creator,
+            updated_by=creator,
             verified=True,
         )
         logger.info("Donation record created successfully. ID: %s, Receipt ID: %s", donation.id, donation.receipt_id)
