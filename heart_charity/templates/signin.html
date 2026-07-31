@@ -114,10 +114,16 @@
         .auth-card { padding: 2rem 1.2rem; }
     }
 </style>
+
+
 <div class="auth-wrapper">
+
     <div class="auth-card">
         <h2>Sign In</h2>
-        <div class="subtext">Enter your credentials to access your account.</div>
+
+<div class="p-2 my-3 rounded text-center fw-bold" style="background-color: #f8f9fa; border: 1.5px solid #000; color: red; font-size: 13px;">
+            <i class="fa-solid fa-circle-info me-1"></i> Note: For login use only ahinsadham.org domain's email.
+        </div>
         {% if errmsg %}
         <div class="alert alert-warning mt-2 mb-3">{{ errmsg }}</div>
         {% endif %}
@@ -130,5 +136,7 @@
         <hr>
           <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Mobile Number</a>
     </div>
+ 
 </div>
+
 {% endblock %}
