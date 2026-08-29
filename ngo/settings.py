@@ -13,7 +13,8 @@ ALLOWED_HOSTS = [
     "admin.ahinsadham.org",
     "ahinsadham.org",
     'ahinsadham-crm-856395380155.us-central1.run.app',
-    'https://ahinsadham-crm-testing-856395380155.us-central1.run.app',
+    'ahinsadham-crm-testing-856395380155.us-central1.run.app',
+    '.run.app',
 ]
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = os.getenv("ENV", "DEV") != 'DEV'
