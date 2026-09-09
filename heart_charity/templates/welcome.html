@@ -1325,18 +1325,34 @@
     cursor: not-allowed;
   }
 
-  .table-responsive::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+  .table-responsive,
+  .scrollable-table1 {
+    scrollbar-width: thin;
+    scrollbar-color: #0d9488 #f1f5f9;
   }
 
-  .table-responsive::-webkit-scrollbar-thumb {
-    background-color: #007bff;
-    border-radius: 10px;
+  .table-responsive::-webkit-scrollbar,
+  .scrollable-table1::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
 
-  .table-responsive::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
+  .table-responsive::-webkit-scrollbar-thumb,
+  .scrollable-table1::-webkit-scrollbar-thumb {
+    background-color: #0d9488;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb:hover,
+  .scrollable-table1::-webkit-scrollbar-thumb:hover {
+    background-color: #0f766e;
+  }
+
+  .table-responsive::-webkit-scrollbar-track,
+  .scrollable-table1::-webkit-scrollbar-track {
+    background-color: #f1f5f9;
+    border-radius: 8px;
   }
 
   .paginated-table th,
@@ -1344,19 +1360,6 @@
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;
-  }
-
-  .table-responsive::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  .table-responsive::-webkit-scrollbar-thumb {
-    background-color: #007bff;
-    border-radius: 10px;
-  }
-
-  .table-responsive::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
   }
 
   .paginated-table th,
@@ -1410,16 +1413,44 @@
       {% if user.is_superuser %}
       <a class="tab-btn active" data-tab="default-user"><i class="bi bi-bar-chart-line"></i><span
           class="sidebar-text">Dashboard</span></a>
-      <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
-      <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
-      <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
-          class="sidebar-text">Roles</span></a>
+
+      <!-- Settings Submenu -->
+      <div class="sidebar-dropdown-wrapper">
+        <button type="button" class="sidebar-dropdown-toggle" id="settingsDropdownToggle">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-gear"></i>
+            <span class="sidebar-text">Settings</span>
+          </div>
+          <i class="bi bi-chevron-down chevron-icon"></i>
+        </button>
+        <div class="sidebar-submenu" id="settingsSubmenu">
+          <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
+          <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
+          <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
+              class="sidebar-text">Roles</span></a>
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
+              Box</span></a>
+        </div>
+      </div>
+
+      <!-- Donations Submenu -->
+      <div class="sidebar-dropdown-wrapper">
+        <button type="button" class="sidebar-dropdown-toggle" id="donationsDropdownToggle">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-cash-coin"></i>
+            <span class="sidebar-text">Donations</span>
+          </div>
+          <i class="bi bi-chevron-down chevron-icon"></i>
+        </button>
+        <div class="sidebar-submenu" id="donationsSubmenu">
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash"></i><span class="sidebar-text">Other Donation</span></a>
+        </div>
+      </div>
+
       <a class="tab-btn" data-tab="Donor/Volunteer Management System"><i class="bi bi-heart"></i><span
           class="sidebar-text">Donor/Volunteer</span></a>
-      <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash-coin"></i><span class="sidebar-text">Donation
-          Module</span></a>
-      <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
-          Box</span></a>
       <a class="tab-btn" data-tab="Event Management System"><i class="bi bi-calendar-event"></i><span
           class="sidebar-text">Event Management</span></a>
       <a class="tab-btn" data-tab="Timesheet System"><i class="bi bi-clock"></i><span class="sidebar-text">Timesheet
@@ -1457,32 +1488,62 @@
       <a class="tab-btn active" data-tab="default-user"><i class="bi bi-bar-chart-line"></i><span
           class="sidebar-text">Dashboard</span></a>
 
-      {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules %}
-      <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
+      {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules or "User" in allowed_modules or "Roles" in allowed_modules or "roles" in allowed_modules or "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
+      <div class="sidebar-dropdown-wrapper">
+        <button type="button" class="sidebar-dropdown-toggle" id="settingsDropdownToggle">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-gear"></i>
+            <span class="sidebar-text">Settings</span>
+          </div>
+          <i class="bi bi-chevron-down chevron-icon"></i>
+        </button>
+        <div class="sidebar-submenu" id="settingsSubmenu">
+          {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules %}
+          <a class="tab-btn mdm" data-tab="MDM"><i class="bi bi-table"></i><span class="sidebar-text">MDM</span></a>
+          {% endif %}
+
+          {% if "User" in allowed_modules %}
+          <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
+          {% endif %}
+
+          {% if "Roles" in allowed_modules or "roles" in allowed_modules %}
+          <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
+              class="sidebar-text">Roles</span></a>
+          {% endif %}
+
+          {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
+              Box</span></a>
+          {% endif %}
+        </div>
+      </div>
       {% endif %}
 
-      {% if "User" in allowed_modules %}
-      <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
-      {% endif %}
+      {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules or "Donation Module" in allowed_modules %}
+      <div class="sidebar-dropdown-wrapper">
+        <button type="button" class="sidebar-dropdown-toggle" id="donationsDropdownToggle">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-cash-coin"></i>
+            <span class="sidebar-text">Donations</span>
+          </div>
+          <i class="bi bi-chevron-down chevron-icon"></i>
+        </button>
+        <div class="sidebar-submenu" id="donationsSubmenu">
+          {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          {% endif %}
 
-      {% if "Roles" in allowed_modules or "roles" in allowed_modules %}
-      <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
-          class="sidebar-text">Roles</span></a>
+          {% if "Donation Module" in allowed_modules %}
+          <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash"></i><span class="sidebar-text">Other Donation</span></a>
+          {% endif %}
+        </div>
+      </div>
       {% endif %}
 
       {% if "Donor/Volunteer Management System" in allowed_modules %}
       <a class="tab-btn" data-tab="Donor/Volunteer Management System"><i class="bi bi-heart"></i><span
           class="sidebar-text">Donor/Volunteer</span></a>
-      {% endif %}
-
-      {% if "Donation Module" in allowed_modules %}
-      <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash-coin"></i><span class="sidebar-text">Donation
-          Module</span></a>
-      {% endif %}
-
-      {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
-      <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
-          Box</span></a>
       {% endif %}
 
       {% if "Employee Management System" in allowed_modules %}
@@ -5074,6 +5135,29 @@
   document.addEventListener('DOMContentLoaded', function () {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
+    const settingsToggle = document.getElementById('settingsDropdownToggle');
+    const settingsSubmenu = document.getElementById('settingsSubmenu');
+    const donationsToggle = document.getElementById('donationsDropdownToggle');
+    const donationsSubmenu = document.getElementById('donationsSubmenu');
+
+    if (settingsToggle && settingsSubmenu) {
+      settingsToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        settingsSubmenu.classList.toggle('show');
+        settingsToggle.classList.toggle('open');
+      });
+    }
+
+    if (donationsToggle && donationsSubmenu) {
+      donationsToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        donationsSubmenu.classList.toggle('show');
+        donationsToggle.classList.toggle('open');
+      });
+    }
+
     function activateTab(tabId) {
       tabBtns.forEach(t => t.classList.remove('active'));
       tabContents.forEach(c => c.classList.remove('active'));
@@ -5131,6 +5215,7 @@
         }
       }
     }
+
     window.activateTab = activateTab;
     const backFromForm = localStorage.getItem('backFromForm');
     if (backFromForm) {

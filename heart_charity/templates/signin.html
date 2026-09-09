@@ -1,140 +1,45 @@
 {% extends 'base.html' %} 
-{% block title %} Heart Charity | Sign In {% endblock %}
+{% block title %} Ahinsadham CRM | Sign In {% endblock %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-    .auth-wrapper {
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1rem;
-    }
-    .auth-card {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 6px 40px #57748d33;
-        width: 100%;
-        max-width: 450px;
-        padding: 2.5rem 2rem;
-        box-sizing: border-box;
-    }
-    .auth-card h2 {
-        font-size: 2.1rem;
-        color: #2b475c;
-        font-weight: 700;
-        margin-bottom: 8px;
-        text-align: center;
-    }
-    .subtext {
-        font-size: 1rem;
-        color: #5091af;
-        margin-bottom: 24px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        text-align: center;
-    }
-    .input-row { margin-bottom: 18px; }
-    .form-control, select {
-        border-radius: 8px;
-        border: 1px solid #ddeaf0;
-        padding: 12px 14px;
-        font-size: 16px;
-        margin-bottom: 0;
-        width: 100%;
-        transition: border .2s;
-    }
-    .form-control:focus, select:focus { border-color: #387ca3; outline: none; }
-    .auth-btn {
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(90deg,#387ca3 0%, #6a88a2 85%);
-        border: none;
-        color: #fff;
-        font-size: 17px;
-        border-radius: 8px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        transition: background 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 14px #387ca340;
-        margin-top: 5px;
-        cursor: pointer;
-    }
-    .auth-btn:hover, .auth-btn:active {
-        background: linear-gradient(90deg,#2b475c 0%, #57748d 85%);
-    }
-    .google-btn {
-        width: 100%;
-        padding: 12px;
-        background: #fff;
-        border: 1px solid #ddeaf0;
-        color: #555;
-        font-size: 15px;
-        border-radius: 8px;
-        font-weight: 600;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        margin-top: 14px;
-        transition: background 0.2s, border 0.2s;
-        box-shadow: 0 2px 30px #ddeaf055;
-        cursor: pointer;
-        text-decoration: none;
-    }
-    .google-btn:hover, .google-btn:focus {
-        background: #f7fafc;
-        border-color: #387ca3;
-    }
-    .alt-option {
-        font-size: 15px;
-        color: #555;
-        margin-top: 24px;
-        margin-bottom: 0;
-        text-align: center;
-    }
-    .alt-option a {
-        color: #387ca3;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color .2s;
-    }
-    .alt-option a:hover { text-decoration: underline; color: #2b475c; }
-    .forgot-link {
-        font-size: 15px;
-        color: #5091af;
-        text-decoration: none;
-        font-weight: 600;
-        margin-left: 12px;
-        transition: color .2s;
-    }
-    .forgot-link:hover { color: #2b475c; text-decoration: underline; }
-    @media (max-width: 480px) {
-        .auth-card { padding: 2rem 1.2rem; }
-    }
-</style>
-
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Sign In</h2>
-
-<div class="p-2 my-3 rounded text-center fw-bold" style="background-color: #f8f9fa; border: 1.5px solid #000; color: red; font-size: 13px;">
-            <i class="fa-solid fa-circle-info me-1"></i> Note: For login use only ahinsadham.org domain's email.
+<div class="d-flex align-items-center justify-content-center py-5" style="min-height: 78vh;">
+    <div class="card border-0 shadow-lg p-4 p-md-5" style="max-width: 460px; width: 100%; border-radius: 20px; background: #ffffff;">
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-mint-bg p-3 rounded-circle mb-3" style="width: 70px; height: 70px; background-color: var(--crm-mint-bg);">
+                <i class="fa-solid fa-shield-halved fs-2" style="color: var(--crm-primary-light);"></i>
+            </div>
+            <h2 class="fw-bold mb-1" style="color: var(--crm-primary);">Ahinsadham CRM</h2>
+            <p class="text-muted small">Sign in to manage donations, volunteers, and operations</p>
         </div>
+
+        <div class="p-3 mb-4 rounded-3 text-center fw-semibold small" style="background-color: var(--crm-mint-bg); border: 1px solid var(--crm-mint-border); color: var(--crm-primary-dark);">
+            <i class="fa-solid fa-circle-info me-1 text-teal"></i> Note: For login use official <strong>@ahinsadham.org</strong> domain email.
+        </div>
+
         {% if errmsg %}
-        <div class="alert alert-warning mt-2 mb-3">{{ errmsg }}</div>
+        <div class="alert alert-warning mb-3 py-2 small fw-semibold border-0 shadow-sm" style="border-radius: 10px;">{{ errmsg }}</div>
         {% endif %}
         {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-danger mt-2 mb-3">{{ message }}</div>
+        <div class="alert alert-danger mb-3 py-2 small fw-semibold border-0 shadow-sm" style="border-radius: 10px;">{{ message }}</div>
         {% endfor %}
         {% endif %}
-        <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Google</a>
-        <hr>
-          <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Mobile Number</a>
-    </div>
- 
-</div>
 
+        <div class="d-flex flex-column gap-3">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn py-3 fw-bold text-white d-flex align-items-center justify-content-center gap-2 shadow-sm" style="background: linear-gradient(135deg, var(--crm-primary) 0%, var(--crm-teal) 100%); border-radius: 12px; font-size: 0.95rem;">
+                <i class="fab fa-google fs-5"></i> Sign in with Google
+            </a>
+
+            <div class="position-relative text-center my-2">
+                <hr class="text-muted opacity-25">
+                <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted extra-small fw-semibold" style="font-size: 0.75rem;">OR</span>
+            </div>
+
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-secondary py-3 fw-bold d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; font-size: 0.95rem;">
+                <i class="fa-solid fa-mobile-screen-button fs-5 text-teal"></i> Sign in with Mobile Number
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
