@@ -1582,8 +1582,8 @@ def add_donor_volunteer(request):
 
                 # ID
                 id_type=get_lookup("id_type"),
-                id_number=request.POST.get("id_number"),
-                pan_number=request.POST.get("pan_number"),
+                id_number=request.POST.get("id_number") or None,
+                pan_number=request.POST.get("pan_number") or None,
 
                 created_by=request.user,
                 updated_by=request.user,
@@ -2612,7 +2612,7 @@ def edit_donor(request, donor_id):
             whatsapp_number = request.POST.get("whatsapp_number")
             donor.whatsapp_number = f"{whatsapp_code}{whatsapp_number}" if whatsapp_code and whatsapp_number else None
 
-            donor.email = request.POST.get("email")
+            donor.email = request.POST.get("email") or None
             donor.date_of_birth = request.POST.get("date_of_birth") or None
             donor.age = request.POST.get("age") or None
             donor.doa = request.POST.get("doa") or None
@@ -2637,8 +2637,8 @@ def edit_donor(request, donor_id):
             donor.designation_id = request.POST.get("designation") or None
 
             donor.id_type_id = request.POST.get("id_type") or None
-            donor.id_number = request.POST.get("id_number")
-            donor.pan_number = request.POST.get("pan_number")
+            donor.id_number = request.POST.get("id_number") or None
+            donor.pan_number = request.POST.get("pan_number") or None
 
             if request.FILES.get("id_proof_image"):
                 donor.id_proof_image = request.FILES["id_proof_image"]

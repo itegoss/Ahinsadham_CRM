@@ -686,8 +686,8 @@
 <hr>    
 <div class="row g-3 mb-3" id="idproof">
     <div class="col-md-4">
-        <label class="form-label">ID Type <span style="color: #d9534f;">*</span></label>
-        <select name="id_type" class="form-select" required>
+        <label class="form-label">ID Type</label>
+        <select name="id_type" class="form-select">
             <option value="">Select</option>
             {% for item in id_types %}
                 <option value="{{ item.id }}"
@@ -702,8 +702,8 @@
 </div>
 <div class="row g-3 mb-3">
     <div class="col-md-4">
-        <label class="form-label">ID Number <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="id_number" value="{{ donor.id_number }}" class="form-control" required aria-required="true">
+        <label class="form-label">ID Number</label>
+        <input type="text" name="id_number" value="{{ donor.id_number }}" class="form-control">
     </div>
     <div class="col-md-4">
         <label class="form-label">Upload ID Proof</label>
@@ -717,8 +717,8 @@
 </div>
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <label class="form-label">PAN Number <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="pan_number" value="{{ donor.pan_number }}" class="form-control" required aria-required="true">
+        <label class="form-label">PAN Number</label>
+        <input type="text" name="pan_number" value="{{ donor.pan_number }}" class="form-control">
     </div>
 
     <div class="col-md-4">

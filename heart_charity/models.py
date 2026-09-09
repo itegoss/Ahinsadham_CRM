@@ -94,9 +94,9 @@ class DonationBox(models.Model):
             last_box = DonationBox.objects.all().order_by('id').last()
             if last_box:
                 last_id = int(last_box.donation_id.split('_')[1])
-                new_id = f"DO_{last_id + 1:04d}"
+                new_id = f"DP_{last_id + 1:04d}"
             else:
-                new_id = "DO_0001"
+                new_id = "DP_0001"
             self.donation_id = new_id
         if not self.qr_code:
             qr_data = f"Donation ID: {self.donation_id}"
