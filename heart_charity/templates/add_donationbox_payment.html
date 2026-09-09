@@ -174,7 +174,7 @@
           <option value="">-- Select Donation Box --</option>
           {% for box in donation_boxes %}
               <option value="{{ box.id }}">
-                  {{ box.donation_box_name }} (ID: {{ box.donation_id }})
+                  {% if box.box_owner %}{{ box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ box.donation_id }})
               </option>
           {% endfor %}
       </select>

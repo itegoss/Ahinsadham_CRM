@@ -1493,7 +1493,11 @@ def add_donor_volunteer(request):
 
     org_types = Lookup.objects.filter(lookup_type__type_name__iexact="Organization Type")
 
-    donation_boxes = DonationBox.objects.filter(is_deleted=False)
+    assigned_box_ids = DonorVolunteer.objects.filter(
+        is_deleted=False,
+        donor_box__isnull=False
+    ).values_list('donor_box_id', flat=True)
+    donation_boxes = DonationBox.objects.filter(is_deleted=False).exclude(id__in=assigned_box_ids)
     all_donors = DonorVolunteer.objects.none()
 
     blood_groups = [
@@ -1521,6 +1525,11 @@ def add_donor_volunteer(request):
 
             if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
                 messages.error(request, "This email already exists.")
+                return redirect("add_donor_volunteer")
+
+            donor_box_obj = get_box("donor_box")
+            if donor_box_obj and DonorVolunteer.objects.filter(is_deleted=False, donor_box=donor_box_obj).exists():
+                messages.error(request, f"Donor Box '{donor_box_obj.donation_id}' is already assigned to another owner.")
                 return redirect("add_donor_volunteer")
 
             # CONTACT
@@ -2588,10 +2597,23 @@ def edit_donor(request, donor_id):
     positions = Lookup.objects.filter(lookup_type__type_name="Position", is_deleted=False)
     designations = Lookup.objects.filter(lookup_type__type_name="Designation", is_deleted=False)
 
-    donation_boxes = DonationBox.objects.filter(is_deleted=False)
+    assigned_box_ids = DonorVolunteer.objects.filter(
+        is_deleted=False,
+        donor_box__isnull=False
+    ).exclude(id=donor.id).values_list('donor_box_id', flat=True)
+    donation_boxes = DonationBox.objects.filter(is_deleted=False).exclude(id__in=assigned_box_ids)
 
     if request.method == "POST":
         try:
+            submitted_box_id = request.POST.get("donor_box") or None
+            if submitted_box_id and str(submitted_box_id).isdigit():
+                submitted_box_id_int = int(submitted_box_id)
+                if DonorVolunteer.objects.filter(is_deleted=False, donor_box_id=submitted_box_id_int).exclude(id=donor.id).exists():
+                    box_obj = DonationBox.objects.filter(id=submitted_box_id_int).first()
+                    box_label = box_obj.donation_id if box_obj else "selected"
+                    messages.error(request, f"Donor Box '{box_label}' is already assigned to another owner.")
+                    return redirect("edit_donor", donor_id=donor.id)
+
             donor.person_type_id = request.POST.get("person_type") or None
             donor.referred_by_id = request.POST.get("referred_by") or None
             donor.donor_box_id = request.POST.get("donor_box") or None

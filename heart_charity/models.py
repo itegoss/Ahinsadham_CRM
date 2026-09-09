@@ -91,13 +91,23 @@ class DonationBox(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.donation_id:
-            last_box = DonationBox.objects.all().order_by('id').last()
-            if last_box:
-                last_id = int(last_box.donation_id.split('_')[1])
-                new_id = f"DO_{last_id + 1:04d}"
-            else:
-                new_id = "DO_0001"
-            self.donation_id = new_id
+            max_num = 0
+            for box in DonationBox.objects.all():
+                if box.donation_id and box.donation_id.startswith('DO_'):
+                    try:
+                        num = int(box.donation_id.split('_')[1])
+                        if num > max_num:
+                            max_num = num
+                    except (IndexError, ValueError):
+                        pass
+
+            candidate_id = f"DO_{max_num + 1:04d}"
+            while DonationBox.objects.filter(donation_id=candidate_id).exists():
+                max_num += 1
+                candidate_id = f"DO_{max_num + 1:04d}"
+
+            self.donation_id = candidate_id
+
         if not self.qr_code:
             qr_data = f"Donation ID: {self.donation_id}"
             qr_img = qrcode.make(qr_data)
@@ -106,8 +116,10 @@ class DonationBox(models.Model):
             self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
 
         super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.donation_box_name} ({self.donation_id})"
+        owner = self.box_owner if self.box_owner else "Donation Box"
+        return f"{owner} ({self.donation_id})"
 gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 
 class DonorVolunteer(models.Model):

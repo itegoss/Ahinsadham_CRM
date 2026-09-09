@@ -82,7 +82,8 @@
                     </div>
                     <div class="col-md-3" id="donor_box_wrapper">
                         <label class="form-label">Donor Box</label>
-                        <select name="donor_box">
+                        <select name="donor_box" class="form-select">
+                            <option value="">Select Donor Box</option>
                             {% for box in donation_boxes %}
                                 <option value="{{ box.id }}"
                                 {% if donor.donor_box_id == box.id %}selected{% endif %}>
