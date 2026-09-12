@@ -1428,7 +1428,7 @@
           <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
           <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
               class="sidebar-text">Roles</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
               Box</span></a>
         </div>
       </div>
@@ -1443,8 +1443,8 @@
           <i class="bi bi-chevron-down chevron-icon"></i>
         </button>
         <div class="sidebar-submenu" id="donationsSubmenu">
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" href="{% url 'danpeti_page' %}" data-tab="Danpeti Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
           <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash"></i><span class="sidebar-text">Other Donation</span></a>
         </div>
       </div>
@@ -1512,7 +1512,7 @@
           {% endif %}
 
           {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
               Box</span></a>
           {% endif %}
         </div>
@@ -1530,8 +1530,8 @@
         </button>
         <div class="sidebar-submenu" id="donationsSubmenu">
           {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" href="{% url 'danpeti_page' %}" data-tab="Danpeti Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
           {% endif %}
 
           {% if "Donation Module" in allowed_modules %}
@@ -3244,9 +3244,9 @@
                       <td>
                         {% if donation.id_proof_image or donation.pan_card_image %}
                         <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
-        '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
-        '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
-      )">
+                            '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
+                            '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+                          )">
                           <i class="fa-solid fa-eye"></i>
                         </span>
                         {% else %}
@@ -3326,8 +3326,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ----------- Visitor Management System ------------------ -->
 
     <div class="tab-content" id="Visitor Management System">
       <div class="card border-0">
@@ -3841,16 +3839,18 @@
 
     <!-- ---------Donation box module-------- -->
 
-    <div class="tab-content" id="Donation Box Module">
+    <div class="tab-content" id="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Donation box (Dan Peti)</h4>
         </div>
         <!-- ------------Donation Owner Module----------- -->
+        {% if page_mode != "box" %}
         <div class="card-body">
           <h5 style="color:#1b5e20">Danpeti Donation</h5>
           <div class="search-container d-flex align-items-center">
             <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="payments_query" data-target="donation"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ payments_query|default:'' }}">
@@ -3858,7 +3858,9 @@
           </div>
           <div class="payments-table-placeholder" data-add-url="{% url 'add_donation_payment' %}"></div>
         </div>
+        {% endif %}
         <!-- ✅ Donation Payment Pagination Controls -->
+        {% if page_mode != "box" %}
         <div class="pagination-container text-center">
           {% if payments_page_obj.has_previous %}
           <a href="?payments_page=1&payments_query={{ payments_query }}"
@@ -3884,7 +3886,9 @@
             class="btn btn-outline-primary btn-sm ms-2">⏭</a>
           {% endif %}
         </div>
+        {% endif %}
         <!-- ------------Donation Box----------- -->
+        {% if page_mode != "danpeti" %}
         <!-- QR Code Popup -->
         <div id="qrModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
           <div
@@ -3907,6 +3911,7 @@
           <div class="search-container">
             <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100"
               role="search">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="box_query" data-target="boxx"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ box_query|default:'' }}">
@@ -4180,6 +4185,7 @@
             class="btn btn-outline-primary btn-sm ms-2">⏭</a>
           {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
 
@@ -5223,11 +5229,12 @@
       activateTab(lastTab);
       localStorage.removeItem('backFromForm');
     } else {
-      const saved = localStorage.getItem('activeTab') || 'default-user';
+      const saved = "{{ active_tab|default:''|escapejs }}" || localStorage.getItem('activeTab') || 'default-user';
       activateTab(saved);
     }
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function (e) {
+        if (this.getAttribute('href')) return;
         e.preventDefault();
         e.stopPropagation();
         const tabId = this.dataset.tab;
@@ -5245,9 +5252,11 @@
 </script>
 
 <!-- Shared Payments Table Container -->
+{% if page_mode != "box" %}
 <div id="shared-payments-table-source" style="display: none;">
   {% include "payments_table.html" %}
 </div>
+{% endif %}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const sidebarWrapper = document.getElementById('sidebarWrapper');

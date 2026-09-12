@@ -34,6 +34,7 @@
             {% endif %}
             {% if permissions.can_add %}
             <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
               <input type="hidden" name="download" value="1">
               <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
@@ -186,6 +187,7 @@
             {% endif %}
             {% if permissions.can_add %}
             <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
               <input type="hidden" name="download" value="1">
               <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
