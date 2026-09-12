@@ -1,140 +1,432 @@
 {% extends 'base.html' %} 
-{% block title %} Heart Charity | Sign In {% endblock %}
+{% block title %} Ahinsadham CRM | Sign In {% endblock %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-    .auth-wrapper {
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1rem;
+  /* ── Override base.html main padding for full-bleed login ── */
+  main.flex-grow-1 {
+    padding: 0 !important;
+  }
+
+  /* ── Split Panel Layout ── */
+  .signin-split {
+    display: flex;
+    min-height: calc(100vh - 70px); /* below navbar */
+    overflow: hidden;
+  }
+
+  /* ── Left: Form Panel ── */
+  .signin-left {
+    flex: 0 0 520px;
+    max-width: 520px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3.5rem 3rem;
+    box-shadow: 4px 0 24px rgba(6,78,59,0.06);
+    position: relative;
+    z-index: 2;
+  }
+
+  .signin-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .signin-logo img {
+    height: 48px;
+    width: auto;
+  }
+
+  .signin-logo-label {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #064E3B;
+    letter-spacing: -0.3px;
+  }
+
+  .signin-heading {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #064E3B;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+
+  .signin-sub {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Domain info box */
+  .signin-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.84rem;
+    color: #065F46;
+    font-weight: 500;
+  }
+  .signin-info-box i {
+    color: #10B981;
+    margin-top: 2px;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+
+  /* Google button */
+  .signin-btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.95rem 1.5rem;
+    background: #064E3B;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    text-decoration: none;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(6,78,59,0.18);
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+  .signin-btn-google:hover {
+    background: #047857;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(4,120,87,0.25);
+    color: #ffffff !important;
+  }
+  .signin-btn-google i {
+    font-size: 1.15rem;
+  }
+
+  /* Divider */
+  .signin-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.4rem 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .signin-divider::before,
+  .signin-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+  }
+
+  /* Mobile button */
+  .signin-btn-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background: #ffffff;
+    color: #064E3B !important;
+    border: 1.5px solid #A7F3D0;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .signin-btn-mobile:hover {
+    background: #ECFDF5;
+    border-color: #10B981;
+    color: #064E3B !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16,185,129,0.12);
+  }
+  .signin-btn-mobile i {
+    font-size: 1.1rem;
+    color: #10B981;
+  }
+
+  /* Alerts */
+  .signin-alert {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .signin-alert-warning {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+  .signin-alert-danger {
+    background: #ffe4e6;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+  }
+
+  /* Footer credit inside left panel */
+  .signin-left-footer {
+    margin-top: 2.5rem;
+    font-size: 0.775rem;
+    color: #94a3b8;
+    text-align: center;
+  }
+  .signin-left-footer a {
+    color: #047857;
+    font-weight: 600;
+  }
+
+  /* ── Right: Brand Panel ── */
+  .signin-right {
+    flex: 1;
+    background: linear-gradient(145deg, #012a1d 0%, #023d2a 40%, #064E3B 70%, #09e6c1 160%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 4rem 4.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative circles */
+  .signin-right::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(9, 230, 193, 0.08);
+    pointer-events: none;
+  }
+  .signin-right::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: 60px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.07);
+    pointer-events: none;
+  }
+
+  /* Dot grid pattern */
+  .signin-dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  /* Right panel content */
+  .signin-brand-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .signin-brand-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(9,230,193,0.12);
+    border: 1px solid rgba(9,230,193,0.25);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #09e6c1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .signin-brand-headline {
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.18;
+    letter-spacing: -0.5px;
+    margin-bottom: 1.25rem;
+    max-width: 420px;
+  }
+
+  .signin-brand-headline span {
+    color: #09e6c1;
+  }
+
+  .signin-brand-desc {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 2.25rem;
+  }
+
+  /* Feature pills */
+  .signin-feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+  .signin-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.815rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+  }
+  .signin-pill:hover {
+    background: rgba(9,230,193,0.15);
+    border-color: rgba(9,230,193,0.3);
+    color: #09e6c1;
+  }
+  .signin-pill i {
+    font-size: 0.85rem;
+    color: #09e6c1;
+  }
+
+  /* ── Mobile responsive ── */
+  @media (max-width: 768px) {
+    .signin-split {
+      flex-direction: column;
     }
-    .auth-card {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 6px 40px #57748d33;
-        width: 100%;
-        max-width: 450px;
-        padding: 2.5rem 2rem;
-        box-sizing: border-box;
+    .signin-left {
+      flex: none;
+      max-width: 100%;
+      width: 100%;
+      padding: 2.5rem 1.75rem;
     }
-    .auth-card h2 {
-        font-size: 2.1rem;
-        color: #2b475c;
-        font-weight: 700;
-        margin-bottom: 8px;
-        text-align: center;
+    .signin-right {
+      padding: 2.5rem 2rem;
+      min-height: 260px;
+      justify-content: center;
     }
-    .subtext {
-        font-size: 1rem;
-        color: #5091af;
-        margin-bottom: 24px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        text-align: center;
+    .signin-brand-headline {
+      font-size: 1.75rem;
     }
-    .input-row { margin-bottom: 18px; }
-    .form-control, select {
-        border-radius: 8px;
-        border: 1px solid #ddeaf0;
-        padding: 12px 14px;
-        font-size: 16px;
-        margin-bottom: 0;
-        width: 100%;
-        transition: border .2s;
-    }
-    .form-control:focus, select:focus { border-color: #387ca3; outline: none; }
-    .auth-btn {
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(90deg,#387ca3 0%, #6a88a2 85%);
-        border: none;
-        color: #fff;
-        font-size: 17px;
-        border-radius: 8px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        transition: background 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 14px #387ca340;
-        margin-top: 5px;
-        cursor: pointer;
-    }
-    .auth-btn:hover, .auth-btn:active {
-        background: linear-gradient(90deg,#2b475c 0%, #57748d 85%);
-    }
-    .google-btn {
-        width: 100%;
-        padding: 12px;
-        background: #fff;
-        border: 1px solid #ddeaf0;
-        color: #555;
-        font-size: 15px;
-        border-radius: 8px;
-        font-weight: 600;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        margin-top: 14px;
-        transition: background 0.2s, border 0.2s;
-        box-shadow: 0 2px 30px #ddeaf055;
-        cursor: pointer;
-        text-decoration: none;
-    }
-    .google-btn:hover, .google-btn:focus {
-        background: #f7fafc;
-        border-color: #387ca3;
-    }
-    .alt-option {
-        font-size: 15px;
-        color: #555;
-        margin-top: 24px;
-        margin-bottom: 0;
-        text-align: center;
-    }
-    .alt-option a {
-        color: #387ca3;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color .2s;
-    }
-    .alt-option a:hover { text-decoration: underline; color: #2b475c; }
-    .forgot-link {
-        font-size: 15px;
-        color: #5091af;
-        text-decoration: none;
-        font-weight: 600;
-        margin-left: 12px;
-        transition: color .2s;
-    }
-    .forgot-link:hover { color: #2b475c; text-decoration: underline; }
-    @media (max-width: 480px) {
-        .auth-card { padding: 2rem 1.2rem; }
-    }
+  }
 </style>
 
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Sign In</h2>
+<div class="signin-split">
 
-<div class="p-2 my-3 rounded text-center fw-bold" style="background-color: #f8f9fa; border: 1.5px solid #000; color: red; font-size: 13px;">
-            <i class="fa-solid fa-circle-info me-1"></i> Note: For login use only ahinsadham.org domain's email.
-        </div>
-        {% if errmsg %}
-        <div class="alert alert-warning mt-2 mb-3">{{ errmsg }}</div>
-        {% endif %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-danger mt-2 mb-3">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-        <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Google</a>
-        <hr>
-          <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn"><i class="fab fa-google"></i> Sign in with Mobile Number</a>
+  <!-- ─── LEFT: Form panel ─── -->
+  <div class="signin-left">
+
+    <!-- Logo -->
+    <div class="signin-logo">
+      <img src="{% static 'images/Ahinsa-logo.png' %}" alt="Ahinsadham Logo">
+      <span class="signin-logo-label">Ahinsadham CRM</span>
     </div>
- 
+
+    <!-- Heading -->
+    <h1 class="signin-heading">Sign in to your account</h1>
+    <p class="signin-sub">Manage donations, volunteers, and operations from one platform.</p>
+
+    <!-- Domain notice -->
+    <div class="signin-info-box">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Use your official <strong>@ahinsadham.org</strong> Google account to sign in.</span>
+    </div>
+
+    <!-- Error/warning messages -->
+    {% if errmsg %}
+    <div class="signin-alert signin-alert-warning">
+      <i class="fa-solid fa-triangle-exclamation"></i>{{ errmsg }}
+    </div>
+    {% endif %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="signin-alert signin-alert-danger">
+      <i class="fa-solid fa-circle-xmark"></i>{{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Google sign in -->
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="signin-btn-google">
+      <i class="fab fa-google"></i>
+      Sign in with Google
+    </a>
+
+    <div class="signin-divider">OR</div>
+
+    <!-- Mobile sign in -->
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="signin-btn-mobile">
+      <i class="fa-solid fa-mobile-screen-button"></i>
+      Sign in with Mobile Number
+    </a>
+
+    <!-- Footer credit -->
+    <div class="signin-left-footer">
+      Powered by <a href="https://www.itegoss.com/" target="_blank">Itegoss Technology</a>
+    </div>
+
+  </div>
+
+  <!-- ─── RIGHT: Brand panel ─── -->
+  <div class="signin-right">
+    <div class="signin-dot-grid"></div>
+    <div class="signin-brand-content">
+
+      <div class="signin-brand-eyebrow">
+        <i class="fa-solid fa-leaf"></i>
+        Ahinsadham NGO &amp; CRM
+      </div>
+
+      <h2 class="signin-brand-headline">
+        Manage your entire<br>
+        NGO from <span>one beautiful</span><br>
+        platform.
+      </h2>
+
+      <p class="signin-brand-desc">
+        From donations to volunteers, events to reporting — Ahinsadham CRM gives you complete visibility and control over every operation.
+      </p>
+
+      <div class="signin-feature-pills">
+        <span class="signin-pill"><i class="bi bi-cash-coin"></i> Donation Management</span>
+        <span class="signin-pill"><i class="bi bi-people-fill"></i> Donor & Volunteer</span>
+        <span class="signin-pill"><i class="bi bi-box"></i> Dan Peti (Donation Box)</span>
+        <span class="signin-pill"><i class="bi bi-calendar-event"></i> Event Management</span>
+        <span class="signin-pill"><i class="bi bi-bar-chart-line"></i> Reports & Analytics</span>
+        <span class="signin-pill"><i class="bi bi-shield-lock"></i> Role-Based Access</span>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 {% endblock %}
