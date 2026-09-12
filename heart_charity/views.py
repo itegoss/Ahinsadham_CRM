@@ -547,6 +547,22 @@ def welcome_view(request):
     context = get_welcome_context(request)
     return render(request, "welcome.html", context)
 
+@login_required
+def danpeti_page(request):
+    context = get_welcome_context(request, extra_context={
+        "active_tab": "Danpeti Module",
+        "page_mode": "danpeti",
+    })
+    return render(request, "welcome.html", context)
+
+@login_required
+def donation_box_page(request):
+    context = get_welcome_context(request, extra_context={
+        "active_tab": "Donation Box Module",
+        "page_mode": "box",
+    })
+    return render(request, "welcome.html", context)
+
 def logout_view(req):
     logout(req)
     return redirect("home")
@@ -1223,6 +1239,7 @@ def search_donation(request):
 @login_required
 def search_donation_payment(request):
     payments_query = request.GET.get("payments_query", "").strip()
+    page_mode = request.GET.get("page_mode", "")
     payments = DonationPaymentBox.objects.select_related(
         'owner', 'donation_box', 'opened_by', 'received_by', 'payment_mode',
         'verified_by', 'created_by', 'updated_by', 'deleted_by'
@@ -1360,6 +1377,8 @@ def search_donation_payment(request):
 
     context = get_welcome_context(request, donation_payment=payments, extra_context={
         "payments_query": payments_query,
+        "page_mode": page_mode,
+        "active_tab": "Danpeti Module" if page_mode == "danpeti" else "Donation Box Module",
     })
     return render(request, "welcome.html", context)
 
@@ -1367,6 +1386,7 @@ def search_donation_payment(request):
 def search_donation_box(request):
 
     box_query = request.GET.get("box_query", "").strip()
+    page_mode = request.GET.get("page_mode", "")
     boxes = DonationBox.objects.select_related(
         'uploaded_by', 'created_by', 'deleted_by'
     ).filter(is_deleted=False).order_by("id")
@@ -1472,6 +1492,8 @@ def search_donation_box(request):
 
     context = get_welcome_context(request, donation_boxes=boxes, extra_context={
         "box_query": box_query,
+        "page_mode": page_mode,
+        "active_tab": "Donation Box Module",
     })
     return render(request, "welcome.html", context)
 
