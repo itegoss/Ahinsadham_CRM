@@ -539,6 +539,22 @@ def welcome_view(request):
     context = get_welcome_context(request)
     return render(request, "welcome.html", context)
 
+@login_required
+def danpeti_page(request):
+    context = get_welcome_context(request, extra_context={
+        "active_tab": "Danpeti Module",
+        "page_mode": "danpeti",
+    })
+    return render(request, "welcome.html", context)
+
+@login_required
+def donation_box_page(request):
+    context = get_welcome_context(request, extra_context={
+        "active_tab": "Donation Box Module",
+        "page_mode": "box",
+    })
+    return render(request, "welcome.html", context)
+
 def logout_view(req):
     logout(req)
     return redirect("home")
@@ -1215,6 +1231,7 @@ def search_donation(request):
 @login_required
 def search_donation_payment(request):
     payments_query = request.GET.get("payments_query", "").strip()
+    page_mode = request.GET.get("page_mode", "")
     payments = DonationPaymentBox.objects.select_related(
         'owner', 'donation_box', 'opened_by', 'received_by', 'payment_mode',
         'verified_by', 'created_by', 'updated_by', 'deleted_by'
@@ -1352,6 +1369,8 @@ def search_donation_payment(request):
 
     context = get_welcome_context(request, donation_payment=payments, extra_context={
         "payments_query": payments_query,
+        "page_mode": page_mode,
+        "active_tab": "Danpeti Module" if page_mode == "danpeti" else "Donation Box Module",
     })
     return render(request, "welcome.html", context)
 
@@ -1359,6 +1378,7 @@ def search_donation_payment(request):
 def search_donation_box(request):
 
     box_query = request.GET.get("box_query", "").strip()
+    page_mode = request.GET.get("page_mode", "")
     boxes = DonationBox.objects.select_related(
         'uploaded_by', 'created_by', 'deleted_by'
     ).filter(is_deleted=False).order_by("id")
@@ -1464,6 +1484,8 @@ def search_donation_box(request):
 
     context = get_welcome_context(request, donation_boxes=boxes, extra_context={
         "box_query": box_query,
+        "page_mode": page_mode,
+        "active_tab": "Donation Box Module",
     })
     return render(request, "welcome.html", context)
 
@@ -2343,9 +2365,8 @@ from .models import DonationBox
 def add_donation_box(request):
     if request.method == "POST":
         key_id = request.POST.get("key_id")
-        box_size = request.POST.get("box_size")  
+        box_size = request.POST.get("box_size")
         status = request.POST.get("status")
-        qr_code = request.FILES.get("qr_code")
         box_owner = request.POST.get("box_owner")
         box_percentage = request.POST.get("box_percentage")
 
@@ -2366,7 +2387,6 @@ def add_donation_box(request):
             key_id=key_id,
             box_size=box_size,
             status=status,
-            qr_code=qr_code if qr_code else None,
             box_owner=box_owner,
             box_percentage=box_percentage,
             uploaded_by=request.user,
@@ -2376,7 +2396,7 @@ def add_donation_box(request):
 
         box.save()
 
-        messages.success(request, "Donation Box Added Successfully!")
+        messages.success(request, "Donation Box Added Successfully with QR Code!")
         return redirect("welcome")
 
     context = {
@@ -2806,9 +2826,8 @@ def edit_donation_box(request, id):
 
         box.status = request.POST.get('status')
 
-        qr_file = request.FILES.get('qr_code')
-        if qr_file:
-            box.qr_code = qr_file
+        if not box.qr_code:
+            box.generate_qr_code()
 
         box.save()
         messages.success(request, "Donation Box updated successfully!")
@@ -2974,6 +2993,10 @@ def verify_payment(request, payment_id):
 def select_donation_box(request):
     if request.method == "POST":
         donation_box_id = request.POST.get("donation_box_id", "").strip()
+        if "Donation ID:" in donation_box_id:
+            donation_box_id = donation_box_id.replace("Donation ID:", "").strip()
+        elif "Donation ID" in donation_box_id:
+            donation_box_id = donation_box_id.replace("Donation ID", "").strip()
 
         if not donation_box_id:
             messages.error(

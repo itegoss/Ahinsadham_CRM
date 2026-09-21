@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from datetime import date
+import os
 from io import BytesIO
 from django.core.files import File
+from PIL import Image
 import qrcode
 
 class Module(models.Model):
@@ -89,21 +91,60 @@ class DonationBox(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
+    def generate_qr_code(self):
+        qr = qrcode.QRCode(
+            version=None,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+        qr_data = self.donation_id
+        qr.add_data(qr_data)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white").convert('RGBA')
+
+        # Embed Ahinsadham logo if available
+        logo_path = os.path.join(settings.BASE_DIR, 'heart_charity', 'static', 'images', 'Ahinsa-logo.png')
+        if not os.path.exists(logo_path):
+            logo_path = os.path.join(settings.BASE_DIR, 'staticfiles', 'images', 'Ahinsa-logo.png')
+
+        if os.path.exists(logo_path):
+            try:
+                logo = Image.open(logo_path).convert('RGBA')
+                qr_w, qr_h = qr_img.size
+                logo_max = int(qr_w * 0.24)
+                logo.thumbnail((logo_max, logo_max), Image.Resampling.LANCZOS)
+
+                # Add a clean white background padding around the logo
+                bg_w = logo.width + 10
+                bg_h = logo.height + 10
+                logo_bg = Image.new('RGBA', (bg_w, bg_h), (255, 255, 255, 255))
+                logo_bg.paste(logo, (5, 5), mask=logo)
+
+                pos = ((qr_w - bg_w) // 2, (qr_h - bg_h) // 2)
+                qr_img.paste(logo_bg, pos, mask=logo_bg)
+            except Exception as e:
+                pass
+
+        buffer = BytesIO()
+        qr_img.convert('RGB').save(buffer, format='PNG')
+        self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
+
     def save(self, *args, **kwargs):
         if not self.donation_id:
             last_box = DonationBox.objects.all().order_by('id').last()
-            if last_box:
-                last_id = int(last_box.donation_id.split('_')[1])
-                new_id = f"DP_{last_id + 1:04d}"
+            if last_box and last_box.donation_id:
+                try:
+                    last_id = int(last_box.donation_id.split('_')[1])
+                    new_id = f"DP_{last_id + 1:04d}"
+                except (IndexError, ValueError):
+                    new_id = f"DP_{last_box.id + 1:04d}"
             else:
                 new_id = "DP_0001"
             self.donation_id = new_id
+
         if not self.qr_code:
-            qr_data = f"Donation ID: {self.donation_id}"
-            qr_img = qrcode.make(qr_data)
-            buffer = BytesIO()
-            qr_img.save(buffer, format='PNG')
-            self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
+            self.generate_qr_code()
 
         super().save(*args, **kwargs)
 

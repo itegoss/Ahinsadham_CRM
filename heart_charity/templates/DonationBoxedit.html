@@ -123,15 +123,10 @@
                     <label class="form-label">Box %</label>
 <input type="number" name="box_percentage" class="form-control" value="{{ box.box_percentage}}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Upload QR Code (optional)</label>
-                    <input type="file" name="qr_code" class="form-control">
-                </div>
-
                 {% if box.qr_code %}
-                <div class="col-md-6 qr-preview">
-                    <label class="form-label">Current QR</label><br>
-                    <img src="{{ box.qr_code.url }}" width="130">
+                <div class="col-md-6">
+                    <label class="form-label">Donation Box QR Code</label><br>
+                    <img src="{{ box.qr_code.url }}" width="130" class="border rounded p-1 shadow-sm bg-white">
                 </div>
                 {% endif %}
             </div>

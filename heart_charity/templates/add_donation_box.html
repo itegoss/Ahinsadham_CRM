@@ -220,9 +220,10 @@
             <input type="radio" name="box_size" value="large" required aria-required="true"> Large
         </label>
     </div>
-    <label>Upload QR Code</span></label>
-    <input type="file" name="qr_code" accept="image/*" onchange="previewQR(event)">
-    <div class="qr-preview" id="qrPreview">QR Preview</div>
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-3 mt-2" style="background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; border-radius: 10px; font-size: 14px; padding: 12px 16px;">
+        <i class="fa-solid fa-qrcode fs-5"></i>
+        <span><strong>Auto QR Code:</strong> QR code with Ahinsadham logo will be automatically generated upon saving.</span>
+    </div>
     <small style="color:#555;">Created & Updated timestamps are automatic.</small>
     <div class="action-buttons">
         <button type="submit" class="action-btn btn-submit save-btn">✔ Save</button>
@@ -231,15 +232,5 @@
   </form>
 </div>
 </div>
-
-<script>
-function previewQR(event) {
-    const preview = document.getElementById("qrPreview");
-    preview.innerHTML = "";
-    let img = document.createElement("img");
-    img.src = URL.createObjectURL(event.target.files[0]);
-    preview.appendChild(img);
-}
-</script>
 
 {% endblock %}

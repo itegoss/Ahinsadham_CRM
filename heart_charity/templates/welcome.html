@@ -16,7 +16,7 @@
 
   .mobile-header {
     display: none;
-    background: #064E3B;
+    background: #184d61;
     color: white;
     padding: 15px;
     justify-content: space-between;
@@ -51,9 +51,9 @@
 
   .sidebar {
     width: 250px;
-    /* White sidebar — matches EMS style, overrides modern_crm.css */
-    background: #ffffff !important;
-    color: #334155;
+    /* Sidebar background gradient */
+    background: linear-gradient(135deg, #09e6c1 0%, #012a1d 100%) !important;
+    color: #ffffff;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
     overflow-y: auto;
     scrollbar-width: none;
@@ -63,8 +63,8 @@
     left: 0;
     z-index: 1051;
     overflow-x: hidden;
-    border-right: 1px solid #e2e8f0;
-    border-top: 3px solid #064E3B;
+    border-right: none;
+    border-top: none;
   }
 
   .sidebar-header {
@@ -118,12 +118,12 @@
     visibility: visible;
   }
 
-  /* Sidebar links: EMS-style dark text + mint hover + dark green active */
+  /* Sidebar links updated for dark gradient background */
   .sidebar a {
     display: flex;
     align-items: center;
     padding: 11px 16px;
-    color: #334155;
+    color: #f1f5f9;
     text-decoration: none;
     transition: all 0.2s;
     border-left: 3px solid transparent;
@@ -135,21 +135,21 @@
 
   .sidebar a:hover,
   .sidebar a.active {
-    background: #064E3B !important;
+    background: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
-    border-left: 3px solid #10B981;
+    border-left: 3px solid #5bc1ac;
   }
 
   .sidebar i {
     margin-right: 10px;
     font-size: 1.1rem;
-    color: #047857;
+    color: #e2e8f0;
     transition: margin-right 0.3s ease, font-size 0.3s ease, color 0.2s ease;
   }
 
   .sidebar a:hover i,
   .sidebar a.active i {
-    color: #10B981;
+    color: #5bc1ac;
   }
 
   .sidebar-wrapper.collapsed .sidebar i {
@@ -181,18 +181,19 @@
   .search-input {
     width: 100%;
     padding: 12px 45px 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 30px;
+    border: none;
+    border-bottom: 2px solid #5bc1ac;
+    border-radius: 0;
     font-size: 1rem;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: transparent;
+    box-shadow: none;
     transition: all 0.2s;
   }
 
   .search-input:focus {
-    border-color: #184d61;
+    border-bottom: 2px solid #0b4231;
     outline: none;
-    box-shadow: 0 2px 8px rgba(24, 77, 97, 0.2);
+    box-shadow: none;
   }
 
   .search-icon {
@@ -1019,9 +1020,62 @@
   }
 
   .pagination-container a.btn,
-  .pagination-container button {
+  .pagination-container button,
+  .pagination-container .btn,
+  .pagination-container .btn-outline-primary {
     flex: 0 0 auto;
     white-space: nowrap;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #0f7b34 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    padding: 0 4px !important;
+    margin: 0 2px !important;
+    height: auto !important;
+    min-width: auto !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, color 0.15s ease !important;
+  }
+
+  .pagination-container a.btn:hover,
+  .pagination-container button:hover,
+  .pagination-container .btn:hover,
+  .pagination-container .btn-outline-primary:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #012a1d !important;
+    transform: scale(1.2) !important;
+  }
+
+  .pagination-container a.btn:active,
+  .pagination-container button:active,
+  .pagination-container .btn:active,
+  .pagination-container .btn-outline-primary:active {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: scale(1.0) !important;
+  }
+
+  .pagination-container a.btn.disabled,
+  .pagination-container button:disabled,
+  .pagination-container .btn:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .pagination-container .form-select {
@@ -1189,7 +1243,7 @@
       width: 100%;
       height: 55px;
       background: transparent;
-      color: #012a1d;
+      color: #0b4231;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -1218,7 +1272,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #012a1d;
+      color: #0b4231;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       cursor: pointer;
       transition: all 0.2s ease-in-out;
@@ -1227,7 +1281,7 @@
 
     .menu-toggle:hover {
       background: #f8fafc;
-      color: #09e6c1;
+      color: #5bc1ac;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
     }
 
@@ -1442,8 +1496,6 @@
           <a class="tab-btn user" data-tab="user"><i class="bi bi-person"></i><span class="sidebar-text">User</span></a>
           <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
               class="sidebar-text">Roles</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
-              Box</span></a>
         </div>
       </div>
 
@@ -1457,8 +1509,8 @@
           <i class="bi bi-chevron-down chevron-icon"></i>
         </button>
         <div class="sidebar-submenu" id="donationsSubmenu">
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" href="{% url 'danpeti_page' %}" data-tab="Danpeti Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
           <a class="tab-btn" data-tab="Donation Module"><i class="bi bi-cash"></i><span class="sidebar-text">Other Donation</span></a>
         </div>
       </div>
@@ -1502,7 +1554,7 @@
       <a class="tab-btn active" data-tab="default-user"><i class="bi bi-bar-chart-line"></i><span
           class="sidebar-text">Dashboard</span></a>
 
-      {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules or "User" in allowed_modules or "Roles" in allowed_modules or "roles" in allowed_modules or "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
+      {% if "MDM" in allowed_modules or "MDM (Master Data)" in allowed_modules or "User" in allowed_modules or "Roles" in allowed_modules or "roles" in allowed_modules %}
       <div class="sidebar-dropdown-wrapper">
         <button type="button" class="sidebar-dropdown-toggle" id="settingsDropdownToggle">
           <div class="d-flex align-items-center gap-2">
@@ -1524,11 +1576,6 @@
           <a class="tab-btn user" data-tab="roles"><i class="bi bi-shield-lock"></i><span
               class="sidebar-text">Roles</span></a>
           {% endif %}
-
-          {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation
-              Box</span></a>
-          {% endif %}
         </div>
       </div>
       {% endif %}
@@ -1544,8 +1591,8 @@
         </button>
         <div class="sidebar-submenu" id="donationsSubmenu">
           {% if "Donation Box Module" in allowed_modules or "Donation box" in allowed_modules %}
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
-          <a class="tab-btn" data-tab="Donation Box Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
+          <a class="tab-btn" href="{% url 'donation_box_page' %}" data-tab="Donation Box Module"><i class="bi bi-box"></i><span class="sidebar-text">Donation Box</span></a>
+          <a class="tab-btn" href="{% url 'danpeti_page' %}" data-tab="Danpeti Module"><i class="bi bi-archive"></i><span class="sidebar-text">Dan Peti</span></a>
           {% endif %}
 
           {% if "Donation Module" in allowed_modules %}
@@ -3258,9 +3305,9 @@
                       <td>
                         {% if donation.id_proof_image or donation.pan_card_image %}
                         <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
-        '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
-        '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
-      )">
+                            '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
+                            '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+                          )">
                           <i class="fa-solid fa-eye"></i>
                         </span>
                         {% else %}
@@ -3340,8 +3387,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ----------- Visitor Management System ------------------ -->
 
     <div class="tab-content" id="Visitor Management System">
       <div class="card border-0">
@@ -3855,16 +3900,17 @@
 
     <!-- ---------Donation box module-------- -->
 
-    <div class="tab-content" id="Donation Box Module">
+    <div class="tab-content" id="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
-          <h4 class="mb-0">Donation box (Dan Peti)</h4>
+          <h4 class="mb-0">{% if page_mode == 'danpeti' %}Danpeti Donation{% else %}Donation Box{% endif %}</h4>
         </div>
         <!-- ------------Donation Owner Module----------- -->
+        {% if page_mode != "box" %}
         <div class="card-body">
-          <h5 style="color:#1b5e20">Danpeti Donation</h5>
           <div class="search-container d-flex align-items-center">
             <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="payments_query" data-target="donation"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ payments_query|default:'' }}">
@@ -3872,7 +3918,9 @@
           </div>
           <div class="payments-table-placeholder" data-add-url="{% url 'add_donation_payment' %}"></div>
         </div>
+        {% endif %}
         <!-- ✅ Donation Payment Pagination Controls -->
+        {% if page_mode != "box" %}
         <div class="pagination-container text-center">
           {% if payments_page_obj.has_previous %}
           <a href="?payments_page=1&payments_query={{ payments_query }}"
@@ -3898,7 +3946,9 @@
             class="btn btn-outline-primary btn-sm ms-2">⏭</a>
           {% endif %}
         </div>
+        {% endif %}
         <!-- ------------Donation Box----------- -->
+        {% if page_mode != "danpeti" %}
         <!-- QR Code Popup -->
         <div id="qrModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
           <div
@@ -3917,10 +3967,10 @@
           </div>
         </div>
         <div class="card-body">
-          <h5 style="color:#1b5e20">Donation Box</h5>
           <div class="search-container">
             <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100"
               role="search">
+              <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="box_query" data-target="boxx"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ box_query|default:'' }}">
@@ -4194,6 +4244,7 @@
             class="btn btn-outline-primary btn-sm ms-2">⏭</a>
           {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
 
@@ -5177,7 +5228,17 @@
       tabContents.forEach(c => c.classList.remove('active'));
 
       const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+        const parentSubmenu = btn.closest('.sidebar-submenu');
+        if (parentSubmenu) {
+          parentSubmenu.classList.add('show');
+          const toggle = parentSubmenu.previousElementSibling;
+          if (toggle && toggle.classList.contains('sidebar-dropdown-toggle')) {
+            toggle.classList.add('open');
+          }
+        }
+      }
       let content = document.getElementById(tabId);
       if (!content) {
         try {
@@ -5237,11 +5298,12 @@
       activateTab(lastTab);
       localStorage.removeItem('backFromForm');
     } else {
-      const saved = localStorage.getItem('activeTab') || 'default-user';
+      const saved = "{{ active_tab|default:''|escapejs }}" || localStorage.getItem('activeTab') || 'default-user';
       activateTab(saved);
     }
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function (e) {
+        if (this.getAttribute('href')) return;
         e.preventDefault();
         e.stopPropagation();
         const tabId = this.dataset.tab;
@@ -5259,9 +5321,11 @@
 </script>
 
 <!-- Shared Payments Table Container -->
+{% if page_mode != "box" %}
 <div id="shared-payments-table-source" style="display: none;">
   {% include "payments_table.html" %}
 </div>
+{% endif %}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const sidebarWrapper = document.getElementById('sidebarWrapper');
