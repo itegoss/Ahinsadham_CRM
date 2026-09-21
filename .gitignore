@@ -24,3 +24,7 @@ Thumbs.db
 full_data.json
 data_new.json
 data.json
+
+db.sqlite3
+*.sqlite3
+.env
