@@ -21,7 +21,9 @@ from django.shortcuts import render, redirect
 
 
 def home(req):
-    return render(req,'home.html')
+    if req.user.is_authenticated:
+        return redirect('welcome')
+    return render(req, 'home.html')
 
 def signin_view(request):
     # If the user is already authenticated (e.g., via Google OAuth), send them to the dashboard.
@@ -529,6 +531,10 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     tab_param = request.GET.get('active_tab') or request.GET.get('tab')
     if tab_param:
         context['active_tab'] = tab_param
+        if tab_param == "Donation Box Module":
+            context['page_mode'] = 'box'
+        elif tab_param == "Danpeti Module":
+            context['page_mode'] = 'danpeti'
     elif request.GET.get('employee_page') or any(k.startswith('emp_') for k in request.GET.keys()):
         context['active_tab'] = 'Employee Management System'
 
@@ -2425,7 +2431,7 @@ def add_donation_payment(request, box_id=None):
             "payment_modes": payment_modes,
             "donor_volunteers": donor_volunteers,
             "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
-            "current_time": timezone.now(),
+            "current_time": timezone.localtime(timezone.now()),
             "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID,
             "form_data": form_data,
             "selected_box_id": current_box.id if current_box else selected_donation_box_id,
@@ -2630,7 +2636,7 @@ def add_donation_payment(request, box_id=None):
         request.session.pop("selected_donation_box_id", None)
         if request.user.is_authenticated:
             messages.success(request, f"Danpeti Donation of ₹{amount} added successfully!")
-            return redirect("welcome")
+            return redirect("danpeti_page")
         else:
             messages.success(request, f"Thank you! Your Danpeti Donation of ₹{amount} was submitted successfully.")
             return redirect("donation_payment_receipt_view", id=payment.id)
@@ -3224,7 +3230,7 @@ def add_donation_box(request):
         box.save(update_fields=['qr_code'])
 
         messages.success(request, f"Donation Box ({box.donation_id}) added successfully with unique QR code!")
-        return redirect("welcome")
+        return redirect("donation_box_page")
 
     context = {
         "status_choices": DonationBox.status_choices,
@@ -3624,7 +3630,7 @@ def edit_box_payment(request, id):
         payment.save()
 
         messages.success(request, "Payment updated successfully!")
-        return redirect('welcome')
+        return redirect('danpeti_page')
 
     return render(request, 'BoxPayment.html', {
         'payment': payment,
@@ -3659,7 +3665,7 @@ def edit_donation_box(request, id):
 
         box.save()
         messages.success(request, "Donation Box updated successfully!")
-        return redirect('welcome')
+        return redirect("donation_box_page")
 
     return render(request, 'DonationBoxedit.html', {
         'box': box,
@@ -3761,7 +3767,7 @@ def delete_box_payment(request, id):
         payment.deleted_by = request.user
         payment.save()
         messages.success(request, "Donation Box Payment deleted successfully!")
-    return redirect("welcome")
+    return redirect("danpeti_page")
 
 def delete_donation_box(request, id):
     if request.method == "POST":
@@ -3771,7 +3777,7 @@ def delete_donation_box(request, id):
         box.deleted_by = request.user
         box.save()
         messages.success(request, "Donation box deleted successfully!")
-        return redirect('welcome')
+        return redirect("donation_box_page")
 # ************* delete Data end *************
 
 def edit_box_payment(request, id):
@@ -3785,7 +3791,7 @@ def edit_box_payment(request, id):
         payment.save()
 
         messages.success(request, "Payment updated successfully!")
-        return redirect('welcome') 
+        return redirect('danpeti_page') 
 
     return render(request, 'BoxPayment.html', {
         'payment': payment

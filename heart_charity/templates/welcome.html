@@ -1136,6 +1136,8 @@
     color: #6c757d !important;
   }
 
+
+
   .hero-banner {
     display: flex;
     align-items: center;
@@ -4175,7 +4177,7 @@
             style="background:#fff; padding:22px 20px 24px; border-radius:16px; width:88%; max-width:360px; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.25);">
             <span onclick="closeQrPopup()"
               style="position:absolute; right:14px; top:10px; cursor:pointer; font-size:22px; font-weight:bold; color:#64748b;"> × </span>
-            <h5 style="margin-bottom:14px; color: #166534; font-weight:700; font-size:16.5px;">Unique Dan-Peti QR Code</h5>
+            <h5 id="qrModalTitle" style="margin-bottom:14px; color: #166534; font-weight:700; font-size:16.5px; cursor:pointer; user-select:none; transition:color 0.2s;" title="QR Code">QR Code</h5>
             <div style="background:#f8fafc; border-radius:12px; padding:10px; display:inline-block; margin-bottom:18px; border:1px solid #e2e8f0;">
               <img id="qrImage" src="" style="width:160px; height:160px; object-fit:contain; display:block;">
             </div>
@@ -5217,11 +5219,39 @@
       openBtn.href = formUrl;
     }
     document.getElementById("qrDownload").href = imageUrl;
+
+    const displayId = donationId || boxId || '';
+    const titleEl = document.getElementById("qrModalTitle");
+    const qrImg = document.getElementById("qrImage");
+
+    if (titleEl) {
+      titleEl.innerText = 'QR Code';
+      titleEl.title = displayId ? `Danpeti ID: ${displayId}` : 'QR Code';
+      titleEl.dataset.danpetiId = displayId;
+
+      titleEl.onmouseenter = function () {
+        if (this.dataset.danpetiId) {
+          this.innerText = `Danpeti ID: ${this.dataset.danpetiId}`;
+        }
+      };
+      titleEl.onmouseleave = function () {
+        this.innerText = 'QR Code';
+      };
+    }
+
+    if (qrImg) {
+      qrImg.title = displayId ? `Danpeti ID: ${displayId}` : 'QR Code';
+    }
+
     document.getElementById("qrModal").style.display = "block";
   }
   function closeQrPopup() {
     document.getElementById("qrModal").style.display = "none";
     document.getElementById("qrImage").src = "";
+    const titleEl = document.getElementById("qrModalTitle");
+    if (titleEl) {
+      titleEl.innerText = 'QR Code';
+    }
   }
 </script>
 <script>
@@ -5519,16 +5549,22 @@
       activateTab(lastTab);
       localStorage.removeItem('backFromForm');
     } else {
-      const saved = "{{ active_tab|default:''|escapejs }}" || localStorage.getItem('activeTab') || 'default-user';
+      const serverTab = "{{ active_tab|default:''|escapejs }}";
+      const saved = serverTab || localStorage.getItem('activeTab') || 'default-user';
       activateTab(saved);
+      if (serverTab) {
+        localStorage.setItem('activeTab', serverTab);
+      }
     }
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function (e) {
+        const tabId = this.dataset.tab;
+        if (tabId) {
+          localStorage.setItem('activeTab', tabId);
+        }
         if (this.getAttribute('href')) return;
         e.preventDefault();
         e.stopPropagation();
-        const tabId = this.dataset.tab;
-        localStorage.setItem('activeTab', tabId);
         activateTab(tabId);
 
         // Close sidebar on mobile after tab click

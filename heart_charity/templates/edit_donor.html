@@ -118,6 +118,79 @@
             grid-template-columns: 1fr;
         }
     }
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+    .action-buttons .btn-submit {
+        background: linear-gradient(135deg, #0d7a34 0%, #10B981 100%) !important;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 10px 32px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 14px rgba(13, 122, 52, 0.28);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    .action-buttons .back-btn {
+        background: #ffffff;
+        color: #475569;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 9px 24px;
+        border-radius: 8px;
+        border: 1.5px solid #cbd5e1;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+    .select2-container {
+        width: 100% !important;
+    }
+    .select2-container--default .select2-selection--single {
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 10px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 40px !important;
+        color: #0f172a !important;
+        padding-left: 2px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 7px 10px !important;
+        outline: none !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+        border-color: #047857 !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #047857 !important;
+        color: white !important;
+    }
+    .select2-dropdown {
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        overflow: hidden !important;
+    }
 </style>
 {% if messages %}
 <div class="container mt-3">
@@ -154,12 +227,12 @@
                     </div>
                     <div class="col-md-3" id="donor_box_wrapper">
                         <label class="form-label">Donor Box</label>
-                        <select name="donor_box" class="form-select">
+                        <select name="donor_box" id="donor_box" class="form-select select2-donor-box">
                             <option value="">Select Donor Box</option>
                             {% for box in donation_boxes %}
                                 <option value="{{ box.id }}"
                                 {% if donor.donor_box_id == box.id %}selected{% endif %}>
-                                    {{ box.donation_id }}
+                                    {{ box.donation_id }}{% if box.box_owner %} - {{ box.box_owner }}{% endif %}{% if box.key_id %} (Key: {{ box.key_id }}){% endif %}
                                 </option>
                             {% endfor %}
                         </select>
@@ -804,7 +877,7 @@
 </div>
 <div class="action-buttons">
     <button type="submit" class="action-btn btn btn-submit">✔ Update</button>
-    <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">← Back</a>
+    <a href="/welcome/?tab=Donor/Volunteer Management System" onclick="if(window.history.length > 1){ history.back(); return false; }" class="action-btn back-btn">← Back</a>
 </div>
             </form>
         </div>
@@ -997,6 +1070,14 @@ $(document).ready(function () {
         },
         minimumInputLength: 1
     });
+
+    if ($('#donor_box').length) {
+        $('#donor_box').select2({
+            placeholder: "Select Donor Box",
+            allowClear: true,
+            width: '100%'
+        });
+    }
 });
 </script>
 <script>

@@ -235,6 +235,10 @@
 }
 
 /* Select2 Customization to match 42px height */
+.select2-container {
+    width: 100% !important;
+}
+
 .select2-container--default .select2-selection--single {
     border: 1.5px solid #cbd5e1 !important;
     border-radius: 8px !important;
@@ -252,6 +256,29 @@
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 40px !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 7px 10px !important;
+    outline: none !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: #047857 !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #047857 !important;
+    color: white !important;
+}
+
+.select2-dropdown {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    overflow: hidden !important;
 }
 
 /* Name Row Grid */
@@ -272,8 +299,9 @@
 .form-actions-bar {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 14px;
-    margin-top: 10px;
+    margin-top: 20px;
     margin-bottom: 40px;
     padding: 8px 4px;
 }
@@ -380,10 +408,10 @@
                     </div>
                     <div class="col-md-3" id="donor_box_wrapper" style="display: none;">
                         <label class="form-label">Donor Box</label>
-                        <select name="donor_box" class="form-select">
+                        <select name="donor_box" id="donor_box" class="form-select select2-donor-box">
                             <option value="">Select Donor Box</option>
                             {% for box in donation_boxes %}
-                                <option value="{{ box.id }}">{{ box.donation_id }}</option>
+                                <option value="{{ box.id }}">{{ box.donation_id }}{% if box.box_owner %} - {{ box.box_owner }}{% endif %}{% if box.key_id %} (Key: {{ box.key_id }}){% endif %}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -1014,7 +1042,7 @@
             <button type="submit" class="action-btn btn btn-submit">
                 <i class="fa-solid fa-check"></i> Save
             </button>
-            <a href="/welcome/?tab=Donation Module" class="action-btn back-btn">
+            <a href="/welcome/?tab=Donor/Volunteer Management System" onclick="if(window.history.length > 1){ history.back(); return false; }" class="action-btn back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </a>
         </div>
@@ -1259,7 +1287,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         else if (text === "donationboxowner" || text === "donorboxowner") {
             if (occupation) occupation.style.display = "block";
-            if (donorBox) donorBox.style.display = "block";
+            if (donorBox) {
+                donorBox.style.display = "block";
+                if (window.$ && $('#donor_box').length) {
+                    $('#donor_box').select2({
+                        placeholder: "Select Donor Box",
+                        allowClear: true,
+                        width: '100%'
+                    });
+                }
+            }
             if (oldBoxIdWrapper) oldBoxIdWrapper.style.display = "block";
             if (businessAddressAlert) businessAddressAlert.style.display = "block";
             if (occupation) occupation.style.display = "block";
@@ -1340,6 +1377,14 @@ $(document).ready(function () {
                 cache: true
             },
             minimumInputLength: 1
+        });
+    }
+
+    if ($('#donor_box').length) {
+        $('#donor_box').select2({
+            placeholder: "Select Donor Box",
+            allowClear: true,
+            width: '100%'
         });
     }
 });
