@@ -11,6 +11,13 @@ def create_history(sender, instance, created, **kwargs):
 
     DonationPaymentBox_Hist.objects.create(
         payment=instance,
+        donor_type=getattr(instance, 'donor_type', None),
+        first_name=getattr(instance, 'first_name', None),
+        middle_name=getattr(instance, 'middle_name', None),
+        last_name=getattr(instance, 'last_name', None),
+        mobile_number=getattr(instance, 'mobile_number', None),
+        pan_number=getattr(instance, 'pan_number', None),
+        want_80g=getattr(instance, 'want_80g', False),
         owner=instance.owner,
         donation_box=instance.donation_box,
         address=instance.address,
@@ -20,6 +27,9 @@ def create_history(sender, instance, created, **kwargs):
         payment_mode=instance.payment_mode,        
         date_time=instance.date_time,
         i_witness=instance.i_witness,
+        transaction_id=getattr(instance, 'transaction_id', None),
+        razorpay_order_id=getattr(instance, 'razorpay_order_id', None),
+        payment_status=getattr(instance, 'payment_status', 'Pending'),
         created_by=instance.created_by,
         updated_by=instance.updated_by,
         created_at=instance.created_at,

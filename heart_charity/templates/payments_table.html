@@ -110,7 +110,7 @@
         </td>
         <td>{{ owner.id }}</td>
         <td>{{ owner.receipt_id }}</td>
-        <td>{{ owner.owner.first_name }} {{ owner.owner.last_name }}</td>
+        <td>{% if owner.first_name %}{{ owner.first_name }} {{ owner.last_name }}{% else %}{{ owner.owner.first_name }} {{ owner.owner.last_name }}{% endif %}</td>
         <td>
           {% if owner.donation_box %}
           {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})

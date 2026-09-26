@@ -1517,6 +1517,8 @@
 
       <a class="tab-btn" data-tab="Donor/Volunteer Management System"><i class="bi bi-heart"></i><span
           class="sidebar-text">Donor/Volunteer</span></a>
+      <a class="tab-btn" data-tab="Employee Management System"><i class="bi bi-person-workspace"></i><span
+          class="sidebar-text">Employee</span></a>
       <a class="tab-btn" data-tab="Event Management System"><i class="bi bi-calendar-event"></i><span
           class="sidebar-text">Event Management</span></a>
       <a class="tab-btn" data-tab="Timesheet System"><i class="bi bi-clock"></i><span class="sidebar-text">Timesheet
@@ -1609,7 +1611,7 @@
 
       {% if "Employee Management System" in allowed_modules %}
       <a class="tab-btn" data-tab="Employee Management System"><i class="bi bi-person-workspace"></i><span
-          class="sidebar-text">Employee Management</span></a>
+          class="sidebar-text">Employee</span></a>
       {% endif %}
 
       {% if "Event Management System" in allowed_modules %}
@@ -3388,6 +3390,224 @@
       </div>
     </div>
 
+    <!-- ----------- Employee Management System ------------------ -->
+    <div class="tab-content" id="Employee Management System">
+      <div class="card border-0">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">All Employees</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="search-container">
+            <form method="GET" action="{% url 'welcome' %}" class="d-flex align-items-center w-100" role="search">
+              <input type="hidden" name="active_tab" value="Employee Management System">
+              <input type="text" name="emp_q" data-target="employeetable"
+                class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search Employee..."
+                value="{{ emp_q|default:'' }}">
+              {% if emp_q %}
+              <a href="{% url 'welcome' %}?active_tab=Employee Management System" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
+              {% endif %}
+            </form>
+          </div>
+          {% if emp_q %}
+          <h5>Showing results for: "<span>{{ emp_q }}</span>"</h5>
+          <hr>
+          {% endif %}
+
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle paginated-table">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th class="sortable" data-col="1">ID Proof <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="2">ID <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="3">Department <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="4">Designation <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="5">Position <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="6">First Name <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="7">Middle Name <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="8">Last Name <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="9">Gender <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="10">DOB <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="11">Contact <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="12">WhatsApp <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="13">Email <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="14">ID Type <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="15">ID Number <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="16">Address <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="17">City <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="18">State <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="20">Postal Code <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="21">Created By <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="22">Created On <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="23">Updated By <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="24">Updated On <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="25">Status <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="26">Deleted By <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="27">Deleted On <span class="sort-icon">⬍</span></th>
+                </tr>
+                <tr class="column-search-row">
+                  <td>
+                    <div class="d-flex justify-content-between">
+                      {% if permissions.can_add %}
+                      <a href="{% url 'add_donor_volunteer' %}?type=Employee"
+                        title="Add Employee"
+                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                          class="fa-solid fa-plus"></i></a>
+                      {% endif %}
+                      {% if permissions.can_add %}
+                      <form method="GET" action="{% url 'download_donor_report' %}" style="margin: -9px; padding: 0;">
+                        <input type="hidden" name="type" value="Employee">
+                        <button type="submit" class="btn btn-link" title="Download Report" style="font-size: 22px; color: black;"><i
+                            class="bi bi-download"></i></button>
+                      </form>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td></td>
+                  <td><input class="column-search" name="emp_col_2" value="{{ emp_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_3" value="{{ emp_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_4" value="{{ emp_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_5" value="{{ emp_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_6" value="{{ emp_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_7" value="{{ emp_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_8" value="{{ emp_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_9" value="{{ emp_col_9|default:'' }}" data-col="9" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_10" value="{{ emp_col_10|default:'' }}" data-col="10" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_11" value="{{ emp_col_11|default:'' }}" data-col="11" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_12" value="{{ emp_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_13" value="{{ emp_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_14" value="{{ emp_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_15" value="{{ emp_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_16" value="{{ emp_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_17" value="{{ emp_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_18" value="{{ emp_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_19" value="{{ emp_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_20" value="{{ emp_col_20|default:'' }}" data-col="20" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_21" value="{{ emp_col_21|default:'' }}" data-col="21" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_22" value="{{ emp_col_22|default:'' }}" data-col="22" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_23" value="{{ emp_col_23|default:'' }}" data-col="23" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_24" value="{{ emp_col_24|default:'' }}" data-col="24" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_25" value="{{ emp_col_25|default:'' }}" data-col="25" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_26" value="{{ emp_col_26|default:'' }}" data-col="26" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_27" value="{{ emp_col_27|default:'' }}" data-col="27" type="text" placeholder="Search..."></td>
+                </tr>
+              </thead>
+              <tbody id="employeetable">
+                {% for emp in employee_page_obj %}
+                <tr>
+                  <td>
+                    <div class="d-inline-flex align-items-center gap-1">
+                      {% if not emp.is_deleted %}
+                      {% if permissions.can_edit %}
+                      <a href="{% url 'edit_donor' emp.id %}" class="btn-sm p-1" title="Edit Employee"
+                        style="font-size: 15px; color:black; text-decoration: none;">
+                        <i class="bi bi-pencil-square"></i>
+                      </a>
+                      {% endif %}
+
+                      {% if permissions.can_delete %}
+                      <form method="POST" action="{% url 'delete_donor_volunteer' emp.id %}"
+                        class="d-inline m-0 p-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-sm p-1" title="Deactivate Employee"
+                          style="font-size: 15px; color:black; text-decoration: none; background-color: transparent !important; border: none;"
+                          onclick="return confirm('Are you sure you want to deactivate this employee?')">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                      {% endif %}
+                      {% else %}
+                      <span class="badge bg-secondary">Deactivated</span>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td>
+                    {% if emp.id_proof_image or emp.pan_card_image %}
+                    <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
+                        '{% if emp.id_proof_image %}{{ emp.id_proof_image.url }}{% endif %}',
+                        '{% if emp.pan_card_image %}{{ emp.pan_card_image.url }}{% endif %}'
+                      )">
+                      <i class="fa-solid fa-eye"></i>
+                    </span>
+                    {% else %}
+                    —
+                    {% endif %}
+                  </td>
+                  <td>{{ emp.id }}</td>
+                  <td>{{ emp.department.lookup_name|default:"—" }}</td>
+                  <td>{{ emp.designation.lookup_name|default:"—" }}</td>
+                  <td>{{ emp.position.lookup_name|default:"—" }}</td>
+                  <td>{{ emp.first_name|default:"—" }}</td>
+                  <td>{{ emp.middle_name|default:"—" }}</td>
+                  <td>{{ emp.last_name|default:"—" }}</td>
+                  <td>{{ emp.gender|default:"—" }}</td>
+                  <td>{{ emp.date_of_birth|default:"—" }}</td>
+                  <td>{{ emp.contact_number|default:"—" }}</td>
+                  <td>{{ emp.whatsapp_number|default:"—" }}</td>
+                  <td>{{ emp.email|default:"—" }}</td>
+                  <td>{{ emp.id_type.lookup_name|default:"—" }}</td>
+                  <td>{{ emp.id_number|default:"—" }}</td>
+                  <td>{{ emp.address|default:"—" }}</td>
+                  <td>{{ emp.city|default:"—" }}</td>
+                  <td>{{ emp.state|default:"—" }}</td>
+                  <td>{{ emp.country|default:"India" }}</td>
+                  <td>{{ emp.postal_code|default:"—" }}</td>
+                  <td>{{ emp.created_by|default:"—" }}</td>
+                  <td>{{ emp.created_at|date:"d M Y" }}</td>
+                  <td>{{ emp.updated_by|default:"—" }}</td>
+                  <td>{{ emp.updated_at|date:"d M Y" }}</td>
+                  <td>
+                    {% if emp.is_deleted %}
+                    <span class="badge bg-danger">Deactivated</span>
+                    {% else %}
+                    <span class="badge bg-success">Active</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ emp.deleted_by|default:"—" }}</td>
+                  <td>{{ emp.deleted_at|date:"d M Y"|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="28" class="text-center text-muted py-4">No employees found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Controls -->
+          <div class="pagination-container text-center mt-3">
+            {% if employee_page_obj.has_previous %}
+            <a href="?employee_page=1{% if emp_q %}&emp_q={{ emp_q }}{% endif %}&active_tab=Employee Management System" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?employee_page={{ employee_page_obj.previous_page_number }}{% if emp_q %}&emp_q={{ emp_q }}{% endif %}&active_tab=Employee Management System" class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <!-- Page Info + Dropdown -->
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="active_tab" value="Employee Management System">
+              {% if emp_q %}<input type="hidden" name="emp_q" value="{{ emp_q }}">{% endif %}
+              <label for="empPageSelect" class="fw-bold me-1">Page</label>
+              <select name="employee_page" id="empPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="this.form.submit()">
+                {% for page_num in employee_page_obj.paginator.page_range %}
+                <option value="{{ page_num }}" {% if page_num == employee_page_obj.number %}selected{% endif %}>
+                  {{ page_num }}
+                </option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ employee_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if employee_page_obj.has_next %}
+            <a href="?employee_page={{ employee_page_obj.next_page_number }}{% if emp_q %}&emp_q={{ emp_q }}{% endif %}&active_tab=Employee Management System" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?employee_page={{ employee_page_obj.paginator.num_pages }}{% if emp_q %}&emp_q={{ emp_q }}{% endif %}&active_tab=Employee Management System"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="tab-content" id="Visitor Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
@@ -3952,18 +4172,23 @@
         <!-- QR Code Popup -->
         <div id="qrModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999;">
           <div
-            style=" background:#fff;padding:20px 20px 25px;border-radius:12px; width:40%;height: 55%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+            style="background:#fff; padding:22px 20px 24px; border-radius:16px; width:88%; max-width:360px; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.25);">
             <span onclick="closeQrPopup()"
-              style="position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px;"> × </span>
-            <h5 style="margin-bottom:10px; color: #095528;">QR Code</h5>
-            <img id="qrImage" src="" style="width:30%; max-width:300px; margin-bottom:12px;">
-            <div style="font-size:14px; text-align:left; margin-bottom:12px;">
-              <div><strong>Key ID:</strong> <span id="key_id"></span></div>
-              <div><strong>Donation ID:</strong> <span id="donation_id"></span></div>
+              style="position:absolute; right:14px; top:10px; cursor:pointer; font-size:22px; font-weight:bold; color:#64748b;"> × </span>
+            <h5 style="margin-bottom:14px; color: #166534; font-weight:700; font-size:16.5px;">Unique Dan-Peti QR Code</h5>
+            <div style="background:#f8fafc; border-radius:12px; padding:10px; display:inline-block; margin-bottom:18px; border:1px solid #e2e8f0;">
+              <img id="qrImage" src="" style="width:160px; height:160px; object-fit:contain; display:block;">
             </div>
-            <a id="qrDownload" href="#" download title="Download QR Code"
-              style="display:inline-flex;align-items:center;gap:6px;font-size:14px;text-decoration:none;color:#000;"> ⬇
-              Download </a>
+            <div style="display:flex; justify-content:center; align-items:center; gap:8px;">
+              <a id="qrDownload" href="#" download title="Download QR Code" class="btn btn-outline-success"
+                style="display:inline-flex; align-items:center; justify-content:center; gap:4px; font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:6px; letter-spacing:0.3px; text-transform:uppercase; white-space:nowrap; height:32px;">
+                <i class="bi bi-download" style="font-size:12px;"></i> Download QR
+              </a>
+              <a id="qrOpenBtn" href="#" target="_blank" class="btn btn-success"
+                style="display:inline-flex; align-items:center; justify-content:center; gap:4px; font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:6px; background:#166534; border-color:#166534; letter-spacing:0.3px; text-transform:uppercase; white-space:nowrap; height:32px;">
+                <i class="bi bi-box-arrow-up-right" style="font-size:12px;"></i> Open Form
+              </a>
+            </div>
           </div>
         </div>
         <div class="card-body">
@@ -4059,10 +4284,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup(
-        '{{ box.qr_code.url }}',
-        '{{ box.key_id }}',
-        '{{ box.id }}' )" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
+                    <span onclick="openQrPopup('{{ box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
                     </span>
                     {% else %}
                     <span class="text-muted">—</span>
@@ -4181,11 +4403,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup(
-        '{{ box.qr_code.url }}',
-        '{{ box.key_id }}',
-        '{{ box.id }}'
-      )" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
+                    <span onclick="openQrPopup('{{ box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
                     {% else %}
                     <span class="text-muted">—</span>
                     {% endif %}
@@ -4991,10 +5209,13 @@
 </script>
 
 <script>
-  function openQrPopup(imageUrl, keyId, donationId) {
+  function openQrPopup(imageUrl, keyId, donationId, boxId) {
     document.getElementById("qrImage").src = imageUrl;
-    document.getElementById("key_id").innerText = keyId || "-";
-    document.getElementById("donation_id").innerText = donationId || "-";
+    const formUrl = boxId ? `/danpeti/donation/${boxId}/` : (donationId ? `/danpeti/donation/${donationId}/` : "#");
+    const openBtn = document.getElementById("qrOpenBtn");
+    if (openBtn) {
+      openBtn.href = formUrl;
+    }
     document.getElementById("qrDownload").href = imageUrl;
     document.getElementById("qrModal").style.display = "block";
   }

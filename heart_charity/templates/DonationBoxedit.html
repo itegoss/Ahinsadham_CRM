@@ -123,12 +123,33 @@
                     <label class="form-label">Box %</label>
 <input type="number" name="box_percentage" class="form-control" value="{{ box.box_percentage}}">
                 </div>
-                {% if box.qr_code %}
-                <div class="col-md-6">
-                    <label class="form-label">Donation Box QR Code</label><br>
-                    <img src="{{ box.qr_code.url }}" width="130" class="border rounded p-1 shadow-sm bg-white">
+                <div class="col-md-12 mt-3 p-3 bg-light border rounded">
+                    <label class="form-label fw-bold text-success mb-2"><i class="bi bi-qr-code"></i> Donation Box QR Code & URL</label>
+                    <div class="d-flex align-items-center gap-4 flex-wrap">
+                        {% if box.qr_code %}
+                            <div>
+                                <img src="{{ box.qr_code.url }}" width="130" class="border rounded p-1 shadow-sm bg-white d-block mb-1">
+                                <a href="{{ box.qr_code.url }}" download class="btn btn-sm btn-outline-secondary w-100" style="font-size:12px;">⬇ Download</a>
+                            </div>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <div><strong>Box Primary ID:</strong> {{ box.id }}</div>
+                            <div><strong>Donation ID:</strong> {{ box.donation_id }}</div>
+                            <div class="mt-2">
+                                <strong>Public Donation Form URL:</strong><br>
+                                <a href="{% url 'danpeti_donation_form' box_id=box.id %}" target="_blank" class="text-success fw-bold">
+                                    /danpeti/donation/{{ box.id }}/ <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
+                            </div>
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" name="regenerate_qr" value="1" id="regenQr">
+                                <label class="form-check-label text-muted" for="regenQr">
+                                    Regenerate QR Code on save (links to current website URL)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
             </div>
             <div class="text-center mt-5">
                 <button type="submit" class="btn btn-success me-3">✔ Update</button>

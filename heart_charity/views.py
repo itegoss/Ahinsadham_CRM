@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
 import random
 from django.shortcuts import get_object_or_404
@@ -12,7 +13,8 @@ from heart_charity.models import LookupType,Lookup,UserModuleAccess,Module,UserR
 from django.conf import settings
 from django.contrib import messages
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.db.models import Q
 import json
 from .utils import generate_receipt_id, generate_ach_receipt_id
 from django.shortcuts import render, redirect
@@ -333,7 +335,36 @@ box_mapping = {
     '14': 'deleted_at',
 }
 
-def get_welcome_context(request, donors=None, donations=None, roles_qs=None, users=None, lookup_types=None, lookups=None, donation_boxes=None, donation_payment=None, extra_context=None):
+employee_mapping = {
+    '2': 'id',
+    '3': 'department__lookup_name',
+    '4': 'designation__lookup_name',
+    '5': 'position__lookup_name',
+    '6': 'first_name',
+    '7': 'middle_name',
+    '8': 'last_name',
+    '9': 'gender',
+    '10': 'date_of_birth',
+    '11': 'contact_number',
+    '12': 'whatsapp_number',
+    '13': 'email',
+    '14': 'id_type__lookup_name',
+    '15': 'id_number',
+    '16': 'address',
+    '17': 'city',
+    '18': 'state',
+    '19': 'country',
+    '20': 'postal_code',
+    '21': 'created_by__username',
+    '22': 'created_at',
+    '23': 'updated_by__username',
+    '24': 'updated_at',
+    '25': 'is_deleted',
+    '26': 'deleted_by__username',
+    '27': 'deleted_at',
+}
+
+def get_welcome_context(request, donors=None, donations=None, roles_qs=None, users=None, lookup_types=None, lookups=None, donation_boxes=None, donation_payment=None, employees=None, extra_context=None):
     user = request.user
     permissions = get_user_permissions(user)
     if user.is_superuser:
@@ -361,6 +392,25 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         donors = DonorVolunteer.objects.all()
     donors = donors.select_related("person_type", "donor_box", "id_type", "occupation_nature", "occupation_type", "created_by", "updated_by", "deleted_by")
 
+    if employees is None:
+        employees = DonorVolunteer.objects.filter(person_type__lookup_name__iexact="Employee")
+    employees = employees.select_related("person_type", "department", "position", "designation", "id_type", "created_by", "updated_by", "deleted_by")
+
+    emp_q = request.GET.get('emp_q', '').strip()
+    if emp_q:
+        employees = employees.filter(
+            Q(first_name__icontains=emp_q) |
+            Q(middle_name__icontains=emp_q) |
+            Q(last_name__icontains=emp_q) |
+            Q(contact_number__icontains=emp_q) |
+            Q(whatsapp_number__icontains=emp_q) |
+            Q(email__icontains=emp_q) |
+            Q(department__lookup_name__icontains=emp_q) |
+            Q(designation__lookup_name__icontains=emp_q) |
+            Q(position__lookup_name__icontains=emp_q) |
+            Q(city__icontains=emp_q)
+        )
+
     if lookup_types is None:
         lookup_types = LookupType.objects.all()
     lookup_types = lookup_types.select_related('created_by', 'updated_by', 'deleted_by').order_by("id")
@@ -386,6 +436,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     roles_qs = apply_column_filters(roles_qs, request, 'roles', roles_mapping)
     donations = apply_column_filters(donations, request, 'donation', donation_mapping)
     donors = apply_column_filters(donors, request, 'donor', donor_mapping)
+    employees = apply_column_filters(employees, request, 'emp', employee_mapping)
     lookup_types = apply_column_filters(lookup_types, request, 'lt', lt_mapping)
     lookups = apply_column_filters(lookups, request, 'lu', lu_mapping)
     donation_boxes = apply_column_filters(donation_boxes, request, 'box', box_mapping)
@@ -393,6 +444,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
 
     # Pagination
     donors = order_queryset(donors, request, 'donor', donor_mapping, 'id')
+    employees = order_queryset(employees, request, 'emp', employee_mapping, 'id')
     donations = order_queryset(donations, request, 'donation', donation_mapping, 'id')
     users = order_queryset(users, request, 'user', user_mapping, 'id')
     roles_qs = order_queryset(roles_qs, request, 'roles', roles_mapping, 'id')
@@ -402,6 +454,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     donation_boxes = order_queryset(donation_boxes, request, 'box', box_mapping, 'id')
 
     page_obj = Paginator(donors, 10).get_page(request.GET.get('donor_page'))
+    employee_page_obj = Paginator(employees, 10).get_page(request.GET.get('employee_page'))
     donation_page_obj = Paginator(donations, 10).get_page(request.GET.get('donation_page'))
     user_page_obj = Paginator(users, 10).get_page(request.GET.get('user_page'))
     roles_page_obj = Paginator(roles_qs, 10).get_page(request.GET.get('roles_page'))
@@ -416,6 +469,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         "Donation Module": "bi bi-cash-coin",
         "Donation Box Module": "bi bi-box",
         "Donor/Volunteer Management System": "bi bi-heart",
+        "Employee Management System": "bi bi-person-workspace",
         "Event Management System": "bi bi-calendar-event",
         "Timesheet System": "bi bi-clock",
         "Leave Management System": "bi bi-calendar-x",
@@ -445,6 +499,9 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         'role_names': role_names,
         'clean_roles': clean_roles,
         'page_obj': page_obj,
+        'employees': employees,
+        'employee_page_obj': employee_page_obj,
+        'emp_q': emp_q,
         'donations': donations,
         'today': now().date(),
         'donation_page_obj': donation_page_obj,
@@ -462,12 +519,18 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     }
 
     # Pass column filter parameters back to the context
-    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation']:
+    for prefix in ['lt', 'lu', 'user', 'roles', 'payments', 'donor', 'box', 'donation', 'emp']:
         for col_idx in range(1, 35):
             param_name = f"{prefix}_col_{col_idx}"
             val = request.GET.get(param_name, "")
             if val:
                 context[param_name] = val
+
+    tab_param = request.GET.get('active_tab') or request.GET.get('tab')
+    if tab_param:
+        context['active_tab'] = tab_param
+    elif request.GET.get('employee_page') or any(k.startswith('emp_') for k in request.GET.keys()):
+        context['active_tab'] = 'Employee Management System'
 
     if user.is_authenticated and user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
@@ -1537,10 +1600,6 @@ def add_donor_volunteer(request):
         try:
             email = request.POST.get("email") or None
 
-            if email and DonorVolunteer.objects.filter(email__iexact=email).exists():
-                messages.error(request, "This email already exists.")
-                return redirect("add_donor_volunteer")
-
             donor_box_obj = get_box("donor_box")
             if donor_box_obj and DonorVolunteer.objects.filter(is_deleted=False, donor_box=donor_box_obj).exists():
                 messages.error(request, f"Donor Box '{donor_box_obj.donation_id}' is already assigned to another owner.")
@@ -2033,11 +2092,12 @@ def donation_payment_receipt_pdf(request, id):
         settings.STATIC_URL + "images/globe.png"
     )
     owner = payment.owner
-    owner_contact = None
-    for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
-        owner_contact = getattr(owner, attr, None)
-        if owner_contact:
-            break
+    owner_contact = payment.mobile_number
+    if not owner_contact and owner:
+        for attr in ("contact_number", "whatsapp_number", "mobile_no", "phone", "username", "email"):
+            owner_contact = getattr(owner, attr, None)
+            if owner_contact:
+                break
     html = render_to_string("donation_owner_receipt_pdf.html", {
         "payment": payment,
         "donor":donor,
@@ -2257,35 +2317,70 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-@login_required
-def add_donation_payment(request):
-    payment_mode = None
+def add_donation_payment(request, box_id=None):
+    import re
+    from decimal import Decimal, InvalidOperation
+
+    # If accessed without a specific box_id (internal CRM route), require login
+    if not box_id and not request.user.is_authenticated:
+        return redirect(f"{settings.LOGIN_URL}?next={request.path}")
+
+    current_box = None
+    if box_id:
+        if str(box_id).isdigit():
+            current_box = DonationBox.objects.filter(id=int(box_id), is_deleted=False).first()
+        if not current_box:
+            current_box = DonationBox.objects.filter(donation_id__iexact=str(box_id).strip(), is_deleted=False).first()
+
+        if not current_box:
+            return render(request, "danpeti_box_invalid.html", {
+                "error_title": "Donation Box Not Found",
+                "error_message": f"The requested Donation Box (ID: '{box_id}') does not exist or has been removed.",
+                "box_id": box_id,
+            }, status=404)
+
+        if current_box.status != "Active":
+            return render(request, "danpeti_box_invalid.html", {
+                "error_title": "Donation Box Inactive",
+                "error_message": f"This Donation Box ({current_box.donation_id}) is currently {current_box.status.lower()} and not active for donations.",
+                "box_id": box_id,
+                "current_box": current_box,
+            }, status=400)
+    else:
+        selected_donation_box_id = request.session.get("selected_donation_box_id")
+        if selected_donation_box_id:
+            current_box = DonationBox.objects.filter(id=selected_donation_box_id, is_deleted=False, status="Active").first()
+
     payment_type = LookupType.objects.filter(
-        type_name__iexact="payment_mode",
+        Q(type_name__iexact="payment_mode") | Q(type_name__iexact="Payment Method"),
         is_deleted=False
     ).first()
 
     payment_modes = Lookup.objects.filter(
         lookup_type=payment_type,
         is_deleted=False
-    )
+    ) if payment_type else Lookup.objects.none()
 
     donation_boxes = DonationBox.objects.filter(
         is_deleted=False,
-        donorvolunteer__isnull=False
+        status="Active"
     ).distinct()
 
     donor_volunteers = DonorVolunteer.objects.filter(
         is_deleted=False,
         person_type__lookup_name__iexact="Employee"
-    ).only('id', 'first_name', 'last_name')
+    ).only('id', 'first_name', 'last_name', 'contact_number', 'whatsapp_number')
 
     box_owner_map = []
 
     owners = DonorVolunteer.objects.filter(
         is_deleted=False,
         donor_box__isnull=False
-    ).select_related('donor_box').only('id', 'first_name', 'last_name', 'address', 'city', 'state', 'postal_code', 'donor_box__id')
+    ).select_related('donor_box').only(
+        'id', 'first_name', 'middle_name', 'last_name',
+        'contact_number', 'whatsapp_number', 'pan_number',
+        'address', 'city', 'state', 'postal_code', 'donor_box__id'
+    )
 
     for owner in owners:
         address = ", ".join(filter(None, [
@@ -2298,63 +2393,792 @@ def add_donation_payment(request):
         box_owner_map.append({
             "box_id": owner.donor_box.id,
             "owner_id": owner.id,
-            "owner_name": f"{owner.first_name} {owner.last_name}",
+            "owner_name": f"{owner.first_name or ''} {owner.last_name or ''}".strip(),
+            "first_name": owner.first_name or "",
+            "middle_name": owner.middle_name or "",
+            "last_name": owner.last_name or "",
+            "mobile_number": owner.whatsapp_number or owner.contact_number or "",
+            "pan_number": owner.pan_number or "",
             "address": address,
         })
 
+    # If current_box is known and not in box_owner_map, add it for client autofill
+    if current_box and not any(item["box_id"] == current_box.id for item in box_owner_map):
+        box_owner_map.append({
+            "box_id": current_box.id,
+            "owner_id": None,
+            "owner_name": current_box.box_owner or "",
+            "first_name": current_box.box_owner or "",
+            "middle_name": "",
+            "last_name": "",
+            "mobile_number": "",
+            "pan_number": "",
+            "address": "",
+        })
+
+    selected_donation_box_id = current_box.id if current_box else request.session.get("selected_donation_box_id")
+
+    def _render_form(form_data):
+        ctx = {
+            "current_box": current_box,
+            "donation_boxes": donation_boxes,
+            "payment_modes": payment_modes,
+            "donor_volunteers": donor_volunteers,
+            "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
+            "current_time": timezone.now(),
+            "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID,
+            "form_data": form_data,
+            "selected_box_id": current_box.id if current_box else selected_donation_box_id,
+        }
+        return render(request, "add_donationbox_payment.html", ctx)
+
     if request.method == "POST":
-
-        donation_box = get_object_or_404(
-            DonationBox,
-            id=request.POST.get("donation_box")
-        )
-
+        donor_type = request.POST.get("donor_type", "").strip()
+        first_name = request.POST.get("first_name", "").strip()
+        middle_name = request.POST.get("middle_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        mobile_number = request.POST.get("mobile_number", "").strip()
+        amount_raw = request.POST.get("amount", "").strip()
+        want_80g = request.POST.get("want_80g") in ["true", "on", "1", True]
+        pan_number = request.POST.get("pan_number", "").strip().upper()
+        # When current_box is defined from URL, bind to it directly!
+        donation_box_id = current_box.id if current_box else request.POST.get("donation_box")
         opened_by_id = request.POST.get("opened_by")
         received_by_id = request.POST.get("received_by")
+        payment_mode_id = request.POST.get("payment_mode")
+        name_of_bank = request.POST.get("name_of_bank", "").strip()
+        branch = request.POST.get("branch", "").strip()
+        transaction_id = request.POST.get("transaction_id", "").strip()
+        date_time = request.POST.get("date_time")
+        i_witness = request.POST.get("i_witness", "").strip()
+        address = request.POST.get("address", "").strip()
+
+        form_data = {
+            "donor_type": donor_type or "Danpeti Owner",
+            "first_name": first_name,
+            "middle_name": middle_name,
+            "last_name": last_name,
+            "mobile_number": mobile_number,
+            "amount": amount_raw,
+            "want_80g": want_80g,
+            "pan_number": pan_number,
+            "donation_box": str(donation_box_id) if donation_box_id else "",
+            "opened_by": opened_by_id,
+            "received_by": received_by_id,
+            "payment_mode": payment_mode_id,
+            "name_of_bank": name_of_bank,
+            "branch": branch,
+            "transaction_id": transaction_id,
+            "date_time": date_time,
+            "i_witness": i_witness,
+            "address": address,
+        }
+
+        # 1. Contributor Type Validation
+        if donor_type not in ["Donor", "Danpeti Owner"]:
+            messages.error(request, "Please select contributor type: Donor or Danpeti Owner.")
+            return _render_form(form_data)
+
+        # 2. First Name & Last Name Mandatory
+        if not first_name:
+            messages.error(request, "First Name is mandatory.")
+            return _render_form(form_data)
+
+        if not last_name:
+            messages.error(request, "Last Name is mandatory.")
+            return _render_form(form_data)
+
+        # 3. Mobile Number Mandatory (10 digits)
+        clean_mobile = re.sub(r'\D', '', mobile_number)
+        if len(clean_mobile) != 10:
+            messages.error(request, "Please provide a valid 10-digit Mobile / WhatsApp number to receive receipts.")
+            return _render_form(form_data)
+
+        # 4. Amount Mandatory (in INR)
+        try:
+            amount = Decimal(amount_raw)
+            if amount <= 0:
+                raise ValueError("Amount must be greater than zero.")
+        except (ValueError, TypeError, InvalidOperation):
+            messages.error(request, "Please enter a valid donation amount in ₹.")
+            return _render_form(form_data)
+
+        # 5. PAN Card Logic (Conditional):
+        # Mandatory when Amount > 5000 OR 80G benefit checkbox is selected.
+        is_pan_required = (amount > Decimal('5000')) or want_80g
+        pan_regex = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+
+        if is_pan_required:
+            if not pan_number:
+                reasons = []
+                if amount > Decimal('5000'):
+                    reasons.append("donation amount is more than ₹5,000")
+                if want_80g:
+                    reasons.append("80G benefit is selected")
+                messages.error(request, f"PAN Card Number is mandatory when {' and '.join(reasons)}.")
+                return _render_form(form_data)
+            elif not re.match(pan_regex, pan_number):
+                messages.error(request, "Please enter a valid 10-character PAN Card Number (e.g. ABCDE1234F).")
+                return _render_form(form_data)
+        else:
+            if pan_number and not re.match(pan_regex, pan_number):
+                messages.error(request, "Please enter a valid 10-character PAN Card Number (e.g. ABCDE1234F).")
+                return _render_form(form_data)
+
+        # 6. Donation Box: Strict resolution from URL context or validated POST
+        if current_box:
+            donation_box = current_box
+        else:
+            if not donation_box_id and donor_type == "Donor":
+                donation_box = DonationBox.objects.filter(status="Active", is_deleted=False).first()
+            elif not donation_box_id:
+                messages.error(request, "Please select a Donation Box.")
+                return _render_form(form_data)
+            else:
+                donation_box = get_object_or_404(DonationBox, id=donation_box_id, is_deleted=False)
+
+        if not donation_box or donation_box.status != "Active":
+            messages.error(request, f"Donation Box ({donation_box.donation_id if donation_box else ''}) is inactive or not found.")
+            return _render_form(form_data)
+
+        # 7. Payment Mode
+        if not payment_mode_id and donor_type == "Donor":
+            default_mode = Lookup.objects.filter(
+                Q(lookup_name__icontains="online") | Q(lookup_name__icontains="upi") | Q(lookup_name__icontains="cash"),
+                lookup_type=payment_type,
+                is_deleted=False
+            ).first() or payment_modes.first()
+            if default_mode:
+                payment_mode_id = default_mode.id
+
+        if not payment_mode_id:
+            messages.error(request, "Please select payment mode.")
+            return _render_form(form_data)
+
+        payment_mode = Lookup.objects.filter(id=payment_mode_id).first()
 
         opened_by = DonorVolunteer.objects.filter(id=opened_by_id).first() if opened_by_id else None
         received_by = DonorVolunteer.objects.filter(id=received_by_id).first() if received_by_id else None
 
-        owner = DonorVolunteer.objects.filter(
-            donor_box=donation_box,
-            is_deleted=False
-        ).first()
+        # Link/Update DonorVolunteer record
+        user_for_audit = request.user if request.user.is_authenticated else None
+        if donor_type == "Danpeti Owner":
+            owner = DonorVolunteer.objects.filter(
+                donor_box=donation_box,
+                is_deleted=False
+            ).first()
+            if owner:
+                updated_owner = False
+                if clean_mobile and not owner.whatsapp_number:
+                    owner.whatsapp_number = clean_mobile
+                    updated_owner = True
+                if clean_mobile and not owner.contact_number:
+                    owner.contact_number = clean_mobile
+                    updated_owner = True
+                if pan_number and not owner.pan_number:
+                    owner.pan_number = pan_number
+                    updated_owner = True
+                if updated_owner:
+                    owner.save()
+        else:
+            owner = DonorVolunteer.objects.filter(contact_number=clean_mobile, is_deleted=False).first()
+            if not owner:
+                donor_type_lookup = Lookup.objects.filter(lookup_name__iexact="Donor", is_deleted=False).first()
+                owner = DonorVolunteer.objects.create(
+                    first_name=first_name,
+                    middle_name=middle_name or None,
+                    last_name=last_name,
+                    contact_number=clean_mobile,
+                    whatsapp_number=clean_mobile,
+                    pan_number=pan_number or None,
+                    address=address or None,
+                    person_type=donor_type_lookup,
+                    created_by=user_for_audit,
+                )
+            else:
+                updated_owner = False
+                if pan_number and not owner.pan_number:
+                    owner.pan_number = pan_number
+                    updated_owner = True
+                if updated_owner:
+                    owner.save()
 
-        payment_mode_id = request.POST.get("payment_mode")
-
-        if not payment_mode_id:
-            messages.error(request, "Please select payment mode.")
-            return redirect("add_donation_payment")
-
-        payment_mode = Lookup.objects.filter(id=payment_mode_id).first()
-
-        DonationPaymentBox.objects.create(
+        payment = DonationPaymentBox.objects.create(
+            donor_type=donor_type,
+            first_name=first_name,
+            middle_name=middle_name or None,
+            last_name=last_name,
+            mobile_number=clean_mobile,
+            pan_number=pan_number or None,
+            want_80g=want_80g,
             owner=owner,
             donation_box=donation_box,
-            address=request.POST.get("address"),
+            address=address or (owner.address if owner else ""),
             opened_by=opened_by,
             received_by=received_by,
-            amount=request.POST.get("amount"),
+            amount=amount,
             payment_mode=payment_mode,
-            date_time=request.POST.get("date_time"),
-            i_witness=request.POST.get("i_witness"),
-            created_by=request.user,
-            updated_by=request.user,
+            name_of_bank=name_of_bank or None,
+            branch=branch or None,
+            transaction_id=transaction_id or None,
+            date_time=date_time or timezone.now(),
+            i_witness=i_witness or None,
+            created_by=user_for_audit,
+            updated_by=user_for_audit,
         )
 
-        messages.success(request, "Donation Payment Added Successfully!")
-        return redirect("welcome")
+        request.session.pop("selected_donation_box_id", None)
+        if request.user.is_authenticated:
+            messages.success(request, f"Danpeti Donation of ₹{amount} added successfully!")
+            return redirect("welcome")
+        else:
+            messages.success(request, f"Thank you! Your Danpeti Donation of ₹{amount} was submitted successfully.")
+            return redirect("donation_payment_receipt_view", id=payment.id)
 
-    context = {
-        "donation_boxes": donation_boxes,
-        "payment_modes": payment_modes,
-        "donor_volunteers": donor_volunteers,
-        "box_owner_map": json.dumps(box_owner_map, cls=DjangoJSONEncoder),
-        "current_time": timezone.now(),
-        "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID
-    }
+    form_data = {"donor_type": "Danpeti Owner"}
+    return _render_form(form_data)
 
-    return render(request, "add_donationbox_payment.html", context)
+
+@require_POST
+def danpeti_create_order(request):
+    import re
+    from decimal import Decimal, InvalidOperation
+    import razorpay
+
+    try:
+        first_name = request.POST.get("first_name", "").strip()
+        middle_name = request.POST.get("middle_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        mobile_number = request.POST.get("mobile_number", "").strip()
+        amount_raw = request.POST.get("amount", "").strip()
+        want_80g = request.POST.get("want_80g") in ["true", "on", "1", True]
+        pan_number = request.POST.get("pan_number", "").strip().upper()
+        donation_box_id = request.POST.get("donation_box", "").strip()
+        address = request.POST.get("address", "").strip()
+
+        # 1. Validation
+        if not first_name:
+            return JsonResponse({"success": False, "error": "First Name is mandatory."}, status=400)
+        if not last_name:
+            return JsonResponse({"success": False, "error": "Last Name is mandatory."}, status=400)
+
+        clean_mobile = re.sub(r'\D', '', mobile_number)
+        if len(clean_mobile) != 10:
+            return JsonResponse({"success": False, "error": "Valid 10-digit mobile number is mandatory."}, status=400)
+
+        try:
+            amount = Decimal(amount_raw)
+            if amount <= 0:
+                raise ValueError()
+        except (ValueError, TypeError, InvalidOperation):
+            return JsonResponse({"success": False, "error": "Please enter a valid donation amount in ₹."}, status=400)
+
+        is_pan_required = (amount > Decimal('5000')) or want_80g
+        pan_regex = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        if is_pan_required:
+            if not pan_number or not re.match(pan_regex, pan_number):
+                return JsonResponse({"success": False, "error": "Valid 10-character PAN is mandatory when amount > ₹5,000 or 80G benefit is selected."}, status=400)
+        elif pan_number and not re.match(pan_regex, pan_number):
+            return JsonResponse({"success": False, "error": "Please enter a valid 10-character PAN."}, status=400)
+
+        # 2. Resolve Donation Box
+        donation_box = None
+        if donation_box_id:
+            if str(donation_box_id).isdigit():
+                donation_box = DonationBox.objects.filter(id=int(donation_box_id), is_deleted=False).first()
+            if not donation_box:
+                donation_box = DonationBox.objects.filter(donation_id__iexact=str(donation_box_id).strip(), is_deleted=False).first()
+
+        if not donation_box:
+            donation_box = DonationBox.objects.filter(status="Active", is_deleted=False).first()
+
+        if not donation_box or donation_box.status != "Active":
+            return JsonResponse({"success": False, "error": "Selected donation box is inactive or not found."}, status=400)
+
+        # 3. Resolve or Create DonorVolunteer
+        user_for_audit = request.user if request.user.is_authenticated else None
+        donor = DonorVolunteer.objects.filter(contact_number=clean_mobile, is_deleted=False).first()
+        if not donor:
+            donor_type_lookup = Lookup.objects.filter(lookup_name__iexact="Donor", is_deleted=False).first()
+            donor = DonorVolunteer.objects.create(
+                first_name=first_name,
+                middle_name=middle_name or None,
+                last_name=last_name,
+                contact_number=clean_mobile,
+                whatsapp_number=clean_mobile,
+                pan_number=pan_number or None,
+                address=address or None,
+                person_type=donor_type_lookup,
+                created_by=user_for_audit,
+            )
+        else:
+            updated_donor = False
+            if pan_number and not donor.pan_number:
+                donor.pan_number = pan_number
+                updated_donor = True
+            if address and not donor.address:
+                donor.address = address
+                updated_donor = True
+            if updated_donor:
+                donor.save()
+
+        # 4. Resolve Payment Mode Lookup (Razorpay / Online)
+        payment_type = LookupType.objects.filter(
+            Q(type_name__iexact="Payment Method") | Q(type_name__iexact="payment_mode"),
+            is_deleted=False
+        ).first()
+        razorpay_mode = None
+        if payment_type:
+            razorpay_mode = Lookup.objects.filter(lookup_name__iexact="Razorpay").first()
+            if not razorpay_mode:
+                razorpay_mode = Lookup.objects.filter(lookup_name__icontains="Online").first()
+            if not razorpay_mode:
+                razorpay_mode = Lookup.objects.create(
+                    lookup_name="Razorpay",
+                    lookup_type=payment_type,
+                    created_by=user_for_audit
+                )
+
+        # 5. Create Pending DonationPaymentBox record
+        payment = DonationPaymentBox.objects.create(
+            donor_type="Donor",
+            first_name=first_name,
+            middle_name=middle_name or None,
+            last_name=last_name,
+            mobile_number=clean_mobile,
+            pan_number=pan_number or None,
+            want_80g=want_80g,
+            owner=donor,
+            donation_box=donation_box,
+            address=address or (donor.address if donor else ""),
+            amount=amount,
+            payment_mode=razorpay_mode,
+            date_time=timezone.now(),
+            verified=False,
+            payment_status="Pending",
+            created_by=user_for_audit,
+            updated_by=user_for_audit,
+        )
+
+        # 6. Create Razorpay Order on server side (amount converted to paise)
+        amount_paise = int(amount * 100)
+        key_id, key_secret = _get_razorpay_credentials()
+        client = razorpay.Client(auth=(key_id, key_secret))
+        order = client.order.create({
+            "amount": amount_paise,
+            "currency": "INR",
+            "receipt": f"danpeti_{payment.id}",
+            "payment_capture": "1",
+            "notes": {
+                "danpeti_payment_id": str(payment.id),
+                "donation_box_id": str(donation_box.id),
+                "donation_box_uid": str(donation_box.donation_id),
+                "donor_name": f"{first_name} {last_name}".strip(),
+                "mobile": clean_mobile,
+            }
+        })
+
+        payment.razorpay_order_id = order["id"]
+        payment.save(update_fields=["razorpay_order_id"])
+
+        return JsonResponse({
+            "success": True,
+            "payment_id": payment.id,
+            "order_id": order["id"],
+            "amount": amount_paise,
+            "key_id": key_id,
+            "donor_name": f"{first_name} {last_name}".strip(),
+            "mobile": clean_mobile,
+            "box_uid": donation_box.donation_id,
+            "box_id": donation_box.id,
+        })
+
+    except Exception as e:
+        import traceback
+        print("Error in danpeti_create_order:", traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+@require_POST
+def danpeti_verify_payment(request):
+    import razorpay
+
+    try:
+        payment_id = request.POST.get("payment_id")
+        razorpay_payment_id = request.POST.get("razorpay_payment_id", "").strip()
+        razorpay_order_id = request.POST.get("razorpay_order_id", "").strip()
+        razorpay_signature = request.POST.get("razorpay_signature", "").strip()
+
+        if not payment_id or not razorpay_payment_id or not razorpay_order_id or not razorpay_signature:
+            return JsonResponse({"success": False, "error": "Missing payment verification parameters."}, status=400)
+
+        payment = get_object_or_404(DonationPaymentBox, id=payment_id, is_deleted=False)
+
+        key_id, key_secret = _get_razorpay_credentials()
+        client = razorpay.Client(auth=(key_id, key_secret))
+
+        # Verify Razorpay signature
+        try:
+            client.utility.verify_payment_signature({
+                "razorpay_order_id": razorpay_order_id,
+                "razorpay_payment_id": razorpay_payment_id,
+                "razorpay_signature": razorpay_signature
+            })
+        except Exception as sig_err:
+            payment.payment_status = "Failed"
+            payment.transaction_id = razorpay_payment_id
+            payment.save(update_fields=["payment_status", "transaction_id"])
+            return JsonResponse({"success": False, "error": "Payment signature verification failed."}, status=400)
+
+        # Signature is verified! Update record to Paid & Verified
+        payment.transaction_id = razorpay_payment_id
+        payment.razorpay_order_id = razorpay_order_id
+        payment.payment_status = "Paid"
+        payment.verified = True
+        payment.verified_at = timezone.now()
+        payment.save()  # Triggers generate_danpeti_receipt signal to assign receipt_id
+        payment.refresh_from_db()
+
+        receipt_url = reverse("donation_payment_receipt_view", kwargs={"id": payment.id})
+        return JsonResponse({
+            "success": True,
+            "receipt_id": payment.receipt_id,
+            "redirect_url": receipt_url
+        })
+
+    except Exception as e:
+        import traceback
+        print("Error in danpeti_verify_payment:", traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+@require_POST
+def danpeti_payment_failure(request):
+    try:
+        payment_id = request.POST.get("payment_id")
+        if payment_id:
+            payment = DonationPaymentBox.objects.filter(id=payment_id, is_deleted=False).first()
+            if payment and payment.payment_status != "Paid":
+                payment.payment_status = "Failed"
+                payment.save(update_fields=["payment_status"])
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+def send_whatsapp_otp(phone_number, otp, person_name=None):
+    """
+    Sends WhatsApp OTP to phone_number using Twilio WhatsApp API if available,
+    falling back to console logging.
+    """
+    import re
+    import os
+    from django.conf import settings
+
+    clean_phone = re.sub(r'\D', '', str(phone_number))
+    if clean_phone.startswith('91') and len(clean_phone) > 10:
+        clean_phone = clean_phone[-10:]
+
+    greeting = f"Namaste {person_name}, " if person_name else "Namaste, "
+    message_body = (
+        f"{greeting}your Ahinsadham Danpeti Donation verification OTP is *{otp}*.\n"
+        f"This OTP is valid for 10 minutes. Please enter it to verify box opening."
+    )
+
+    twilio_sid = getattr(settings, 'TWILIO_ACCOUNT_SID', None) or os.getenv('TWILIO_ACCOUNT_SID', 'AC730c5a6779806941ef6ef4215f92629a')
+    twilio_token = getattr(settings, 'TWILIO_AUTH_TOKEN', None) or os.getenv('TWILIO_AUTH_TOKEN', '8ab4ce8083246cb7fc38dccacc5a521b')
+    twilio_whatsapp_from = getattr(settings, 'TWILIO_WHATSAPP_NUMBER', None) or os.getenv('TWILIO_WHATSAPP_NUMBER', 'whatsapp:+14155238886')
+
+    sent = False
+    try:
+        from twilio.rest import Client
+        client = Client(twilio_sid, twilio_token)
+        to_whatsapp = f"whatsapp:+91{clean_phone}"
+        from_whatsapp = twilio_whatsapp_from if twilio_whatsapp_from.startswith('whatsapp:') else f"whatsapp:{twilio_whatsapp_from}"
+        client.messages.create(
+            body=message_body,
+            from_=from_whatsapp,
+            to=to_whatsapp
+        )
+        sent = True
+        print(f"WhatsApp OTP sent to {to_whatsapp}")
+    except Exception as e:
+        print(f"Twilio WhatsApp sending notice for +91{clean_phone}: {e}")
+
+    # Always log OTP clearly for audit/testing
+    print(f"[WHATSAPP OTP] Contact: +91{clean_phone} | Name: {person_name} | OTP: {otp}")
+    return {"sent": sent, "phone": clean_phone, "otp": otp}
+
+
+@require_POST
+def danpeti_send_owner_otp(request):
+    import re
+    import random
+    from django.utils import timezone
+    from .models import DonorVolunteer
+
+    try:
+        opened_by_id = request.POST.get("opened_by")
+        if not opened_by_id:
+            return JsonResponse({"success": False, "error": "Please select the 'Opened By' employee to send OTP."}, status=400)
+
+        opened_by = DonorVolunteer.objects.filter(id=opened_by_id, is_deleted=False).first()
+        if not opened_by:
+            return JsonResponse({"success": False, "error": "Selected 'Opened By' employee not found."}, status=400)
+
+        contact = (opened_by.whatsapp_number or opened_by.contact_number or "").strip()
+        clean_mobile = re.sub(r'\D', '', contact)
+        if len(clean_mobile) < 10:
+            return JsonResponse({
+                "success": False,
+                "error": f"Employee {opened_by.first_name} {opened_by.last_name} does not have a valid 10-digit mobile number for WhatsApp OTP."
+            }, status=400)
+
+        clean_10 = clean_mobile[-10:]
+        otp = str(random.randint(100000, 999999))
+        emp_name = f"{opened_by.first_name or ''} {opened_by.last_name or ''}".strip()
+
+        request.session['danpeti_owner_otp'] = {
+            'otp': otp,
+            'opened_by_id': opened_by.id,
+            'employee_name': emp_name,
+            'phone': clean_10,
+            'timestamp': timezone.now().timestamp(),
+        }
+
+        send_whatsapp_otp(clean_10, otp, person_name=emp_name)
+
+        masked_phone = f"+91 ******{clean_10[-4:]}"
+        return JsonResponse({
+            "success": True,
+            "employee_name": emp_name,
+            "masked_phone": masked_phone,
+            "otp_debug": otp if settings.DEBUG else None,
+            "message": f"OTP successfully sent via WhatsApp to {emp_name} ({masked_phone})."
+        })
+
+    except Exception as e:
+        import traceback
+        print("Error in danpeti_send_owner_otp:", traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+@require_POST
+def danpeti_verify_owner_otp(request):
+    import re
+    from decimal import Decimal, InvalidOperation
+    from django.utils import timezone
+    import razorpay
+    from .models import DonationBox, DonationPaymentBox, DonorVolunteer, Lookup, LookupType
+
+    try:
+        entered_otp = request.POST.get("otp", "").strip()
+        if not entered_otp:
+            return JsonResponse({"success": False, "error": "Please enter the 6-digit OTP."}, status=400)
+
+        session_otp_data = request.session.get("danpeti_owner_otp")
+        if not session_otp_data:
+            return JsonResponse({"success": False, "error": "Session expired or OTP not requested. Please request a new OTP."}, status=400)
+
+        sent_time = session_otp_data.get("timestamp", 0)
+        if (timezone.now().timestamp() - sent_time) > 600:
+            return JsonResponse({"success": False, "error": "OTP has expired (valid 10 minutes). Please click Resend OTP."}, status=400)
+
+        expected_otp = str(session_otp_data.get("otp")).strip()
+        if entered_otp != expected_otp:
+            return JsonResponse({"success": False, "error": "Incorrect OTP. Please enter the valid OTP sent on WhatsApp."}, status=400)
+
+        # OTP is VALID! Process the Danpeti Owner donation
+        first_name = request.POST.get("first_name", "").strip()
+        middle_name = request.POST.get("middle_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        mobile_number = request.POST.get("mobile_number", "").strip()
+        amount_raw = request.POST.get("amount", "").strip()
+        want_80g = request.POST.get("want_80g") in ["true", "on", "1", True]
+        pan_number = request.POST.get("pan_number", "").strip().upper()
+        donation_box_id = request.POST.get("donation_box")
+        opened_by_id = request.POST.get("opened_by") or session_otp_data.get("opened_by_id")
+        received_by_id = request.POST.get("received_by")
+        payment_mode_id = request.POST.get("payment_mode")
+        name_of_bank = request.POST.get("name_of_bank", "").strip()
+        branch = request.POST.get("branch", "").strip()
+        transaction_id = request.POST.get("transaction_id", "").strip()
+        date_time_raw = request.POST.get("date_time")
+        i_witness = request.POST.get("i_witness", "").strip()
+        address = request.POST.get("address", "").strip()
+
+        if not first_name:
+            return JsonResponse({"success": False, "error": "Owner First Name is mandatory."}, status=400)
+        if not last_name:
+            return JsonResponse({"success": False, "error": "Owner Last Name is mandatory."}, status=400)
+
+        clean_mobile = re.sub(r'\D', '', mobile_number)
+        if len(clean_mobile) != 10:
+            return JsonResponse({"success": False, "error": "Valid 10-digit mobile number is mandatory."}, status=400)
+
+        try:
+            amount = Decimal(amount_raw)
+            if amount <= 0:
+                raise ValueError()
+        except (ValueError, TypeError, InvalidOperation):
+            return JsonResponse({"success": False, "error": "Please enter a valid donation amount in ₹."}, status=400)
+
+        is_pan_required = (amount > Decimal('5000')) or want_80g
+        pan_regex = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        if is_pan_required:
+            if not pan_number or not re.match(pan_regex, pan_number):
+                return JsonResponse({"success": False, "error": "Valid 10-character PAN is mandatory when amount > ₹5,000 or 80G benefit is selected."}, status=400)
+        elif pan_number and not re.match(pan_regex, pan_number):
+            return JsonResponse({"success": False, "error": "Please enter a valid 10-character PAN."}, status=400)
+
+        donation_box = None
+        if donation_box_id:
+            if str(donation_box_id).isdigit():
+                donation_box = DonationBox.objects.filter(id=int(donation_box_id), is_deleted=False).first()
+            if not donation_box:
+                donation_box = DonationBox.objects.filter(donation_id__iexact=str(donation_box_id).strip(), is_deleted=False).first()
+
+        if not donation_box or donation_box.status != "Active":
+            return JsonResponse({"success": False, "error": "Selected donation box is inactive or not found."}, status=400)
+
+        payment_mode = Lookup.objects.filter(id=payment_mode_id, is_deleted=False).first() if payment_mode_id else None
+        if not payment_mode:
+            payment_type = LookupType.objects.filter(
+                Q(type_name__iexact="Payment Method") | Q(type_name__iexact="payment_mode"),
+                is_deleted=False
+            ).first()
+            payment_mode = Lookup.objects.filter(lookup_type=payment_type, is_deleted=False).first()
+
+        opened_by = DonorVolunteer.objects.filter(id=opened_by_id, is_deleted=False).first()
+        received_by = DonorVolunteer.objects.filter(id=received_by_id, is_deleted=False).first() if received_by_id else None
+        user_for_audit = request.user if request.user.is_authenticated else None
+
+        # Resolve or update Owner
+        owner = DonorVolunteer.objects.filter(donor_box=donation_box, is_deleted=False).first()
+        if owner:
+            updated_owner = False
+            if clean_mobile and not owner.whatsapp_number:
+                owner.whatsapp_number = clean_mobile
+                updated_owner = True
+            if clean_mobile and not owner.contact_number:
+                owner.contact_number = clean_mobile
+                updated_owner = True
+            if pan_number and not owner.pan_number:
+                owner.pan_number = pan_number
+                updated_owner = True
+            if updated_owner:
+                owner.save()
+        else:
+            owner = DonorVolunteer.objects.filter(contact_number=clean_mobile, is_deleted=False).first()
+
+        is_online = payment_mode and ("online" in payment_mode.lookup_name.lower() or "razorpay" in payment_mode.lookup_name.lower())
+
+        if is_online:
+            # Create Pending record and Razorpay Order
+            payment = DonationPaymentBox.objects.create(
+                donor_type="Danpeti Owner",
+                first_name=first_name,
+                middle_name=middle_name or None,
+                last_name=last_name,
+                mobile_number=clean_mobile,
+                pan_number=pan_number or None,
+                want_80g=want_80g,
+                owner=owner,
+                donation_box=donation_box,
+                address=address or (owner.address if owner else ""),
+                opened_by=opened_by,
+                received_by=received_by,
+                amount=amount,
+                payment_mode=payment_mode,
+                name_of_bank=name_of_bank or None,
+                branch=branch or None,
+                transaction_id=transaction_id or None,
+                date_time=timezone.now(),
+                i_witness=i_witness or None,
+                verified=False,
+                payment_status="Pending",
+                created_by=user_for_audit,
+                updated_by=user_for_audit,
+            )
+
+            amount_paise = int(amount * 100)
+            key_id, key_secret = _get_razorpay_credentials()
+            client = razorpay.Client(auth=(key_id, key_secret))
+            order = client.order.create({
+                "amount": amount_paise,
+                "currency": "INR",
+                "receipt": f"danpeti_{payment.id}",
+                "payment_capture": "1",
+                "notes": {
+                    "danpeti_payment_id": str(payment.id),
+                    "donation_box_id": str(donation_box.id),
+                    "donation_box_uid": str(donation_box.donation_id),
+                    "donor_name": f"{first_name} {last_name}".strip(),
+                    "mobile": clean_mobile,
+                }
+            })
+            payment.razorpay_order_id = order["id"]
+            payment.save(update_fields=["razorpay_order_id"])
+            request.session.pop("danpeti_owner_otp", None)
+
+            return JsonResponse({
+                "success": True,
+                "is_online": True,
+                "payment_id": payment.id,
+                "order_id": order["id"],
+                "amount": amount_paise,
+                "key_id": key_id,
+                "donor_name": f"{first_name} {last_name}".strip(),
+                "mobile": clean_mobile,
+                "box_uid": donation_box.donation_id,
+                "box_id": donation_box.id,
+            })
+
+        else:
+            # Offline collection (Cash / Cheque / Bank Transfer) -> Marked Verified & Paid
+            payment = DonationPaymentBox.objects.create(
+                donor_type="Danpeti Owner",
+                first_name=first_name,
+                middle_name=middle_name or None,
+                last_name=last_name,
+                mobile_number=clean_mobile,
+                pan_number=pan_number or None,
+                want_80g=want_80g,
+                owner=owner,
+                donation_box=donation_box,
+                address=address or (owner.address if owner else ""),
+                opened_by=opened_by,
+                received_by=received_by,
+                amount=amount,
+                payment_mode=payment_mode,
+                name_of_bank=name_of_bank or None,
+                branch=branch or None,
+                transaction_id=transaction_id or None,
+                date_time=timezone.now(),
+                i_witness=i_witness or None,
+                verified=True,
+                verified_at=timezone.now(),
+                payment_status="Paid",
+                created_by=user_for_audit,
+                updated_by=user_for_audit,
+            )
+            payment.save()
+            payment.refresh_from_db()
+            request.session.pop("danpeti_owner_otp", None)
+
+            receipt_url = reverse("donation_payment_receipt_view", kwargs={"id": payment.id})
+            return JsonResponse({
+                "success": True,
+                "is_online": False,
+                "message": f"Danpeti Donation of ₹{amount} verified and recorded successfully!",
+                "receipt_id": payment.receipt_id,
+                "redirect_url": receipt_url
+            })
+
+    except Exception as e:
+        import traceback
+        print("Error in danpeti_verify_owner_otp:", traceback.format_exc())
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 from django.contrib.auth.decorators import login_required
@@ -2395,8 +3219,11 @@ def add_donation_box(request):
         )
 
         box.save()
+        base_url = request.build_absolute_uri('/')[:-1]
+        box.generate_qr_code(base_url=base_url)
+        box.save(update_fields=['qr_code'])
 
-        messages.success(request, "Donation Box Added Successfully with QR Code!")
+        messages.success(request, f"Donation Box ({box.donation_id}) added successfully with unique QR code!")
         return redirect("welcome")
 
     context = {
@@ -2826,8 +3653,9 @@ def edit_donation_box(request, id):
 
         box.status = request.POST.get('status')
 
-        if not box.qr_code:
-            box.generate_qr_code()
+        if request.POST.get('regenerate_qr') or not box.qr_code:
+            base_url = request.build_absolute_uri('/')[:-1]
+            box.generate_qr_code(base_url=base_url)
 
         box.save()
         messages.success(request, "Donation Box updated successfully!")
@@ -2993,7 +3821,12 @@ def verify_payment(request, payment_id):
 def select_donation_box(request):
     if request.method == "POST":
         donation_box_id = request.POST.get("donation_box_id", "").strip()
-        if "Donation ID:" in donation_box_id:
+        # If full scanned URL was submitted, extract the box ID
+        if "/danpeti/donation/" in donation_box_id:
+            parts = [p for p in donation_box_id.split("/") if p]
+            if parts:
+                donation_box_id = parts[-1]
+        elif "Donation ID:" in donation_box_id:
             donation_box_id = donation_box_id.replace("Donation ID:", "").strip()
         elif "Donation ID" in donation_box_id:
             donation_box_id = donation_box_id.replace("Donation ID", "").strip()
@@ -3004,18 +3837,15 @@ def select_donation_box(request):
             )
             return redirect("select_donation_box")
 
-        try:
-            donation_box = DonationBox.objects.get(
-                donation_id__iexact=donation_box_id,is_deleted=False)
-            request.session["selected_donation_box_id"] = donation_box.id
+        donation_box = None
+        if donation_box_id.isdigit():
+            donation_box = DonationBox.objects.filter(id=int(donation_box_id), is_deleted=False).first()
+        if not donation_box:
+            donation_box = DonationBox.objects.filter(donation_id__iexact=donation_box_id, is_deleted=False).first()
 
-            messages.success(
-                request,
-                f"Donation Box '{donation_box.donation_id}' selected successfully."
-            )
-            return redirect("add_donation_payment")
-
-        except DonationBox.DoesNotExist:
+        if donation_box:
+            return redirect("danpeti_donation_form", box_id=donation_box.id)
+        else:
             messages.error(
                 request,"Invalid Donation Box ID. Please scan the correct QR code or re-enter the ID."
             )

@@ -91,14 +91,29 @@ class DonationBox(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
-    def generate_qr_code(self):
+    def get_donation_path(self):
+        box_id = self.id if self.id else (self.donation_id or "")
+        return f"/danpeti/donation/{box_id}/"
+
+    def get_donation_url(self, base_url=None):
+        path = self.get_donation_path()
+        if base_url:
+            return f"{base_url.rstrip('/')}{path}"
+        site_url = getattr(settings, 'SITE_URL', '').strip()
+        if not site_url:
+            site_url = os.environ.get('SITE_URL', '').strip()
+        if not site_url:
+            site_url = 'https://admin.ahinsadham.org'
+        return f"{site_url.rstrip('/')}{path}"
+
+    def generate_qr_code(self, base_url=None):
         qr = qrcode.QRCode(
             version=None,
             error_correction=qrcode.constants.ERROR_CORRECT_H,
             box_size=10,
             border=4,
         )
-        qr_data = self.donation_id
+        qr_data = self.get_donation_url(base_url=base_url)
         qr.add_data(qr_data)
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color="black", back_color="white").convert('RGBA')
@@ -128,7 +143,8 @@ class DonationBox(models.Model):
 
         buffer = BytesIO()
         qr_img.convert('RGB').save(buffer, format='PNG')
-        self.qr_code.save(f"{self.donation_id}_qr.png", File(buffer), save=False)
+        box_id_str = str(self.id or self.donation_id or 'box')
+        self.qr_code.save(f"box_{box_id_str}_qr.png", File(buffer), save=False)
 
     def save(self, *args, **kwargs):
         if not self.donation_id:
@@ -143,10 +159,13 @@ class DonationBox(models.Model):
                 new_id = "DP_0001"
             self.donation_id = new_id
 
-        if not self.qr_code:
-            self.generate_qr_code()
-
+        # First save to ensure self.id is generated for new records
+        needs_qr = not self.qr_code
         super().save(*args, **kwargs)
+
+        if needs_qr:
+            self.generate_qr_code()
+            super().save(update_fields=['qr_code'])
 
     def __str__(self):
         owner = self.box_owner if self.box_owner else "Donation Box"
@@ -173,7 +192,7 @@ class DonorVolunteer(models.Model):
     blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES, blank=True, null=True)
     contact_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
     whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(unique=True, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     doa = models.DateField(blank=True, null=True)
@@ -325,6 +344,19 @@ class DonationPaymentBox(models.Model):
     id = models.AutoField(primary_key=True)
     receipt_id = models.CharField(max_length=20,unique=True,blank=True, null=True)
 
+    donor_type = models.CharField(
+        max_length=20,
+        default='Danpeti Owner',
+        choices=[('Donor', 'Donor'), ('Danpeti Owner', 'Danpeti Owner')],
+        verbose_name="Type"
+    )
+    first_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="First Name")
+    middle_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Middle Name")
+    last_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Last Name")
+    mobile_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Mobile Number")
+    pan_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="PAN Number")
+    want_80g = models.BooleanField(default=False, verbose_name="80G Benefit")
+
     owner = models.ForeignKey(
         DonorVolunteer,
         on_delete=models.SET_NULL,
@@ -343,6 +375,13 @@ class DonationPaymentBox(models.Model):
     name_of_bank = models.CharField(max_length=100,null=True,blank=True,verbose_name="Bank Name")
     branch = models.CharField(max_length=100,null=True,blank=True,verbose_name="Branch")
     transaction_id = models.CharField(max_length=100,null=True,blank=True,verbose_name="Transaction ID")
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True, verbose_name="Razorpay Order ID")
+    payment_status = models.CharField(
+        max_length=20,
+        default='Pending',
+        choices=[('Pending', 'Pending'), ('Paid', 'Paid'), ('Failed', 'Failed')],
+        verbose_name="Payment Status"
+    )
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_donation_payments')
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_donation_payments')
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
@@ -390,6 +429,13 @@ class Donation_Hist(models.Model):
 class DonationPaymentBox_Hist(models.Model):
     id = models.AutoField(primary_key=True)
     payment = models.ForeignKey('DonationPaymentBox', on_delete=models.CASCADE, related_name='history')
+    donor_type = models.CharField(max_length=20, blank=True, null=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    mobile_number = models.CharField(max_length=20, blank=True, null=True)
+    pan_number = models.CharField(max_length=20, blank=True, null=True)
+    want_80g = models.BooleanField(default=False)
     owner = models.ForeignKey('DonorVolunteer',on_delete=models.SET_NULL, null=True,blank=True,related_name='donation_payment_history')
     donation_box = models.ForeignKey('DonationBox', on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -399,6 +445,9 @@ class DonationPaymentBox_Hist(models.Model):
     payment_mode = models.CharField(max_length=100, null=True, blank=True)   
     date_time = models.DateTimeField(null=True, blank=True)
     i_witness = models.CharField(max_length=100, blank=True, null=True)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True)
+    payment_status = models.CharField(max_length=20, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
     created_at = models.DateTimeField(null=True, blank=True)

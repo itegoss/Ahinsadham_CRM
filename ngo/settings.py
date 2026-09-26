@@ -21,6 +21,9 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = os.getenv("ENV", "DEV") != 'DEV'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
+# Base domain for public URLs and QR codes (can be configured via environment variable)
+SITE_URL = os.environ.get('SITE_URL', 'https://admin.ahinsadham.org')
+
 # SECURE_SSL_REDIRECT = True
 
 CSRF_TRUSTED_ORIGINS = [
@@ -81,16 +84,15 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DATABASE_NAME'),
-            'USER': os.environ.get('DATABASE_USER'),
-            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-            'HOST': os.environ.get('DATABASE_HOST'),
-            'PORT': os.environ.get('DATABASE_PORT'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Ahinsadhamm',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
-
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
