@@ -59,6 +59,7 @@ class DonationBox(models.Model):
     donation_id = models.CharField(max_length=10, unique=True, editable=False)
     qr_code = models.ImageField(upload_to='qr_images/', blank=True, null=True)
     key_id = models.CharField(max_length=50, null=True, blank=True)
+    old_box_id = models.CharField(max_length=50, null=True, blank=True)
     BOX_SIZES = [
         ('small', 'Small'),
         ('medium', 'Medium'),
@@ -81,12 +82,14 @@ class DonationBox(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_boxes')
     status_choices = [
         ('Active', 'Active'),
+        ('Maintainance', 'Maintainance'),
         ('Inactive', 'Inactive'),
         ('return', 'Return')
     ]
     status = models.CharField(max_length=20, choices=status_choices, default='Active', db_index=True)
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='%(class)s_updated_by')
     is_deleted = models.BooleanField(default=False, db_index=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
@@ -481,3 +484,106 @@ class UserRole_Hist(models.Model):
 
     def __str__(self):
         return f"History of UserRole {self.user_role_id} - {self.action}"
+
+class OwnerDetail(models.Model):
+    # Business Details (from user specification)
+    business_name = models.CharField(max_length=200, blank=True, null=True, db_index=True)
+    gst_number = models.CharField(max_length=30, blank=True, null=True, db_index=True)
+
+    # Address Details
+    address_line_1 = models.CharField(max_length=255, blank=True, null=True)
+    address_line_2 = models.CharField(max_length=255, blank=True, null=True)
+    area = models.CharField(max_length=100, blank=True, null=True)
+    zone = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, default='India', blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+
+    # Personal Details (matches DonorVolunteer structure)
+    salutation = models.CharField(max_length=20, blank=True, null=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    blood_group = models.CharField(max_length=5, blank=True, null=True)
+    contact_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(null=True, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    native_place = models.CharField(max_length=200, blank=True, null=True)
+
+    id_type = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True, blank=True, related_name="owner_id_type_lookup")
+    id_number = models.CharField(max_length=30, blank=True, null=True)
+    id_proof_image = models.ImageField(upload_to='id_proofs/', blank=True, null=True)
+    pan_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
+    pan_card_image = models.ImageField(upload_to='pan_cards/', blank=True, null=True)
+
+    # Associated Donation Box
+    donor_box = models.ForeignKey('DonationBox', on_delete=models.SET_NULL, null=True, blank=True, related_name="box_owner_details")
+
+    # Audit & Soft Delete
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="owner_detail_created_by")
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="owner_detail_updated_by")
+    is_deleted = models.BooleanField(default=False, db_index=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="%(class)s_deleted_by")
+
+    def __str__(self):
+        full_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
+        if self.business_name and full_name:
+            return f"{self.business_name} ({full_name})"
+        return self.business_name or full_name or f"Owner #{self.id}"
+
+class Employee(models.Model):
+    BLOOD_GROUP_CHOICES = [
+        ('A+', 'A+'), ('A-', 'A-'),
+        ('B+', 'B+'), ('B-', 'B-'),
+        ('AB+', 'AB+'), ('AB-', 'AB-'),
+        ('O+', 'O+'), ('O-', 'O-'),
+    ]
+
+    salutation = models.CharField(max_length=20, blank=True, null=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES, blank=True, null=True)
+    contact_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(null=True, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    
+    address = models.CharField(max_length=255, blank=True, null=True)
+    area = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    state = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, default='India', blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    native_place = models.CharField(max_length=200, blank=True, null=True)
+
+    department = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True, blank=True, related_name="emp_department_lookup")
+    position = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True, blank=True, related_name="emp_position_lookup")
+    designation = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True, blank=True, related_name="emp_designation_lookup")
+
+    id_type = models.ForeignKey("Lookup", on_delete=models.SET_NULL, null=True, blank=True, related_name="emp_id_type_lookup")
+    id_number = models.CharField(max_length=20, blank=True, null=True)
+    id_proof_image = models.ImageField(upload_to='emp_id_proofs/', blank=True, null=True)
+    pan_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
+    pan_card_image = models.ImageField(upload_to='emp_pan_cards/', blank=True, null=True)
+    
+    # Audit & Soft Delete
+    is_deleted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name='emp_created_by', on_delete=models.SET_NULL, null=True, blank=True)
+    updated_by = models.ForeignKey(User, related_name='emp_updated_by', on_delete=models.SET_NULL, null=True, blank=True)
+    deleted_by = models.ForeignKey(User, related_name='emp_deleted_by', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.first_name or ''} {self.last_name or ''}".strip()

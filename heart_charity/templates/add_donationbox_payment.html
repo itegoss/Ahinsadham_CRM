@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danpeti Donation</title>
+  <title>Daanpeti Donation</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
     * {
@@ -643,8 +643,8 @@
 <body>
 <div class="page-wrapper">
 <div class="container">
-  <h2>Danpeti Donation</h2>
-  <p class="subtitle">Please fill in the required contributor, donation box, and payment details below</p>
+  <h2>Daanpeti Donation</h2>
+ <p class="form-page-subtitle text-center"><hr style="width: 50%; margin: 20px auto; border: 0; border-top: 2px solid #ccc;"></p>
 
   {% if messages %}
     {% for message in messages %}
@@ -679,7 +679,7 @@
               </label>
 
               <label class="radio-card" id="cardOwner">
-                  <input type="radio" name="donor_type" value="Danpeti Owner" id="typeOwner" required {% if form_data.donor_type == 'Danpeti Owner' or not form_data.donor_type %}checked{% endif %}>
+                  <input type="radio" name="donor_type" value="Daanpeti Donor" id="typeOwner" required {% if form_data.donor_type == 'Daanpeti Donor' or not form_data.donor_type %}checked{% endif %}>
                   <span class="custom-radio-circle"></span>
                   <div class="radio-content">
                       <span class="radio-label-text">Donor Box Owner</span>
@@ -715,6 +715,68 @@
 
       <!-- 2B. Donor Box Owner Details Block -->
       <div id="donorBoxOwnerBlock" style="display: none;">
+          <!-- 3. Donation Box Details -->
+          <div class="section-title">
+              <i class="bi bi-box-seam"></i> Donation Box Details
+          </div>
+          <hr>
+
+          {% if current_box %}
+          <div class="form-group">
+              <label>Donation Box <span class="req-star">*</span></label>
+              <div style="position: relative;">
+                  <input type="text" class="form-control" readonly 
+                         value="{% if current_box.box_owner %}{{ current_box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ current_box.donation_id }})"
+                         style="background-color: #f1f8f3; font-weight: 700; color: #15803d; border-color: #86efac; cursor: default; padding-right: 120px;">
+                  <span style="position: absolute; right: 10px; top: 10px; font-size: 12px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 8px;">
+                      <i class="bi bi-qr-code-scan"></i> Linked Box
+                  </span>
+              </div>
+              <input type="hidden" name="donation_box" id="donationBoxSelect" value="{{ current_box.id }}">
+              <div class="helper-text" style="color: #15803d; font-weight: 500;">
+                  <i class="bi bi-check-circle-fill"></i> Automatically identified from QR code URL (Box #{{ current_box.id }})
+              </div>
+          </div>
+          {% else %}
+          <div class="form-group">
+              <label for="donationBoxSelect">Donation Box <span class="req-star">*</span></label>
+              <select name="donation_box" id="donationBoxSelect" class="form-select">
+                  <option value="">-- Select Donation Box --</option>
+                  {% for box in donation_boxes %}
+                      <option value="{{ box.id }}" {% if selected_box_id == box.id or form_data.donation_box == box.id|stringformat:'s' %}selected{% endif %}>
+                          {% if box.box_owner %}{{ box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ box.donation_id }})
+                      </option>
+                  {% endfor %}
+              </select>
+              <div class="field-error" id="donationBoxError">Please select a Donation Box</div>
+          </div>
+          {% endif %}
+
+          <div class="form-grid-3 mb-4">
+              <div class="form-group">
+                  <label for="openedBySelect">Opened By <span class="req-star">*</span></label>
+                  <select name="opened_by" id="openedBySelect" class="form-select">
+                      <option value="">-- Select Person --</option>
+                      {% for person in donor_volunteers %}
+                          <option value="{{ person.id }}" data-contact="{{ person.whatsapp_number|default:person.contact_number|default:'' }}" {% if form_data.opened_by == person.id|stringformat:'s' %}selected{% endif %}>
+                              {{ person.first_name }} {{ person.last_name }}
+                          </option>
+                      {% endfor %}
+                  </select>
+                  <div class="field-error" id="openedByError">Please select the Opened By employee</div>
+              </div>
+
+              <div class="form-group">
+                  <label for="openedByContact">Contact Number</label>
+                  <input type="text" id="openedByContact" readonly class="form-control" placeholder="Auto-filled on selection" style="background-color: #f8fafc; font-weight: 600; color: #166534;">
+              </div>
+
+              <div class="form-group">
+                  <label for="iWitness">I Witness</label>
+                  <input type="text" id="iWitness" name="i_witness" placeholder="Witness name" value="{{ form_data.i_witness|default:'' }}">
+              </div>
+          </div>
+
           <div class="section-title">
               <i class="bi bi-person-badge"></i>
               <span>Donor Box Owner Details</span>
@@ -799,70 +861,8 @@
           </div>
       </div>
 
-      <!-- 3 & 4. Box Collection Details Block (Visible only for Donor Box Owner) -->
+      <!-- 4. Payment Details Block (Visible only for Donor Box Owner) -->
       <div id="boxCollectionDetailsBlock" style="display: none;">
-          <!-- 3. Donation Box Details -->
-          <div class="section-title">
-              <i class="bi bi-box-seam"></i> Donation Box Details
-          </div>
-          <hr>
-
-          {% if current_box %}
-          <div class="form-group">
-              <label>Donation Box <span class="req-star">*</span></label>
-              <div style="position: relative;">
-                  <input type="text" class="form-control" readonly 
-                         value="{% if current_box.box_owner %}{{ current_box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ current_box.donation_id }})"
-                         style="background-color: #f1f8f3; font-weight: 700; color: #15803d; border-color: #86efac; cursor: default; padding-right: 120px;">
-                  <span style="position: absolute; right: 10px; top: 10px; font-size: 12px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 8px;">
-                      <i class="bi bi-qr-code-scan"></i> Linked Box
-                  </span>
-              </div>
-              <input type="hidden" name="donation_box" id="donationBoxSelect" value="{{ current_box.id }}">
-              <div class="helper-text" style="color: #15803d; font-weight: 500;">
-                  <i class="bi bi-check-circle-fill"></i> Automatically identified from QR code URL (Box #{{ current_box.id }})
-              </div>
-          </div>
-          {% else %}
-          <div class="form-group">
-              <label for="donationBoxSelect">Donation Box <span class="req-star">*</span></label>
-              <select name="donation_box" id="donationBoxSelect" class="form-select">
-                  <option value="">-- Select Donation Box --</option>
-                  {% for box in donation_boxes %}
-                      <option value="{{ box.id }}" {% if selected_box_id == box.id or form_data.donation_box == box.id|stringformat:'s' %}selected{% endif %}>
-                          {% if box.box_owner %}{{ box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ box.donation_id }})
-                      </option>
-                  {% endfor %}
-              </select>
-              <div class="field-error" id="donationBoxError">Please select a Donation Box</div>
-          </div>
-          {% endif %}
-
-          <div class="form-grid-3">
-              <div class="form-group">
-                  <label for="openedBySelect">Opened By <span class="req-star">*</span></label>
-                  <select name="opened_by" id="openedBySelect" class="form-select">
-                      <option value="">-- Select Person --</option>
-                      {% for person in donor_volunteers %}
-                          <option value="{{ person.id }}" data-contact="{{ person.whatsapp_number|default:person.contact_number|default:'' }}" {% if form_data.opened_by == person.id|stringformat:'s' %}selected{% endif %}>
-                              {{ person.first_name }} {{ person.last_name }}
-                          </option>
-                      {% endfor %}
-                  </select>
-                  <div class="field-error" id="openedByError">Please select the Opened By employee</div>
-              </div>
-
-              <div class="form-group">
-                  <label for="openedByContact">Contact Number</label>
-                  <input type="text" id="openedByContact" readonly class="form-control" placeholder="Auto-filled on selection" style="background-color: #f8fafc; font-weight: 600; color: #166534;">
-              </div>
-
-              <div class="form-group">
-                  <label for="iWitness">I Witness</label>
-                  <input type="text" id="iWitness" name="i_witness" placeholder="Witness name" value="{{ form_data.i_witness|default:'' }}">
-              </div>
-          </div>
-
           <!-- 4. Payment Details -->
           <div class="section-title">
               <i class="bi bi-credit-card"></i> Payment Details
@@ -1106,7 +1106,7 @@ function autoFillFromSelectedBox() {
         ownerDisplay.value = info.owner_name || "";
         addressField.value = info.address || "";
         // If Donor Box Owner mode is selected, also auto-fill owner personal details
-        if (getSelectedContributorType() === "Danpeti Owner") {
+        if (getSelectedContributorType() === "Daanpeti Donor") {
             if (!ownerFirstName.value || ownerFirstName.dataset.autofilled === "true") {
                 ownerFirstName.value = info.first_name || "";
                 ownerFirstName.dataset.autofilled = "true";
@@ -1270,7 +1270,7 @@ function validateForm() {
     }
 
     // Donation Box & Payment Mode (Only required for Donor Box Owner)
-    if (type === "Danpeti Owner") {
+    if (type === "Daanpeti Donor") {
         if (!boxSelect.value) {
             showError("donationBoxError", boxSelect, "Please select a Donation Box.");
             isValid = false;
@@ -1395,7 +1395,7 @@ function processIndividualDonorPayment() {
             amount: data.amount,
             currency: "INR",
             name: "Ahinsadham Dan-Peti",
-            description: "Danpeti Donation" + (data.box_uid ? (" - Box #" + data.box_uid) : ""),
+            description: "Daanpeti Donation" + (data.box_uid ? (" - Box #" + data.box_uid) : ""),
             order_id: data.order_id,
             prefill: {
                 name: data.donor_name || "",
@@ -1407,7 +1407,7 @@ function processIndividualDonorPayment() {
             },
             handler: function (response) {
                 setBtnLoading("Verifying Payment & Generating Receipt...");
-                verifyDanpetiPayment(data.payment_id, response, resetBtn);
+                verifyDaanpetiPayment(data.payment_id, response, resetBtn);
             },
             modal: {
                 ondismiss: function () {
@@ -1451,7 +1451,7 @@ function processIndividualDonorPayment() {
     });
 }
 
-function verifyDanpetiPayment(paymentId, rzpResponse, resetBtnCallback) {
+function verifyDaanpetiPayment(paymentId, rzpResponse, resetBtnCallback) {
     const verifyData = new FormData();
     verifyData.append("payment_id", paymentId);
     verifyData.append("razorpay_payment_id", rzpResponse.razorpay_payment_id || "");
@@ -1661,8 +1661,8 @@ function submitOwnerOtp() {
                 key: data.key_id,
                 amount: data.amount,
                 currency: "INR",
-                name: "Danpeti Donation",
-                description: "Danpeti Box Collection" + (data.box_uid ? (" - " + data.box_uid) : ""),
+                name: "Daanpeti Donation",
+                description: "Daanpeti Box Collection" + (data.box_uid ? (" - " + data.box_uid) : ""),
                 order_id: data.order_id,
                 prefill: {
                     name: data.donor_name || "",
@@ -1673,7 +1673,7 @@ function submitOwnerOtp() {
                     box_id: String(data.box_id || "")
                 },
                 handler: function (resp) {
-                    verifyDanpetiPayment(data.payment_id, resp, () => {});
+                    verifyDaanpetiPayment(data.payment_id, resp, () => {});
                 },
                 theme: { color: "#166534" }
             };

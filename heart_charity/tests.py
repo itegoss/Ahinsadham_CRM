@@ -2,8 +2,8 @@ from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import User
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.urls import reverse
-from heart_charity.models import DonorVolunteer, LookupType, Lookup, Donation
-from heart_charity.views import apply_column_filters, donor_mapping
+from heart_charity.models import DonorVolunteer, LookupType, Lookup, Donation, OwnerDetail
+from heart_charity.views import apply_column_filters, donor_mapping, owner_mapping
 
 class ColumnFilterTestCase(TestCase):
     def setUp(self):
@@ -41,6 +41,24 @@ class ColumnFilterTestCase(TestCase):
             postal_code="411001",
         )
 
+        OwnerDetail.objects.create(
+            business_name="Mahavir Emporium",
+            gst_number="24AAAAA0000A1Z5",
+            salutation="Mr.",
+            first_name="Kantilal",
+            middle_name="H",
+            last_name="Shah",
+            gender="Male",
+            blood_group="O+",
+            contact_number="9876543210",
+            whatsapp_number="9876543210",
+            email="kantilal@example.com",
+            city="Ahmedabad",
+            country="India",
+            state="Gujarat",
+            postal_code="380001",
+        )
+
     def test_apply_column_filters_first_name(self):
         request = self.factory.get('/welcome/?donor_col_4=Wagad')
         queryset = DonorVolunteer.objects.all()
@@ -63,6 +81,20 @@ class ColumnFilterTestCase(TestCase):
         
         request_mismatch = self.factory.get('/welcome/?donor_col_4=Kutch&donor_col_19=Mumbai') # Mumbai is city (col 19)
         filtered_mismatch = apply_column_filters(queryset, request_mismatch, 'donor', donor_mapping)
+        self.assertEqual(filtered_mismatch.count(), 0)
+
+    def test_apply_column_filters_owner_details(self):
+        # col 3: business_name, col 6: first_name, col 20: city
+        request = self.factory.get('/welcome/?owner_col_3=Mahavir&owner_col_6=Kantilal&owner_col_20=Ahmedabad')
+        queryset = OwnerDetail.objects.all()
+        filtered = apply_column_filters(queryset, request, 'owner', owner_mapping)
+        self.assertEqual(filtered.count(), 1)
+        self.assertEqual(filtered.first().business_name, "Mahavir Emporium")
+        self.assertEqual(filtered.first().city, "Ahmedabad")
+
+        # Mismatch test
+        request_mismatch = self.factory.get('/welcome/?owner_col_3=Mahavir&owner_col_20=Surat')
+        filtered_mismatch = apply_column_filters(queryset, request_mismatch, 'owner', owner_mapping)
         self.assertEqual(filtered_mismatch.count(), 0)
 
 

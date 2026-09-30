@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Danpeti Receipt</title>
+<title>Daanpeti Receipt</title>
 </head>
 <style>
 @page {
@@ -225,7 +225,7 @@ table {
     <td><b>PAN No :</b> {{ payment.pan_number|default:donor.pan_number|default:"-" }}</td>
 </tr>
 <tr>
-    <td><b>Contributor Type :</b> {{ payment.donor_type|default:"Danpeti Owner" }}</td>
+    <td><b>Contributor Type :</b> {{ payment.donor_type|default:"Daanpeti Donor" }}</td>
     <td><b>80G Benefit :</b> {% if payment.want_80g %}Yes (Eligible){% else %}No{% endif %}</td>
 </tr>
 <tr>
@@ -240,7 +240,7 @@ table {
     <th  width="35%" style="text-align:right;">Amount (Rs.)</th>
 </tr>
 <tr>
-    <td>Danpeti/{{ payment.donation_box.donation_id }}</td>
+    <td>Daanpeti/{{ payment.donation_box.donation_id }}</td>
     <td class="amount"> <b> Rs. {{ payment.amount }}</b></td>
 </tr>
 <tr class="total-row">
@@ -252,7 +252,7 @@ table {
 <tr>
     <td width="35%"><b>Amount in Words :</b> {{ payment.amount|number_to_words }}</td>
     <td width="30%"><b>Mode Of Receipt :</b> {{ payment.payment_mode.lookup_name }}</td>
-    <td width="35%"><b>Type of Donation :</b> Danpeti</td>
+    <td width="35%"><b>Type of Donation :</b> Daanpeti</td>
 </tr>
 <tr>
     <td><b>Name of Bank :</b> {{ payment.name_of_bank|default:"-" }}</td>
@@ -372,7 +372,7 @@ function shareReceipt() {
 
     if (navigator.share) {
         navigator.share({
-            title: "Danpeti Donation Receipt",
+            title: "Daanpeti Donation Receipt",
             text: message,
             url: window.location.origin + pdfUrl
         }).catch(err => {

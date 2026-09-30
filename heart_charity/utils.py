@@ -10,7 +10,7 @@ def generate_receipt_id():
     else:
         start_year = now.year - 1
     end_year = start_year + 1
-    fy_str = f"{str(start_year)[2:]}-{str(end_year)[2:]}"
+    fy_str = f"{str(start_year)[2:]}{str(end_year)[2:]}"
 
     with transaction.atomic():
         seq, created = ReceiptSequence.objects.select_for_update().get_or_create(

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Add Donor / Volunteer{% endblock %}
+{% block title %}{% if request.GET.type|lower == 'employee' or request.GET.person_type|lower == 'employee' %}Add Employee{% else %}Add Employee{% endif %}{% endblock %}
 {% block content %}
 <style>
 /* ==========================================
@@ -21,12 +21,14 @@
     font-weight: 700;
     font-size: 1.65rem;
     margin-bottom: 4px;
+    text-align: center;
 }
 
 .form-page-subtitle {
     color: #64748b;
     font-size: 0.92rem;
     margin: 0;
+    text-align: center;
 }
 
 .row {
@@ -373,14 +375,17 @@
 
 <div class="container form-page-container mt-4 mb-5">
     <!-- Header -->
-    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2 form-page-header">
-        <div>
-            <h3 class="form-page-title">Add Donor / Volunteer</h3>
-            <p class="form-page-subtitle">Fill out details to create a donor/volunteer record</p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
+    <div class="position-relative text-center mb-4 form-page-header">
+        <h3 class="form-page-title text-center" id="mainPageTitle">{% if request.GET.type|lower == 'employee' or request.GET.person_type|lower == 'employee' %}Add Employee{% else %}Add Employee{% endif %}</h3>
+ <p class="form-page-subtitle text-center"><hr style="width: 50%; margin: 20px auto; border: 0; border-top: 2px solid #ccc;"></p>
+        <div class="position-absolute end-0 top-50 translate-middle-y d-none d-sm-block">
             <button type="button" class="btn btn-sm btn-outline-success" id="toggleAllSectionsBtn" style="font-weight: 600; border-radius: 8px; font-size: 0.85rem; padding: 7px 16px;">
                 <i class="fa-solid fa-layer-group me-1"></i> <span id="toggleAllText">Expand All</span>
+            </button>
+        </div>
+        <div class="d-block d-sm-none mt-2 text-center">
+            <button type="button" class="btn btn-sm btn-outline-success" onclick="document.getElementById('toggleAllSectionsBtn').click();" style="font-weight: 600; border-radius: 8px; font-size: 0.85rem; padding: 6px 14px;">
+                <i class="fa-solid fa-layer-group me-1"></i> Toggle All
             </button>
         </div>
     </div>
@@ -388,49 +393,7 @@
     <form method="POST" enctype="multipart/form-data" id="donorVolunteerForm">
         {% csrf_token %}
 
-        <!-- ===================================== 1. PERSON TYPE (Fixed/Static - Not Collapsible) ===================================== -->
-        <div class="form-card">
-            <div class="static-card-body">
-                <div class="static-card-header">
-                    <h5 class="static-card-title">
-                        <i class="fa-solid fa-id-badge text-success"></i> Person Type
-                    </h5>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Person Type <span class="req-star">*</span></label>
-                        <select name="person_type" id="person_type" class="form-select" required aria-required="true">
-                            <option value="">Select</option>
-                            {% for option in person_type_options %}
-                                <option value="{{ option.id }}" {% if request.GET.type|lower == option.lookup_name|lower or request.GET.person_type|lower == option.lookup_name|lower %}selected{% endif %}>{{ option.lookup_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3" id="donor_box_wrapper" style="display: none;">
-                        <label class="form-label">Donor Box</label>
-                        <select name="donor_box" id="donor_box" class="form-select select2-donor-box">
-                            <option value="">Select Donor Box</option>
-                            {% for box in donation_boxes %}
-                                <option value="{{ box.id }}">{{ box.donation_id }}{% if box.box_owner %} - {{ box.box_owner }}{% endif %}{% if box.key_id %} (Key: {{ box.key_id }}){% endif %}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3" id="old_box_id_wrapper" style="display: none;">
-                        <label class="form-label">Old Box Id</label>
-                        <input type="text" name="old_box_id" class="form-control" placeholder="Enter old box id">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Referred By</label>
-                        <select name="referred_by" id="referred_by" class="form-select select2-search">
-                            <option value="">-- Select Person --</option>
-                            {% for person in all_donors %}
-                                <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <!-- ===================================== 2. PERSONAL DETAILS (Dropdown / Collapsible) ===================================== -->
         <div class="form-card is-open" id="personalDetailsCard">
@@ -747,131 +710,39 @@
             </div>
         </div>
 
-        <!-- ===================================== 3. OCCUPATION DETAILS (Separate Dropdown / Collapsible) ===================================== -->
+        <!-- ===================================== 3. OCCUPATION / EMPLOYMENT DETAILS (Separate Dropdown / Collapsible) ===================================== -->
         <div class="form-card" id="occupationDetailsCard">
             <div class="accordion-card-header" onclick="toggleAccordion(this)">
                 <h5 class="accordion-card-title">
-                    <i class="fa-solid fa-briefcase text-success"></i> Occupation Details
+                    <i class="fa-solid fa-briefcase text-success"></i> <span id="occupationCardTitleText">{% if request.GET.type|lower == 'employee' or request.GET.person_type|lower == 'employee' %}Employment Details{% else %}Occupation Details{% endif %}</span>
                 </h5>
                 <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
             </div>
             <div class="accordion-card-content">
-                <!-- Occupation Details -->
-                <div id="occupation">
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-2">
-                            <label class="form-label">Occupation/Org Salutation</label>
-                            <select name="occupation_salutation" class="form-select">
-                                <option value="">-- Select --</option>
-                                <option value="Mr.">M/S.</option>
-                                <option value="Mrs.">Messrs.</option>
-                                <option value="Ms.">The.</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Occupation Type</label>
-                            <select name="occupation_type" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in occupation_types %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Occupation Nature</label>
-                            <select name="occupation_nature" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in occupation_natures %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Occupation Name</label>
-                            <input type="text" name="occupation_name" class="form-control" placeholder="Enter occupation name">
-                        </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in departments %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">GST Number</label>
-                            <input type="text" name="gst_number" class="form-control" maxlength="15" placeholder="Enter GST Number (e.g. 22AAAAA0000A1Z5)">
-                        </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Designation</label>
+                        <select name="designation" class="form-select">
+                            <option value="">Select</option>
+                            {% for item in designations %}
+                                <option value="{{ item.id }}">{{ item.lookup_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-
-                <!-- Department Details -->
-                <div id="department" style="display: none;">
-                    <h6 class="sub-section-title">
-                        <i class="fa-solid fa-building-user"></i> Department Details
-                    </h6>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Department</label>
-                            <select name="department" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in departments %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Position</label>
-                            <select name="position" id="position" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in positions %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Organization Details -->
-                <div id="org" style="display: none;">
-                    <h6 class="sub-section-title">
-                        <i class="fa-solid fa-sitemap"></i> Organization Details
-                    </h6>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Organization Name</label>
-                            <input type="text" name="org_name" class="form-control" placeholder="Enter organization name">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Organization Type</label>
-                            <select name="org_type" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in org_types %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Nature of Service</label>
-                            <input type="text" name="nature_of_service" class="form-control" placeholder="Enter nature of service">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Designation Details -->
-                <div id="designation" style="display: none;">
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Designation</label>
-                            <select name="designation" class="form-select">
-                                <option value="">Select</option>
-                                {% for item in designations %}
-                                    <option value="{{ item.id }}">{{ item.lookup_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </div>
 
         <!-- ===================================== 4. ADDRESS DETAILS (Dropdown / Collapsible) ===================================== -->
-        <div class="form-card" id="addressDetailsCard">
+        <div class="form-card is-open" id="addressDetailsCard">
             <div class="accordion-card-header" onclick="toggleAccordion(this)">
                 <h5 class="accordion-card-title">
                     <i class="fa-solid fa-location-dot text-success"></i> Address Details
@@ -939,12 +810,6 @@
                         <div class="col-md-6" id="stateTextboxBox" style="display: none;">
                             <label class="form-label">State <span class="req-star">*</span></label>
                             <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
-                        </div>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Native Postal Code</label>
-                            <input type="text" name="native_postal_code" class="form-control" placeholder="Enter native postal code" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                     </div>
                 </div>
@@ -1121,152 +986,53 @@ if (whatsappInput && contactInput && checkbox) {
 <script>
 /* --- Country & State switcher --- */
 const indiaStates = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal"
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam",
+  "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir",
+  "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh",
+  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha",
+  "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
+  "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
-const countryEl = document.getElementById('country');
-if (countryEl) {
-    countryEl.addEventListener('change', function() {
-        const country = this.value;
-        const dropdownBox = document.getElementById('stateDropdownBox');
-        const textboxBox = document.getElementById('stateTextboxBox');
-        const stateSelect = document.getElementById('state');
-        if (country === "India") {
-            dropdownBox.style.display = "block";
-            textboxBox.style.display = "none";
-            stateSelect.innerHTML = "";
-            indiaStates.forEach(function(state) {
-                let opt = document.createElement("option");
-                opt.value = state;
-                opt.text = state;
-                stateSelect.appendChild(opt);
-            });
-        } else {
-            dropdownBox.style.display = "none";
-            textboxBox.style.display = "block";
-        }
-    });
-}
-</script>
+function populateStates(selectedState) {
+    const countryEl = document.getElementById('country');
+    const dropdownBox = document.getElementById('stateDropdownBox');
+    const textboxBox = document.getElementById('stateTextboxBox');
+    const stateSelect = document.getElementById('state');
+    if (!countryEl || !dropdownBox || !textboxBox || !stateSelect) return;
 
-<script>
-/* --- Person Type conditional visibility --- */
-document.addEventListener("DOMContentLoaded", function () {
-    const personType = document.getElementById("person_type");
-    const baseSections = [
-        "persontype",
-        "personaldetails",
-        "idproof",
-        "address",
-        "occupation",
-        "designation"
-    ];
-    const department = document.getElementById("department");
-    const position = document.getElementById("position");
-    const business = document.getElementById("business");
-    const donorBox = document.getElementById("donor_box_wrapper");
-    const oldBoxIdWrapper = document.getElementById("old_box_id_wrapper");
-    const org = document.getElementById("org");
-    const employee = document.getElementById("employee");
-    const occupation = document.getElementById("occupation");
-    const businessAddressAlert = document.getElementById("businessAddressAlert");
-
-    function normalize(text) {
-        return text.toLowerCase().replace(/[\s\-_]/g, "");
-    }
-    function hideAllConditional() {
-        if (department) department.style.display = "none";
-        if (position) position.style.display = "none";
-        if (business) business.style.display = "none";
-        if (donorBox) donorBox.style.display = "none";
-        if (org) org.style.display = "none";
-        if (businessAddressAlert) businessAddressAlert.style.display = "none";
-        if (occupation) occupation.style.display = "none";
-        if (oldBoxIdWrapper) oldBoxIdWrapper.style.display = "none";
-    }
-    function showBaseSections() {
-        baseSections.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                if (el.classList.contains('row')) {
-                    el.style.display = "flex";
-                } else {
-                    el.style.display = "block";
-                }
+    if (countryEl.value === "India") {
+        dropdownBox.style.display = "block";
+        textboxBox.style.display = "none";
+        stateSelect.innerHTML = '<option value="">Select State</option>';
+        indiaStates.forEach(function(state) {
+            let opt = document.createElement("option");
+            opt.value = state;
+            opt.text = state;
+            if (selectedState && state === selectedState) {
+                opt.selected = true;
             }
+            stateSelect.appendChild(opt);
         });
+    } else {
+        dropdownBox.style.display = "none";
+        textboxBox.style.display = "block";
     }
-    function updateVisibility() {
-        if (!personType) return;
-        const selectedOption = personType.options[personType.selectedIndex];
-        const text = selectedOption ? normalize(selectedOption.text) : "";
-        
-        hideAllConditional();
-        showBaseSections();
-        if (!text) return;
-        if (text === "employee") {
-            if (department) department.style.display = "block";
-            if (occupation) occupation.style.display = "none";
-        }
-        else if (text === "committeemember") {
-            if (position) position.style.display = "block";
-        }
-        else if (text === "business") {
-            if (business) business.style.display = "block";
-        }
-        else if (text === "organization") {
-            if (org) org.style.display = "block";
-        }
-        else if (text === "donationboxowner" || text === "donorboxowner") {
-            if (occupation) occupation.style.display = "block";
-            if (donorBox) {
-                donorBox.style.display = "block";
-                if (window.$ && $('#donor_box').length) {
-                    $('#donor_box').select2({
-                        placeholder: "Select Donor Box",
-                        allowClear: true,
-                        width: '100%'
-                    });
-                }
-            }
-            if (oldBoxIdWrapper) oldBoxIdWrapper.style.display = "block";
-            if (businessAddressAlert) businessAddressAlert.style.display = "block";
-            if (occupation) occupation.style.display = "block";
-        }
-    }
-    updateVisibility();
-    if (personType) {
-        personType.addEventListener("change", updateVisibility);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    populateStates("Gujarat");
+    const countryEl = document.getElementById('country');
+    if (countryEl) {
+        countryEl.addEventListener('change', function() {
+            populateStates();
+        });
     }
 });
 </script>
+
+
 
 <!-- ================= AGE AUTO CALCULATION ================= -->
 <script>
@@ -1339,13 +1105,6 @@ $(document).ready(function () {
         });
     }
 
-    if ($('#donor_box').length) {
-        $('#donor_box').select2({
-            placeholder: "Select Donor Box",
-            allowClear: true,
-            width: '100%'
-        });
-    }
 });
 </script>
 

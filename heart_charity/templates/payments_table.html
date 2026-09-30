@@ -1,135 +1,439 @@
+<style>
+  /* ==========================================================================
+     Ahinsadham CRM - Payments Table Clean Green Underline Filter System
+     ========================================================================== */
+  .payments-active-filters-bar {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  }
+
+  .payments-active-filters-inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .payments-active-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .payments-chips-wrap {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .payments-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #064e3b;
+    border-radius: 6px;
+    padding: 3px 8px 3px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(4, 120, 87, 0.05);
+    animation: paymentsChipFadeIn 0.2s ease-out;
+  }
+
+  .payments-filter-chip .chip-label {
+    color: #047857;
+    font-weight: 600;
+  }
+
+  .payments-filter-chip .chip-val {
+    color: #064e3b;
+    font-weight: 700;
+  }
+
+  .payments-filter-chip .chip-close-btn {
+    background: none;
+    border: none;
+    color: #047857;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+  }
+
+  .payments-filter-chip .chip-close-btn:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .payments-clear-all-btn {
+    background: transparent;
+    border: 1px dashed #cbd5e1;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .payments-clear-all-btn:hover {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+  }
+
+  /* Sleek Underline Search Bar in Table Row (Exactly like reference: green line, no box) */
+  .column-search-row td {
+    padding: 6px 8px !important;
+    background: #ffffff !important;
+    vertical-align: middle !important;
+  }
+
+  .payments-line-search {
+    width: 100%;
+    border: none !important;
+    border-bottom: 2px solid #16a34a !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 2px 2px 4px 2px !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    cursor: pointer;
+    transition: border-bottom-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .payments-line-search::placeholder {
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-style: normal;
+    opacity: 0.9;
+  }
+
+  .payments-line-search:focus,
+  .payments-line-search:hover {
+    border-bottom-color: #0f766e !important;
+    background: rgba(22, 163, 74, 0.05) !important;
+  }
+
+  .payments-line-search.has-val {
+    border-bottom-color: #047857 !important;
+    font-weight: 600;
+    color: #064e3b !important;
+  }
+
+  /* Floating Popover */
+  .payments-floating-popover {
+    position: fixed;
+    z-index: 1060;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -3px rgba(6, 78, 59, 0.14), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    animation: paymentsPopoverFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes paymentsPopoverFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes paymentsChipFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .payments-popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .payments-popover-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #064e3b;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .payments-popover-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1;
+    padding: 2px 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .payments-popover-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .payments-popover-body {
+    padding: 12px;
+  }
+
+  .payments-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .payments-input-icon {
+    position: absolute;
+    left: 10px;
+    color: #94a3b8;
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .payments-currency-prefix {
+    position: absolute;
+    left: 9px;
+    color: #047857;
+    font-size: 12px;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  .payments-popover-field {
+    width: 100%;
+    font-size: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 10px 6px 28px;
+    transition: all 0.15s ease;
+    color: #0f172a;
+  }
+
+  .payments-popover-field:focus {
+    border-color: #047857;
+    box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+    outline: none;
+  }
+
+  select.payments-popover-field {
+    padding-left: 10px;
+  }
+
+  .payments-popover-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .popover-btn-clear {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .popover-btn-clear:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .popover-btn-apply {
+    background: #047857;
+    border: 1px solid #047857;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .popover-btn-apply:hover {
+    background: #059669;
+    border-color: #059669;
+  }
+</style>
+
+<!-- Active Filter Chips Bar -->
+<div class="payments-active-filters-bar" id="paymentsActiveFiltersBar" style="display: none;">
+  <div class="payments-active-filters-inner">
+    <span class="payments-active-label">
+      <i class="fa-solid fa-filter text-muted"></i> Active Filters:
+    </span>
+    <div class="payments-chips-wrap" id="paymentsActiveChipsContainer"></div>
+    <button type="button" class="payments-clear-all-btn" id="paymentsClearAllFiltersBtn" title="Clear all column filters">
+      <i class="fa-solid fa-rotate-left"></i> Clear all
+    </button>
+  </div>
+</div>
+
 {% if payments_page_obj %}
 <div class="table-responsive scrollable-table1">
   <table class="table table-hover table-bordered align-middle paginated-table">
     <thead class="sticky-top">
       <tr>
         <th>Actions</th>
-        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="7">Received by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="10">Branch <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="12">Created By <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Box ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Business Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Owner Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Amount <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Payment Method <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Transaction ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Updated On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Deleted By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
+      <!-- Clean Green Underline Search Row -->
       <tr class="column-search-row">
         <td>
-          <div class="d-inline-flex align-items-center gap-1">
+          <div class="d-flex align-items-center justify-content-between" style="min-width: 55px; max-width: 70px;">
             {% if permissions.can_add %}
-            <a href="#" class="add-payment-btn"
-              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; display: none;"><i
+            <a href="{% url 'add_donation_payment' %}" class="add-payment-btn" title="Add Payment"
+              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; line-height: 1;"><i
                 class="fa-solid fa-plus"></i></a>
             {% endif %}
             {% if permissions.can_add %}
-            <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+            <form method="GET" action="{% url 'search_donation_payment' %}" class="d-inline m-0 p-0" title="Download">
               <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
               <input type="hidden" name="download" value="1">
-              <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+              <button type="submit" class="btn btn-link p-0 border-0" style="font-size: 22px; color: black; line-height: 1;"><i
                   class="bi bi-download"></i></button>
             </form>
             {% endif %}
           </div>
         </td>
-        <td><input class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_15" value="{{ payments_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_16" value="{{ payments_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_17" value="{{ payments_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_18" value="{{ payments_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_19" value="{{ payments_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
+        <td><input class="column-search payments-line-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" data-col-idx="1" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" data-col-idx="2" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" data-col-idx="3" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" data-col-idx="4" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" data-col-idx="5" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" data-col-idx="6" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" data-col-idx="7" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" data-col-idx="8" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" data-col-idx="9" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" data-col-idx="10" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" data-col-idx="11" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" data-col-idx="12" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" data-col-idx="13" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" data-col-idx="14" type="text" placeholder="Search..." autocomplete="off"></td>
+      </tr>
+      <!-- Hidden synchronization inputs ensuring prefix discovery by sorting script -->
+      <tr style="display: none;">
+        <td colspan="20">
+          <input type="hidden" class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}">
+        </td>
       </tr>
     </thead>
     <tbody id="donation">
       {% for owner in payments_page_obj.object_list %}
       <tr>
         <td>
-          <div class="d-inline-flex align-items-center gap-1">
-            {% if not owner.is_deleted %}
-            {% if permissions.can_edit %}
-            <a href="{% url 'edit_box_payment' owner.id %}" class="btn-sm p-1"
-              style="font-size: 15px; color:black ; text-decoration: none;"><i
-                class="bi bi-pencil-square"></i></a>
-            {% endif %}
-            {% if permissions.can_delete %}
-            <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="d-inline m-0 p-0">
-              {% csrf_token %}
-              <button type="submit" class="btn-sm p-1"
-                style="font-size: 15px; color:black ; text-decoration: none;   background-color: transparent !important;"
-                onclick="return confirm('Are you sure you want to deactivate this donation owner?')"> <i
-                  class="bi bi-trash"></i></button>
-            </form>
-            {% if owner.verified %}
-            <a href="{% url 'donation_payment_receipt_view' owner.id %}" style="font-size: 17px;"
-              title="View Receipt"><i class="fa-solid fa-eye"></i></a>
-            {% endif %}
-            {% if request.user.is_superuser %}
-            {% if owner and owner.id %}
-            {% if owner.verified %}
-            <i class="fa-solid fa-circle-check" style="font-size: 17px; color:#16a34a;"
-              title="Verified by Admin"></i>
-            {% else %}
-            <a href="{% url 'verify_payment' owner.id %}" onclick="return confirm('Verify this donation?')">
-              <i class="fa-regular fa-circle-check" style="font-size: 17px; color:red;"
-                title="Click to Verify"></i></a>
-            {% endif %}
-            {% else %}
-            <span class="text-muted" title="No payment found">—</span>
-            {% endif %}
-            {% endif %}
-            {% endif %}
-            {% else %}
-            <span class="badge1" style="font-size: 14px;"><i class="fa-solid fa-ban"
-                title="Deactivate"></i></span>
-            {% endif %}
+          <div class="action-dropdown-wrapper">
+            <button class="action-dots-btn" onclick="toggleActionMenu(this)" title="Actions"><i class="bi bi-three-dots"></i></button>
+            <div class="action-dropdown-menu">
+              {% if not owner.is_deleted %}
+              {% if permissions.can_edit %}
+              <a href="{% url 'edit_box_payment' owner.id %}">
+                <i class="bi bi-pencil-square"></i> Edit
+              </a>
+              {% endif %}
+              {% if owner.verified %}
+              <a href="{% url 'donation_payment_receipt_view' owner.id %}" title="View Receipt">
+                <i class="fa-solid fa-eye"></i> View Receipt
+              </a>
+              {% endif %}
+              {% if request.user.is_superuser %}
+              {% if owner and owner.id %}
+              {% if owner.verified %}
+              <span class="drop-verified">
+                <i class="fa-solid fa-circle-check"></i> Verified
+              </span>
+              {% else %}
+              <a href="{% url 'verify_payment' owner.id %}" onclick="return confirm('Verify this donation?')">
+                <i class="fa-regular fa-circle-check"></i> Verify
+              </a>
+              {% endif %}
+              {% else %}
+              <span class="text-muted" style="padding:8px 16px; font-size:13px;" title="No payment found">—</span>
+              {% endif %}
+              {% endif %}
+              {% if permissions.can_delete %}
+              <div class="drop-divider"></div>
+              <form method="POST" action="{% url 'delete_box_payment' owner.id %}" class="m-0 p-0">
+                {% csrf_token %}
+                <button type="submit" class="drop-danger"
+                  onclick="return confirm('Are you sure you want to deactivate this donation owner?')">
+                  <i class="bi bi-trash"></i> Deactivate
+                </button>
+              </form>
+              {% endif %}
+              {% else %}
+              <span style="padding:8px 16px; color:#888; font-size:13px;"><i class="fa-solid fa-ban"></i> Deactivated</span>
+              {% endif %}
+            </div>
           </div>
         </td>
-        <td>{{ owner.id }}</td>
         <td>{{ owner.receipt_id }}</td>
-        <td>{% if owner.first_name %}{{ owner.first_name }} {{ owner.last_name }}{% else %}{{ owner.owner.first_name }} {{ owner.owner.last_name }}{% endif %}</td>
         <td>
           {% if owner.donation_box %}
-          {{ owner.donation_box.donation_name }} (ID: {{ owner.donation_box.donation_id }})
+          {{ owner.donation_box.donation_id }}
           {% else %}
           <span class="text-muted">N/A</span>
           {% endif %}
         </td>
+        <td>{{ owner.donation_box.box_owner_details.first.business_name|default:'—' }}</td>
+        <td>{% if owner.first_name %}{{ owner.first_name }} {{ owner.last_name }}{% else %}{{ owner.owner.first_name }} {{ owner.owner.last_name }}{% endif %}</td>
         <td>₹{{ owner.amount }}</td>
-        <td>{{ owner.payment_method }}</td>
-        <td>{{ owner.opened_by }}</td>
-        <td>{{ owner.verified_by }}</td>
-        <td>{{ owner.i_witness }}</td>
-        <td>{{ owner.name_of_bank }}</td>
-        <td>{{ owner.branch }}</td>
+        <td>{{ owner.payment_mode.lookup_name|default:owner.payment_mode|default:'—' }}</td>
         <td>{{ owner.transaction_id }}</td>
         <td>{{ owner.created_by }}</td>
         <td>{{ owner.created_at|date:"d M Y" }}</td>
         <td>{{ owner.updated_by }}</td>
         <td>{{ owner.updated_at|date:"d M Y" }}</td>
+        <td>{{ owner.deleted_by }}</td>
         <td>
           {% if owner.is_deleted %}
           Yes
@@ -137,7 +441,6 @@
           No
           {% endif %}
         </td>
-        <td>{{ owner.deleted_by }}</td>
         <td>{{ owner.deleted_at|date:"d M Y" }}</td>
       </tr>
       {% empty %}
@@ -157,64 +460,59 @@
     <thead class="sticky-top">
       <tr>
         <th>Actions</th>
-        <th class="sortable" data-col="1">ID <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="1">Receipt ID <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="2">Owner Name <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="3">Donation Box <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="4">Amount <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="5">Payment Method <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="6">Opened by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="7">Received by <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="8">I Witness <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="9">Bank Name <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="10">Branch <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="11">Transaction id <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="12">Created By <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="13">Created On <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="14">Updated By <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="15">Updated On <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="16">Deleted By<span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="17">is_deleted <span class="sort-icon">⬍</span></th>
-        <th class="sortable" data-col="18">Deleted On<span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="1">Receipt Number <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="2">Box ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="3">Business Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="4">Owner Name <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="5">Amount <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="6">Payment Method <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="7">Transaction ID <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="8">Created By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="9">Created On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="10">Updated By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="11">Updated On <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="12">Deleted By <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="13">is_deleted <span class="sort-icon">⬍</span></th>
+        <th class="sortable" data-col="14">Deleted On <span class="sort-icon">⬍</span></th>
       </tr>
       <tr class="column-search-row">
         <td>
-          <div class="d-inline-flex align-items-center gap-1">
+          <div class="d-flex align-items-center justify-content-between" style="min-width: 55px; max-width: 70px;">
             {% if permissions.can_add %}
-            <a href="#" class="add-payment-btn"
-              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; display: none;"><i
+            <a href="{% url 'add_donation_payment' %}" class="add-payment-btn" title="Add Payment"
+              style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a; line-height: 1;"><i
                 class="fa-solid fa-plus"></i></a>
             {% endif %}
             {% if permissions.can_add %}
-            <form method="GET" action="{% url 'search_donation_payment' %}" style="margin: -9px; padding: 0;">
+            <form method="GET" action="{% url 'search_donation_payment' %}" class="d-inline m-0 p-0" title="Download">
               <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="hidden" name="payments_query" value="{{ payments_query|default:'' }}">
               <input type="hidden" name="download" value="1">
-              <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+              <button type="submit" class="btn btn-link p-0 border-0" style="font-size: 22px; color: black; line-height: 1;"><i
                   class="bi bi-download"></i></button>
             </form>
             {% endif %}
           </div>
         </td>
-        <td><input class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_15" value="{{ payments_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_16" value="{{ payments_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_17" value="{{ payments_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_18" value="{{ payments_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
-        <td><input class="column-search" name="payments_col_19" value="{{ payments_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
+        <td><input class="column-search payments-line-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}" data-col="1" data-col-idx="1" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_2" value="{{ payments_col_2|default:'' }}" data-col="2" data-col-idx="2" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_3" value="{{ payments_col_3|default:'' }}" data-col="3" data-col-idx="3" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_4" value="{{ payments_col_4|default:'' }}" data-col="4" data-col-idx="4" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_5" value="{{ payments_col_5|default:'' }}" data-col="5" data-col-idx="5" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_6" value="{{ payments_col_6|default:'' }}" data-col="6" data-col-idx="6" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_7" value="{{ payments_col_7|default:'' }}" data-col="7" data-col-idx="7" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_8" value="{{ payments_col_8|default:'' }}" data-col="8" data-col-idx="8" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_9" value="{{ payments_col_9|default:'' }}" data-col="9" data-col-idx="9" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_10" value="{{ payments_col_10|default:'' }}" data-col="10" data-col-idx="10" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_11" value="{{ payments_col_11|default:'' }}" data-col="11" data-col-idx="11" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_12" value="{{ payments_col_12|default:'' }}" data-col="12" data-col-idx="12" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_13" value="{{ payments_col_13|default:'' }}" data-col="13" data-col-idx="13" type="text" placeholder="Search..." autocomplete="off"></td>
+        <td><input class="column-search payments-line-search" name="payments_col_14" value="{{ payments_col_14|default:'' }}" data-col="14" data-col-idx="14" type="text" placeholder="Search..." autocomplete="off"></td>
+      </tr>
+      <tr style="display: none;">
+        <td colspan="20">
+          <input type="hidden" class="column-search" name="payments_col_1" value="{{ payments_col_1|default:'' }}">
+        </td>
       </tr>
     </thead>
     <tbody>
@@ -225,3 +523,526 @@
   </table>
 </div>
 {% endif %}
+
+<!-- Single Dynamic Floating Filter Popover -->
+<div id="paymentsFilterPopover" class="payments-floating-popover" style="display: none;">
+  <div class="payments-popover-header">
+    <div class="payments-popover-title">
+      <i class="fa-solid fa-filter text-muted"></i>
+      <span id="popoverTitle">Filter</span>
+    </div>
+    <button type="button" class="payments-popover-close" id="popoverCloseBtn" title="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="payments-popover-body" id="popoverBody"></div>
+  <div class="payments-popover-footer">
+    <button type="button" class="popover-btn-clear" id="popoverClearBtn">Clear</button>
+    <button type="button" class="popover-btn-apply" id="popoverApplyBtn">Apply</button>
+  </div>
+</div>
+
+<script>
+// 3-Dot dropdown (fixed, viewport-aware)
+if (typeof toggleActionMenu === 'undefined') {
+  window.toggleActionMenu = function(btn) {
+    const menu = btn.nextElementSibling;
+    const isOpen = menu.classList.contains('open');
+
+    document.querySelectorAll('.action-dropdown-menu.open').forEach(m => {
+      m.classList.remove('open');
+      m.style.top = '';
+      m.style.left = '';
+      m.style.bottom = '';
+    });
+
+    if (!isOpen) {
+      const rect = btn.getBoundingClientRect();
+      const menuH = 200;
+      const menuW = 185;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      let left = rect.left;
+      if (left + menuW > vw - 8) left = rect.right - menuW;
+
+      if (rect.bottom + menuH + 6 > vh) {
+        menu.style.bottom = (vh - rect.top + 4) + 'px';
+        menu.style.top = 'auto';
+      } else {
+        menu.style.top = (rect.bottom + 4) + 'px';
+        menu.style.bottom = 'auto';
+      }
+
+      menu.style.left = left + 'px';
+      menu.classList.add('open');
+    }
+  };
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.action-dropdown-wrapper')) {
+      document.querySelectorAll('.action-dropdown-menu.open').forEach(m => {
+        m.classList.remove('open');
+        m.style.top = '';
+        m.style.left = '';
+        m.style.bottom = '';
+      });
+    }
+  });
+
+  ['scroll', 'resize'].forEach(evt =>
+    window.addEventListener(evt, function() {
+      document.querySelectorAll('.action-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    }, true)
+  );
+}
+(function() {
+  const FILTER_CONFIG = {
+    1: { title: 'Receipt Number', type: 'text', placeholder: 'Search Receipt Number...', icon: 'fa-receipt', minW: 220, maxW: 260 },
+    2: { title: 'Box ID', type: 'text', placeholder: 'Search box ID...', icon: 'fa-box-archive', minW: 230, maxW: 280 },
+    3: { title: 'Business Name', type: 'text', placeholder: 'Search business...', icon: 'fa-building', minW: 250, maxW: 300 },
+    4: { title: 'Owner Name', type: 'text', placeholder: 'Search owner name...', icon: 'fa-user', minW: 280, maxW: 340 },
+    5: { title: 'Amount', type: 'amount', placeholder: 'Enter amount...', icon: 'fa-indian-rupee-sign', minW: 270, maxW: 310 },
+    6: { 
+      title: 'Payment Method', 
+      type: 'select', 
+      minW: 210, 
+      maxW: 250,
+      options: [
+        { value: '', label: 'All Payment Methods' },
+        { value: 'Cash', label: 'Cash' },
+        { value: 'Razorpay', label: 'Razorpay' },
+        { value: 'Online', label: 'Online' },
+        { value: 'Cheque', label: 'Cheque' },
+        { value: 'Pending', label: 'Pending' }
+      ]
+    },
+    7: { title: 'Transaction ID', type: 'text', placeholder: 'Search transaction ID...', icon: 'fa-money-bill-transfer', minW: 230, maxW: 280 },
+    8: { title: 'Created By', type: 'text', placeholder: 'Search username...', icon: 'fa-user-pen', minW: 220, maxW: 260 },
+    9: { title: 'Created On', type: 'text', placeholder: 'e.g. 2024 or Sep...', icon: 'fa-calendar-days', minW: 220, maxW: 260 },
+    10: { title: 'Updated By', type: 'text', placeholder: 'Search username...', icon: 'fa-user-pen', minW: 220, maxW: 260 },
+    11: { title: 'Updated On', type: 'text', placeholder: 'e.g. 2024 or Sep...', icon: 'fa-calendar-days', minW: 220, maxW: 260 },
+    12: { title: 'Deleted By', type: 'text', placeholder: 'Search username...', icon: 'fa-user-xmark', minW: 220, maxW: 260 },
+    13: { 
+      title: 'Status', 
+      type: 'select', 
+      minW: 190, 
+      maxW: 230,
+      options: [
+        { value: '', label: 'All Records' },
+        { value: 'No', label: 'Active only' },
+        { value: 'Yes', label: 'Deleted only' }
+      ]
+    },
+    14: { title: 'Deleted On', type: 'text', placeholder: 'e.g. 2024 or Sep...', icon: 'fa-calendar-days', minW: 220, maxW: 260 }
+  };
+
+  let currentOpenColIdx = null;
+
+  function initPaymentsFilterUI() {
+    renderActiveFilterChips();
+    highlightActiveFilterStates();
+    attachFilterEvents();
+  }
+
+  function getUrlParam(key) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(key) || '';
+  }
+
+  function highlightActiveFilterStates() {
+    for (let colIdx = 1; colIdx <= 14; colIdx++) {
+      const paramName = `payments_col_${colIdx}`;
+      const val = getUrlParam(paramName);
+      const isAct = Boolean(val && val.trim());
+
+      // Highlight line search input
+      document.querySelectorAll(`.payments-line-search[data-col-idx="${colIdx}"]`).forEach(inp => {
+        inp.classList.toggle('has-val', isAct);
+        if (isAct && !inp.value) {
+          inp.value = val.trim();
+        }
+      });
+    }
+  }
+
+  function renderActiveFilterChips() {
+    const bar = document.getElementById('paymentsActiveFiltersBar');
+    const container = document.getElementById('paymentsActiveChipsContainer');
+    if (!bar || !container) return;
+
+    container.innerHTML = '';
+    const params = new URLSearchParams(window.location.search);
+    let activeCount = 0;
+
+    for (let colIdx = 1; colIdx <= 14; colIdx++) {
+      const paramName = `payments_col_${colIdx}`;
+      const val = params.get(paramName);
+      if (val && val.trim()) {
+        activeCount++;
+        const config = FILTER_CONFIG[colIdx] || { title: `Col ${colIdx}` };
+        let displayVal = val.trim();
+        let displayLabel = config.title;
+
+        if (colIdx === 5) {
+          const storedMax = sessionStorage.getItem('payments_filter_amt_max');
+          if (storedMax) {
+            displayVal = `₹${displayVal} – ₹${storedMax}`;
+          } else {
+            displayVal = `₹${displayVal}`;
+          }
+        } else if (colIdx === 18) {
+          displayVal = displayVal.toLowerCase() === 'yes' ? 'Deleted' : 'Active';
+        }
+
+        const chip = document.createElement('div');
+        chip.className = 'payments-filter-chip';
+        chip.innerHTML = `
+          <span class="chip-label">${escapeHtml(displayLabel)}:</span>
+          <span class="chip-val">${escapeHtml(displayVal)}</span>
+          <button type="button" class="chip-close-btn" data-col-idx="${colIdx}" title="Remove this filter">&times;</button>
+        `;
+        container.appendChild(chip);
+      }
+    }
+
+    if (activeCount > 0) {
+      bar.style.display = 'block';
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function openPopoverForTarget(targetEl, colIdx) {
+    const popover = document.getElementById('paymentsFilterPopover');
+    if (!popover) return;
+
+    // Toggle if clicking the exact same target when open
+    if (currentOpenColIdx === colIdx && popover.style.display !== 'none' && popover.dataset.targetId === (targetEl.name || targetEl.dataset.colIdx)) {
+      closePopover();
+      return;
+    }
+
+    currentOpenColIdx = colIdx;
+    popover.dataset.targetId = targetEl.name || targetEl.dataset.colIdx || '';
+    const config = FILTER_CONFIG[colIdx] || { title: `Column ${colIdx}`, type: 'text', placeholder: 'Search...' };
+    const paramName = `payments_col_${colIdx}`;
+    const lineSearchInput = document.querySelector(`.payments-line-search[data-col-idx="${colIdx}"]`);
+    const currentVal = (lineSearchInput && lineSearchInput.value.trim()) || getUrlParam(paramName);
+
+    // Setup header
+    document.getElementById('popoverTitle').textContent = `Filter: ${config.title}`;
+
+    // Setup body
+    const body = document.getElementById('popoverBody');
+    if (config.type === 'select') {
+      body.innerHTML = `
+        <div class="payments-input-container">
+          <select id="paymentsPopoverInput" class="form-select form-select-sm payments-popover-field">
+            ${config.options.map(opt => `
+              <option value="${escapeHtml(opt.value)}" ${currentVal.toLowerCase() === opt.value.toLowerCase() ? 'selected' : ''}>${escapeHtml(opt.label)}</option>
+            `).join('')}
+          </select>
+        </div>
+      `;
+    } else if (config.type === 'amount') {
+      const storedMax = sessionStorage.getItem('payments_filter_amt_max') || '';
+      body.innerHTML = `
+        <div class="payments-amount-filter-container">
+          <div class="mb-2">
+            <label class="form-label text-muted small fw-semibold mb-1" style="font-size: 11px;">SEARCH AMOUNT</label>
+            <div class="payments-input-wrapper">
+              <span class="payments-currency-prefix">₹</span>
+              <input type="text" id="paymentsPopoverInput" class="form-control form-control-sm payments-popover-field ps-4" placeholder="Enter amount..." value="${escapeHtml(currentVal)}">
+            </div>
+          </div>
+          <div class="payments-amt-range-divider text-muted small my-2 d-flex align-items-center">
+            <span class="flex-grow-1 border-bottom"></span>
+            <span class="px-2 text-uppercase" style="font-size: 9px; letter-spacing: 0.5px; color: #94a3b8;">Or Min / Max</span>
+            <span class="flex-grow-1 border-bottom"></span>
+          </div>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label text-muted small mb-1" style="font-size: 11px;">Min Amount</label>
+              <div class="payments-input-wrapper">
+                <span class="payments-currency-prefix">₹</span>
+                <input type="number" step="any" id="paymentsAmtMin" class="form-control form-control-sm ps-4" placeholder="Min" value="${escapeHtml(currentVal)}">
+              </div>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-muted small mb-1" style="font-size: 11px;">Max Amount</label>
+              <div class="payments-input-wrapper">
+                <span class="payments-currency-prefix">₹</span>
+                <input type="number" step="any" id="paymentsAmtMax" class="form-control form-control-sm ps-4" placeholder="Max" value="${escapeHtml(storedMax)}">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      setTimeout(() => {
+        const minInp = document.getElementById('paymentsAmtMin');
+        const mainInp = document.getElementById('paymentsPopoverInput');
+        if (minInp && mainInp) {
+          minInp.addEventListener('input', () => {
+            mainInp.value = minInp.value;
+          });
+          mainInp.addEventListener('input', () => {
+            minInp.value = mainInp.value;
+          });
+        }
+      }, 50);
+    } else if (config.type === 'datalist') {
+      body.innerHTML = `
+        <div class="payments-input-container">
+          <div class="payments-input-wrapper">
+            <i class="fa-solid ${config.icon || 'fa-magnifying-glass'} payments-input-icon"></i>
+            <input type="text" id="paymentsPopoverInput" class="form-control form-control-sm payments-popover-field" placeholder="${escapeHtml(config.placeholder)}" value="${escapeHtml(currentVal)}" list="paymentsDatalistOptions">
+          </div>
+          <datalist id="paymentsDatalistOptions">
+            ${config.options.map(opt => `<option value="${escapeHtml(opt)}">`).join('')}
+          </datalist>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="payments-input-container">
+          <div class="payments-input-wrapper">
+            <i class="fa-solid ${config.icon || 'fa-magnifying-glass'} payments-input-icon"></i>
+            <input type="text" id="paymentsPopoverInput" class="form-control form-control-sm payments-popover-field" placeholder="${escapeHtml(config.placeholder)}" value="${escapeHtml(currentVal)}">
+          </div>
+        </div>
+      `;
+    }
+
+    // Position popover right below the clicked search input
+    const anchor = targetEl.closest('.payments-line-search-wrap') || targetEl.closest('td') || targetEl;
+    const anchorRect = anchor.getBoundingClientRect();
+    const colWidth = anchorRect.width;
+
+    // Responsive width based on column width and min/max config
+    const minW = config.minW || 200;
+    const maxW = config.maxW || 300;
+    const popoverWidth = Math.max(minW, Math.min(Math.max(colWidth, minW), maxW));
+
+    popover.style.width = popoverWidth + 'px';
+    popover.style.display = 'block';
+
+    let left = anchorRect.left;
+    if (left + popoverWidth > window.innerWidth - 14) {
+      left = window.innerWidth - popoverWidth - 14;
+    }
+    if (left < 14) {
+      left = 14;
+    }
+
+    popover.style.left = left + 'px';
+
+    // Calculate top position with safety clamp
+    const estimatedPopHeight = 160;
+    const navH = 60;
+    let popTop = anchorRect.bottom + 4;
+    const inputInView = anchorRect.top >= navH && anchorRect.bottom <= window.innerHeight;
+    if (!inputInView) {
+      popTop = navH + 10;
+    } else if (popTop + estimatedPopHeight > window.innerHeight - 10) {
+      const topAbove = anchorRect.top - estimatedPopHeight - 4;
+      popTop = topAbove >= navH ? topAbove : Math.max(navH + 8, window.innerHeight / 2 - estimatedPopHeight / 2);
+    }
+    // Final safety clamp
+    popTop = Math.max(navH + 4, Math.min(popTop, window.innerHeight - estimatedPopHeight - 8));
+    popover.style.top = popTop + 'px';
+
+    // Focus input inside popover
+    setTimeout(() => {
+      const input = document.getElementById('paymentsPopoverInput');
+      if (input) {
+        input.focus();
+        if (input.select && config.type !== 'select') input.select();
+      }
+    }, 60);
+  }
+
+  function closePopover() {
+    const popover = document.getElementById('paymentsFilterPopover');
+    if (popover) {
+      popover.style.display = 'none';
+      popover.dataset.targetId = '';
+    }
+    currentOpenColIdx = null;
+  }
+
+  function applyCurrentFilter() {
+    if (!currentOpenColIdx) return;
+    const input = document.getElementById('paymentsPopoverInput');
+    let value = input ? input.value : '';
+
+    if (currentOpenColIdx === 5) {
+      const maxInp = document.getElementById('paymentsAmtMax');
+      if (maxInp && maxInp.value.trim()) {
+        sessionStorage.setItem('payments_filter_amt_max', maxInp.value.trim());
+      } else {
+        sessionStorage.removeItem('payments_filter_amt_max');
+      }
+    }
+
+    submitColumnFilter(currentOpenColIdx, value);
+  }
+
+  function clearCurrentFilter() {
+    if (!currentOpenColIdx) return;
+    if (currentOpenColIdx === 5) {
+      sessionStorage.removeItem('payments_filter_amt_max');
+    }
+    submitColumnFilter(currentOpenColIdx, '');
+  }
+
+  function submitColumnFilter(colIdx, value) {
+    const params = new URLSearchParams(window.location.search);
+    const paramName = `payments_col_${colIdx}`;
+    if (value && value.trim()) {
+      params.set(paramName, value.trim());
+    } else {
+      params.delete(paramName);
+      if (colIdx === 5) {
+        sessionStorage.removeItem('payments_filter_amt_max');
+      }
+    }
+    params.delete('payments_page');
+    params.delete('page');
+
+    const activeTab = localStorage.getItem('activeTab');
+    if (activeTab && !params.has('active_tab')) {
+      params.set('active_tab', activeTab);
+    }
+
+    window.location.href = window.location.pathname + '?' + params.toString();
+  }
+
+  function clearAllColumnFilters() {
+    const params = new URLSearchParams(window.location.search);
+    let changed = false;
+    for (let i = 1; i <= 35; i++) {
+      if (params.has(`payments_col_${i}`)) {
+        params.delete(`payments_col_${i}`);
+        changed = true;
+      }
+    }
+    sessionStorage.removeItem('payments_filter_amt_max');
+
+    if (changed) {
+      params.delete('payments_page');
+      params.delete('page');
+      const activeTab = localStorage.getItem('activeTab');
+      if (activeTab && !params.has('active_tab')) {
+        params.set('active_tab', activeTab);
+      }
+      window.location.href = window.location.pathname + '?' + params.toString();
+    }
+  }
+
+  function attachFilterEvents() {
+    // Click on clean line search bar opens popover
+    document.addEventListener('click', function(e) {
+      const lineSearch = e.target.closest('.payments-line-search');
+      if (lineSearch) {
+        e.preventDefault();
+        e.stopPropagation();
+        const colIdx = parseInt(lineSearch.dataset.colIdx, 10);
+        openPopoverForTarget(lineSearch, colIdx);
+        return;
+      }
+
+      // Chip close button
+      const chipClose = e.target.closest('.chip-close-btn');
+      if (chipClose) {
+        e.preventDefault();
+        e.stopPropagation();
+        const colIdx = parseInt(chipClose.dataset.colIdx, 10);
+        submitColumnFilter(colIdx, '');
+        return;
+      }
+
+      // Clear all chips button
+      const clearAllBtn = e.target.closest('#paymentsClearAllFiltersBtn');
+      if (clearAllBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        clearAllColumnFilters();
+        return;
+      }
+
+      // Popover internal buttons
+      const popoverClose = e.target.closest('#popoverCloseBtn');
+      if (popoverClose) {
+        e.preventDefault();
+        closePopover();
+        return;
+      }
+
+      const popoverApply = e.target.closest('#popoverApplyBtn');
+      if (popoverApply) {
+        e.preventDefault();
+        applyCurrentFilter();
+        return;
+      }
+
+      const popoverClear = e.target.closest('#popoverClearBtn');
+      if (popoverClear) {
+        e.preventDefault();
+        clearCurrentFilter();
+        return;
+      }
+
+      // Click outside popover closes it
+      const popover = document.getElementById('paymentsFilterPopover');
+      if (popover && popover.style.display !== 'none' && !popover.contains(e.target)) {
+        closePopover();
+      }
+    });
+
+    // Handle typing and Enter key directly in line search bar or in popover
+    document.addEventListener('keydown', function(e) {
+      // Enter key in line search bar directly applies
+      if (e.target.classList.contains('payments-line-search') && e.key === 'Enter') {
+        e.preventDefault();
+        const colIdx = parseInt(e.target.dataset.colIdx, 10);
+        submitColumnFilter(colIdx, e.target.value);
+        return;
+      }
+
+      const popover = document.getElementById('paymentsFilterPopover');
+      if (!popover || popover.style.display === 'none') return;
+
+      if (e.key === 'Escape') {
+        closePopover();
+      } else if (e.key === 'Enter') {
+        const active = document.activeElement;
+        if (active && (active.id === 'paymentsPopoverInput' || active.id === 'paymentsAmtMin' || active.id === 'paymentsAmtMax')) {
+          e.preventDefault();
+          applyCurrentFilter();
+        }
+      }
+    });
+
+    // Close popover on horizontal scroll of table
+    document.querySelectorAll('.table-responsive').forEach(el => {
+      el.addEventListener('scroll', function() {
+        closePopover();
+      }, { passive: true });
+    });
+  }
+
+  // Initialize on DOMContentLoaded and immediately if already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPaymentsFilterUI);
+  } else {
+    initPaymentsFilterUI();
+  }
+})();
+</script>

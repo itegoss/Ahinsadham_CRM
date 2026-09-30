@@ -712,110 +712,54 @@
 <h5 class="section-title">Address Details</h5>
 <hr>
 <div class="row g-3 mb-4" id="address">
-    <div class="col-md-12">
-        <label class="form-label">Address <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="address" value="{{ donor.address }}" class="form-control" required aria-required="true">
+    <div class="col-md-6">
+        <label class="form-label">Address Line 1 <span class="req-star" style="color: #d9534f;">*</span></label>
+        <input type="text" name="address_line_1" id="address_line_1" class="form-control" value="{{ donor.address }}" placeholder="House/Flat/Shop no., Building, Street" required>
     </div>
-    <div class="col-md-4">
-        <label class="form-label">Area</label>
-        <input type="text" name="area" value="{{ donor.area }}" class="form-control" placeholder="Enter area">
+    <div class="col-md-6">
+        <label class="form-label">Address Line 2</label>
+        <input type="text" name="address_line_2" id="address_line_2" class="form-control" placeholder="Landmark, locality">
     </div>
-    <div class="col-md-4">
-        <label class="form-label">City <span style="color: #d9534f;">*</span></label>
-        <input type="text" name="city" value="{{ donor.city }}" class="form-control" required aria-required="true">
+    <div class="col-md-6">
+        <label class="form-label">Area/Town <span class="req-star" style="color: #d9534f;">*</span></label>
+        <input type="text" name="area" class="form-control" value="{{ donor.area }}" placeholder="Borivali/Vashi/Bhujpur" required>
     </div>
-
-<div class="col-md-4">
-<label class="form-label">Country</label>
-<select id="country" name="country" class="form-select">
-<option value="">Select</option>
-<option value="India" {% if donor.country == "India" %}selected{% endif %}>India</option>
-<option value="Afghanistan" {% if donor.country == "Afghanistan" %}selected{% endif %}>Afghanistan</option>
-<option value="Albania" {% if donor.country == "Albania" %}selected{% endif %}>Albania</option>
-<option value="Algeria" {% if donor.country == "Algeria" %}selected{% endif %}>Algeria</option>
-<option value="Andorra" {% if donor.country == "Andorra" %}selected{% endif %}>Andorra</option>
-<option value="Angola" {% if donor.country == "Angola" %}selected{% endif %}>Angola</option>
-<option value="Argentina" {% if donor.country == "Argentina" %}selected{% endif %}>Argentina</option>
-<option value="Armenia" {% if donor.country == "Armenia" %}selected{% endif %}>Armenia</option>
-<option value="Australia" {% if donor.country == "Australia" %}selected{% endif %}>Australia</option>
-<option value="Austria" {% if donor.country == "Austria" %}selected{% endif %}>Austria</option>
-<option value="Azerbaijan" {% if donor.country == "Azerbaijan" %}selected{% endif %}>Azerbaijan</option>
-<option value="Bahamas" {% if donor.country == "Bahamas" %}selected{% endif %}>Bahamas</option>
-<option value="Bahrain" {% if donor.country == "Bahrain" %}selected{% endif %}>Bahrain</option>
-<option value="Bangladesh" {% if donor.country == "Bangladesh" %}selected{% endif %}>Bangladesh</option>
-<option value="Belgium" {% if donor.country == "Belgium" %}selected{% endif %}>Belgium</option>
-<option value="Belize" {% if donor.country == "Belize" %}selected{% endif %}>Belize</option>
-<option value="Bhutan" {% if donor.country == "Bhutan" %}selected{% endif %}>Bhutan</option>
-<option value="Bolivia" {% if donor.country == "Bolivia" %}selected{% endif %}>Bolivia</option>
-<option value="Brazil" {% if donor.country == "Brazil" %}selected{% endif %}>Brazil</option>
-<option value="Cambodia" {% if donor.country == "Cambodia" %}selected{% endif %}>Cambodia</option>
-<option value="Canada" {% if donor.country == "Canada" %}selected{% endif %}>Canada</option>
-<option value="China" {% if donor.country == "China" %}selected{% endif %}>China</option>
-<option value="Colombia" {% if donor.country == "Colombia" %}selected{% endif %}>Colombia</option>
-<option value="Croatia" {% if donor.country == "Croatia" %}selected{% endif %}>Croatia</option>
-<option value="Denmark" {% if donor.country == "Denmark" %}selected{% endif %}>Denmark</option>
-<option value="Egypt" {% if donor.country == "Egypt" %}selected{% endif %}>Egypt</option>
-<option value="France" {% if donor.country == "France" %}selected{% endif %}>France</option>
-<option value="Germany" {% if donor.country == "Germany" %}selected{% endif %}>Germany</option>
-<option value="Greece" {% if donor.country == "Greece" %}selected{% endif %}>Greece</option>
-<option value="Hong Kong" {% if donor.country == "Hong Kong" %}selected{% endif %}>Hong Kong</option>
-<option value="Hungary" {% if donor.country == "Hungary" %}selected{% endif %}>Hungary</option>
-<option value="Indonesia" {% if donor.country == "Indonesia" %}selected{% endif %}>Indonesia</option>
-<option value="Iran" {% if donor.country == "Iran" %}selected{% endif %}>Iran</option>
-<option value="Ireland" {% if donor.country == "Ireland" %}selected{% endif %}>Ireland</option>
-<option value="Israel" {% if donor.country == "Israel" %}selected{% endif %}>Israel</option>
-<option value="Italy" {% if donor.country == "Italy" %}selected{% endif %}>Italy</option>
-<option value="Japan" {% if donor.country == "Japan" %}selected{% endif %}>Japan</option>
-<option value="Kenya" {% if donor.country == "Kenya" %}selected{% endif %}>Kenya</option>
-<option value="Kuwait" {% if donor.country == "Kuwait" %}selected{% endif %}>Kuwait</option>
-<option value="Malaysia" {% if donor.country == "Malaysia" %}selected{% endif %}>Malaysia</option>
-<option value="Maldives" {% if donor.country == "Maldives" %}selected{% endif %}>Maldives</option>
-<option value="Mexico" {% if donor.country == "Mexico" %}selected{% endif %}>Mexico</option>
-<option value="Nepal" {% if donor.country == "Nepal" %}selected{% endif %}>Nepal</option>
-<option value="Netherlands" {% if donor.country == "Netherlands" %}selected{% endif %}>Netherlands</option>
-<option value="New Zealand" {% if donor.country == "New Zealand" %}selected{% endif %}>New Zealand</option>
-<option value="Nigeria" {% if donor.country == "Nigeria" %}selected{% endif %}>Nigeria</option>
-<option value="Pakistan" {% if donor.country == "Pakistan" %}selected{% endif %}>Pakistan</option>
-<option value="Philippines" {% if donor.country == "Philippines" %}selected{% endif %}>Philippines</option>
-<option value="Poland" {% if donor.country == "Poland" %}selected{% endif %}>Poland</option>
-<option value="Portugal" {% if donor.country == "Portugal" %}selected{% endif %}>Portugal</option>
-<option value="Qatar" {% if donor.country == "Qatar" %}selected{% endif %}>Qatar</option>
-<option value="Romania" {% if donor.country == "Romania" %}selected{% endif %}>Romania</option>
-<option value="Russia" {% if donor.country == "Russia" %}selected{% endif %}>Russia</option>
-<option value="Saudi Arabia" {% if donor.country == "Saudi Arabia" %}selected{% endif %}>Saudi Arabia</option>
-<option value="Singapore" {% if donor.country == "Singapore" %}selected{% endif %}>Singapore</option>
-<option value="South Africa" {% if donor.country == "South Africa" %}selected{% endif %}>South Africa</option>
-<option value="Spain" {% if donor.country == "Spain" %}selected{% endif %}>Spain</option>
-<option value="Sri Lanka" {% if donor.country == "Sri Lanka" %}selected{% endif %}>Sri Lanka</option>
-<option value="Sweden" {% if donor.country == "Sweden" %}selected{% endif %}>Sweden</option>
-<option value="Switzerland" {% if donor.country == "Switzerland" %}selected{% endif %}>Switzerland</option>
-<option value="Thailand" {% if donor.country == "Thailand" %}selected{% endif %}>Thailand</option>
-<option value="Turkey" {% if donor.country == "Turkey" %}selected{% endif %}>Turkey</option>
-<option value="United Arab Emirates" {% if donor.country == "United Arab Emirates" %}selected{% endif %}>United Arab Emirates</option>
-<option value="United Kingdom" {% if donor.country == "United Kingdom" %}selected{% endif %}>United Kingdom</option>
-<option value="United States" {% if donor.country == "United States" %}selected{% endif %}>United States</option>
-<option value="Vietnam" {% if donor.country == "Vietnam" %}selected{% endif %}>Vietnam</option>
-<option value="Zimbabwe" {% if donor.country == "Zimbabwe" %}selected{% endif %}>Zimbabwe</option>
-</select>
-</div>
-<div class="col-md-4" id="stateDropdownBox">
-<label class="form-label">State</label>
-<select id="state" name="state" class="form-select">
-</select>
-</div>
-<div class="col-md-4" id="stateTextboxBox" style="display: none;">
-    <label class="form-label">State</label>
-    <input type="text" id="state_text" name="state_text" class="form-control" placeholder="Enter State">
-</div>
-<div class="col-md-4">
-    <label class="form-label">Postal Code <span style="color: #d9534f;">*</span></label>
-    <input type="text" name="postal_code" class="form-control" value="{{ donor.postal_code }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required aria-required="true">
-</div>
-
-    <!-- <div class="col-md-4">
-        <label class="form-label">Native Postal Code</label>
-        <input type="text" name="native_postal_code" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-    </div> -->
+    <div class="col-md-6">
+        <label class="form-label">Postal Code <span class="req-star" style="color: #d9534f;">*</span></label>
+        <input type="text" name="postal_code" class="form-control" value="{{ donor.postal_code }}" placeholder="Enter postal code" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="6" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Zone</label>
+        <input type="text" name="zone" class="form-control" placeholder="Enter zone">
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">City <span class="req-star" style="color: #d9534f;">*</span></label>
+        <input type="text" name="city" value="{{ donor.city }}" class="form-control" placeholder="Mumbai/Ahmedabad" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Country <span class="req-star" style="color: #d9534f;">*</span></label>
+        <select id="country" name="country" class="form-select" required>
+            <option value="India" {% if donor.country == "India" or not donor.country %}selected{% endif %}>India</option>
+            <option value="United States" {% if donor.country == "United States" %}selected{% endif %}>United States</option>
+            <option value="United Kingdom" {% if donor.country == "United Kingdom" %}selected{% endif %}>United Kingdom</option>
+            <option value="United Arab Emirates" {% if donor.country == "United Arab Emirates" %}selected{% endif %}>United Arab Emirates</option>
+            <option value="Australia" {% if donor.country == "Australia" %}selected{% endif %}>Australia</option>
+            <option value="Canada" {% if donor.country == "Canada" %}selected{% endif %}>Canada</option>
+            <option value="Singapore" {% if donor.country == "Singapore" %}selected{% endif %}>Singapore</option>
+            <option value="Germany" {% if donor.country == "Germany" %}selected{% endif %}>Germany</option>
+            <option value="France" {% if donor.country == "France" %}selected{% endif %}>France</option>
+            <option value="Other" {% if donor.country == "Other" %}selected{% endif %}>Other</option>
+        </select>
+    </div>
+    <div class="col-md-6" id="stateDropdownBox">
+        <label class="form-label">State <span class="req-star" style="color: #d9534f;">*</span></label>
+        <select id="state" name="state" class="form-select" data-selected-state="{{ donor.state }}">
+        </select>
+    </div>
+    <div class="col-md-6" id="stateTextboxBox" style="display: none;">
+        <label class="form-label">State <span class="req-star" style="color: #d9534f;">*</span></label>
+        <input type="text" id="state_text" name="state_text" class="form-control" value="{{ donor.state }}" placeholder="Enter State">
+    </div>
 </div>
 <div class="row g-3 mb-3">
        <div class="col-md-4">

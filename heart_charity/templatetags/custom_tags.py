@@ -18,3 +18,16 @@ def number_to_words(value):
         return words.title() + " Rupees Only"
     except (ValueError, TypeError):
         return ""
+
+@register.simple_tag(takes_context=True)
+def url_replace(context, field, value):
+    request = context.get('request')
+    if request:
+        dict_ = request.GET.copy()
+    else:
+        from django.http import QueryDict
+        dict_ = QueryDict('', mutable=True)
+    dict_[field] = value
+    if 'active_tab' in context and 'active_tab' not in dict_:
+        dict_['active_tab'] = context['active_tab']
+    return dict_.urlencode()

@@ -84,15 +84,15 @@ WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DATABASE_NAME'),
-            'USER': os.environ.get('DATABASE_USER'),
-            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-            'HOST': os.environ.get('DATABASE_HOST'),
-            'PORT': os.environ.get('DATABASE_PORT'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Ahinsadhamm',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
+}
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -122,7 +122,7 @@ AUTHENTICATION_BACKENDS = (
 # Social auth keys
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['ahinsadham.org']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['ahinsadham.org','itegoss.in']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['sangalevarsha04@gmail.com']
 
 # URLs
