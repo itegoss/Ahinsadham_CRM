@@ -3516,7 +3516,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup('{{ box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
+                    <span onclick="openQrPopup('{{ box.safe_qr_code_url|default:box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
                     </span>
                     {% else %}
                     <span class="text-muted">—</span>
@@ -3641,7 +3641,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup('{{ box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
+                    <span onclick="openQrPopup('{{ box.safe_qr_code_url|default:box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
                     {% else %}
                     <span class="text-muted">—</span>
                     {% endif %}

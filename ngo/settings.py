@@ -181,6 +181,12 @@ RAZORPAY_KEY_SECRET = "qwL7A2iiPT3xMZvNdBFouGzF"
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": os.environ.get("GS_BUCKET_NAME", "ahinsadham-media"),
+            "project_id": os.environ.get("GS_PROJECT_ID", "sickbed-505105"),
+            "querystring_auth": os.environ.get("GS_QUERYSTRING_AUTH", "False") == 'True',
+            "file_overwrite": os.environ.get("GS_FILE_OVERWRITE", "False") == 'True',
+        },
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -189,5 +195,8 @@ STORAGES = {
 
 GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME", "ahinsadham-media")
 GS_PROJECT_ID = os.environ.get("GS_PROJECT_ID", "sickbed-505105")
-GS_IAM_SIGN_BLOB = os.environ.get("GS_IAM_SIGN_BLOB", "True") == 'True'
+GS_QUERYSTRING_AUTH = os.environ.get("GS_QUERYSTRING_AUTH", "False") == 'True'
+GS_DEFAULT_ACL = os.environ.get("GS_DEFAULT_ACL", None)
+GS_FILE_OVERWRITE = os.environ.get("GS_FILE_OVERWRITE", "False") == 'True'
+GS_IAM_SIGN_BLOB = os.environ.get("GS_IAM_SIGN_BLOB", "False") == 'True'
 GS_SA_EMAIL = os.environ.get("GS_SA_EMAIL", "319338334172-compute@developer.gserviceaccount.com")

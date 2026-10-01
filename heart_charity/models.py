@@ -95,6 +95,18 @@ class DonationBox(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
 
+    @property
+    def safe_qr_code_url(self):
+        try:
+            if self.qr_code:
+                return self.qr_code.url
+        except Exception:
+            if self.qr_code and getattr(self.qr_code, 'name', None):
+                bucket = getattr(settings, 'GS_BUCKET_NAME', 'ahinsadham-media')
+                return f"https://storage.googleapis.com/{bucket}/{self.qr_code.name}"
+            return ""
+        return ""
+
     def get_donation_path(self):
         box_id = self.id if self.id else (self.donation_id or "")
         return f"/danpeti/donation/{box_id}/"

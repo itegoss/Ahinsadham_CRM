@@ -189,8 +189,8 @@
                     <div class="d-flex align-items-center gap-4 flex-wrap">
                         {% if box.qr_code %}
                             <div>
-                                <img src="{{ box.qr_code.url }}" width="130" class="border rounded p-1 shadow-sm bg-white d-block mb-1">
-                                <a href="{{ box.qr_code.url }}" download class="btn btn-sm btn-outline-secondary w-100" style="font-size:12px;">⬇ Download</a>
+                                <img src="{{ box.safe_qr_code_url|default:box.qr_code.url }}" width="130" class="border rounded p-1 shadow-sm bg-white d-block mb-1">
+                                <a href="{{ box.safe_qr_code_url|default:box.qr_code.url }}" download class="btn btn-sm btn-outline-secondary w-100" style="font-size:12px;">⬇ Download</a>
                             </div>
                         {% endif %}
                         <div class="flex-grow-1">
