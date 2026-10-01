@@ -3511,7 +3511,7 @@ def edit_usermoduleaccess(request, id):
         record.can_delete = bool(request.POST.get("can_delete"))
         record.can_view = bool(request.POST.get("can_view"))
         record.save()
-        return redirect("welcome")
+        return redirect(reverse("welcome") + "?active_tab=roles")
     return render(request, "edit_usermoduleaccess.html", {"access": record})
 
 from .models import DonationBox

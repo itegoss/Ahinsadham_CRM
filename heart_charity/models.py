@@ -97,14 +97,21 @@ class DonationBox(models.Model):
 
     @property
     def safe_qr_code_url(self):
-        try:
-            if self.qr_code:
-                return self.qr_code.url
-        except Exception:
-            if self.qr_code and getattr(self.qr_code, 'name', None):
-                bucket = getattr(settings, 'GS_BUCKET_NAME', 'ahinsadham-media')
-                return f"https://storage.googleapis.com/{bucket}/{self.qr_code.name}"
+        if not self.qr_code:
             return ""
+        try:
+            url = self.qr_code.url
+            if url:
+                return url
+        except Exception:
+            pass
+        try:
+            name = getattr(self.qr_code, 'name', None)
+            if name:
+                bucket = getattr(settings, 'GS_BUCKET_NAME', 'ahinsadham-media')
+                return f"https://storage.googleapis.com/{bucket}/{name}"
+        except Exception:
+            pass
         return ""
 
     def get_donation_path(self):

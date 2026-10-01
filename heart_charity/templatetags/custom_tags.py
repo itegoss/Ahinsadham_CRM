@@ -31,3 +31,23 @@ def url_replace(context, field, value):
     if 'active_tab' in context and 'active_tab' not in dict_:
         dict_['active_tab'] = context['active_tab']
     return dict_.urlencode()
+
+@register.filter
+def safe_url(file_field):
+    if not file_field:
+        return ""
+    try:
+        url = file_field.url
+        if url:
+            return url
+    except Exception:
+        pass
+    try:
+        name = getattr(file_field, 'name', None)
+        if name:
+            from django.conf import settings
+            bucket = getattr(settings, 'GS_BUCKET_NAME', 'ahinsadham-media')
+            return f"https://storage.googleapis.com/{bucket}/{name}"
+    except Exception:
+        pass
+    return ""

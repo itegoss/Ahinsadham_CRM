@@ -2369,8 +2369,8 @@
                       <td>
                         {% if donation.id_proof_image or donation.pan_card_image %}
                         <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
-        '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
-        '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+        '{{ donation.id_proof_image|safe_url }}',
+        '{{ donation.pan_card_image|safe_url }}'
       )">
                           <i class="fa-solid fa-eye"></i>
                         </span>
@@ -2540,8 +2540,8 @@
                       <td>
                         {% if donation.id_proof_image or donation.pan_card_image %}
                         <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
-                            '{% if donation.id_proof_image %}{{ donation.id_proof_image.url }}{% endif %}',
-                            '{% if donation.pan_card_image %}{{ donation.pan_card_image.url }}{% endif %}'
+                            '{{ donation.id_proof_image|safe_url }}',
+                            '{{ donation.pan_card_image|safe_url }}'
                           )">
                           <i class="fa-solid fa-eye"></i>
                         </span>
@@ -2755,8 +2755,8 @@
                   <td>
                     {% if emp.id_proof_image or emp.pan_card_image %}
                     <span style="cursor:pointer;font-size:17px;" title="View ID / PAN" onclick="openImagesPopup(
-                        '{% if emp.id_proof_image %}{{ emp.id_proof_image.url }}{% endif %}',
-                        '{% if emp.pan_card_image %}{{ emp.pan_card_image.url }}{% endif %}'
+                        '{{ emp.id_proof_image|safe_url }}',
+                        '{{ emp.pan_card_image|safe_url }}'
                       )">
                       <i class="fa-solid fa-eye"></i>
                     </span>
@@ -3516,7 +3516,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup('{{ box.safe_qr_code_url|default:box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
+                    <span onclick="openQrPopup('{{ box.safe_qr_code_url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i>
                     </span>
                     {% else %}
                     <span class="text-muted">—</span>
@@ -3641,7 +3641,7 @@
                   <td>{{ box.donation_id }}</td>
                   <td style="text-align:center;">
                     {% if box.qr_code %}
-                    <span onclick="openQrPopup('{{ box.safe_qr_code_url|default:box.qr_code.url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
+                    <span onclick="openQrPopup('{{ box.safe_qr_code_url }}', '{{ box.key_id|default:'' }}', '{{ box.donation_id|default:'' }}', '{{ box.id }}')" title="View QR Code" style="cursor:pointer; font-size:17px;"><i class="fa-solid fa-eye"></i></span>
                     {% else %}
                     <span class="text-muted">—</span>
                     {% endif %}
