@@ -362,13 +362,14 @@ $(document).ready(function () {
         allowClear: true,
         tags: true,    
         width: '100%',
+        minimumInputLength: 0,
         ajax: {
             url: "{% url 'donor_autocomplete_ajax' %}?person_type=donor",
             dataType: 'json',
             delay: 250,
             data: function (params) {
                 return {
-                    q: params.term
+                    q: params.term || ''
                 };
             },
             processResults: function (data) {
@@ -377,8 +378,14 @@ $(document).ready(function () {
                 };
             },
             cache: true
-        },
-        minimumInputLength: 1
+        }
+    });
+
+    $('#donor').on('select2:open', function () {
+        let searchField = document.querySelector('.select2-container--open .select2-search__field');
+        if (searchField && !searchField.value) {
+            $(this).data('select2').trigger('query', { term: '' });
+        }
     });
 });
 </script>

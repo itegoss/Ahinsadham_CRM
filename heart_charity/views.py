@@ -1650,7 +1650,7 @@ def add_donor_volunteer(request):
         donor_box__isnull=False
     ).values_list('donor_box_id', flat=True)
     donation_boxes = DonationBox.objects.filter(is_deleted=False).exclude(id__in=assigned_box_ids)
-    all_donors = DonorVolunteer.objects.none()
+    all_donors = DonorVolunteer.objects.filter(is_deleted=False).order_by('-id')[:50]
 
     blood_groups = [
         ("A+", "A+"), ("A-", "A-"),
@@ -1776,7 +1776,7 @@ from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Sum
 
 def adddonation(request):
-    donors = DonorVolunteer.objects.none()
+    donors = DonorVolunteer.objects.filter(is_deleted=False).order_by('-id')[:50]
     today = now().date()
     donation_categories = Lookup.objects.filter(
         lookup_type__type_name__iexact="Donation Category",
@@ -4892,7 +4892,7 @@ def donor_autocomplete_ajax(request):
                 Q(pan_number__icontains=q)
             )
         results = []
-        for d in donors.only('id', 'first_name', 'last_name', 'pan_number')[:30]:
+        for d in donors.only('id', 'first_name', 'last_name', 'pan_number').order_by('-id')[:50]:
             pan_suffix = f" - {d.pan_number}" if d.pan_number else ""
             results.append({
                 "id": d.id,
@@ -4902,22 +4902,25 @@ def donor_autocomplete_ajax(request):
 
     donors = DonorVolunteer.objects.filter(is_deleted=False)
     if person_type == 'donor':
-        donors = donors.filter(person_type__lookup_name__icontains='donor')
+        donors = donors.filter(Q(person_type__lookup_name__icontains='donor') | Q(person_type__isnull=True))
         
     if q:
         donors = donors.filter(
             Q(first_name__icontains=q) | 
+            Q(middle_name__icontains=q) |
             Q(last_name__icontains=q) |
             Q(contact_number__icontains=q) |
             Q(pan_number__icontains=q)
         )
     
     results = []
-    for d in donors.only('id', 'first_name', 'last_name', 'pan_number')[:30]:
+    for d in donors.only('id', 'first_name', 'middle_name', 'last_name', 'pan_number').order_by('-id')[:50]:
         pan_suffix = f" - {d.pan_number}" if d.pan_number else ""
+        mid = f" {d.middle_name}" if d.middle_name else ""
+        name = f"{d.first_name}{mid} {d.last_name}".strip()
         results.append({
             "id": d.id,
-            "text": f"{d.first_name} {d.last_name}{pan_suffix}"
+            "text": f"{name}{pan_suffix}".strip()
         })
     return JsonResponse({"results": results})
 
