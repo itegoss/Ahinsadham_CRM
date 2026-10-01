@@ -78,6 +78,49 @@
         padding: 6px;
         background: #f0fdf4;
     }
+    .select2-container,
+    .select2-container * {
+        text-align: left !important;
+    }
+    .select2-container .select2-selection--single {
+        position: relative !important;
+        height: 48px !important;
+        border-radius: 12px !important;
+        border: 1px solid #c7e7d4 !important;
+        background: #f7fff9 !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 12px !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 46px !important;
+        padding-left: 0 !important;
+        padding-right: 24px !important;
+        margin: 0 !important;
+        font-size: 15px !important;
+        color: #374151 !important;
+        text-align: left !important;
+        display: block !important;
+        width: 100% !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 46px !important;
+        right: 10px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__clear {
+        position: absolute !important;
+        right: 25px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        color: #888 !important;
+    }
 </style>
 <div class="popup-overlay">
     <div class="popup-card">
@@ -118,9 +161,7 @@
                     <select name="box_owner" id="box_owner" class="form-select" required>
                         <option value="">Select Collector</option>
                         {% for emp in employees %}
-                            <option value="{{ emp.first_name }} {{ emp.last_name }}" {% if emp.first_name|add:" "|add:emp.last_name == box.box_owner %}selected{% endif %}>
-                                {{ emp.first_name }} {{ emp.last_name }}{% if emp.designation %} - {{ emp.designation.lookup_name }}{% endif %}
-                            </option>
+                            <option value="{{ emp.first_name }} {{ emp.last_name }}" {% if emp.first_name|add:" "|add:emp.last_name == box.box_owner %}selected{% endif %}>{{ emp.first_name }} {{ emp.last_name }}{% if emp.designation %} - {{ emp.designation.lookup_name }}{% endif %}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -129,9 +170,7 @@
                     <select name="assigned_to" id="assigned_to" class="form-select">
                         <option value="">Select Donor</option>
                         {% for owner in owners %}
-                            <option value="{{ owner.id }}" {% if current_assigned == owner.id %}selected{% endif %}>
-                                {% if owner.business_name %}{{ owner.business_name }} ({% endif %}{{ owner.first_name }} {{ owner.last_name }}{% if owner.business_name %}){% endif %}
-                            </option>
+                            <option value="{{ owner.id }}" {% if current_assigned == owner.id %}selected{% endif %}>{% if owner.business_name %}{{ owner.business_name }} ({% endif %}{{ owner.first_name }} {{ owner.last_name }}{% if owner.business_name %}){% endif %}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -187,12 +226,18 @@ $(document).ready(function() {
         $('#assigned_to').select2({
             placeholder: "Select Donor",
             allowClear: true,
-            width: '100%'
+            width: '100%',
+            templateSelection: function(data) {
+                return data.text ? data.text.trim() : data.text;
+            }
         });
         $('#box_owner').select2({
             placeholder: "Select Collector",
-            allowClear: true,
-            width: '100%'
+            allowClear: false,
+            width: '100%',
+            templateSelection: function(data) {
+                return data.text ? data.text.trim() : data.text;
+            }
         });
     }
 });

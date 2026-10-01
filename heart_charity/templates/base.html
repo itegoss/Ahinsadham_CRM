@@ -17,15 +17,79 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'css/templatemo-kind-heart-charity.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.4">
-    <link rel="stylesheet" href="{% static 'css/modern_crm.css' %}?v=2.4">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.5">
+    <link rel="stylesheet" href="{% static 'css/modern_crm.css' %}?v=3.5">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'js/column_selector.js' %}?v=1.0"></script>
     <link rel="icon" type="image/jpeg" href="{% static 'images/Ahinsa-logo.png' %}">
 
     <style>
+      html, body {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        position: relative !important;
+      }
+      .gcp-header {
+        width: 100% !important;
+        max-width: 100vw !important;
+      }
+      .gcp-nav-toggle-btn {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        flex-shrink: 0 !important;
+      }
+      /* Pagination single-line enforcement across all screen sizes */
+      .pagination-container {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        width: 100% !important;
+        margin: 0.75rem 0 !important;
+      }
+      .pagination-container form,
+      .pagination-container .pagination-form {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 0 4px !important;
+        white-space: nowrap !important;
+      }
+      .pagination-container .form-select {
+        width: auto !important;
+        min-width: 56px !important;
+        height: 32px !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        margin: 0 !important;
+      }
+      .pagination-container .btn,
+      .pagination-container a.btn,
+      .pagination-container button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 32px !important;
+        width: 32px !important;
+        min-width: 32px !important;
+        padding: 0 !important;
+        margin: 0 2px !important;
+        flex-shrink: 0 !important;
+      }
+      .pagination-container label,
+      .pagination-container span {
+        white-space: nowrap !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+      }
       .container {
         max-width: 100% !important;
       }
@@ -330,7 +394,94 @@
         </div>
     </div>
 </header>
+
+{% block universal_nav %}
+{% if user.is_authenticated %}
+<!-- Universal Mobile Navigation Drawer for pages outside welcome.html -->
+<div class="sidebar-backdrop" id="globalNavBackdrop"></div>
+<aside class="sidebar-wrapper global-offcanvas-drawer" id="globalNavDrawer">
+  <div class="sidebar">
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-white border-opacity-10 mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <img src="{% static 'images/Ahinsa-logo.png' %}" alt="Logo" style="height: 28px; width: auto; background: #fff; padding: 2px 4px; border-radius: 4px;">
+        <span class="text-white fw-bold small">Ahinsadham CRM</span>
+      </div>
+      <button type="button" class="btn btn-sm text-white p-1" id="globalNavCloseBtn" aria-label="Close Navigation">
+        <i class="bi bi-x-lg fs-5"></i>
+      </button>
+    </div>
+    
+    <div class="sidebar-section-label">Navigation</div>
+    <a class="tab-btn" href="/welcome/?tab=default-user">
+      <i class="bi bi-speedometer2"></i>
+      <span class="sidebar-text">Dashboard</span>
+    </a>
+    <a class="tab-btn" href="/welcome/?tab=Donor/Volunteer Management System">
+      <i class="bi bi-heart"></i>
+      <span class="sidebar-text">Donor / Volunteer</span>
+    </a>
+    <a class="tab-btn" href="{% url 'donation_box_page' %}">
+      <i class="bi bi-box-seam"></i>
+      <span class="sidebar-text">Daanpeti Details</span>
+    </a>
+    <a class="tab-btn" href="{% url 'danpeti_page' %}">
+      <i class="bi bi-receipt"></i>
+      <span class="sidebar-text">Donation Details</span>
+    </a>
+    <a class="tab-btn" href="/welcome/?tab=Donation Module">
+      <i class="bi bi-cash-stack"></i>
+      <span class="sidebar-text">Other Donation</span>
+    </a>
+    {% if user.is_superuser %}
+    <div class="sidebar-section-label">System &amp; Settings</div>
+    <a class="tab-btn" href="/welcome/?tab=MDM">
+      <i class="bi bi-table"></i>
+      <span class="sidebar-text">Master Data (MDM)</span>
+    </a>
+    <a class="tab-btn" href="/welcome/?tab=Settings">
+      <i class="bi bi-gear"></i>
+      <span class="sidebar-text">Settings</span>
+    </a>
+    {% endif %}
+    
+    <div class="sidebar-section-label mt-3">Account</div>
+    <a class="tab-btn" href="#" data-bs-toggle="modal" data-bs-target="#helpCenterModal">
+      <i class="bi bi-question-circle"></i>
+      <span class="sidebar-text">Help Center</span>
+    </a>
+    <a class="tab-btn text-danger-emphasis" href="/logout">
+      <i class="bi bi-box-arrow-right text-danger"></i>
+      <span class="sidebar-text">Sign Out</span>
+    </a>
+  </div>
+</aside>
+{% endif %}
+{% endblock %}
+
 <main class="flex-grow-1 p-0">
+    {% block messages %}
+    {% if messages %}
+    <div class="container my-3" style="max-width: 960px;" id="djangoMessagesContainer">
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show shadow-sm text-center d-flex align-items-center justify-content-between py-2 px-3 mb-2" role="alert" style="border-radius: 8px; border-left: 5px solid {% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' or message.tags == 'danger' %}#dc2626{% elif message.tags == 'warning' %}#f59e0b{% else %}#2563eb{% endif %}; background-color: {% if message.tags == 'success' %}#f0fdf4{% elif message.tags == 'error' or message.tags == 'danger' %}#fef2f2{% elif message.tags == 'warning' %}#fffbeb{% else %}#eff6ff{% endif %};">
+                <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-center">
+                    {% if message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                    {% endif %}
+                    <span class="fw-semibold text-dark">{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endblock %}
     <div class="container-fluid p-0">
         {% block content %}
         {% endblock %}
@@ -594,25 +745,93 @@
       });
     }
 
+    // Global drawer closer utility
+    function closeGlobalNav() {
+      const gDrawer = document.getElementById('globalNavDrawer');
+      const gBackdrop = document.getElementById('globalNavBackdrop');
+      const wDrawer = document.getElementById('sidebarWrapper');
+      const wBackdrop = document.getElementById('sidebarBackdrop');
+      if (gDrawer) {
+        gDrawer.classList.remove('mobile-show');
+        gDrawer.classList.remove('active');
+      }
+      if (gBackdrop) {
+        gBackdrop.classList.remove('active');
+      }
+      if (wDrawer && window.innerWidth <= 991) {
+        wDrawer.classList.remove('mobile-show');
+        wDrawer.classList.remove('active');
+      }
+      if (wBackdrop) {
+        wBackdrop.classList.remove('active');
+      }
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    }
+    window.closeGlobalNav = closeGlobalNav;
+
+    // Delegated click listener for all drawer close triggers and backdrops
+    document.addEventListener('click', function (e) {
+      const closeTarget = e.target.closest('#mobileDrawerCloseBtn, #globalNavCloseBtn, .drawer-close-btn, #sidebarBackdrop, #globalNavBackdrop');
+      if (closeTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeGlobalNav();
+      }
+    });
+
     // Global hamburger toggle button in header
     const toggleBtn = document.getElementById('globalSidebarToggle');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const wrapper = document.getElementById('sidebarWrapper');
         const backdrop = document.getElementById('sidebarBackdrop');
-        if (window.innerWidth <= 991) {
-          if (wrapper) wrapper.classList.toggle('active');
-          if (backdrop) backdrop.classList.toggle('active');
-        } else {
-          if (wrapper) {
+        const globalDrawer = document.getElementById('globalNavDrawer');
+        const globalBackdrop = document.getElementById('globalNavBackdrop');
+
+        if (wrapper) {
+          if (window.innerWidth <= 991) {
+            const isOpen = wrapper.classList.toggle('mobile-show');
+            wrapper.classList.toggle('active', isOpen);
+            if (backdrop) backdrop.classList.toggle('active', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+          } else {
             wrapper.classList.toggle('collapsed');
             const isCollapsed = wrapper.classList.contains('collapsed');
             localStorage.setItem('gcpSidebarCollapsed', isCollapsed ? 'true' : 'false');
           }
+        } else if (globalDrawer) {
+          const isOpen = globalDrawer.classList.toggle('mobile-show');
+          globalDrawer.classList.toggle('active', isOpen);
+          if (globalBackdrop) globalBackdrop.classList.toggle('active', isOpen);
+          document.body.style.overflow = isOpen ? 'hidden' : '';
         }
       });
     }
+
+    // Handle Back/Forward Cache (bfcache) navigation
+    window.addEventListener('pageshow', function (event) {
+      closeGlobalNav();
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    });
+
+    // Auto-dismiss Django flash messages after 6 seconds
+    setTimeout(function() {
+      var msgBox = document.getElementById('djangoMessagesContainer');
+      if (msgBox) {
+        var alerts = msgBox.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+          alert.classList.remove('show');
+          setTimeout(function() { alert.remove(); }, 350);
+        });
+      }
+    }, 6000);
   });
 </script>
 </body>

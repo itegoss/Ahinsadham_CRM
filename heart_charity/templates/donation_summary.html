@@ -82,14 +82,6 @@
 </div>
 </div>
  </div>
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    {% endfor %}
-{% endif %}
 <form method="POST" action="{% url 'donation_summary' donation.id %}">
       {% csrf_token %}
       <h5 class="text-success fw-bold mb-2">Donor Information</h5>

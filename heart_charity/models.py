@@ -5,7 +5,8 @@ from django.conf import settings
 from datetime import date
 import os
 from io import BytesIO
-from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from PIL import Image
 import qrcode
 
@@ -146,8 +147,13 @@ class DonationBox(models.Model):
 
         buffer = BytesIO()
         qr_img.convert('RGB').save(buffer, format='PNG')
-        box_id_str = str(self.id or self.donation_id or 'box')
-        self.qr_code.save(f"box_{box_id_str}_qr.png", File(buffer), save=False)
+        # Define GCS path for QR code
+        qr_path = f"donation_box_qr/{self.id or self.donation_id}.png"
+        # Save PNG bytes to default storage (GCS)
+        saved_path = default_storage.save(qr_path, ContentFile(buffer.getvalue()))
+        self.qr_code.name = saved_path
+        # Assign the storage path to ImageField
+
 
     def save(self, *args, **kwargs):
         if not self.donation_id:

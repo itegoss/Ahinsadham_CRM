@@ -93,6 +93,7 @@ DATABASES = {
             'PORT': os.environ.get('DATABASE_PORT'),
         }
     }
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -175,3 +176,18 @@ DEFAULT_FILE_STORAGE = os.environ.get("DEFAULT_FILE_STORAGE")
 # Razorpay Test Keys
 RAZORPAY_KEY_ID = "rzp_live_VYcozrWng2p4M0"
 RAZORPAY_KEY_SECRET = "qwL7A2iiPT3xMZvNdBFouGzF"
+
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME", "ahinsadham-media")
+GS_PROJECT_ID = os.environ.get("GS_PROJECT_ID", "sickbed-505105")
+GS_IAM_SIGN_BLOB = os.environ.get("GS_IAM_SIGN_BLOB", "True") == 'True'
+GS_SA_EMAIL = os.environ.get("GS_SA_EMAIL", "319338334172-compute@developer.gserviceaccount.com")

@@ -291,6 +291,12 @@
   }
 </style>
 
+<!-- Payments Table Toolbar with Column Selector -->
+<div class="d-flex justify-content-between align-items-center mb-2 px-1 payments-table-toolbar">
+  <span class="text-muted fw-bold small"><i class="bi bi-receipt me-1"></i> Payment Records</span>
+  <div id="colvis-mount-donation-payments"></div>
+</div>
+
 <!-- Active Filter Chips Bar -->
 <div class="payments-active-filters-bar" id="paymentsActiveFiltersBar" style="display: none;">
   <div class="payments-active-filters-inner">
@@ -1036,6 +1042,38 @@ if (typeof toggleActionMenu === 'undefined') {
         closePopover();
       }, { passive: true });
     });
+
+    // Initialize Column Selector for Payments Table
+    initPaymentsColumnSelector();
+  }
+
+
+  function initPaymentsColumnSelector() {
+    const mount = document.getElementById('colvis-mount-donation-payments');
+    if (window.TableColumnSelector && mount && !mount.hasChildNodes()) {
+      new window.TableColumnSelector({
+        container: mount,
+        table: 'auto',
+        storageKey: 'column_visibility_donation_payments',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "receipt_number", label: "RECEIPT NUMBER" },
+          { key: "box_id", label: "BOX ID" },
+          { key: "business_name", label: "BUSINESS NAME" },
+          { key: "owner_name", label: "OWNER NAME" },
+          { key: "amount", label: "AMOUNT" },
+          { key: "payment_method", label: "PAYMENT METHOD" },
+          { key: "transaction_id", label: "TRANSACTION ID" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
   }
 
   // Initialize on DOMContentLoaded and immediately if already loaded
@@ -1045,4 +1083,5 @@ if (typeof toggleActionMenu === 'undefined') {
     initPaymentsFilterUI();
   }
 })();
+
 </script>

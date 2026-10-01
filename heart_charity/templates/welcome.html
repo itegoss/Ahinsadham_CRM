@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_tags %}
+{% block universal_nav %}{% endblock %}
 {% block content %}
 <style>
   /* ── Sleek Underline Search Bar for All Tables (clean line, no box) ── */
@@ -238,6 +239,89 @@
     min-height: calc(100vh - var(--gcp-header-height));
     background-color: var(--gcp-bg);
     position: relative;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  @media (max-width: 991px) {
+    .dashboard-container {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+    .content {
+      width: 100% !important;
+      max-width: 100vw !important;
+      padding: 1rem 0.75rem !important;
+      overflow-x: hidden !important;
+      margin: 0 !important;
+    }
+    .sidebar-wrapper {
+      position: fixed !important;
+      top: 0 !important;
+      left: -320px !important;
+      width: 290px !important;
+      max-width: 85vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      z-index: 1075 !important;
+      box-shadow: none !important;
+      transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .sidebar-wrapper.mobile-show,
+    .sidebar-wrapper.active {
+      left: 0 !important;
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.45) !important;
+    }
+    .pagination-container {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      width: 100% !important;
+    }
+    .pagination-container form,
+    .pagination-container .pagination-form {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 4px !important;
+      margin: 0 2px !important;
+      white-space: nowrap !important;
+    }
+    .pagination-container .form-select {
+      width: auto !important;
+      min-width: 52px !important;
+      height: 30px !important;
+      display: inline-block !important;
+      vertical-align: middle !important;
+      margin: 0 !important;
+    }
+    .pagination-container .btn,
+    .pagination-container a.btn,
+    .pagination-container button {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      height: 30px !important;
+      width: 30px !important;
+      min-width: 30px !important;
+      padding: 0 !important;
+      margin: 0 1px !important;
+      flex-shrink: 0 !important;
+    }
+    .pagination-container label,
+    .pagination-container span {
+      white-space: nowrap !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
   }
 
   /* Multi-step Form Progress Bar */
@@ -390,20 +474,20 @@
   <!-- Mobile drawer backdrop -->
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-  <!-- Mobile Header Bar -->
-  <div class="mobile-header d-lg-none d-flex align-items-center justify-content-between px-3 py-2 bg-white border-bottom w-100">
-    <div class="d-flex align-items-center gap-2">
-      <button class="btn btn-sm btn-outline-secondary p-1 px-2" id="mobileMenuToggle" title="Toggle Navigation Menu">
-        <i class="bi bi-list fs-5"></i>
-      </button>
-      <span class="fw-bold text-dark small">Navigation Menu</span>
-    </div>
-    <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 11px;">Ahinsadham CRM</span>
-  </div>
-
   <!-- Left Sidebar (Google Cloud Console Navigation Drawer) -->
   <div class="sidebar-wrapper" id="sidebarWrapper">
     <div class="sidebar" id="sidebar">
+
+      <!-- Mobile Drawer Close Header -->
+      <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom border-white border-opacity-10 mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <img src="{% static 'images/Ahinsa-logo.png' %}" alt="Logo" style="height: 28px; width: auto; background: #fff; padding: 2px 4px; border-radius: 4px;">
+          <span class="text-white fw-bold small">Navigation</span>
+        </div>
+        <button type="button" class="btn btn-sm text-white p-1" id="mobileDrawerCloseBtn" aria-label="Close navigation drawer">
+          <i class="bi bi-x-lg fs-5"></i>
+        </button>
+      </div>
 
       {% if user.is_superuser %}
       <!-- OVERVIEW -->
@@ -899,7 +983,10 @@
         </div>
         <!-- ------------Lookup type table----------- -->
         <div class="card-body">
-          <h5 style="color:#1b5e20">Category/Lookup Type</h5>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 style="color:#1b5e20" class="mb-0">Category/Lookup Type</h5>
+            <div id="colvis-mount-mdm-lookup-type"></div>
+          </div>
           <div class="search-container d-flex align-items-center">
             <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
               <input type="text" name="lookup_query" data-target="Lookup"
@@ -1123,7 +1210,10 @@
         </div>
         <!-- ------------Lookup table----------- -->
         <div class="card-body">
-          <h5 style="color:#1b5e20">Subcategory/Lookup Table</h5>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 style="color:#1b5e20" class="mb-0">Subcategory/Lookup Table</h5>
+            <div id="colvis-mount-mdm-lookup"></div>
+          </div>
           <div class="search-container">
             <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100"
               role="search">
@@ -1366,6 +1456,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Users</h4>
+          <div id="colvis-mount-all-users"></div>
         </div>
         <div class="card-body">
           <div class="search-container">
@@ -1582,6 +1673,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Roles</h4>
+          <div id="colvis-mount-roles"></div>
         </div>
         <div class="card-body">
           <div class="search-container">
@@ -1893,6 +1985,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Leave Management System</h4>
+          <div id="colvis-mount-leave-management"></div>
         </div>
         <div class="card-body">
           <div class="search-container d-flex align-items-center">
@@ -2142,6 +2235,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donors and Volunteers</h4>
+          <div id="colvis-mount-donor-volunteer"></div>
         </div>
 
         <div class="card-body">
@@ -2534,6 +2628,7 @@
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Employees</h4>
+          <div id="colvis-mount-employee-details"></div>
         </div>
 
         <div class="card-body">
@@ -2562,6 +2657,7 @@
                   <th class="sortable" data-col="2">ID <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="3">Department <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="4">Designation <span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="5">Position <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="6">First Name <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="7">Middle Name <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="8">Last Name <span class="sort-icon">⬍</span></th>
@@ -2607,6 +2703,7 @@
                   <td><input class="column-search" name="emp_col_2" value="{{ emp_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_3" value="{{ emp_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_4" value="{{ emp_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="emp_col_5" value="{{ emp_col_5|default:'' }}" data-col="5" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_6" value="{{ emp_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_7" value="{{ emp_col_7|default:'' }}" data-col="7" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_8" value="{{ emp_col_8|default:'' }}" data-col="8" type="text" placeholder="Search..."></td>
@@ -2744,6 +2841,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Visitor Management System</h4>
+          <div id="colvis-mount-visitor-management"></div>
         </div>
         <div class="card-body">
           <div class="search-container d-flex align-items-center">
@@ -3251,6 +3349,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">{% if page_mode == 'danpeti' %}Donation Details{% else %}Daanpeti Details{% endif %}</h4>
+          <div id="colvis-mount-daanpeti-details"></div>
         </div>
         <!-- ------------Donation Owner Module----------- -->
         {% if page_mode != "box" %}
@@ -3335,7 +3434,7 @@
                 <tr>
                   <th>Actions</th>
                   <th class="sortable" data-col="1">Daanpeti ID<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="2">QR<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="3">Key Number<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
@@ -3460,18 +3559,20 @@
                 <tr>
                   <th>Actions</th>
                   <th class="sortable" data-col="1">Daanpeti ID<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="2">OR Code<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="3">Key ID<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="2">QR<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="3">Key Number<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="4">Box Size<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="6">Status<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="7">Box Owner<span class="sort-icon">⬍</span> </th>
-                  <th class="sortable" data-col="8">Box Percentage<span class="sort-icon">⬍</span> </th>
-                  <th class="sortable" data-col="9">Created By<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="10">Created On<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="11">Updated By<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="12">Updated On<span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="13">Deleted On<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="7">Collector<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="8">Daanpeti Donor<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="9">Commission %<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="10">Created By<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="11">Created On<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="12">Updated By<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="13">Updated On<span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="14">Is Deleted<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="15">Deleted By<span class="sort-icon">⬍</span></th>
+                  <th class="sortable" data-col="16">Deleted On<span class="sort-icon">⬍</span></th>
                 </tr>
                 <tr class="column-search-row">
                   <td>
@@ -3492,7 +3593,7 @@
                     </div>
                   </td>
                   <td><input class="column-search" name="box_col_1" value="{{ box_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="box_col_2" value="{{ box_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
+                  <td></td>
                   <td><input class="column-search" name="box_col_3" value="{{ box_col_3|default:'' }}" data-col="3" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="box_col_4" value="{{ box_col_4|default:'' }}" data-col="4" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="box_col_6" value="{{ box_col_6|default:'' }}" data-col="6" type="text" placeholder="Search..."></td>
@@ -3504,7 +3605,8 @@
                   <td><input class="column-search" name="box_col_12" value="{{ box_col_12|default:'' }}" data-col="12" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="box_col_13" value="{{ box_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="box_col_14" value="{{ box_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="box_col_15" value="{{ box_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="box_col_15" value="{{ box_col_15|default:'' }}" data-col="15" type="text" placeholder="Search.."></td>
+                  <td><input class="column-search" name="box_col_16" value="{{ box_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
                 </tr>
               </thead>
               <tbody id="boxx">
@@ -3545,10 +3647,11 @@
                     {% endif %}
                   </td>
                   <td>{{ box.key_id }}</td>
-                  <td>{{ box.box_size }}</td>
+                  <td>{{ box.box_size|title }}</td>
                   <td>{{ box.status }}</td>
-                  <td>{{ box.box_owner }}</td>
-                  <td>{{ box.box_percentage }}</td>
+                  <td>{{ box.box_owner|default:"—" }}</td>
+                  <td>{{ box.box_owner_details.first|default:"—" }}</td>
+                  <td>{{ box.box_percentage|floatformat:"-2" }}</td>
                   <td>{{ box.created_by }}</td>
                   <td>{{ box.created_at|date:"d M Y" }}</td>
                   <td>{{ box.updated_by }}</td>
@@ -3563,6 +3666,7 @@
                   <td>{{ box.deleted_by }}</td>
                   <td>{{ box.deleted_at|date:"d M Y" }}</td>
                 </tr>
+
                 {% empty %}
                 <tr>
                   <td colspan="15" class="text-muted py-4">No donation boxes found.</td>
@@ -3607,6 +3711,7 @@
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donor Details</h4>
+          <div id="colvis-mount-owner-details"></div>
         </div>
 
         <div class="card-body">
@@ -3815,6 +3920,7 @@
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donations</h4>
+          <div id="colvis-mount-donation-details"></div>
         </div>
         <div class="card-body">
           <div class="search-container">
@@ -5125,10 +5231,34 @@
     }
 
     function activateTab(tabId) {
+      if (!tabId || tabId === 'null' || tabId === 'undefined') {
+        tabId = 'default-user';
+      }
       tabBtns.forEach(t => t.classList.remove('active'));
       tabContents.forEach(c => c.classList.remove('active'));
 
-      const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+      let btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+      let content = document.getElementById(tabId);
+      if (!content) {
+        try {
+          if (window.CSS && CSS.escape) {
+            content = document.querySelector('.tab-content[id="' + CSS.escape(tabId) + '"]');
+          }
+        } catch (e) {
+        }
+      }
+      if (!content) {
+        content = Array.from(tabContents).find(c => c.id === tabId);
+      }
+      // SAFE FALLBACK: Never leave content area blank
+      if (!content) {
+        content = document.getElementById('default-user') || (tabContents.length > 0 ? tabContents[0] : null);
+        if (content) {
+          tabId = content.id;
+          btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+        }
+      }
+
       if (btn) {
         btn.classList.add('active');
         const sidebarTextEl = btn.querySelector('.sidebar-text');
@@ -5144,18 +5274,7 @@
           }
         }
       }
-      let content = document.getElementById(tabId);
-      if (!content) {
-        try {
-          if (window.CSS && CSS.escape) {
-            content = document.querySelector('.tab-content[id="' + CSS.escape(tabId) + '"]');
-          }
-        } catch (e) {
-        }
-      }
-      if (!content) {
-        content = Array.from(tabContents).find(c => c.id === tabId);
-      }
+
       if (content) {
         content.classList.add('active');
         
@@ -5200,19 +5319,28 @@
     }
 
     window.activateTab = activateTab;
+
+    // Initial Tab Activation from URL query param, back navigation, or saved state
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryTab = urlParams.get('tab');
     const backFromForm = localStorage.getItem('backFromForm');
-    if (backFromForm) {
-      const lastTab = localStorage.getItem('activeTab');
-      activateTab(lastTab);
+    const serverTab = "{{ active_tab|default:''|escapejs }}";
+
+    let initialTab = 'default-user';
+    if (queryTab) {
+      initialTab = queryTab;
+      localStorage.setItem('activeTab', queryTab);
+    } else if (backFromForm) {
+      initialTab = localStorage.getItem('activeTab') || 'default-user';
       localStorage.removeItem('backFromForm');
+    } else if (serverTab) {
+      initialTab = serverTab;
+      localStorage.setItem('activeTab', serverTab);
     } else {
-      const serverTab = "{{ active_tab|default:''|escapejs }}";
-      const saved = serverTab || localStorage.getItem('activeTab') || 'default-user';
-      activateTab(saved);
-      if (serverTab) {
-        localStorage.setItem('activeTab', serverTab);
-      }
+      initialTab = localStorage.getItem('activeTab') || 'default-user';
     }
+    activateTab(initialTab);
+
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function (e) {
         const tabId = this.dataset.tab;
@@ -5225,9 +5353,8 @@
         activateTab(tabId);
 
         // Close sidebar on mobile after tab click
-        const sidebar = document.getElementById('sidebar');
-        if (window.innerWidth <= 768 && sidebar) {
-          sidebar.classList.remove('active');
+        if (window.innerWidth <= 991 && typeof toggleMobileDrawer === 'function') {
+          toggleMobileDrawer(false);
         }
       });
     });
@@ -5245,6 +5372,7 @@
     const sidebarWrapper = document.getElementById('sidebarWrapper');
     const sidebar = document.getElementById('sidebar');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileDrawerCloseBtn = document.getElementById('mobileDrawerCloseBtn');
     const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 
     // Restore desktop collapsed preference
@@ -5259,25 +5387,40 @@
 
     function toggleMobileDrawer(open) {
       if (!sidebarWrapper) return;
+      let shouldOpen;
       if (typeof open === 'boolean') {
-        if (open) {
-          sidebarWrapper.classList.add('mobile-show');
-          if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
-        } else {
-          sidebarWrapper.classList.remove('mobile-show');
-          if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
-        }
+        shouldOpen = open;
       } else {
-        const isOpen = sidebarWrapper.classList.toggle('mobile-show');
-        if (sidebarBackdrop) sidebarBackdrop.classList.toggle('active', isOpen);
+        shouldOpen = !sidebarWrapper.classList.contains('mobile-show') && !sidebarWrapper.classList.contains('active');
+      }
+
+      if (shouldOpen) {
+        sidebarWrapper.classList.add('mobile-show');
+        sidebarWrapper.classList.add('active');
+        if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        sidebarWrapper.classList.remove('mobile-show');
+        sidebarWrapper.classList.remove('active');
+        if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+        document.body.style.removeProperty('overflow');
       }
     }
+    window.toggleMobileDrawer = toggleMobileDrawer;
 
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         toggleMobileDrawer();
+      });
+    }
+
+    if (mobileDrawerCloseBtn) {
+      mobileDrawerCloseBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileDrawer(false);
       });
     }
 
@@ -5294,6 +5437,15 @@
           toggleMobileDrawer(false);
         }
       });
+    });
+
+    // bfcache / Back navigation restore handler
+    window.addEventListener('pageshow', function () {
+      toggleMobileDrawer(false);
+      const curTab = localStorage.getItem('activeTab') || 'default-user';
+      if (typeof activateTab === 'function') {
+        activateTab(curTab);
+      }
     });
   });
 
@@ -5550,7 +5702,333 @@
                 });
             });
         }
-    });
+    // Initialize All Reusable Column Selectors
+    initAhinsadhamColumnSelectors();
   });
+
+  function initAhinsadhamColumnSelectors() {
+    if (typeof window.TableColumnSelector === 'undefined') return;
+
+    // 1. Daanpeti Details
+    if (document.getElementById('colvis-mount-daanpeti-details')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-daanpeti-details',
+        table: 'auto',
+        storageKey: 'column_visibility_daanpeti_details',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "daanpeti_id", label: "DAANPETI ID" },
+          { key: "qr", label: "QR" },
+          { key: "key_number", label: "KEY NUMBER" },
+          { key: "box_size", label: "BOX SIZE" },
+          { key: "status", label: "STATUS" },
+          { key: "collector", label: "COLLECTOR" },
+          { key: "daanpeti_donor", label: "DAANPETI DONOR" },
+          { key: "commission", label: "COMMISSION %" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 2. All Donors and Volunteers
+    if (document.getElementById('colvis-mount-donor-volunteer')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-donor-volunteer',
+        table: 'auto',
+        storageKey: 'column_visibility_donor_volunteer',
+        columns: [
+          { key: "actions", label: "ACTION", alwaysVisible: true },
+          { key: "id_proof", label: "ID PROOF" },
+          { key: "id", label: "ID" },
+          { key: "person_type", label: "PERSON TYPE" },
+          { key: "first_name", label: "FIRST NAME" },
+          { key: "middle_name", label: "MIDDLE NAME" },
+          { key: "last_name", label: "LAST NAME" },
+          { key: "gender", label: "GENDER" },
+          { key: "dob", label: "DOB" },
+          { key: "contact", label: "CONTACT" },
+          { key: "email", label: "EMAIL" },
+          { key: "donor_box_id", label: "DONOR BOX ID" },
+          { key: "id_type", label: "ID TYPE" },
+          { key: "id_number", label: "ID NUMBER" },
+          { key: "occupation_name", label: "OCCUPATION NAME" },
+          { key: "occupation_nature", label: "OCCUPATION NATURE" },
+          { key: "occupation_type", label: "OCCUPATION TYPE" },
+          { key: "gst_number", label: "GST NUMBER" },
+          { key: "address", label: "ADDRESS" },
+          { key: "city", label: "CITY" },
+          { key: "state", label: "STATE" },
+          { key: "country", label: "COUNTRY" },
+          { key: "postal_code", label: "POSTAL CODE" },
+          { key: "native_place", label: "NATIVE PLACE" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 3. All Employees
+    if (document.getElementById('colvis-mount-employee-details')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-employee-details',
+        table: 'auto',
+        storageKey: 'column_visibility_employee_details',
+        columns: [
+          { key: "actions", label: "ACTION", alwaysVisible: true },
+          { key: "id_proof", label: "ID PROOF" },
+          { key: "id", label: "ID" },
+          { key: "department", label: "DEPARTMENT" },
+          { key: "designation", label: "DESIGNATION" },
+          { key: "position", label: "POSITION" },
+          { key: "first_name", label: "FIRST NAME" },
+          { key: "middle_name", label: "MIDDLE NAME" },
+          { key: "last_name", label: "LAST NAME" },
+          { key: "gender", label: "GENDER" },
+          { key: "dob", label: "DOB" },
+          { key: "contact", label: "CONTACT" },
+          { key: "whatsapp", label: "WHATSAPP" },
+          { key: "email", label: "EMAIL" },
+          { key: "id_type", label: "ID TYPE" },
+          { key: "id_number", label: "ID NUMBER" },
+          { key: "address", label: "ADDRESS" },
+          { key: "city", label: "CITY" },
+          { key: "state", label: "STATE" },
+          { key: "country", label: "COUNTRY" },
+          { key: "postal_code", label: "POSTAL CODE" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "status", label: "STATUS" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 4. All Donations
+    if (document.getElementById('colvis-mount-donation-details')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-donation-details',
+        table: 'auto',
+        storageKey: 'column_visibility_donation_details',
+        columns: [
+          { key: "actions", label: "ACTION", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "receipt_id", label: "RECEIPT ID" },
+          { key: "donor", label: "DONOR" },
+          { key: "address", label: "ADDRESS" },
+          { key: "amount_declared", label: "AMOUNT DECLARED" },
+          { key: "amount_paid", label: "AMOUNT PAID" },
+          { key: "date", label: "DATE" },
+          { key: "category", label: "CATEGORY" },
+          { key: "payment_method", label: "PAYMENT METHOD" },
+          { key: "transaction_id", label: "TRANSACTION ID" },
+          { key: "payment_status", label: "PAYMENT STATUS" },
+          { key: "check_number", label: "CHECK NUMBER" },
+          { key: "place_of_donation", label: "PLACE OF DONATION" },
+          { key: "description", label: "DESCRIPTION" },
+          { key: "bank_name", label: "BANK NAME" },
+          { key: "branch", label: "BRANCH" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" },
+          { key: "verified_by", label: "VERIFIED BY" }
+        ]
+      });
+    }
+
+    // 5. All Donor Details (Owner Details Module)
+    if (document.getElementById('colvis-mount-owner-details')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-owner-details',
+        table: 'auto',
+        storageKey: 'column_visibility_owner_details',
+        columns: [
+          { key: "actions", label: "ACTION", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "business_name", label: "BUSINESS NAME" },
+          { key: "gst_number", label: "GST NUMBER" },
+          { key: "salutation", label: "SALUTATION" },
+          { key: "first_name", label: "FIRST NAME" },
+          { key: "middle_name", label: "MIDDLE NAME" },
+          { key: "last_name", label: "LAST NAME" },
+          { key: "gender", label: "GENDER" },
+          { key: "blood_group", label: "BLOOD GROUP" },
+          { key: "contact_number", label: "CONTACT NUMBER" },
+          { key: "whatsapp_number", label: "WHATSAPP NUMBER" },
+          { key: "email", label: "EMAIL" },
+          { key: "dob", label: "DOB" },
+          { key: "age", label: "AGE" },
+          { key: "native_place", label: "NATIVE PLACE" },
+          { key: "address_line_1", label: "ADDRESS LINE 1" },
+          { key: "address_line_2", label: "ADDRESS LINE 2" },
+          { key: "area", label: "AREA" },
+          { key: "city", label: "CITY" },
+          { key: "country", label: "COUNTRY" },
+          { key: "state", label: "STATE" },
+          { key: "postal_code", label: "POSTAL CODE" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 6. All Users
+    if (document.getElementById('colvis-mount-all-users')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-all-users',
+        table: 'auto',
+        storageKey: 'column_visibility_all_users',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "role", label: "ROLE" },
+          { key: "id", label: "ID" },
+          { key: "username", label: "USERNAME" },
+          { key: "first_name", label: "FIRST NAME" },
+          { key: "last_name", label: "LAST NAME" },
+          { key: "email", label: "EMAIL" },
+          { key: "is_active", label: "IS ACTIVE" },
+          { key: "is_superuser", label: "IS SUPERUSER" },
+          { key: "date_joined", label: "DATE OF JOIN" }
+        ]
+      });
+    }
+
+    // 7. Roles
+    if (document.getElementById('colvis-mount-roles')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-roles',
+        table: 'auto',
+        storageKey: 'column_visibility_roles',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "module_id", label: "MODULE ID" },
+          { key: "module_name", label: "MODULE NAME" },
+          { key: "description", label: "DESCRIPTION" },
+          { key: "role", label: "ROLE" },
+          { key: "access", label: "ACCESS" },
+          { key: "add", label: "ADD" },
+          { key: "delete", label: "DELETE" },
+          { key: "edit", label: "EDIT" },
+          { key: "view", label: "VIEW" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 8. Leave Management System
+    if (document.getElementById('colvis-mount-leave-management')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-leave-management',
+        table: 'auto',
+        storageKey: 'column_visibility_leave_management',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "type_name", label: "TYPE NAME" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 9. Visitor Management System
+    if (document.getElementById('colvis-mount-visitor-management')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-visitor-management',
+        table: 'auto',
+        storageKey: 'column_visibility_visitor_management',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "type_name", label: "TYPE NAME" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 10. MDM - Lookup Type
+    if (document.getElementById('colvis-mount-mdm-lookup-type')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-mdm-lookup-type',
+        table: 'auto',
+        storageKey: 'column_visibility_mdm_lookup_type',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "type_name", label: "TYPE NAME" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+
+    // 11. MDM - Sub Lookup
+    if (document.getElementById('colvis-mount-mdm-lookup')) {
+      new window.TableColumnSelector({
+        container: '#colvis-mount-mdm-lookup',
+        table: 'auto',
+        storageKey: 'column_visibility_mdm_lookup',
+        columns: [
+          { key: "actions", label: "ACTIONS", alwaysVisible: true },
+          { key: "id", label: "ID" },
+          { key: "lookup_name", label: "LOOKUP NAME" },
+          { key: "lookup_type", label: "LOOKUP TYPE" },
+          { key: "created_by", label: "CREATED BY" },
+          { key: "created_on", label: "CREATED ON" },
+          { key: "updated_by", label: "UPDATED BY" },
+          { key: "updated_on", label: "UPDATED ON" },
+          { key: "is_deleted", label: "IS DELETED" },
+          { key: "deleted_by", label: "DELETED BY" },
+          { key: "deleted_on", label: "DELETED ON" }
+        ]
+      });
+    }
+  }
+
 </script>
 {% endblock %}

@@ -466,8 +466,12 @@ td {
     /* Mobile view fix */
 @media (max-width: 755px) {
     .pagination-container {
-        flex-direction: column;     /* stack nicely */
-        gap: 6px;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
     }
 
     .pagination-form {
