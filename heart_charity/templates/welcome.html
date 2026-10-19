@@ -4,36 +4,241 @@
 {% block universal_nav %}{% endblock %}
 {% block content %}
 <style>
+  /* Universal Compact Row Height & Single-Line Enforcement for All Tables */
+  table.table tbody tr td,
+  .table tbody tr td,
+  table tbody tr td,
+  .paginated-table tbody tr td,
+  table.table tfoot tr td,
+  .table tfoot tr td {
+    padding: 5px 8px !important;
+    vertical-align: middle !important;
+    font-size: 0.81rem !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+    white-space: nowrap !important;
+  }
+  table.table tbody tr td *,
+  .table tbody tr td *,
+  table tbody tr td *,
+  .paginated-table tbody tr td *,
+  table.table thead th,
+  .table thead th,
+  table thead th,
+  .paginated-table thead th,
+  table.table thead th *,
+  .table thead th * {
+    white-space: nowrap !important;
+  }
+
+  /* ── Universal Address Column Constrained Width & Interactive Truncation ── */
+  th.col-address,
+  td.col-address,
+  table.table thead th.col-address,
+  table.table tbody tr td.col-address,
+  .table thead th.col-address,
+  .table tbody tr td.col-address,
+  .paginated-table thead th.col-address,
+  .paginated-table tbody tr td.col-address,
+  .column-search-row td.col-address {
+    width: 175px !important;
+    max-width: 175px !important;
+    min-width: 130px !important;
+    box-sizing: border-box !important;
+  }
+
+  td.col-address,
+  table.table tbody tr td.col-address,
+  .table tbody tr td.col-address,
+  .paginated-table tbody tr td.col-address {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  td.col-address .column-search {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .address-truncate-cell {
+    display: inline-block !important;
+    max-width: 160px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+    cursor: pointer !important;
+    color: inherit !important;
+    padding: 1px 4px !important;
+    border-radius: 4px !important;
+    border: 1px dashed transparent !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .address-truncate-cell:hover,
+  .address-truncate-cell:focus {
+    background-color: #E8F5E9 !important;
+    color: #15803D !important;
+    border-color: #86EFAC !important;
+    text-decoration: none !important;
+    outline: none !important;
+  }
+
   /* ── Sleek Underline Search Bar for All Tables (clean line, no box) ── */
   .column-search-row td {
-    padding: 6px 8px !important;
+    padding: 3px 6px !important;
     background: #ffffff !important;
     vertical-align: middle !important;
   }
+
+  /* Universal Compact Action Column & Action Buttons (Add & Download) for all tables */
+  table.table thead th:first-child,
+  .table thead th:first-child,
+  .paginated-table thead th:first-child,
+  table.table tbody tr td:first-child,
+  .table tbody tr td:first-child,
+  .paginated-table tbody tr td:first-child,
+  .column-search-row td:first-child {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 70px !important;
+    text-align: center !important;
+    padding: 4px 2px !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  .column-search-row td:first-child > div,
+  .table-action-btns-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    width: auto !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .column-search-row td:first-child a,
+  .table-action-add-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 14px !important;
+    color: #16a34a !important;
+    text-decoration: none !important;
+    border-radius: 4px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    transition: all 0.15s ease !important;
+  }
+  .column-search-row td:first-child a:hover,
+  .table-action-add-btn:hover {
+    background-color: rgba(22, 163, 74, 0.12) !important;
+    color: #15803d !important;
+  }
+
+  .column-search-row td:first-child form {
+    display: inline-flex !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .column-search-row td:first-child button,
+  .table-action-download-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 14px !important;
+    color: #334155 !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+  }
+  .column-search-row td:first-child button:hover,
+  .table-action-download-btn:hover {
+    background-color: rgba(51, 65, 85, 0.12) !important;
+    color: #0f172a !important;
+  }
+
+  .column-search-row td:first-child i {
+    font-size: 14px !important;
+    line-height: 1 !important;
+  }
+  table.table thead .column-search-row input,
+  table.table thead .column-search-row td input,
+  table.table thead .column-search,
+  table.table thead input.column-search,
+  .table thead .column-search-row input,
+  .paginated-table thead .column-search-row input,
+  .column-search-row td input,
+  .column-search-row input,
+  input.column-search,
   .column-search {
     width: 100% !important;
     border: none !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
     border-bottom: 2px solid #16a34a !important;
     background: transparent !important;
+    background-color: transparent !important;
     border-radius: 0 !important;
-    padding: 3px 2px 5px 2px !important;
-    font-size: 13px !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    padding: 2px 2px 3px 2px !important;
+    height: 24px !important;
+    font-size: 12px !important;
     color: #1e293b !important;
-    line-height: 1.4 !important;
+    line-height: 1.2 !important;
     box-shadow: none !important;
     outline: none !important;
     cursor: pointer !important;
     transition: border-bottom-color 0.15s ease, background-color 0.15s ease !important;
   }
+  table.table thead .column-search-row input::placeholder,
+  .column-search-row td input::placeholder,
+  input.column-search::placeholder,
   .column-search::placeholder {
     color: #64748b !important;
     font-size: 12px !important;
     font-style: normal !important;
     opacity: 0.85 !important;
   }
+  table.table thead .column-search-row input:hover,
+  table.table thead .column-search-row td input:hover,
+  table.table thead .column-search-row input:focus,
+  table.table thead .column-search-row td input:focus,
+  .column-search-row td input:hover,
+  .column-search-row td input:focus,
+  input.column-search:hover,
+  input.column-search:focus,
+  .column-search:hover,
   .column-search:focus {
+    border: none !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
     border-bottom: 2px solid #047857 !important;
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
     background: rgba(16, 185, 129, 0.05) !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
     box-shadow: none !important;
     outline: none !important;
   }
@@ -404,8 +609,9 @@
 .action-dots-btn {
   background: none;
   border: 1px solid transparent;
-  padding: 3px 10px;
-  font-size: 16px;
+  padding: 2px 6px;
+  font-size: 14px;
+  height: 24px;
   cursor: pointer;
   color: #555;
   border-radius: 6px;
@@ -985,14 +1191,15 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 style="color:#1b5e20" class="mb-0">Category/Lookup Type</h5>
-            <div id="colvis-mount-mdm-lookup-type"></div>
           </div>
-          <div class="search-container d-flex align-items-center">
-            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center" role="search">
+              <input type="hidden" name="active_tab" value="MDM">
               <input type="text" name="lookup_query" data-target="Lookup"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ lookup_query|default:'' }}">
             </form>
+            <div id="colvis-mount-mdm-lookup-type" class="ms-auto"></div>
           </div>
           {% if lookup_page_obj %}
           <div class="table-responsive scrollable-table1">
@@ -1012,18 +1219,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/lookup_type_create/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="/lookup_type_create/" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -1108,19 +1313,17 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/lookup_type_create/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i
-                          class="fa-solid fa-plus"></i> </a>
+                      <a href="/lookup_type_create/" class="table-action-add-btn" title="Add"><i
+                          class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
-                            class="bi bi-download"></i> </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
                     </div>
@@ -1188,39 +1391,59 @@
         </div>
         <!-- ✅ LookupType Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if lookup_page_obj.has_previous %}
-          <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="ltPageSelect" class="fw-bold me-1">Page</label>
-            <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in lookup_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="lt_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'lt_page')">
+              <option value="10" {% if lt_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if lt_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if lt_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if lt_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if lt_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if lookup_page_obj.has_next %}
-          <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if lookup_page_obj.paginator.count > 0 %}
+                {{ lookup_page_obj.start_index }} to {{ lookup_page_obj.end_index }} of {{ lookup_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if lookup_page_obj.has_previous %}
+            <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="ltPageSelect" class="fw-bold me-1">Page</label>
+              <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in lookup_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if lookup_page_obj.has_next %}
+            <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
         <!-- ------------Lookup table----------- -->
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 style="color:#1b5e20" class="mb-0">Subcategory/Lookup Table</h5>
-            <div id="colvis-mount-mdm-lookup"></div>
           </div>
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center w-100"
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_lookup_table' %}" class="d-flex align-items-center"
               role="search">
+              <input type="hidden" name="active_tab" value="MDM">
               <input type="text" name="sub_lookup_query" data-target="LookupType"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ sub_lookup_query|default:'' }}">
             </form>
+            <div id="colvis-mount-mdm-lookup" class="ms-auto"></div>
           </div>
           {% if sub_lookup_query %}
           <h5>Showing results for: "<span ">{{ sub_lookup_query }}</span>" </h5>
@@ -1245,18 +1468,16 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <div class="d-flex justify-content-between">
+                        <div class="table-action-btns-wrap">
                           {% if permissions.can_add %}
-                          <a href="/lookup/create/"
-                            style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                          <a href="/lookup/create/" class="table-action-add-btn" title="Add"><i
                               class="fa-solid fa-plus"></i></a>
                           {% endif %}
                           {% if permissions.can_add %}
-                          <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
+                          <form method="GET" action="{% url 'search_lookup_table' %}" class="d-inline m-0 p-0">
                             <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
                             <input type="hidden" name="download" value="1">
-                            <button type="submit"
-                              style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
                                 class="bi bi-download"></i></button>
                           </form>
                           {% endif %}
@@ -1344,19 +1565,17 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <div class="d-flex justify-content-between">
+                        <div class="table-action-btns-wrap">
                           {% if permissions.can_add %}
-                          <a href="/lookup/create/"
-                            style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                          <a href="/lookup/create/" class="table-action-add-btn" title="Add"><i
                               class="fa-solid fa-plus"></i></a>
                           {% endif %}
                           {% if permissions.can_add %}
-                          <form method="GET" action="{% url 'search_lookup_table' %}" style="margin: 0; padding: 0;">
+                          <form method="GET" action="{% url 'search_lookup_table' %}" class="d-inline m-0 p-0">
                             <input type="hidden" name="sub_lookup_query" value="{{ sub_lookup_query }}">
                             <input type="hidden" name="download" value="1">
-                            <button type="submit"
-                              style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-                              <i class="bi bi-download"></i></button>
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
+                                class="bi bi-download"></i></button>
                           </form>
                           {% endif %}
                         </div>
@@ -1428,44 +1647,63 @@
         </div>
         <!-- ✅ Lookups Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if lookup_table_obj.has_previous %}
-          <a href="?{% url_replace "lu_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "lu_page" lookup_table_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="lookupPageSelect" class="fw-bold me-1">Page</label>
-            <select name="lu_page" id="lookupPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for page_num in lookup_table_obj.paginator.page_range %}
-              <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}>{{ page_num }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="lu_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'lu_page')">
+              <option value="10" {% if lu_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if lu_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if lu_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if lu_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if lu_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
-          </form>
-          {% if lookup_table_obj.has_next %}
-          <a href="?{% url_replace "lu_page" lookup_table_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "lu_page" lookup_table_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if lookup_table_obj.paginator.count > 0 %}
+                {{ lookup_table_obj.start_index }} to {{ lookup_table_obj.end_index }} of {{ lookup_table_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if lookup_table_obj.has_previous %}
+            <a href="?{% url_replace "lu_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "lu_page" lookup_table_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="lookupPageSelect" class="fw-bold me-1">Page</label>
+              <select name="lu_page" id="lookupPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for page_num in lookup_table_obj.paginator.page_range %}
+                <option value="{{ page_num }}" {% if page_num == lookup_table_obj.number %}selected{% endif %}>{{ page_num }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ lookup_table_obj.paginator.num_pages }}</span>
+            </form>
+            {% if lookup_table_obj.has_next %}
+            <a href="?{% url_replace "lu_page" lookup_table_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "lu_page" lookup_table_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
     <!--   🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 All Users Section 🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 -->
     <div class="tab-content" id="user">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Users</h4>
-          <div id="colvis-mount-all-users"></div>
         </div>
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_users' %}" class="d-flex align-items-center w-100">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_users' %}" class="d-flex align-items-center" role="search">
               <input type="hidden" name="active_tab" value="user">
               <input type="text" name="user_query" data-target="users"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ user_query|default:'' }}">
             </form>
+            <div id="colvis-mount-all-users" class="ms-auto"></div>
           </div>
           {% if query %}
           <h5>Showing results for: "<span ">{{ query }}</span>" </h5>
@@ -1489,13 +1727,15 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <form method="GET" action="{% url 'search_users' %}" style="margin: 0; padding: 0;">
-                          <input type="hidden" name="active_tab" value="user">
-                          <input type="hidden" name="user_query" value="{{ user_query }}">
-                          <input type="hidden" name="download" value="1">
-                          <button type="submit" style="background:none; color:black; cursor:pointer; font-size:22px;"><i
-                              class="bi bi-download"></i></button>
-                        </form>
+                        <div class="table-action-btns-wrap">
+                          <form method="GET" action="{% url 'search_users' %}" class="d-inline m-0 p-0">
+                            <input type="hidden" name="active_tab" value="user">
+                            <input type="hidden" name="user_query" value="{{ user_query }}">
+                            <input type="hidden" name="download" value="1">
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
+                                class="bi bi-download"></i></button>
+                          </form>
+                        </div>
                       </td>
                       <td><input class="column-search" name="user_col_1" value="{{ user_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="user_col_2" value="{{ user_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
@@ -1575,15 +1815,15 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <form method="GET" action="{% url 'search_users' %}" style="margin-left: 10px;"
-                          style="margin: 0; padding: 0;">
-                          <input type="hidden" name="active_tab" value="user">
-                          <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
-                          <input type="hidden" name="download" value="1">
-                          <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
-                              class="bi bi-download"></i>
-                          </button>
-                        </form>
+                        <div class="table-action-btns-wrap">
+                          <form method="GET" action="{% url 'search_users' %}" class="d-inline m-0 p-0">
+                            <input type="hidden" name="active_tab" value="user">
+                            <input type="hidden" name="user_query" value="{{ user_query|default:'' }}">
+                            <input type="hidden" name="download" value="1">
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
+                                class="bi bi-download"></i></button>
+                          </form>
+                        </div>
                       </td>
                       <td><input class="column-search" name="user_col_1" value="{{ user_col_1|default:'' }}" data-col="1" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="user_col_2" value="{{ user_col_2|default:'' }}" data-col="2" type="text" placeholder="Search..."></td>
@@ -1645,43 +1885,63 @@
               {% endif %}
         </div>
         <div class="pagination-container text-center mt-3">
-          {% if user_page_obj.has_previous %}
-          <a href="?{% url_replace "user_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "user_page" user_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="pageSelect" class="fw-bold me-1">Page</label>
-            <select name="user_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for page_num in user_page_obj.paginator.page_range %}
-              <option value="{{ page_num }}" {% if page_num == user_page_obj.number %}selected{% endif %}> {{ page_num }}
-              </option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="user_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'user_page')">
+              <option value="10" {% if user_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if user_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if user_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if user_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if user_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ user_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if user_page_obj.has_next %}
-          <a href="?{% url_replace "user_page" user_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "user_page" user_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if user_page_obj.paginator.count > 0 %}
+                {{ user_page_obj.start_index }} to {{ user_page_obj.end_index }} of {{ user_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if user_page_obj.has_previous %}
+            <a href="?{% url_replace "user_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "user_page" user_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="pageSelect" class="fw-bold me-1">Page</label>
+              <select name="user_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for page_num in user_page_obj.paginator.page_range %}
+                <option value="{{ page_num }}" {% if page_num == user_page_obj.number %}selected{% endif %}> {{ page_num }}
+                </option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ user_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if user_page_obj.has_next %}
+            <a href="?{% url_replace "user_page" user_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "user_page" user_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
     <!-- ================Roles================== -->
     <div class="tab-content" id="roles">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Roles</h4>
-          <div id="colvis-mount-roles"></div>
         </div>
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_roles' %}" class="d-flex align-items-center w-100" role="search">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_roles' %}" class="d-flex align-items-center" role="search">
+              <input type="hidden" name="active_tab" value="roles">
               <input type="text" name="query1" data-target="roless"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ query1|default:'' }}">
             </form>
+            <div id="colvis-mount-roles" class="ms-auto"></div>
           </div>
 
           {% if roles_page_obj %}
@@ -1710,16 +1970,14 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
-                      <a href="{% url 'access_control' %}"
-                        style="font-size: 24px; color: #16a34a; text-decoration: none;"><i
+                    <div class="table-action-btns-wrap">
+                      <a href="{% url 'access_control' %}" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
-                      <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_roles' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="query1" value="{{ query1 }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-                          <i class="bi bi-download"></i> </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                     </div>
                   </td>
@@ -1738,8 +1996,8 @@
                   <td><input class="column-search" name="roles_col_13" value="{{ roles_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="roles_col_14" value="{{ roles_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="roles_col_15" value="{{ roles_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="roles_col_16" value="{{ roles_col_16|default:'' }}" data-col="16" type="text  " placeholder="Search..."></td>
-                  <td><input class="column-search" name="roles_col_17" value="{{ roles_col_17|default:'' }}" data-col="17" type="text  " placeholder="Search..."></td>
+                  <td><input class="column-search" name="roles_col_16" value="{{ roles_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="roles_col_17" value="{{ roles_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
                 </tr>
               </thead>
               <tbody id="roless">
@@ -1822,17 +2080,14 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
-                      <a href="{% url 'access_control' %}"
-                        style="font-size: 24px; color: #16a34a; text-decoration: none;"><i
+                    <div class="table-action-btns-wrap">
+                      <a href="{% url 'access_control' %}" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
-                      <form method="GET" action="{% url 'search_roles' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_roles' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="query1" value="{{ query1 }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;">
-                          <i class="bi bi-download"></i>
-                        </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                     </div>
                   </td>
@@ -1851,8 +2106,8 @@
                   <td><input class="column-search" name="roles_col_13" value="{{ roles_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="roles_col_14" value="{{ roles_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="roles_col_15" value="{{ roles_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="roles_col_16" value="{{ roles_col_16|default:'' }}" data-col="16" type="text  " placeholder="Search..."></td>
-                  <td><input class="column-search" name="roles_col_17" value="{{ roles_col_17|default:'' }}" data-col="17" type="text  " placeholder="Search..."></td>
+                  <td><input class="column-search" name="roles_col_16" value="{{ roles_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+                  <td><input class="column-search" name="roles_col_17" value="{{ roles_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
                 </tr>
               </thead>
               <tbody id="roless">
@@ -1910,27 +2165,46 @@
           {% endif %}
         </div>
         <div class="pagination-container text-center mt-3">
-          {% if roles_page_obj.has_previous %}
-          <a href="?{% url_replace "roles_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "roles_page" roles_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="pageSelect" class="fw-bold me-1">Page</label>
-            <select name="roles_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for page_num in roles_page_obj.paginator.page_range %}
-              <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}> {{ page_num }}
-              </option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="roles_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'roles_page')">
+              <option value="10" {% if roles_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if roles_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if roles_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if roles_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if roles_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if roles_page_obj.has_next %}
-          <a href="?{% url_replace "roles_page" roles_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "roles_page" roles_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if roles_page_obj.paginator.count > 0 %}
+                {{ roles_page_obj.start_index }} to {{ roles_page_obj.end_index }} of {{ roles_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if roles_page_obj.has_previous %}
+            <a href="?{% url_replace "roles_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "roles_page" roles_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="pageSelect" class="fw-bold me-1">Page</label>
+              <select name="roles_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for page_num in roles_page_obj.paginator.page_range %}
+                <option value="{{ page_num }}" {% if page_num == roles_page_obj.number %}selected{% endif %}> {{ page_num }}
+                </option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ roles_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if roles_page_obj.has_next %}
+            <a href="?{% url_replace "roles_page" roles_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "roles_page" roles_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -1953,29 +2227,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -1983,17 +2276,17 @@
 
     <div class="tab-content" id="Leave Management System">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Leave Management System</h4>
-          <div id="colvis-mount-leave-management"></div>
         </div>
         <div class="card-body">
-          <div class="search-container d-flex align-items-center">
-            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center" role="search">
               <input type="text" name="lookup_query" data-target="Lookup"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ lookup_query|default:'' }}">
             </form>
+            <div id="colvis-mount-leave-management" class="ms-auto"></div>
           </div>
           {% if lookup_page_obj %}
           <div class="table-responsive scrollable-table1">
@@ -2013,18 +2306,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/add-leave/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="/add-leave/" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -2109,19 +2400,17 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/lookup_type_create/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i
-                          class="fa-solid fa-plus"></i> </a>
+                      <a href="/lookup_type_create/" class="table-action-add-btn" title="Add"><i
+                          class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
-                            class="bi bi-download"></i> </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
                     </div>
@@ -2189,25 +2478,44 @@
         </div>
         <!-- ✅ LookupType Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if lookup_page_obj.has_previous %}
-          <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="ltPageSelect" class="fw-bold me-1">Page</label>
-            <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in lookup_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="lt_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'lt_page')">
+              <option value="10" {% if lt_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if lt_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if lt_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if lt_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if lt_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if lookup_page_obj.has_next %}
-          <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if lookup_page_obj.paginator.count > 0 %}
+                {{ lookup_page_obj.start_index }} to {{ lookup_page_obj.end_index }} of {{ lookup_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if lookup_page_obj.has_previous %}
+            <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="ltPageSelect" class="fw-bold me-1">Page</label>
+              <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in lookup_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if lookup_page_obj.has_next %}
+            <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -2233,15 +2541,15 @@
 
 
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donors and Volunteers</h4>
-          <div id="colvis-mount-donor-volunteer"></div>
         </div>
 
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center w-100"
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center"
               role="search">
+              <input type="hidden" name="active_tab" value="Donor/Volunteer Management System">
               <input type="text" name="q" data-target="donorvolunteer"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ query|default:'' }}">
@@ -2249,6 +2557,7 @@
               <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
               {% endif %}
             </form>
+            <div id="colvis-mount-donor-volunteer" class="ms-auto"></div>
           </div>
           {% if query2 %}
           <h5>Showing results for: "<span ">{{ query2 }}</span>" </h5>
@@ -2277,7 +2586,7 @@
                       <th class="sortable" data-col="15">Occupation Nature <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="16">Occupation Type <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="17">GST Number<span class="sort-icon">⬍</span></th>
-                      <th class="sortable" data-col="18">Address <span class="sort-icon">⬍</span></th>
+                      <th class="sortable col-address" data-col="18">Address <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="19">City <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="20">State <span class="sort-icon ">⬍</span></th>
                       <th class="sortable" data-col="21">Country <span class="sort-icon">⬍</span></th>
@@ -2293,18 +2602,16 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <div class="d-flex justify-content-between">
+                        <div class="table-action-btns-wrap">
                           {% if permissions.can_add %}
-                          <a href="{% url 'add_donor_volunteer' %}"
-                            style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                          <a href="{% url 'add_donor_volunteer' %}" class="table-action-add-btn" title="Add"><i
                               class="fa-solid fa-plus"></i></a>
                           {% endif %}
                           {% if permissions.can_add %}
-                          <form method="GET" action="{% url 'search_donor_volunteer' %}"
-                            style="margin: -9px; padding: 0;">
+                          <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-inline m-0 p-0">
                             <input type="hidden" name="q" value="{{ query2|default:'' }}">
                             <input type="hidden" name="download" value="1">
-                            <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
                                 class="bi bi-download"></i></button>
                           </form>
                           {% endif %}
@@ -2327,7 +2634,7 @@
                       <td><input class="column-search" name="donor_col_15" value="{{ donor_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_16" value="{{ donor_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_17" value="{{ donor_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
-                      <td><input class="column-search" name="donor_col_18" value="{{ donor_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+                      <td class="col-address"><input class="column-search" name="donor_col_18" value="{{ donor_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_19" value="{{ donor_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_20" value="{{ donor_col_20|default:'' }}" data-col="20" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_21" value="{{ donor_col_21|default:'' }}" data-col="21" type="text" placeholder="Search..."></td>
@@ -2394,7 +2701,7 @@
                       <td>{{ donation.occupation_nature }}</td>
                       <td>{{ donation.occupation_type }}</td>
                       <td>{{ donation.gst_number }}</td>
-                      <td>{{ donation.address }}</td>
+                      <td class="col-address">{% if donation.address and donation.address != "None" and donation.address != "-" %}<span class="address-truncate-cell" data-full-address="{{ donation.address }}" title="{{ donation.address }}" tabindex="0" role="button">{{ donation.address }}</span>{% else %}—{% endif %}</td>
                       <td>{{ donation.city }}</td>
                       <td>{{ donation.state }}</td>
                       <td>{{ donation.country }}</td>
@@ -2447,7 +2754,7 @@
                       <th class="sortable" data-col="15">Occupation Nature <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="16">Occupation Type <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="17">GST Number <span class="sort-icon">⬍</span></th>
-                      <th class="sortable" data-col="18">Address <span class="sort-icon">⬍</span></th>
+                      <th class="sortable col-address" data-col="18">Address <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="19">City <span class="sort-icon">⬍</span></th>
                       <th class="sortable" data-col="20">State <span class="sort-icon ">⬍</span></th>
                       <th class="sortable" data-col="21">Country <span class="sort-icon">⬍</span></th>
@@ -2463,18 +2770,16 @@
                     </tr>
                     <tr class="column-search-row">
                       <td>
-                        <div class="d-flex justify-content-between">
+                        <div class="table-action-btns-wrap">
                           {% if permissions.can_add %}
-                          <a href="{% url 'add_donor_volunteer' %}"
-                            style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                          <a href="{% url 'add_donor_volunteer' %}" class="table-action-add-btn" title="Add"><i
                               class="fa-solid fa-plus"></i></a>
                           {% endif %}
                           {% if permissions.can_add %}
-                          <form method="GET" action="{% url 'search_donor_volunteer' %}"
-                            style="margin: -9px; padding: 0;">
+                          <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-inline m-0 p-0">
                             <input type="hidden" name="q" value="{{ query2|default:'' }}">
                             <input type="hidden" name="download" value="1">
-                            <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                            <button type="submit" class="table-action-download-btn" title="Download"><i
                                 class="bi bi-download"></i></button>
                           </form>
                           {% endif %}
@@ -2497,7 +2802,7 @@
                       <td><input class="column-search" name="donor_col_15" value="{{ donor_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_16" value="{{ donor_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_17" value="{{ donor_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
-                      <td><input class="column-search" name="donor_col_18" value="{{ donor_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+                      <td class="col-address"><input class="column-search" name="donor_col_18" value="{{ donor_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_19" value="{{ donor_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_20" value="{{ donor_col_20|default:'' }}" data-col="20" type="text" placeholder="Search..."></td>
                       <td><input class="column-search" name="donor_col_21" value="{{ donor_col_21|default:'' }}" data-col="21" type="text" placeholder="Search..."></td>
@@ -2565,7 +2870,7 @@
                       <td>{{ donation.occupation_nature }}</td>
                       <td>{{ donation.occupation_type }}</td>
                       <td>{{ donation.gst_number }}</td>
-                      <td>{{ donation.address }}</td>
+                      <td class="col-address">{% if donation.address and donation.address != "None" and donation.address != "-" %}<span class="address-truncate-cell" data-full-address="{{ donation.address }}" title="{{ donation.address }}" tabindex="0" role="button">{{ donation.address }}</span>{% else %}—{% endif %}</td>
                       <td>{{ donation.city }}</td>
                       <td>{{ donation.state }}</td>
                       <td>{{ donation.country }}</td>
@@ -2597,28 +2902,47 @@
         </div>
         <!-- ✅ Pagination Controls -->
         <div class="pagination-container text-center mt-3">
-          {% if page_obj.has_previous %}
-          <a href="?{% url_replace "donor_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "donor_page" page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <!-- Page Info + Dropdown -->
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="pageSelect" class="fw-bold me-1">Page</label>
-            <select name="donor_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for page_num in page_obj.paginator.page_range %}
-              <option value="{{ page_num }}" {% if page_num == page_obj.number %}selected{% endif %}>
-                {{ page_num }}
-              </option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="donor_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'donor_page')">
+              <option value="10" {% if donor_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if donor_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if donor_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if donor_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if donor_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if page_obj.has_next %}
-          <a href="?{% url_replace "donor_page" page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "donor_page" donor_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if page_obj.paginator.count > 0 %}
+                {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if page_obj.has_previous %}
+            <a href="?{% url_replace "donor_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "donor_page" page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <!-- Page Info + Dropdown -->
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="pageSelect" class="fw-bold me-1">Page</label>
+              <select name="donor_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for page_num in page_obj.paginator.page_range %}
+                <option value="{{ page_num }}" {% if page_num == page_obj.number %}selected{% endif %}>
+                  {{ page_num }}
+                </option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if page_obj.has_next %}
+            <a href="?{% url_replace "donor_page" page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "donor_page" page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -2628,12 +2952,11 @@
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Employees</h4>
-          <div id="colvis-mount-employee-details"></div>
         </div>
 
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'welcome' %}" class="d-flex align-items-center w-100" role="search">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'welcome' %}" class="d-flex align-items-center" role="search">
               <input type="hidden" name="active_tab" value="Employee Management System">
               <input type="text" name="emp_q" data-target="employeetable"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search Employee..."
@@ -2642,6 +2965,7 @@
               <a href="{% url 'welcome' %}?active_tab=Employee Management System" class="btn btn-outline-secondary ms-2 search-btn">Clear</a>
               {% endif %}
             </form>
+            <div id="colvis-mount-employee-details" class="ms-auto"></div>
           </div>
           {% if emp_q %}
           <h5>Showing results for: "<span>{{ emp_q }}</span>"</h5>
@@ -2668,7 +2992,7 @@
                   <th class="sortable" data-col="13">Email <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="14">ID Type <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="15">ID Number <span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="16">Address <span class="sort-icon">⬍</span></th>
+                  <th class="sortable col-address" data-col="16">Address <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="17">City <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="18">State <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="19">Country <span class="sort-icon">⬍</span></th>
@@ -2683,17 +3007,15 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="{% url 'add_employee' %}"
-                        title="Add Employee"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="{% url 'add_employee' %}" class="table-action-add-btn" title="Add Employee"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'download_donor_report' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'download_donor_report' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="type" value="Employee">
-                        <button type="submit" class="btn btn-link" title="Download Report" style="font-size: 22px; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download Report"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -2714,7 +3036,7 @@
                   <td><input class="column-search" name="emp_col_13" value="{{ emp_col_13|default:'' }}" data-col="13" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_14" value="{{ emp_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_15" value="{{ emp_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="emp_col_16" value="{{ emp_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
+                  <td class="col-address"><input class="column-search" name="emp_col_16" value="{{ emp_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_17" value="{{ emp_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_18" value="{{ emp_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="emp_col_19" value="{{ emp_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
@@ -2778,7 +3100,7 @@
                   <td>{{ emp.email|default:"—" }}</td>
                   <td>{{ emp.id_type.lookup_name|default:"—" }}</td>
                   <td>{{ emp.id_number|default:"—" }}</td>
-                  <td>{{ emp.address|default:"—" }}</td>
+                  <td class="col-address">{% if emp.address and emp.address != "None" and emp.address != "—" and emp.address != "-" %}<span class="address-truncate-cell" data-full-address="{{ emp.address }}" title="{{ emp.address }}" tabindex="0" role="button">{{ emp.address }}</span>{% else %}—{% endif %}</td>
                   <td>{{ emp.city|default:"—" }}</td>
                   <td>{{ emp.state|default:"—" }}</td>
                   <td>{{ emp.country|default:"India" }}</td>
@@ -2808,30 +3130,49 @@
 
           <!-- Pagination Controls -->
           <div class="pagination-container text-center mt-3">
-            {% if employee_page_obj.has_previous %}
-            <a href="?{% url_replace "employee_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-            <a href="?{% url_replace "employee_page" employee_page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
-            {% endif %}
-            <!-- Page Info + Dropdown -->
-            <form method="get" class="d-inline-block pagination-form">
-              <input type="hidden" name="active_tab" value="Employee Management System">
-              {% if emp_q %}<input type="hidden" name="emp_q" value="{{ emp_q }}">{% endif %}
-              <label for="empPageSelect" class="fw-bold me-1">Page</label>
-              <select name="employee_page" id="empPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-                onchange="handlePaginationSelect(this)">
-                {% for page_num in employee_page_obj.paginator.page_range %}
-                <option value="{{ page_num }}" {% if page_num == employee_page_obj.number %}selected{% endif %}>
-                  {{ page_num }}
-                </option>
-                {% endfor %}
+            <div class="page-size-wrap">
+              <span class="page-size-label">Page size:</span>
+              <select name="employee_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'employee_page')">
+                <option value="10" {% if employee_page_size == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if employee_page_size == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if employee_page_size == 50 %}selected{% endif %}>50</option>
+                <option value="75" {% if employee_page_size == 75 %}selected{% endif %}>75</option>
+                <option value="100" {% if employee_page_size == 100 %}selected{% endif %}>100</option>
               </select>
-              <span class="fw-bold">of {{ employee_page_obj.paginator.num_pages }}</span>
-            </form>
-            {% if employee_page_obj.has_next %}
-            <a href="?{% url_replace "employee_page" employee_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-            <a href="?{% url_replace "employee_page" employee_page_obj.paginator.num_pages  %}"
-              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-            {% endif %}
+              <span class="page-range-info">
+                {% if employee_page_obj.paginator.count > 0 %}
+                  {{ employee_page_obj.start_index }} to {{ employee_page_obj.end_index }} of {{ employee_page_obj.paginator.count }}
+                {% else %}
+                  0 to 0 of 0
+                {% endif %}
+              </span>
+            </div>
+            <div class="pagination-nav-wrap">
+              {% if employee_page_obj.has_previous %}
+              <a href="?{% url_replace "employee_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+              <a href="?{% url_replace "employee_page" employee_page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+              {% endif %}
+              <!-- Page Info + Dropdown -->
+              <form method="get" class="d-inline-block pagination-form">
+                <input type="hidden" name="active_tab" value="Employee Management System">
+                {% if emp_q %}<input type="hidden" name="emp_q" value="{{ emp_q }}">{% endif %}
+                <label for="empPageSelect" class="fw-bold me-1">Page</label>
+                <select name="employee_page" id="empPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                  onchange="handlePaginationSelect(this)">
+                  {% for page_num in employee_page_obj.paginator.page_range %}
+                  <option value="{{ page_num }}" {% if page_num == employee_page_obj.number %}selected{% endif %}>
+                    {{ page_num }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <span class="fw-bold">of {{ employee_page_obj.paginator.num_pages }}</span>
+              </form>
+              {% if employee_page_obj.has_next %}
+              <a href="?{% url_replace "employee_page" employee_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+              <a href="?{% url_replace "employee_page" employee_page_obj.paginator.num_pages  %}"
+                class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
@@ -2839,17 +3180,17 @@
 
     <div class="tab-content" id="Visitor Management System">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Visitor Management System</h4>
-          <div id="colvis-mount-visitor-management"></div>
         </div>
         <div class="card-body">
-          <div class="search-container d-flex align-items-center">
-            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center w-100">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_lookup_type' %}" class="d-flex align-items-center" role="search">
               <input type="text" name="lookup_query" data-target="Lookup"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ lookup_query|default:'' }}">
             </form>
+            <div id="colvis-mount-visitor-management" class="ms-auto"></div>
           </div>
           {% if lookup_page_obj %}
           <div class="table-responsive scrollable-table1">
@@ -2869,18 +3210,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/add-visitor/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="/add-visitor/" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -2965,19 +3304,17 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/lookup_type_create/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i
-                          class="fa-solid fa-plus"></i> </a>
+                      <a href="/lookup_type_create/" class="table-action-add-btn" title="Add"><i
+                          class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_lookup_type' %}" style="margin: 0; padding: 0;">
+                      <form method="GET" action="{% url 'search_lookup_type' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="lookup_query" value="{{ lookup_query }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit"
-                          style="background: none; border: none; padding: 0; font-size: 24px; cursor: pointer; color: black;"><i
-                            class="bi bi-download"></i> </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
                     </div>
@@ -3045,25 +3382,44 @@
         </div>
         <!-- ✅ LookupType Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if lookup_page_obj.has_previous %}
-          <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <label for="ltPageSelect" class="fw-bold me-1">Page</label>
-            <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in lookup_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="lt_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'lt_page')">
+              <option value="10" {% if lt_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if lt_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if lt_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if lt_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if lt_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if lookup_page_obj.has_next %}
-          <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if lookup_page_obj.paginator.count > 0 %}
+                {{ lookup_page_obj.start_index }} to {{ lookup_page_obj.end_index }} of {{ lookup_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if lookup_page_obj.has_previous %}
+            <a href="?{% url_replace "lt_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <label for="ltPageSelect" class="fw-bold me-1">Page</label>
+              <select name="lt_page" id="ltPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in lookup_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == lookup_page_obj.number %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ lookup_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if lookup_page_obj.has_next %}
+            <a href="?{% url_replace "lt_page" lookup_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "lt_page" lookup_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3087,29 +3443,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3133,29 +3508,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3178,29 +3572,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3224,29 +3637,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3270,29 +3702,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3316,29 +3767,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -3347,20 +3817,20 @@
 
     <div class="tab-content" id="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">{% if page_mode == 'danpeti' %}Donation Details{% else %}Daanpeti Details{% endif %}</h4>
-          <div id="colvis-mount-daanpeti-details"></div>
         </div>
         <!-- ------------Donation Owner Module----------- -->
         {% if page_mode != "box" %}
         <div class="card-body">
-          <div class="search-container d-flex align-items-center">
-            <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center w-100">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_donation_payment' %}" class="d-flex align-items-center" role="search">
               <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="payments_query" data-target="donation"
                 class="form-control live-search search-input me-2" placeholder="🔍 Search..."
                 value="{{ payments_query|default:'' }}">
             </form>
+            <div id="colvis-mount-donation-payments" class="ms-auto"></div>
           </div>
           <div class="payments-table-placeholder" data-add-url="{% url 'add_donation_payment' %}"></div>
         </div>
@@ -3368,29 +3838,48 @@
         <!-- ✅ Donation Payment Pagination Controls -->
         {% if page_mode != "box" %}
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
         {% endif %}
         <!-- ------------Donation Box----------- -->
@@ -3418,14 +3907,16 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center w-100"
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_donation_box' %}" class="d-flex align-items-center"
               role="search">
+              <input type="hidden" name="active_tab" value="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
               <input type="hidden" name="page_mode" value="{{ page_mode|default:'' }}">
               <input type="text" name="box_query" data-target="boxx"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ box_query|default:'' }}">
             </form>
+            <div id="colvis-mount-daanpeti-details" class="ms-auto"></div>
           </div>
           {% if box_page_obj %}
           <div class="table-responsive scrollable-table1">
@@ -3451,17 +3942,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-inline-flex align-items-center gap-1">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/add_donation_box/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="/add_donation_box/" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'search_donation_box' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -3576,17 +4066,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-inline-flex align-items-center gap-1">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="/add_donation_box/"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"> <i
-                          class="fa-solid fa-plus"></i> </a>
+                      <a href="/add_donation_box/" class="table-action-add-btn" title="Add"><i
+                          class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_donation_box' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'search_donation_box' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="box_query" value="{{ box_query|default:'' }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -3677,30 +4166,55 @@
           </div>
           {% endif %}
         </div>
-        <!-- ✅ Lookups Pagination Controls -->
+        <!-- ✅ Donation Box Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if box_page_obj.has_previous %}
-          <a href="?{% url_replace "box_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "box_page" box_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="box_query" value="{{ box_query }}" />
-            <label for="boxPageSelect" class="fw-bold me-1">Page</label>
-            <select name="box_page" id="boxPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in box_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == box_page_obj.number %}selected{% endif %}>{{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="box_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'box_page')">
+              <option value="10" {% if box_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if box_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if box_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if box_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if box_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ box_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if box_page_obj.has_next %}
-          <a href="?{% url_replace "box_page" box_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "box_page" box_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if box_page_obj.paginator.count > 0 %}
+                {{ box_page_obj.start_index }} to {{ box_page_obj.end_index }} of {{ box_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if box_page_obj.has_previous %}
+            <a href="?{% url_replace "box_page" 1 %}" class="btn btn-outline-primary btn-sm me-2" title="First Page">⏮</a>
+            <a href="?{% url_replace "box_page" box_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2" title="Previous Page">◀</a>
+            {% else %}
+            <button class="btn btn-outline-secondary btn-sm me-2" disabled style="opacity: 0.4;">⏮</button>
+            <button class="btn btn-outline-secondary btn-sm me-2" disabled style="opacity: 0.4;">◀</button>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="box_query" value="{{ box_query|default:'' }}" />
+              <label for="boxPageSelect" class="fw-bold me-1">Page</label>
+              <select name="box_page" id="boxPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in box_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == box_page_obj.number %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ box_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if box_page_obj.has_next %}
+            <a href="?{% url_replace "box_page" box_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2" title="Next Page">▶</a>
+            <a href="?{% url_replace "box_page" box_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2" title="Last Page">⏭</a>
+            {% else %}
+            <button class="btn btn-outline-secondary btn-sm ms-2" disabled style="opacity: 0.4;">▶</button>
+            <button class="btn btn-outline-secondary btn-sm ms-2" disabled style="opacity: 0.4;">⏭</button>
+            {% endif %}
+          </div>
         </div>
         {% endif %}
       </div>
@@ -3711,12 +4225,12 @@
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donor Details</h4>
-          <div id="colvis-mount-owner-details"></div>
         </div>
 
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_owner_details' %}" class="d-flex align-items-center w-100" role="search">
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_owner_details' %}" class="d-flex align-items-center" role="search">
+              <input type="hidden" name="active_tab" value="Owner Details Module">
               <input type="text" name="q" data-target="ownerdetails"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ owner_query|default:'' }}">
@@ -3724,6 +4238,7 @@
               <a href="{% url 'owner_details_page' %}" class="btn btn-outline-secondary ms-2 search-btn"><i class="bi bi-x"></i></a>
               {% endif %}
             </form>
+            <div id="colvis-mount-owner-details" class="ms-auto"></div>
           </div>
           {% if owner_query2 %}
           <h5>Showing results for: "<span>{{ owner_query2 }}</span>"</h5>
@@ -3750,8 +4265,8 @@
                   <th class="sortable" data-col="14">DOB <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="15">Age <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="16">Native Place <span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="17">Address Line 1 <span class="sort-icon">⬍</span></th>
-                  <th class="sortable" data-col="18">Address Line 2 <span class="sort-icon">⬍</span></th>
+                  <th class="sortable col-address" data-col="17">Address Line 1 <span class="sort-icon">⬍</span></th>
+                  <th class="sortable col-address" data-col="18">Address Line 2 <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="19">Area <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="20">City <span class="sort-icon">⬍</span></th>
                   <th class="sortable" data-col="21">Country <span class="sort-icon">⬍</span></th>
@@ -3767,17 +4282,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add or user.is_superuser %}
-                      <a href="{% url 'add_owner_details' %}"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="{% url 'add_owner_details' %}" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add or user.is_superuser %}
-                      <form method="GET" action="{% url 'search_owner_details' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'search_owner_details' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="q" value="{{ owner_query2|default:'' }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit" class="btn btn-link" style="font-size: 22px; color: black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -3798,8 +4312,8 @@
                   <td><input class="column-search" name="owner_col_14" value="{{ owner_col_14|default:'' }}" data-col="14" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="owner_col_15" value="{{ owner_col_15|default:'' }}" data-col="15" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="owner_col_16" value="{{ owner_col_16|default:'' }}" data-col="16" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="owner_col_17" value="{{ owner_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
-                  <td><input class="column-search" name="owner_col_18" value="{{ owner_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
+                  <td class="col-address"><input class="column-search" name="owner_col_17" value="{{ owner_col_17|default:'' }}" data-col="17" type="text" placeholder="Search..."></td>
+                  <td class="col-address"><input class="column-search" name="owner_col_18" value="{{ owner_col_18|default:'' }}" data-col="18" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="owner_col_19" value="{{ owner_col_19|default:'' }}" data-col="19" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="owner_col_20" value="{{ owner_col_20|default:'' }}" data-col="20" type="text" placeholder="Search..."></td>
                   <td><input class="column-search" name="owner_col_21" value="{{ owner_col_21|default:'' }}" data-col="21" type="text" placeholder="Search..."></td>
@@ -3844,7 +4358,7 @@
                     </div>
                   </td>
                   <td>{{ owner.id }}</td>
-                  <td><strong>{{ owner.business_name|default:'—' }}</strong></td>
+                  <td><strong>{% if owner.business_name %}{{ owner.business_name }}{% else %}Individual{% endif %}</strong></td>
                   <td>{{ owner.gst_number|default:'—' }}</td>
                   <td>{{ owner.salutation|default:'—' }}</td>
                   <td>{{ owner.first_name|default:'—' }}</td>
@@ -3858,8 +4372,8 @@
                   <td>{{ owner.date_of_birth|date:"d M Y"|default:'—' }}</td>
                   <td>{{ owner.age|default:'—' }}</td>
                   <td>{{ owner.native_place|default:'—' }}</td>
-                  <td>{{ owner.address_line_1|default:'—' }}</td>
-                  <td>{{ owner.address_line_2|default:'—' }}</td>
+                  <td class="col-address">{% if owner.address_line_1 and owner.address_line_1 != "None" and owner.address_line_1 != "—" and owner.address_line_1 != "-" %}<span class="address-truncate-cell" data-full-address="{{ owner.address_line_1 }}" title="{{ owner.address_line_1 }}" tabindex="0" role="button">{{ owner.address_line_1 }}</span>{% else %}—{% endif %}</td>
+                  <td class="col-address">{% if owner.address_line_2 and owner.address_line_2 != "None" and owner.address_line_2 != "—" and owner.address_line_2 != "-" %}<span class="address-truncate-cell" data-full-address="{{ owner.address_line_2 }}" title="{{ owner.address_line_2 }}" tabindex="0" role="button">{{ owner.address_line_2 }}</span>{% else %}—{% endif %}</td>
                   <td>{{ owner.area|default:'—' }}</td>
                   <td>{{ owner.city|default:'—' }}</td>
                   <td>{{ owner.country|default:'India' }}</td>
@@ -3890,26 +4404,45 @@
 
           <!-- Pagination Controls -->
           <div class="pagination-container text-center mt-3">
-            {% if owner_page_obj.has_previous %}
-            <a href="?{% url_replace "owner_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-            <a href="?{% url_replace "owner_page" owner_page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
-            {% endif %}
-            <form method="get" class="d-inline-block pagination-form">
-              {% if owner_query %}<input type="hidden" name="q" value="{{ owner_query }}">{% endif %}
-              <label for="ownerPageSelect" class="fw-bold me-1">Page</label>
-              <select name="owner_page" id="ownerPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="handlePaginationSelect(this)">
-                {% for page_num in owner_page_obj.paginator.page_range %}
-                <option value="{{ page_num }}" {% if page_num == owner_page_obj.number %}selected{% endif %}>
-                  {{ page_num }}
-                </option>
-                {% endfor %}
+            <div class="page-size-wrap">
+              <span class="page-size-label">Page size:</span>
+              <select name="owner_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'owner_page')">
+                <option value="10" {% if owner_page_size == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if owner_page_size == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if owner_page_size == 50 %}selected{% endif %}>50</option>
+                <option value="75" {% if owner_page_size == 75 %}selected{% endif %}>75</option>
+                <option value="100" {% if owner_page_size == 100 %}selected{% endif %}>100</option>
               </select>
-              <span class="fw-bold">of {{ owner_page_obj.paginator.num_pages }}</span>
-            </form>
-            {% if owner_page_obj.has_next %}
-            <a href="?{% url_replace "owner_page" owner_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
-            <a href="?{% url_replace "owner_page" owner_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-            {% endif %}
+              <span class="page-range-info">
+                {% if owner_page_obj.paginator.count > 0 %}
+                  {{ owner_page_obj.start_index }} to {{ owner_page_obj.end_index }} of {{ owner_page_obj.paginator.count }}
+                {% else %}
+                  0 to 0 of 0
+                {% endif %}
+              </span>
+            </div>
+            <div class="pagination-nav-wrap">
+              {% if owner_page_obj.has_previous %}
+              <a href="?{% url_replace "owner_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+              <a href="?{% url_replace "owner_page" owner_page_obj.previous_page_number  %}" class="btn btn-outline-primary btn-sm me-2">◀</a>
+              {% endif %}
+              <form method="get" class="d-inline-block pagination-form">
+                {% if owner_query %}<input type="hidden" name="q" value="{{ owner_query }}">{% endif %}
+                <label for="ownerPageSelect" class="fw-bold me-1">Page</label>
+                <select name="owner_page" id="ownerPageSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="handlePaginationSelect(this)">
+                  {% for page_num in owner_page_obj.paginator.page_range %}
+                  <option value="{{ page_num }}" {% if page_num == owner_page_obj.number %}selected{% endif %}>
+                    {{ page_num }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <span class="fw-bold">of {{ owner_page_obj.paginator.num_pages }}</span>
+              </form>
+              {% if owner_page_obj.has_next %}
+              <a href="?{% url_replace "owner_page" owner_page_obj.next_page_number  %}" class="btn btn-outline-primary btn-sm ms-2">▶</a>
+              <a href="?{% url_replace "owner_page" owner_page_obj.paginator.num_pages  %}" class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
@@ -3918,18 +4451,19 @@
     <!-- --------------START:  DONATION MODULE---------- -->
     <div class="tab-content" id="Donation Module">
       <div class="card border-0">
-        <div class="card-header  text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donations</h4>
-          <div id="colvis-mount-donation-details"></div>
         </div>
         <div class="card-body">
-          <div class="search-container">
-            <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center w-100"
+          <div class="search-container d-flex justify-content-between align-items-center">
+            <form method="GET" action="{% url 'search_donation' %}" class="d-flex align-items-center"
               role="search">
+              <input type="hidden" name="active_tab" value="Donation Module">
               <input type="text" name="q" data-target="alldonations"
                 class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
                 value="{{ query3|default:'' }}">
             </form>
+            <div id="colvis-mount-donation-details" class="ms-auto"></div>
           </div>
           {% if donation_page_obj %}
           <div class="table-responsive">
@@ -3964,18 +4498,17 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="{% url 'adddonation' %}"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;"><i
+                      <a href="{% url 'adddonation' %}" class="table-action-add-btn" title="Add"><i
                           class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'search_donation' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="q" value="{{ query3|default:'' }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit" class="btn btn-link" style="font-size:22px; color:black;"><i
-                            class="bi bi-download"></i> </button>
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
+                            class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
                     </div>
@@ -4125,17 +4658,16 @@
                 </tr>
                 <tr class="column-search-row">
                   <td>
-                    <div class="d-flex justify-content-between">
+                    <div class="table-action-btns-wrap">
                       {% if permissions.can_add %}
-                      <a href="{% url 'adddonation' %}"
-                        style="font-size: 24px; text-decoration: none; vertical-align: middle; color: #16a34a;">
-                        <i class="fa-solid fa-plus"></i></a>
+                      <a href="{% url 'adddonation' %}" class="table-action-add-btn" title="Add"><i
+                          class="fa-solid fa-plus"></i></a>
                       {% endif %}
                       {% if permissions.can_add %}
-                      <form method="GET" action="{% url 'search_donation' %}" style="margin: -9px; padding: 0;">
+                      <form method="GET" action="{% url 'search_donation' %}" class="d-inline m-0 p-0">
                         <input type="hidden" name="q" value="{{ query3|default:'' }}">
                         <input type="hidden" name="download" value="1">
-                        <button type="submit" class="btn btn-link" style="font-size:22px; color:black;"><i
+                        <button type="submit" class="table-action-download-btn" title="Download"><i
                             class="bi bi-download"></i></button>
                       </form>
                       {% endif %}
@@ -4261,28 +4793,47 @@
         {% endif %}
       </div>
       <div class="pagination-container text-center mt-3">
-        {% if donation_page_obj.has_previous %}
-        <a href="?{% url_replace "donation_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
-        <a href="?{% url_replace "donation_page" donation_page_obj.previous_page_number  %}"
-          class="btn btn-outline-primary btn-sm me-2">◀</a>
-        {% endif %}
-        <form method="get" class="d-inline-block pagination-form">
-          <label for="pageSelect" class="fw-bold me-1">Page</label>
-          <select name="donation_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
-            onchange="handlePaginationSelect(this)">
-            {% for page_num in donation_page_obj.paginator.page_range %}
-            <option value="{{ page_num }}" {% if page_num == donation_page_obj.number %}selected{% endif %}>{{ page_num }}
-            </option>
-            {% endfor %}
+        <div class="page-size-wrap">
+          <span class="page-size-label">Page size:</span>
+          <select name="donation_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'donation_page')">
+            <option value="10" {% if donation_page_size == 10 %}selected{% endif %}>10</option>
+            <option value="25" {% if donation_page_size == 25 %}selected{% endif %}>25</option>
+            <option value="50" {% if donation_page_size == 50 %}selected{% endif %}>50</option>
+            <option value="75" {% if donation_page_size == 75 %}selected{% endif %}>75</option>
+            <option value="100" {% if donation_page_size == 100 %}selected{% endif %}>100</option>
           </select>
-          <span class="fw-bold">of {{ donation_page_obj.paginator.num_pages }}</span>
-        </form>
-        {% if donation_page_obj.has_next %}
-        <a href="?{% url_replace "donation_page" donation_page_obj.next_page_number  %}"
-          class="btn btn-outline-primary btn-sm ms-2">▶</a>
-        <a href="?{% url_replace "donation_page" donation_page_obj.paginator.num_pages  %}"
-          class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-        {% endif %}
+          <span class="page-range-info">
+            {% if donation_page_obj.paginator.count > 0 %}
+              {{ donation_page_obj.start_index }} to {{ donation_page_obj.end_index }} of {{ donation_page_obj.paginator.count }}
+            {% else %}
+              0 to 0 of 0
+            {% endif %}
+          </span>
+        </div>
+        <div class="pagination-nav-wrap">
+          {% if donation_page_obj.has_previous %}
+          <a href="?{% url_replace "donation_page" 1 %}" class="btn btn-outline-primary btn-sm me-2">⏮</a>
+          <a href="?{% url_replace "donation_page" donation_page_obj.previous_page_number  %}"
+            class="btn btn-outline-primary btn-sm me-2">◀</a>
+          {% endif %}
+          <form method="get" class="d-inline-block pagination-form">
+            <label for="pageSelect" class="fw-bold me-1">Page</label>
+            <select name="donation_page" id="pageSelect" class="form-select form-select-sm d-inline-block w-auto"
+              onchange="handlePaginationSelect(this)">
+              {% for page_num in donation_page_obj.paginator.page_range %}
+              <option value="{{ page_num }}" {% if page_num == donation_page_obj.number %}selected{% endif %}>{{ page_num }}
+              </option>
+              {% endfor %}
+            </select>
+            <span class="fw-bold">of {{ donation_page_obj.paginator.num_pages }}</span>
+          </form>
+          {% if donation_page_obj.has_next %}
+          <a href="?{% url_replace "donation_page" donation_page_obj.next_page_number  %}"
+            class="btn btn-outline-primary btn-sm ms-2">▶</a>
+          <a href="?{% url_replace "donation_page" donation_page_obj.paginator.num_pages  %}"
+            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+          {% endif %}
+        </div>
       </div>
     </div>
 
@@ -4304,29 +4855,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4348,29 +4918,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4392,29 +4981,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4436,29 +5044,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4480,29 +5107,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4525,29 +5171,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -4570,29 +5235,48 @@
         </div>
         <!-- ✅ Donation Payment Pagination Controls -->
         <div class="pagination-container text-center">
-          {% if payments_page_obj.has_previous %}
-          <a href="?{% url_replace "payments_page" 1 %}"
-            class="btn btn-outline-primary btn-sm me-2">⏮</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
-            class="btn btn-outline-primary btn-sm me-2">◀</a>
-          {% endif %}
-          <form method="get" class="d-inline-block pagination-form">
-            <input type="hidden" name="payments_query" value="{{ payments_query }}" />
-            <label for="dpPageSelect" class="fw-bold me-1">Page</label>
-            <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
-              onchange="handlePaginationSelect(this)">
-              {% for p in payments_page_obj.paginator.page_range %}
-              <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
-              {% endfor %}
+          <div class="page-size-wrap">
+            <span class="page-size-label">Page size:</span>
+            <select name="payments_page_size" class="form-select form-select-sm page-size-select" onchange="handlePageSizeChange(this, 'payments_page')">
+              <option value="10" {% if payments_page_size == 10 %}selected{% endif %}>10</option>
+              <option value="25" {% if payments_page_size == 25 %}selected{% endif %}>25</option>
+              <option value="50" {% if payments_page_size == 50 %}selected{% endif %}>50</option>
+              <option value="75" {% if payments_page_size == 75 %}selected{% endif %}>75</option>
+              <option value="100" {% if payments_page_size == 100 %}selected{% endif %}>100</option>
             </select>
-            <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
-          </form>
-          {% if payments_page_obj.has_next %}
-          <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
-            class="btn btn-outline-primary btn-sm ms-2">▶</a>
-          <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
-            class="btn btn-outline-primary btn-sm ms-2">⏭</a>
-          {% endif %}
+            <span class="page-range-info">
+              {% if payments_page_obj.paginator.count > 0 %}
+                {{ payments_page_obj.start_index }} to {{ payments_page_obj.end_index }} of {{ payments_page_obj.paginator.count }}
+              {% else %}
+                0 to 0 of 0
+              {% endif %}
+            </span>
+          </div>
+          <div class="pagination-nav-wrap">
+            {% if payments_page_obj.has_previous %}
+            <a href="?{% url_replace "payments_page" 1 %}"
+              class="btn btn-outline-primary btn-sm me-2">⏮</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.previous_page_number  %}"
+              class="btn btn-outline-primary btn-sm me-2">◀</a>
+            {% endif %}
+            <form method="get" class="d-inline-block pagination-form">
+              <input type="hidden" name="payments_query" value="{{ payments_query }}" />
+              <label for="dpPageSelect" class="fw-bold me-1">Page</label>
+              <select name="payments_page" id="dpPageSelect" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="handlePaginationSelect(this)">
+                {% for p in payments_page_obj.paginator.page_range %}
+                <option value="{{ p }}" {% if p == payments_page_obj.number %}selected{% endif %}> {{ p }}</option>
+                {% endfor %}
+              </select>
+              <span class="fw-bold">of {{ payments_page_obj.paginator.num_pages }}</span>
+            </form>
+            {% if payments_page_obj.has_next %}
+            <a href="?{% url_replace "payments_page" payments_page_obj.next_page_number  %}"
+              class="btn btn-outline-primary btn-sm ms-2">▶</a>
+            <a href="?{% url_replace "payments_page" payments_page_obj.paginator.num_pages  %}"
+              class="btn btn-outline-primary btn-sm ms-2">⏭</a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -5154,53 +5838,7 @@
     }
   });
 
-  // Preserve column search params on pagination clicks
-  document.addEventListener("click", function (e) {
-    const link = e.target.closest('a[href^="?"]');
-    if (!link) return;
-    e.preventDefault();
-    const linkParams = new URLSearchParams(link.getAttribute("href"));
-    const currentParams = new URLSearchParams(window.location.search);
-    for (const [key, value] of linkParams.entries()) {
-      currentParams.set(key, value);
-    }
-    document.querySelectorAll(".column-search").forEach(inp => {
-      if (inp.value && inp.value.trim()) {
-        currentParams.set(inp.name, inp.value.trim());
-      } else {
-        currentParams.delete(inp.name);
-      }
-    });
-    const activeTab = localStorage.getItem('activeTab');
-    if (activeTab && !currentParams.has('active_tab')) {
-      currentParams.set('active_tab', activeTab);
-    }
-    window.location.href = window.location.pathname + '?' + currentParams.toString();
-  });
-
-  // Preserve column search params on pagination form submits
-  document.addEventListener("submit", function (e) {
-    const form = e.target.closest(".pagination-form");
-    if (!form) return;
-    e.preventDefault();
-    const formData = new FormData(form);
-    const params = new URLSearchParams(window.location.search);
-    for (const [key, value] of formData.entries()) {
-      params.set(key, value);
-    }
-    document.querySelectorAll(".column-search").forEach(inp => {
-      if (inp.value && inp.value.trim()) {
-        params.set(inp.name, inp.value.trim());
-      } else {
-        params.delete(inp.name);
-      }
-    });
-    const activeTab = localStorage.getItem('activeTab');
-    if (activeTab && !params.has('active_tab')) {
-      params.set('active_tab', activeTab);
-    }
-    window.location.href = window.location.pathname + '?' + params.toString();
-  });
+  // Pagination handled globally below
 })();
 </script>
 <script>
@@ -5322,7 +5960,7 @@
 
     // Initial Tab Activation from URL query param, back navigation, or saved state
     const urlParams = new URLSearchParams(window.location.search);
-    const queryTab = urlParams.get('tab');
+    const queryTab = urlParams.get('tab') || urlParams.get('active_tab');
     const backFromForm = localStorage.getItem('backFromForm');
     const serverTab = "{{ active_tab|default:''|escapejs }}";
 
@@ -5647,61 +6285,95 @@
 
 <script>
   function handlePaginationSelect(selectElement) {
+    if (!selectElement) return;
     const pageNum = selectElement.value;
     const pageParam = selectElement.name;
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set(pageParam, pageNum);
-    
-    const activeTab = localStorage.getItem('activeTab');
-    if (activeTab) {
-      urlParams.set('active_tab', activeTab);
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set(pageParam, pageNum);
+
+    const tabEl = selectElement.closest('.tab-content');
+    const tabId = (tabEl && tabEl.id) ? tabEl.id : (currentParams.get('active_tab') || localStorage.getItem('activeTab'));
+    if (tabId) {
+      currentParams.set('active_tab', tabId);
+      localStorage.setItem('activeTab', tabId);
     }
-    
-    window.location.href = "?" + urlParams.toString();
+
+    window.location.href = window.location.pathname + '?' + currentParams.toString();
   }
+  window.handlePaginationSelect = handlePaginationSelect;
+
+  function handlePageSizeChange(selectElement, pageParam) {
+    if (!selectElement) return;
+    const pageSize = selectElement.value;
+    const sizeParam = selectElement.name || 'page_size';
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set(sizeParam, pageSize);
+    if (pageParam) {
+      currentParams.set(pageParam, '1');
+    }
+
+    const tabEl = selectElement.closest('.tab-content');
+    const tabId = (tabEl && tabEl.id) ? tabEl.id : (currentParams.get('active_tab') || localStorage.getItem('activeTab'));
+    if (tabId) {
+      currentParams.set('active_tab', tabId);
+      localStorage.setItem('activeTab', tabId);
+    }
+
+    window.location.href = window.location.pathname + '?' + currentParams.toString();
+  }
+  window.handlePageSizeChange = handlePageSizeChange;
 
   document.addEventListener("DOMContentLoaded", function() {
     // Intercept native form submissions for pagination
-    document.querySelectorAll('form.pagination-form').forEach(form => {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        for (const [key, value] of formData.entries()) {
-          urlParams.set(key, value);
-        }
-        
-        const activeTab = localStorage.getItem('activeTab');
-        if (activeTab) {
-          urlParams.set('active_tab', activeTab);
-        }
-        
-        window.location.href = "?" + urlParams.toString();
-      });
+    document.addEventListener('submit', function(e) {
+      const form = e.target.closest('.pagination-form');
+      if (!form) return;
+      e.preventDefault();
+      const formData = new FormData(form);
+      const currentParams = new URLSearchParams(window.location.search);
+
+      for (const [key, value] of formData.entries()) {
+        currentParams.set(key, value);
+      }
+
+      const tabEl = form.closest('.tab-content');
+      const tabId = (tabEl && tabEl.id) ? tabEl.id : (currentParams.get('active_tab') || localStorage.getItem('activeTab'));
+      if (tabId) {
+        currentParams.set('active_tab', tabId);
+        localStorage.setItem('activeTab', tabId);
+      }
+
+      window.location.href = window.location.pathname + '?' + currentParams.toString();
     });
 
-    // Intercept pagination links to inject correct activeTab
-    document.querySelectorAll('.pagination-form').forEach(form => {
-        // Find sibling <a> tags which are pagination buttons
-        const parent = form.parentElement;
-        if (parent) {
-            parent.querySelectorAll('a.btn').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href')) {
-                        e.preventDefault();
-                        const href = this.getAttribute('href');
-                        const url = new URL(href, window.location.origin + window.location.pathname);
-                        
-                        const activeTab = localStorage.getItem('activeTab');
-                        if (activeTab) {
-                            url.searchParams.set('active_tab', activeTab);
-                        }
-                        window.location.href = url.pathname + url.search;
-                    }
-                });
-            });
-        }
+    // Intercept pagination links to inject correct activeTab and params
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('.pagination-container a[href]');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const queryPart = href.includes('?') ? href.substring(href.indexOf('?') + 1) : href;
+      const linkParams = new URLSearchParams(queryPart);
+      const currentParams = new URLSearchParams(window.location.search);
+
+      for (const [key, value] of linkParams.entries()) {
+        currentParams.set(key, value);
+      }
+
+      const tabEl = link.closest('.tab-content');
+      const tabId = (tabEl && tabEl.id) ? tabEl.id : (currentParams.get('active_tab') || localStorage.getItem('activeTab'));
+      if (tabId) {
+        currentParams.set('active_tab', tabId);
+        localStorage.setItem('activeTab', tabId);
+      }
+
+      window.location.href = window.location.pathname + '?' + currentParams.toString();
+    });
+
     // Initialize All Reusable Column Selectors
     initAhinsadhamColumnSelectors();
   });

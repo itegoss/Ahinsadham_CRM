@@ -262,6 +262,77 @@
     margin-top: 5px;
     text-decoration: none;
 }
+
+/* Registration Type Radio Selector */
+.type-selector-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #d1fae5;
+    box-shadow: 0 4px 18px rgba(6, 78, 59, 0.05);
+    padding: 16px 24px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.type-selector-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #065F46;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.type-radio-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.type-radio-option {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 22px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    background-color: #f8fafc;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.93rem;
+    color: #334155;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    margin: 0;
+}
+
+.type-radio-option:hover {
+    border-color: #10b981;
+    background-color: #ecfdf5;
+    color: #065f46;
+}
+
+.type-radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #059669;
+    margin: 0;
+}
+
+.type-radio-option.selected {
+    border-color: #059669;
+    background-color: #ecfdf5;
+    color: #065f46;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}
 </style>
 
 
@@ -285,221 +356,244 @@
     <form method="POST" enctype="multipart/form-data" id="ownerDetailsForm">
         {% csrf_token %}
 
-        <!-- ===================================== 1. BUSINESS DETAILS ===================================== -->
-        <div class="form-card is-open" id="businessDetailsCard">
-            <div class="accordion-card-header" onclick="toggleAccordion(this)">
-                <h5 class="accordion-card-title">
-                    <i class="fa-solid fa-building text-success"></i> Business Details
-                </h5>
-                <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
+        <!-- ===================================== TYPE SELECTOR (BUSINESS / INDIVIDUAL) ===================================== -->
+        <div class="type-selector-card">
+            <div class="type-selector-label">
+                <i class="fa-solid fa-user-tag text-success"></i> Registration Type:
             </div>
-            <div class="accordion-card-content">
-                <div class="row g-3 mb-2">
-                    <div class="col-md-6">
-                        <label class="form-label">Business Name <span class="req-star">*</span></label>
-                        <input type="text" name="business_name" class="form-control" value="{{ owner.business_name|default:'' }}" placeholder="Enter business / firm / shop name" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">GST <span class="req-star">*</span></label>
-                        <input type="text" name="gst_number" class="form-control" value="{{ owner.gst_number|default:'' }}" placeholder="Enter GST number" minlength="15" maxlength="15" required pattern="^[a-zA-Z0-9]{15}$" title="GST Number must be exactly 15 alphanumeric characters">
-                    </div>
-                </div>
+            <div class="type-radio-group">
+                <label class="type-radio-option {% if owner.business_name and owner.business_name != 'Individual' %}selected{% endif %}" id="optBusiness" for="typeBusiness">
+                    <input type="radio" name="owner_type" id="typeBusiness" value="business" {% if owner.business_name and owner.business_name != 'Individual' %}checked{% endif %} onchange="handleTypeChange('business')">
+                    <span><i class="fa-solid fa-building me-1 text-success"></i> Business</span>
+                </label>
+                <label class="type-radio-option {% if not owner.business_name or owner.business_name == 'Individual' %}selected{% endif %}" id="optIndividual" for="typeIndividual">
+                    <input type="radio" name="owner_type" id="typeIndividual" value="individual" {% if not owner.business_name or owner.business_name == 'Individual' %}checked{% endif %} onchange="handleTypeChange('individual')">
+                    <span><i class="fa-solid fa-user me-1 text-success"></i> Individual</span>
+                </label>
             </div>
         </div>
 
-        <!-- ===================================== 2. PERSONAL DETAILS ===================================== -->
-        <div class="form-card is-open" id="personalDetailsCard">
-            <div class="accordion-card-header" onclick="toggleAccordion(this)">
-                <h5 class="accordion-card-title">
-                    <i class="fa-solid fa-user text-success"></i> Personal Details
-                </h5>
-                <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
-            </div>
-            <div class="accordion-card-content">
-                <!-- Row 1: Name fields with dedicated Salutation column and equal Name columns -->
-                <div class="name-grid-row mb-4">
-                    <div>
-                        <label class="form-label">Sal.</label>
-                        <select name="salutation" class="form-select">
-                            <option value="">—</option>
-                            <option {% if owner.salutation == 'Mr.' %}selected{% endif %}>Mr.</option>
-                            <option {% if owner.salutation == 'Mrs.' %}selected{% endif %}>Mrs.</option>
-                            <option {% if owner.salutation == 'Ms.' %}selected{% endif %}>Ms.</option>
-                            <option {% if owner.salutation == 'Shri' %}selected{% endif %}>Shri</option>
-                            <option {% if owner.salutation == 'Smt.' %}selected{% endif %}>Smt.</option>
-                            <option {% if owner.salutation == 'Kumari' %}selected{% endif %}>Kumari</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label">First Name <span class="req-star">*</span></label>
-                        <input type="text" name="first_name" class="form-control" value="{{ owner.first_name|default:'' }}" placeholder="Enter first name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
-                    </div>
-                    <div>
-                        <label class="form-label">Middle Name</label>
-                        <input type="text" name="middle_name" class="form-control" value="{{ owner.middle_name|default:'' }}" placeholder="Enter middle name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')">
-                    </div>
-                    <div>
-                        <label class="form-label">Last Name <span class="req-star">*</span></label>
-                        <input type="text" name="last_name" class="form-control" value="{{ owner.last_name|default:'' }}" placeholder="Enter last name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
-                    </div>
+        <div id="formCardsContainer">
+            <!-- ===================================== 1. BUSINESS DETAILS ===================================== -->
+            <div class="form-card is-open" id="businessDetailsCard">
+                <div class="accordion-card-header" onclick="toggleAccordion(this)">
+                    <h5 class="accordion-card-title">
+                        <i class="fa-solid fa-building text-success"></i> Business Details
+                    </h5>
+                    <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
                 </div>
-
-                <!-- Row 2: Gender and Blood Group -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label">Gender</label>
-                        <select name="gender" class="form-select">
-                            <option value="">Select</option>
-                            <option {% if owner.gender == 'Male' %}selected{% endif %}>Male</option>
-                            <option {% if owner.gender == 'Female' %}selected{% endif %}>Female</option>
-                            <option {% if owner.gender == 'Other' %}selected{% endif %}>Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Blood Group</label>
-                        <select name="blood_group" class="form-select text-dark">
-                            <option value="">Select</option>
-                            {% for bg, val in blood_groups %}
-                                <option value="{{ bg }}" {% if owner.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Row 3: Contact Number, WhatsApp Number, Email (Perfect Grid & Vertical Alignment) -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
-                            <label class="form-label mb-0">Contact Number <span class="req-star">*</span></label>
+                <div class="accordion-card-content">
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Business Name <span class="req-star">*</span></label>
+                            <input type="text" name="business_name" id="business_name" class="form-control" value="{% if owner.business_name and owner.business_name != 'Individual' %}{{ owner.business_name }}{% endif %}" placeholder="Enter business / firm / shop name" required>
                         </div>
-                        <div class="custom-phone-group">
-                            <select class="country-code-select" name="contact_country_code" required>
-                                <option value="+91" selected>+91</option>
-                                <option value="+1">+1</option>
-                                <option value="+44">+44</option>
-                                <option value="+971">+971</option>
-                                <option value="+61">+61</option>
-                                <option value="+65">+65</option>
+                        <div class="col-md-6">
+                            <label class="form-label">GST <span class="req-star">*</span></label>
+                            <input type="text" name="gst_number" id="gst_number" class="form-control" value="{{ owner.gst_number|default:'' }}" placeholder="Enter GST number" minlength="15" maxlength="15" required pattern="^[a-zA-Z0-9]{15}$" title="GST Number must be exactly 15 alphanumeric characters">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================================== 2. ADDRESS DETAILS ===================================== -->
+            <div class="form-card is-open" id="addressDetailsCard">
+                <div class="accordion-card-header" onclick="toggleAccordion(this)">
+                    <h5 class="accordion-card-title" id="addressCardTitle">
+                        <i class="fa-solid fa-location-dot text-success"></i> <span id="addressTitleText">Business Address Details</span>
+                    </h5>
+                    <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
+                </div>
+                <div class="accordion-card-content">
+                    <!-- Address line 1 & line 2 -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Address Line 1 <span class="req-star">*</span></label>
+                            <input type="text" name="address_line_1" id="address_line_1" class="form-control" value="{{ owner.address_line_1|default:'' }}" placeholder="House/Flat/Shop no., Building, Street" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Address Line 2</label>
+                            <input type="text" name="address_line_2" id="address_line_2" class="form-control" value="{{ owner.address_line_2|default:'' }}" placeholder="Landmark, locality">
+                        </div>
+                    </div>
+
+                    <!-- Area & Postal Code -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Area/Town <span class="req-star">*</span></label>
+                            <input type="text" name="area" class="form-control" value="{{ owner.area|default:'' }}" placeholder="Borivali/Vashi/Bhujpur" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Postal Code <span class="req-star">*</span></label>
+                            <input type="text" name="postal_code" class="form-control" value="{{ owner.postal_code|default:'' }}" placeholder="Enter postal code" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+                    </div>
+
+                    <!-- Zone & City -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Zone</label>
+                            <input type="text" name="zone" class="form-control" value="{{ owner.zone|default:'' }}" placeholder="Enter zone">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">City <span class="req-star">*</span></label>
+                            <input type="text" name="city" class="form-control" value="{{ owner.city|default:'' }}" placeholder="Mumbai/Ahmedabad" required>
+                        </div>
+                    </div>
+
+                    <!-- Country, State -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Country <span class="req-star">*</span></label>
+                            <select id="country" name="country" class="form-select" required>
+                                <option value="India" {% if owner.country == 'India' or not owner.country %}selected{% endif %}>India</option>
+                                <option value="United States" {% if owner.country == 'United States' %}selected{% endif %}>United States</option>
+                                <option value="United Kingdom" {% if owner.country == 'United Kingdom' %}selected{% endif %}>United Kingdom</option>
+                                <option value="United Arab Emirates" {% if owner.country == 'United Arab Emirates' %}selected{% endif %}>United Arab Emirates</option>
+                                <option value="Australia" {% if owner.country == 'Australia' %}selected{% endif %}>Australia</option>
+                                <option value="Canada" {% if owner.country == 'Canada' %}selected{% endif %}>Canada</option>
+                                <option value="Singapore" {% if owner.country == 'Singapore' %}selected{% endif %}>Singapore</option>
+                                <option value="Other" {% if owner.country and owner.country != 'India' and owner.country != 'United States' and owner.country != 'United Kingdom' and owner.country != 'United Arab Emirates' and owner.country != 'Australia' and owner.country != 'Canada' and owner.country != 'Singapore' %}selected{% endif %}>Other</option>
                             </select>
-                            <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ owner.contact_number|default:'' }}" placeholder="Enter phone number" maxlength="15" required>
                         </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
-                            <label class="form-label mb-0">WhatsApp Number</label>
-                            <label class="form-check-label text-muted d-flex align-items-center gap-1" for="different_whatsapp" style="font-size: 0.8rem; cursor: pointer; user-select: none;">
-                                <input class="form-check-input mt-0" type="checkbox" id="different_whatsapp" style="cursor: pointer;">
-                                <span>Different number</span>
-                            </label>
-                        </div>
-                        <div class="custom-phone-group">
-                            <select class="country-code-select" name="whatsapp_country_code">
-                                <option value="+91" selected>+91</option>
-                                <option value="+1">+1</option>
-                                <option value="+44">+44</option>
-                                <option value="+971">+971</option>
-                                <option value="+61">+61</option>
-                                <option value="+65">+65</option>
+                        <div class="col-md-6" id="stateDropdownBox">
+                            <label class="form-label">State <span class="req-star">*</span></label>
+                            <select id="state" name="state" class="form-select">
                             </select>
-                            <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control" value="{{ owner.whatsapp_number|default:'' }}" maxlength="15" placeholder="Enter whatsapp number">
                         </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
-                            <label class="form-label mb-0">Email</label>
+                        <div class="col-md-6" id="stateTextboxBox" style="display: none;">
+                            <label class="form-label">State <span class="req-star">*</span></label>
+                            <input type="text" id="state_text" name="state_text" class="form-control" value="{{ owner.state|default:'' }}" placeholder="Enter State">
                         </div>
-                        <input type="email" name="email" class="form-control" value="{{ owner.email|default:'' }}" placeholder="Enter email address" style="height: 42px;">
-                    </div>
-                </div>
-
-                <!-- Row 4: DOB, Age, Native Place -->
-                <div class="row g-3 mb-2">
-                    <div class="col-md-4">
-                        <label class="form-label">Date of Birth</label>
-                        <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ owner.date_of_birth|date:'Y-m-d' }}">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Age</label>
-                        <input type="number" name="age" id="age" class="form-control" style="background-color: #f8fafc;" value="{{ owner.age|default:'' }}" placeholder="Age" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Native Place</label>
-                        <input type="text" name="native_place" class="form-control" value="{{ owner.native_place|default:'' }}" placeholder="Enter native place">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ===================================== 3. ADDRESS DETAILS ===================================== -->
-        <div class="form-card is-open" id="addressDetailsCard">
-            <div class="accordion-card-header" onclick="toggleAccordion(this)">
-                <h5 class="accordion-card-title">
-                    <i class="fa-solid fa-location-dot text-success"></i> Address Details
-                </h5>
-                <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
-            </div>
-            <div class="accordion-card-content">
-                <!-- Address line 1 & line 2 -->
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Address Line 1 <span class="req-star">*</span></label>
-                        <input type="text" name="address_line_1" id="address_line_1" class="form-control" value="{{ owner.address_line_1|default:'' }}" placeholder="House/Flat/Shop no., Building, Street" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Address Line 2</label>
-                        <input type="text" name="address_line_2" id="address_line_2" class="form-control" value="{{ owner.address_line_2|default:'' }}" placeholder="Landmark, locality">
-                    </div>
+            <!-- ===================================== 3. PERSONAL DETAILS ===================================== -->
+            <div class="form-card is-open" id="personalDetailsCard">
+                <div class="accordion-card-header" onclick="toggleAccordion(this)">
+                    <h5 class="accordion-card-title">
+                        <i class="fa-solid fa-user text-success"></i> Personal Details
+                    </h5>
+                    <i class="fa-solid fa-chevron-down accordion-chevron-icon"></i>
                 </div>
+                <div class="accordion-card-content">
+                    <!-- Row 1: Name fields with dedicated Salutation column and equal Name columns -->
+                    <div class="name-grid-row mb-4">
+                        <div>
+                            <label class="form-label">Sal.</label>
+                            <select name="salutation" class="form-select">
+                                <option value="">—</option>
+                                <option {% if owner.salutation == 'Mr.' %}selected{% endif %}>Mr.</option>
+                                <option {% if owner.salutation == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                                <option {% if owner.salutation == 'Ms.' %}selected{% endif %}>Ms.</option>
+                                <option {% if owner.salutation == 'Shri' %}selected{% endif %}>Shri</option>
+                                <option {% if owner.salutation == 'Smt.' %}selected{% endif %}>Smt.</option>
+                                <option {% if owner.salutation == 'Kumari' %}selected{% endif %}>Kumari</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">First Name <span class="req-star">*</span></label>
+                            <input type="text" name="first_name" class="form-control" value="{{ owner.first_name|default:'' }}" placeholder="Enter first name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Middle Name</label>
+                            <input type="text" name="middle_name" class="form-control" value="{{ owner.middle_name|default:'' }}" placeholder="Enter middle name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')">
+                        </div>
+                        <div>
+                            <label class="form-label">Last Name <span class="req-star">*</span></label>
+                            <input type="text" name="last_name" class="form-control" value="{{ owner.last_name|default:'' }}" placeholder="Enter last name" oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')" required>
+                        </div>
+                    </div>
 
-                <!-- Area & Postal Code -->
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Area/Town <span class="req-star">*</span></label>
-                        <input type="text" name="area" class="form-control" value="{{ owner.area|default:'' }}" placeholder="Borivali/Vashi/Bhujpur" required>
+                    <!-- Row 2: Gender, Blood Group, and PAN Number -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">Select</option>
+                                <option {% if owner.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option {% if owner.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option {% if owner.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Blood Group</label>
+                            <select name="blood_group" class="form-select text-dark">
+                                <option value="">Select</option>
+                                {% for bg, val in blood_groups %}
+                                    <option value="{{ bg }}" {% if owner.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">PAN Number</label>
+                            <input type="text" name="pan_number" id="pan_number" class="form-control" value="{{ owner.pan_number|default:'' }}" placeholder="Enter PAN number" maxlength="10" pattern="^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$" title="Enter a valid 10-character PAN (e.g. ABCDE1234F)" oninput="this.value = this.value.toUpperCase();" style="text-transform: uppercase;">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Postal Code <span class="req-star">*</span></label>
-                        <input type="text" name="postal_code" class="form-control" value="{{ owner.postal_code|default:'' }}" placeholder="Enter postal code" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                    </div>
-                </div>
 
-                <!-- Zone & City -->
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Zone</label>
-                        <input type="text" name="zone" class="form-control" value="{{ owner.zone|default:'' }}" placeholder="Enter zone">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">City <span class="req-star">*</span></label>
-                        <input type="text" name="city" class="form-control" value="{{ owner.city|default:'' }}" placeholder="Mumbai/Ahmedabad" required>
-                    </div>
-                </div>
+                    <!-- Row 3: Contact Number, WhatsApp Number, Email (Perfect Grid & Vertical Alignment) -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
+                                <label class="form-label mb-0">Contact Number <span class="req-star">*</span></label>
+                            </div>
+                            <div class="custom-phone-group">
+                                <select class="country-code-select" name="contact_country_code" required>
+                                    <option value="+91" selected>+91</option>
+                                    <option value="+1">+1</option>
+                                    <option value="+44">+44</option>
+                                    <option value="+971">+971</option>
+                                    <option value="+61">+61</option>
+                                    <option value="+65">+65</option>
+                                </select>
+                                <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ owner.contact_number|default:'' }}" placeholder="Enter phone number" maxlength="15" required>
+                            </div>
+                        </div>
 
-                <!-- Country, State -->
-                <div class="row g-3 mb-2">
-                    <div class="col-md-6">
-                        <label class="form-label">Country <span class="req-star">*</span></label>
-                        <select id="country" name="country" class="form-select" required>
-                            <option value="India" {% if owner.country == 'India' or not owner.country %}selected{% endif %}>India</option>
-                            <option value="United States" {% if owner.country == 'United States' %}selected{% endif %}>United States</option>
-                            <option value="United Kingdom" {% if owner.country == 'United Kingdom' %}selected{% endif %}>United Kingdom</option>
-                            <option value="United Arab Emirates" {% if owner.country == 'United Arab Emirates' %}selected{% endif %}>United Arab Emirates</option>
-                            <option value="Australia" {% if owner.country == 'Australia' %}selected{% endif %}>Australia</option>
-                            <option value="Canada" {% if owner.country == 'Canada' %}selected{% endif %}>Canada</option>
-                            <option value="Singapore" {% if owner.country == 'Singapore' %}selected{% endif %}>Singapore</option>
-                            <option value="Other" {% if owner.country and owner.country != 'India' and owner.country != 'United States' and owner.country != 'United Kingdom' and owner.country != 'United Arab Emirates' and owner.country != 'Australia' and owner.country != 'Canada' and owner.country != 'Singapore' %}selected{% endif %}>Other</option>
-                        </select>
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
+                                <label class="form-label mb-0">WhatsApp Number</label>
+                                <label class="form-check-label text-muted d-flex align-items-center gap-1" for="different_whatsapp" style="font-size: 0.8rem; cursor: pointer; user-select: none;">
+                                    <input class="form-check-input mt-0" type="checkbox" id="different_whatsapp" style="cursor: pointer;">
+                                    <span>Different number</span>
+                                </label>
+                            </div>
+                            <div class="custom-phone-group">
+                                <select class="country-code-select" name="whatsapp_country_code">
+                                    <option value="+91" selected>+91</option>
+                                    <option value="+1">+1</option>
+                                    <option value="+44">+44</option>
+                                    <option value="+971">+971</option>
+                                    <option value="+61">+61</option>
+                                    <option value="+65">+65</option>
+                                </select>
+                                <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control" value="{{ owner.whatsapp_number|default:'' }}" maxlength="15" placeholder="Enter whatsapp number">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between align-items-center" style="min-height: 22px; margin-bottom: 6px;">
+                                <label class="form-label mb-0">Email</label>
+                            </div>
+                            <input type="email" name="email" class="form-control" value="{{ owner.email|default:'' }}" placeholder="Enter email address" style="height: 42px;">
+                        </div>
                     </div>
-                    <div class="col-md-6" id="stateDropdownBox">
-                        <label class="form-label">State <span class="req-star">*</span></label>
-                        <select id="state" name="state" class="form-select">
-                        </select>
-                    </div>
-                    <div class="col-md-6" id="stateTextboxBox" style="display: none;">
-                        <label class="form-label">State <span class="req-star">*</span></label>
-                        <input type="text" id="state_text" name="state_text" class="form-control" value="{{ owner.state|default:'' }}" placeholder="Enter State">
+
+                    <!-- Row 4: DOB, Age, Native Place -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ owner.date_of_birth|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" id="age" class="form-control" style="background-color: #f8fafc;" value="{{ owner.age|default:'' }}" placeholder="Age" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Native Place</label>
+                            <input type="text" name="native_place" class="form-control" value="{{ owner.native_place|default:'' }}" placeholder="Enter native place">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -524,6 +618,67 @@
 function toggleAccordion(header) {
     const card = header.closest('.form-card');
     card.classList.toggle('is-open');
+}
+
+/* Dynamic Switch: Business vs Individual */
+function handleTypeChange(type) {
+    const isIndividual = (type === 'individual');
+    const container = document.getElementById('formCardsContainer');
+    const businessCard = document.getElementById('businessDetailsCard');
+    const addressCard = document.getElementById('addressDetailsCard');
+    const personalCard = document.getElementById('personalDetailsCard');
+    const addressTitleText = document.getElementById('addressTitleText');
+    const businessNameInput = document.getElementById('business_name');
+    const gstNumberInput = document.getElementById('gst_number');
+    const optBusiness = document.getElementById('optBusiness');
+    const optIndividual = document.getElementById('optIndividual');
+    const radioBusiness = document.getElementById('typeBusiness');
+    const radioIndividual = document.getElementById('typeIndividual');
+
+    if (isIndividual) {
+        if (radioIndividual) radioIndividual.checked = true;
+        if (optIndividual) optIndividual.classList.add('selected');
+        if (optBusiness) optBusiness.classList.remove('selected');
+
+        // Hide Business Details card completely
+        if (businessCard) businessCard.classList.add('d-none');
+
+        // Business fields are not required for Individual
+        if (businessNameInput) businessNameInput.required = false;
+        if (gstNumberInput) gstNumberInput.required = false;
+
+        // Move Personal Details to top (before Address Details)
+        if (container && personalCard && addressCard) {
+            container.insertBefore(personalCard, addressCard);
+        }
+
+        // Change Address title to "Address Details"
+        if (addressTitleText) {
+            addressTitleText.textContent = 'Address Details';
+        }
+    } else {
+        if (radioBusiness) radioBusiness.checked = true;
+        if (optBusiness) optBusiness.classList.add('selected');
+        if (optIndividual) optIndividual.classList.remove('selected');
+
+        // Show Business Details card
+        if (businessCard) businessCard.classList.remove('d-none');
+
+        // Business fields are required for Business
+        if (businessNameInput) businessNameInput.required = true;
+        if (gstNumberInput) gstNumberInput.required = true;
+
+        // Reset Order: Business Details -> Address Details -> Personal Details
+        if (container && businessCard && addressCard && personalCard) {
+            container.insertBefore(businessCard, addressCard);
+            container.appendChild(personalCard);
+        }
+
+        // Change Address title to "Business Address Details"
+        if (addressTitleText) {
+            addressTitleText.textContent = 'Business Address Details';
+        }
+    }
 }
 
 /* Expand / Collapse All */
@@ -618,6 +773,8 @@ function populateStates(selectedState) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    const initialType = "{% if owner.business_name and owner.business_name != 'Individual' %}business{% else %}individual{% endif %}";
+    handleTypeChange(initialType);
     populateStates(savedState || "Gujarat");
     const countryEl = document.getElementById('country');
     if (countryEl) {

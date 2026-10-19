@@ -28,8 +28,9 @@ def url_replace(context, field, value):
         from django.http import QueryDict
         dict_ = QueryDict('', mutable=True)
     dict_[field] = value
-    if 'active_tab' in context and 'active_tab' not in dict_:
-        dict_['active_tab'] = context['active_tab']
+    active_tab = context.get('active_tab') or (request.GET.get('active_tab') if request else None)
+    if active_tab:
+        dict_['active_tab'] = active_tab
     return dict_.urlencode()
 
 @register.filter

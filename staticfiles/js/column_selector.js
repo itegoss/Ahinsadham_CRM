@@ -28,7 +28,7 @@
         return;
       }
       this.options = Object.assign({
-        buttonLabel: 'Select Columns',
+        buttonLabel: 'Select Column',
         columns: null,
         onChange: null
       }, options);
@@ -312,7 +312,13 @@
       const total = this.columns.length;
       const count = this.visibleKeys.length;
 
-      // Badge in trigger button
+      // Update title on trigger button
+      const triggerBtn = this.wrapper.querySelector('.col-selector-btn');
+      if (triggerBtn) {
+        triggerBtn.title = `Select Columns (${count}/${total} visible)`;
+      }
+
+      // Badge in trigger button (if present)
       const badge = this.wrapper.querySelector('.col-counter-badge');
       if (badge) {
         badge.textContent = `${count}/${total}`;
@@ -353,16 +359,14 @@
       const count = this.visibleKeys.length;
 
       wrapper.innerHTML = `
-        <button class="btn btn-sm col-selector-btn dropdown-toggle d-inline-flex align-items-center gap-1"
+        <button class="btn btn-sm col-selector-btn d-inline-flex align-items-center justify-content-center"
                 type="button"
                 data-bs-toggle="dropdown"
+                data-bs-display="static"
                 data-bs-auto-close="outside"
                 aria-expanded="false"
-                title="Customize visible columns for this table">
+                title="Select Columns (${count}/${total} visible)">
           <i class="bi bi-columns-gap"></i>
-          <span class="col-selector-btn-text">${this.options.buttonLabel}</span>
-          <i class="bi bi-gear-fill col-gear-icon"></i>
-          <span class="badge rounded-pill col-counter-badge ms-1">${count}/${total}</span>
         </button>
 
         <div class="dropdown-menu dropdown-menu-end col-selector-menu shadow-lg">
@@ -372,12 +376,14 @@
                 <i class="bi bi-layout-three-columns"></i>
                 <span>Table Columns</span>
               </strong>
-              <span class="badge bg-secondary-subtle text-secondary col-counter-text">${count} of ${total} visible</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-secondary-subtle text-secondary col-counter-text">${count} of ${total} visible</span>
+                <button type="button" class="btn-close col-selector-close-btn" aria-label="Close" title="Close" style="font-size: 0.72rem; cursor: pointer;"></button>
+              </div>
             </div>
 
             <div class="col-selector-search-box mb-2">
               <div class="input-group input-group-sm">
-                <span class="input-group-text bg-light border-end-0 py-1 px-2"><i class="bi bi-search text-muted"></i></span>
                 <input type="text" class="form-control form-control-sm border-start-0 col-search-input py-1" placeholder="Find column...">
               </div>
             </div>
@@ -394,13 +400,13 @@
 
           <div class="col-selector-body p-1" style="max-height: 280px; overflow-y: auto;">
             ${this.columns.map(col => {
-              const isChecked = col.alwaysVisible || this.visibleKeys.includes(col.key);
-              const isDisabled = col.alwaysVisible ? 'disabled' : '';
-              const lockedBadge = col.alwaysVisible
-                ? '<span class="badge bg-light text-secondary border ms-auto col-locked-badge" title="This column is required"><i class="bi bi-lock-fill me-1" style="font-size: 9px;"></i>Always Visible</span>'
-                : '';
+        const isChecked = col.alwaysVisible || this.visibleKeys.includes(col.key);
+        const isDisabled = col.alwaysVisible ? 'disabled' : '';
+        const lockedBadge = col.alwaysVisible
+          ? '<span class="badge bg-light text-secondary border ms-auto col-locked-badge" title="This column is required"><i class="bi bi-lock-fill me-1" style="font-size: 9px;"></i>Always Visible</span>'
+          : '';
 
-              return `
+        return `
                 <label class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded col-checkbox-item ${col.alwaysVisible ? 'col-item-locked' : ''}">
                   <div class="form-check d-flex align-items-center gap-2 mb-0 w-100">
                     <input class="form-check-input col-toggle-checkbox m-0"
@@ -416,13 +422,17 @@
                   </div>
                 </label>
               `;
-            }).join('')}
+      }).join('')}
           </div>
 
-          <div class="col-selector-footer p-2 border-top bg-light text-center">
-            <button type="button" class="btn btn-sm btn-outline-secondary w-100 col-reset-btn d-flex align-items-center justify-content-center gap-1">
+          <div class="col-selector-footer p-2 border-top bg-light d-flex gap-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1 col-reset-btn d-flex align-items-center justify-content-center gap-1">
               <i class="bi bi-arrow-counterclockwise"></i>
-              <span>Reset Columns</span>
+              <span>Reset</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-success flex-grow-1 col-apply-btn d-flex align-items-center justify-content-center gap-1">
+              <i class="bi bi-check2"></i>
+              <span>Apply</span>
             </button>
           </div>
         </div>
@@ -470,7 +480,28 @@
         });
       });
 
-      // Prevent dropdown from closing when clicking inside menu on non-Bootstrap fallback
+      // Close / Apply buttons & backdrop logic
+      const closeColMenu = () => {
+        menu.classList.remove('show');
+        wrapper.classList.remove('show');
+        triggerBtn.classList.remove('show');
+        triggerBtn.setAttribute('aria-expanded', 'false');
+        TableColumnSelector._removeBackdrop();
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+          const inst = bootstrap.Dropdown.getInstance(triggerBtn);
+          if (inst) inst.hide();
+        }
+      };
+
+      wrapper.querySelectorAll('.col-selector-close-btn, .col-apply-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeColMenu();
+        });
+      });
+
+      // Prevent dropdown from closing when clicking inside menu
       const menu = wrapper.querySelector('.col-selector-menu');
       if (menu) {
         menu.addEventListener('click', (e) => {
@@ -478,19 +509,49 @@
         });
       }
 
-      // Reliable manual toggle fallback in case Bootstrap JS dropdown is not initialized
+      // Bootstrap dropdown event hooks
+      wrapper.addEventListener('show.bs.dropdown', () => {
+        wrapper.classList.add('show');
+        if (menu) {
+          menu.style.removeProperty('transform');
+          menu.style.removeProperty('inset');
+        }
+        const sc = wrapper.closest('.search-container, .gcp-table-toolbar');
+        if (sc) sc.style.setProperty('z-index', '1055', 'important');
+        wrapper.style.setProperty('z-index', '1055', 'important');
+      });
+
+      wrapper.addEventListener('shown.bs.dropdown', () => {
+        if (menu) {
+          menu.style.removeProperty('transform');
+          menu.style.removeProperty('inset');
+        }
+      });
+
+      wrapper.addEventListener('hidden.bs.dropdown', () => {
+        wrapper.classList.remove('show');
+        const sc = wrapper.closest('.search-container, .gcp-table-toolbar');
+        if (sc) sc.style.removeProperty('z-index');
+        wrapper.style.removeProperty('z-index');
+      });
+
       const triggerBtn = wrapper.querySelector('.col-selector-btn');
-      if (triggerBtn && menu) {
+      if (triggerBtn) {
+        // Reliable toggle fallback in case Bootstrap JS dropdown is not initialized
         triggerBtn.addEventListener('click', (e) => {
-          // If bootstrap dropdown works naturally, this is harmless; if not, toggle manual class
           if (typeof bootstrap === 'undefined' || !bootstrap.Dropdown) {
             e.preventDefault();
             e.stopPropagation();
             const isOpen = menu.classList.contains('show');
-            // Close all other col-selector menus
-            document.querySelectorAll('.col-selector-menu.show').forEach(m => m.classList.remove('show'));
+            TableColumnSelector.closeAll();
             if (!isOpen) {
               menu.classList.add('show');
+              wrapper.classList.add('show');
+              triggerBtn.classList.add('show');
+              triggerBtn.setAttribute('aria-expanded', 'true');
+              const sc = wrapper.closest('.search-container, .gcp-table-toolbar');
+              if (sc) sc.style.setProperty('z-index', '1055', 'important');
+              wrapper.style.setProperty('z-index', '1055', 'important');
             }
           }
         });
@@ -502,9 +563,33 @@
   // Global document click to close manual fallback dropdowns
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.col-selector-wrapper')) {
-      document.querySelectorAll('.col-selector-menu.show').forEach(m => m.classList.remove('show'));
+      TableColumnSelector.closeAll();
     }
   });
+
+  TableColumnSelector._ensureBackdrop = function () {
+    // Backdrop removed: dropdown is cleanly anchored directly below the button
+  };
+
+  TableColumnSelector._removeBackdrop = function () {
+    const bd = document.querySelector('.col-selector-backdrop');
+    if (bd) bd.remove();
+  };
+
+  TableColumnSelector.closeAll = function () {
+    document.querySelectorAll('.col-selector-menu.show').forEach(m => m.classList.remove('show'));
+    document.querySelectorAll('.col-selector-wrapper.show').forEach(w => {
+      w.classList.remove('show');
+      w.style.removeProperty('z-index');
+      const sc = w.closest('.search-container, .gcp-table-toolbar');
+      if (sc) sc.style.removeProperty('z-index');
+    });
+    document.querySelectorAll('.col-selector-btn.show').forEach(b => {
+      b.classList.remove('show');
+      b.setAttribute('aria-expanded', 'false');
+    });
+    TableColumnSelector._removeBackdrop();
+  };
 
   // Export to window
   window.TableColumnSelector = TableColumnSelector;

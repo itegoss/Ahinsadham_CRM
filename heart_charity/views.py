@@ -84,8 +84,8 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django.utils import timezone
 def show_lookup_data(request):
-    lookup_types = LookupType.objects.filter(is_deleted=False)
-    lookups = Lookup.objects.select_related("lookup_type").filter(is_deleted=False).order_by("id")
+    lookup_types = LookupType.objects.filter(is_deleted=False).order_by("-updated_at", "-id")
+    lookups = Lookup.objects.select_related("lookup_type").filter(is_deleted=False).order_by("-updated_at", "-id")
 
     return render(request, "lookup_display.html", {
         "lookup_types": lookup_types,
@@ -124,6 +124,17 @@ class FastPaginator(DjangoPaginator):
         return c
 
 Paginator = FastPaginator
+
+def get_page_size(request, prefix):
+    size = request.GET.get(f'{prefix}_page_size') or request.GET.get('page_size')
+    try:
+        size = int(size)
+        if size in [10, 25, 50, 75, 100]:
+            return size
+    except (ValueError, TypeError):
+        pass
+    return 10
+
 from .helpers import get_user_permissions
 
 def apply_column_filters(queryset, request, prefix, mapping):
@@ -414,27 +425,27 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
 
     if users is None:
         users = User.objects.all()
-    users = users.select_related('userrole__role').order_by('id')
+    users = users.select_related('userrole__role').order_by('-date_joined', '-id')
 
     if roles_qs is None:
         roles_qs = UserModuleAccess.objects.all()
-    roles_qs = roles_qs.select_related('module', 'created_by', 'updated_by', 'deleted_by')
+    roles_qs = roles_qs.select_related('module', 'created_by', 'updated_by', 'deleted_by').order_by('-updated_at', '-id')
 
     if donations is None:
         donations = Donation.objects.all()
-    donations = donations.select_related('donor', 'donation_category', 'donation_sub_category', 'payment_method', 'payment_status', 'created_by', 'updated_by', 'deleted_by', 'verified_by')
+    donations = donations.select_related('donor', 'donation_category', 'donation_sub_category', 'payment_method', 'payment_status', 'created_by', 'updated_by', 'deleted_by', 'verified_by').order_by('-updated_at', '-id')
 
     if donors is None:
         donors = DonorVolunteer.objects.all()
-    donors = donors.select_related("person_type", "donor_box", "id_type", "occupation_nature", "occupation_type", "created_by", "updated_by", "deleted_by")
+    donors = donors.select_related("person_type", "donor_box", "id_type", "occupation_nature", "occupation_type", "created_by", "updated_by", "deleted_by").order_by('-updated_at', '-id')
 
     if owner_details is None:
         owner_details = OwnerDetail.objects.all()
-    owner_details = owner_details.select_related("donor_box", "id_type", "created_by", "updated_by", "deleted_by")
+    owner_details = owner_details.select_related("donor_box", "id_type", "created_by", "updated_by", "deleted_by").order_by('-updated_at', '-id')
 
     if employees is None:
         employees = Employee.objects.all()
-    employees = employees.select_related("department", "position", "designation", "id_type", "created_by", "updated_by", "deleted_by")
+    employees = employees.select_related("department", "position", "designation", "id_type", "created_by", "updated_by", "deleted_by").order_by('-updated_at', '-id')
 
     emp_q = request.GET.get('emp_q', '').strip()
     if emp_q:
@@ -453,19 +464,19 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
 
     if lookup_types is None:
         lookup_types = LookupType.objects.all()
-    lookup_types = lookup_types.select_related('created_by', 'updated_by', 'deleted_by').order_by("id")
+    lookup_types = lookup_types.select_related('created_by', 'updated_by', 'deleted_by').order_by("-updated_at", "-id")
 
     if lookups is None:
         lookups = Lookup.objects.all()
-    lookups = lookups.select_related("lookup_type", "created_by", "updated_by", "deleted_by").order_by("id")
+    lookups = lookups.select_related("lookup_type", "created_by", "updated_by", "deleted_by").order_by("-updated_at", "-id")
 
     if donation_boxes is None:
         donation_boxes = DonationBox.objects.all()
-    donation_boxes = donation_boxes.select_related('uploaded_by', 'created_by', 'deleted_by')
+    donation_boxes = donation_boxes.select_related('uploaded_by', 'created_by', 'deleted_by').order_by("-updated_at", "-id")
 
     if donation_payment is None:
         donation_payment = DonationPaymentBox.objects.all()
-    donation_payment = donation_payment.select_related("owner", "donation_box", "opened_by", "received_by", "payment_mode", "verified_by", "created_by", "updated_by", "deleted_by")
+    donation_payment = donation_payment.select_related("owner", "donation_box", "opened_by", "received_by", "payment_mode", "verified_by", "created_by", "updated_by", "deleted_by").order_by("-updated_at", "-id")
 
     donation_owners = DonationOwner.objects.select_related('owner_name', 'donation_box').all()
     roles_qss = UserModuleAccess.objects.values_list("name", flat=True)
@@ -487,24 +498,35 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
     donors = order_queryset(donors, request, 'donor', donor_mapping, ['-updated_at', '-id'])
     employees = order_queryset(employees, request, 'emp', employee_mapping, ['-updated_at', '-id'])
     owner_details = order_queryset(owner_details, request, 'owner', owner_mapping, ['-updated_at', '-id'])
-    donations = order_queryset(donations, request, 'donation', donation_mapping, 'id')
-    users = order_queryset(users, request, 'user', user_mapping, 'id')
-    roles_qs = order_queryset(roles_qs, request, 'roles', roles_mapping, 'id')
-    lookup_types = order_queryset(lookup_types, request, 'lt', lt_mapping, 'id')
-    lookups = order_queryset(lookups, request, 'lu', lu_mapping, 'id')
-    donation_payment = order_queryset(donation_payment, request, 'payments', payments_mapping, 'id')
-    donation_boxes = order_queryset(donation_boxes, request, 'box', box_mapping, 'id')
+    donations = order_queryset(donations, request, 'donation', donation_mapping, ['-updated_at', '-id'])
+    users = order_queryset(users, request, 'user', user_mapping, ['-date_joined', '-id'])
+    roles_qs = order_queryset(roles_qs, request, 'roles', roles_mapping, ['-updated_at', '-id'])
+    lookup_types = order_queryset(lookup_types, request, 'lt', lt_mapping, ['-updated_at', '-id'])
+    lookups = order_queryset(lookups, request, 'lu', lu_mapping, ['-updated_at', '-id'])
+    donation_payment = order_queryset(donation_payment, request, 'payments', payments_mapping, ['-updated_at', '-id'])
+    donation_boxes = order_queryset(donation_boxes, request, 'box', box_mapping, ['-updated_at', '-id'])
 
-    page_obj = Paginator(donors, 10).get_page(request.GET.get('donor_page'))
-    employee_page_obj = Paginator(employees, 10).get_page(request.GET.get('employee_page'))
-    owner_page_obj = Paginator(owner_details, 10).get_page(request.GET.get('owner_page'))
-    donation_page_obj = Paginator(donations, 10).get_page(request.GET.get('donation_page'))
-    user_page_obj = Paginator(users, 10).get_page(request.GET.get('user_page'))
-    roles_page_obj = Paginator(roles_qs, 10).get_page(request.GET.get('roles_page'))
-    lookup_page_obj = Paginator(lookup_types, 5).get_page(request.GET.get("lt_page"))
-    lookup_table_obj = Paginator(lookups, 5).get_page(request.GET.get("lu_page"))
-    payments_page_obj = Paginator(donation_payment, 5).get_page(request.GET.get("payments_page"))
-    box_page_obj = Paginator(donation_boxes, 5).get_page(request.GET.get("box_page"))
+    donor_page_size = get_page_size(request, 'donor')
+    employee_page_size = get_page_size(request, 'employee')
+    owner_page_size = get_page_size(request, 'owner')
+    donation_page_size = get_page_size(request, 'donation')
+    user_page_size = get_page_size(request, 'user')
+    roles_page_size = get_page_size(request, 'roles')
+    lt_page_size = get_page_size(request, 'lt')
+    lu_page_size = get_page_size(request, 'lu')
+    payments_page_size = get_page_size(request, 'payments')
+    box_page_size = get_page_size(request, 'box')
+
+    page_obj = Paginator(donors, donor_page_size).get_page(request.GET.get('donor_page'))
+    employee_page_obj = Paginator(employees, employee_page_size).get_page(request.GET.get('employee_page'))
+    owner_page_obj = Paginator(owner_details, owner_page_size).get_page(request.GET.get('owner_page'))
+    donation_page_obj = Paginator(donations, donation_page_size).get_page(request.GET.get('donation_page'))
+    user_page_obj = Paginator(users, user_page_size).get_page(request.GET.get('user_page'))
+    roles_page_obj = Paginator(roles_qs, roles_page_size).get_page(request.GET.get('roles_page'))
+    lookup_page_obj = Paginator(lookup_types, lt_page_size).get_page(request.GET.get("lt_page"))
+    lookup_table_obj = Paginator(lookups, lu_page_size).get_page(request.GET.get("lu_page"))
+    payments_page_obj = Paginator(donation_payment, payments_page_size).get_page(request.GET.get("payments_page"))
+    box_page_obj = Paginator(donation_boxes, box_page_size).get_page(request.GET.get("box_page"))
 
     icon_map = {
         "User": "bi bi-person",
@@ -562,6 +584,17 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         'payments_page_obj': payments_page_obj,
         'box_page_obj': box_page_obj,
         'icon_map': icon_map,
+        'donor_page_size': donor_page_size,
+        'employee_page_size': employee_page_size,
+        'owner_page_size': owner_page_size,
+        'donation_page_size': donation_page_size,
+        'user_page_size': user_page_size,
+        'roles_page_size': roles_page_size,
+        'lt_page_size': lt_page_size,
+        'lu_page_size': lu_page_size,
+        'payments_page_size': payments_page_size,
+        'box_page_size': box_page_size,
+        'page_size_options': [10, 25, 50, 75, 100],
     }
 
     # Pass column filter parameters back to the context
@@ -581,11 +614,29 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
             context['page_mode'] = 'danpeti'
         elif tab_param == "Owner Details Module":
             context['page_mode'] = 'owner_details'
-    elif request.GET.get('owner_page') or any(k.startswith('owner_') for k in request.GET.keys()):
+    elif request.GET.get('donor_page') or any(k.startswith('donor_') for k in request.GET.keys()):
+        context['active_tab'] = 'Donor/Volunteer Management System'
+    elif request.GET.get('employee_page') or any(k.startswith('emp_') for k in request.GET.keys()) or request.GET.get('emp_q'):
+        context['active_tab'] = 'Employee Management System'
+    elif request.GET.get('owner_page') or any(k.startswith('owner_') for k in request.GET.keys()) or request.GET.get('owner_query') or request.GET.get('owner_query2'):
         context['active_tab'] = 'Owner Details Module'
         context['page_mode'] = 'owner_details'
-    elif request.GET.get('employee_page') or any(k.startswith('emp_') for k in request.GET.keys()):
-        context['active_tab'] = 'Employee Management System'
+    elif request.GET.get('donation_page') or any(k.startswith('donation_') for k in request.GET.keys()) or request.GET.get('query3'):
+        context['active_tab'] = 'Donation Module'
+    elif request.GET.get('box_page') or any(k.startswith('box_') for k in request.GET.keys()):
+        req_page_mode = request.GET.get('page_mode')
+        if req_page_mode == 'danpeti':
+            context['active_tab'] = 'Danpeti Module'
+            context['page_mode'] = 'danpeti'
+        else:
+            context['active_tab'] = 'Donation Box Module'
+            context['page_mode'] = 'box'
+    elif request.GET.get('user_page') or any(k.startswith('user_') for k in request.GET.keys()):
+        context['active_tab'] = 'user'
+    elif request.GET.get('roles_page') or any(k.startswith('roles_') for k in request.GET.keys()):
+        context['active_tab'] = 'roles'
+    elif request.GET.get('lt_page') or any(k.startswith('lt_') for k in request.GET.keys()) or request.GET.get('lu_page') or any(k.startswith('lu_') for k in request.GET.keys()) or request.GET.get('lookup_query') or request.GET.get('sub_lookup_query'):
+        context['active_tab'] = 'MDM'
 
     if user.is_authenticated and user.is_superuser:
         all_modules = Module.objects.all().values_list('module_name', flat=True)
@@ -732,8 +783,8 @@ def send_otp(request):
 @login_required
 def search_lookup_type(request):
     lookup_query = request.GET.get('lookup_query', '').strip()
-    active_tab = request.GET.get('active_tab', 'mdm')
-    lookup_types = LookupType.objects.select_related('created_by', 'updated_by', 'deleted_by').all().order_by('id')
+    active_tab = request.GET.get('active_tab', 'MDM')
+    lookup_types = LookupType.objects.select_related('created_by', 'updated_by', 'deleted_by').all().order_by('-updated_at', '-id')
     if lookup_query:
         filters = (
             Q(type_name__icontains=lookup_query) |
@@ -776,8 +827,8 @@ def search_lookup_type(request):
 @login_required
 def search_lookup_table(request):
     sub_lookup_query = request.GET.get('sub_lookup_query', '').strip()
-    active_tab = request.GET.get('active_tab', 'mdm')
-    lookups = Lookup.objects.select_related("lookup_type", "created_by", "updated_by", "deleted_by").all().order_by('id')
+    active_tab = request.GET.get('active_tab', 'MDM')
+    lookups = Lookup.objects.select_related("lookup_type", "created_by", "updated_by", "deleted_by").all().order_by('-updated_at', '-id')
     if sub_lookup_query:
         month_map = {
             "jan": 1, "january": 1,
@@ -860,7 +911,7 @@ def search_users(request):
     query = request.GET.get("user_query", "")
     active_tab = request.GET.get("active_tab", "user")
     download = request.GET.get("download")
-    users = User.objects.all().order_by("id")
+    users = User.objects.all().order_by("-date_joined", "-id")
     if query:
         users = users.filter(
             Q(username__icontains=query) |
@@ -895,7 +946,7 @@ def search_users(request):
 def search_roles(request):
     query1 = request.GET.get('query1', '').strip()
     active_tab = "roles"
-    roles = UserModuleAccess.objects.all().order_by('id')
+    roles = UserModuleAccess.objects.all().order_by('-updated_at', '-id')
     if query1:
         month_map = {
             "jan": 1, "january": 1,
@@ -1052,7 +1103,7 @@ def search_donor_volunteer(request):
         "person_type", "id_type", "donor_box",
         "created_by", "updated_by", "occupation_nature", "occupation_type",
         "department", "position", "designation", "deleted_by"
-    ).all()
+    ).all().order_by("-updated_at", "-id")
 
     query2 = request.GET.get('q')
     if query2:
@@ -1268,6 +1319,7 @@ def search_donor_volunteer(request):
 
         return response
     context = get_welcome_context(request, donors=donorvolunteer, extra_context={
+        "active_tab": "Donor/Volunteer Management System",
         "query": query2 if query2 else "",
         "query2": query2 if query2 else "",
     })
@@ -1281,7 +1333,7 @@ def search_donation(request):
         'donor', 'donation_category', 'donation_sub_category',
         'payment_method', 'payment_status', 'created_by', 'updated_by',
         'deleted_by', 'verified_by'
-    ).all()
+    ).all().order_by('-updated_at', '-id')
     query3 = request.GET.get('q', '').strip()
 
     if query3:
@@ -1362,6 +1414,7 @@ def search_donation(request):
         return response
 
     context = get_welcome_context(request, donations=donations, extra_context={
+        "active_tab": "Donation Module",
         'query3': query3,
     })
     return render(request, 'welcome.html', context)
@@ -1373,7 +1426,7 @@ def search_donation_payment(request):
     payments = DonationPaymentBox.objects.select_related(
         'owner', 'donation_box', 'opened_by', 'received_by', 'payment_mode',
         'verified_by', 'created_by', 'updated_by', 'deleted_by'
-    ).filter(is_deleted=False)
+    ).filter(is_deleted=False).order_by("-updated_at", "-id")
     if payments_query:
         q = payments_query.lower()
         month_map = {
@@ -1458,7 +1511,7 @@ def search_donation_payment(request):
             except:
                 pass
 
-        payments = payments.filter(filters).distinct().order_by("id")
+        payments = payments.filter(filters).distinct().order_by("-updated_at", "-id")
     if request.GET.get("download") == "1":
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="donation_payments.csv"'
@@ -1519,7 +1572,7 @@ def search_donation_box(request):
     page_mode = request.GET.get("page_mode", "")
     boxes = DonationBox.objects.select_related(
         'uploaded_by', 'created_by', 'deleted_by'
-    ).filter(is_deleted=False).order_by("id")
+    ).filter(is_deleted=False).order_by("-updated_at", "-id")
     if box_query:
         qlow = box_query.lower()
         month_map = {
@@ -1578,7 +1631,7 @@ def search_donation_box(request):
             except:
                 pass
 
-        boxes = boxes.filter(filters).distinct().order_by("id")
+        boxes = boxes.filter(filters).distinct().order_by("-updated_at", "-id")
     # ---------------------------------------
     # 📥 CSV DOWNLOAD
     # ---------------------------------------
@@ -3329,7 +3382,7 @@ def add_donation_box(request):
     return render(request, "add_donation_box.html", context)
 def all_donations(request):
     q = request.GET.get('q', '').strip()
-    donations = Donation.objects.filter(is_deleted=False)
+    donations = Donation.objects.filter(is_deleted=False).order_by('-updated_at', '-id')
 
     if q:
         donations = donations.filter(
@@ -3351,9 +3404,9 @@ def all_donations(request):
     })
 
 def donation_list(request):
-    donations = Donation.objects.all().order_by('id')
+    donations = Donation.objects.all().order_by('-updated_at', '-id')
     page = request.GET.get('page', 1) 
-    paginator = Paginator(donations, 1)
+    paginator = Paginator(donations, 10)
     donations_page = paginator.get_page(page)
     return render(request, 'donation_list.html', {'donations': donations_page})
 
@@ -4974,10 +5027,14 @@ def add_owner_details(request):
             if not state_val or country_val != "India":
                 state_val = request.POST.get("state_text") or state_val
 
+            owner_type = request.POST.get("owner_type", "business")
+            business_name_val = "Individual" if owner_type == "individual" else (request.POST.get("business_name") or None)
+            gst_number_val = None if owner_type == "individual" else (request.POST.get("gst_number") or None)
+
             owner = OwnerDetail(
                 # Business Details
-                business_name=request.POST.get("business_name") or None,
-                gst_number=request.POST.get("gst_number") or None,
+                business_name=business_name_val,
+                gst_number=gst_number_val,
 
                 # Address Details
                 address_line_1=request.POST.get("address_line_1") or None,
@@ -5089,8 +5146,13 @@ def edit_owner_details(request, id):
                 state_val = request.POST.get("state_text") or state_val
 
             # Business Details
-            owner.business_name = request.POST.get("business_name") or None
-            owner.gst_number = request.POST.get("gst_number") or None
+            owner_type = request.POST.get("owner_type", "business")
+            if owner_type == "individual":
+                owner.business_name = "Individual"
+                owner.gst_number = None
+            else:
+                owner.business_name = request.POST.get("business_name") or None
+                owner.gst_number = request.POST.get("gst_number") or None
 
             # Address Details
             owner.address_line_1 = request.POST.get("address_line_1") or None
@@ -5166,7 +5228,7 @@ def delete_owner_details(request, id):
 def search_owner_details(request):
     ownerdetails = OwnerDetail.objects.select_related(
         "donor_box", "id_type", "created_by", "updated_by", "deleted_by"
-    ).all()
+    ).all().order_by("-updated_at", "-id")
 
     query2 = request.GET.get('q')
     if query2:

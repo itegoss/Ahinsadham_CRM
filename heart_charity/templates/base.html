@@ -18,12 +18,12 @@
     <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'css/templatemo-kind-heart-charity.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.5">
-    <link rel="stylesheet" href="{% static 'css/modern_crm.css' %}?v=3.5">
+    <link rel="stylesheet" href="{% static 'css/modern_crm.css' %}?v=6.7">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{% static 'js/column_selector.js' %}?v=1.0"></script>
+    <script src="{% static 'js/column_selector.js' %}?v=4.6"></script>
     <link rel="icon" type="image/jpeg" href="{% static 'images/Ahinsa-logo.png' %}">
 
     <style>
@@ -46,12 +46,61 @@
       .pagination-container {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
         align-items: center !important;
-        justify-content: center !important;
-        gap: 6px !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
         width: 100% !important;
         margin: 0.75rem 0 !important;
+        padding: 4px 6px !important;
+      }
+      .page-size-wrap {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+      }
+      .page-size-label {
+        color: #5f6368 !important;
+        font-size: 13.5px !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+      }
+      .page-size-select {
+        display: inline-block !important;
+        width: auto !important;
+        min-width: 64px !important;
+        height: 32px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #202124 !important;
+        border-radius: 16px !important;
+        border: 1.5px solid #a4a9f7 !important;
+        padding: 2px 28px 2px 12px !important;
+        background-color: #ffffff !important;
+        cursor: pointer !important;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+      }
+      .page-size-select:focus {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        outline: none !important;
+      }
+      .page-range-info {
+        color: #5f6368 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+        margin: 0 0 0 4px !important;
+      }
+      .pagination-nav-wrap {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 4px !important;
       }
       .pagination-container form,
       .pagination-container .pagination-form {
@@ -63,7 +112,7 @@
         margin: 0 4px !important;
         white-space: nowrap !important;
       }
-      .pagination-container .form-select {
+      .pagination-container .form-select:not(.page-size-select) {
         width: auto !important;
         min-width: 56px !important;
         height: 32px !important;
@@ -84,12 +133,259 @@
         margin: 0 2px !important;
         flex-shrink: 0 !important;
       }
-      .pagination-container label,
-      .pagination-container span {
+      .pagination-container label:not(.page-size-label),
+      .pagination-container span:not(.page-size-label):not(.page-range-info) {
         white-space: nowrap !important;
         margin: 0 !important;
         line-height: 1 !important;
       }
+
+      /* Universal Compact Row Height & Single-Line Enforcement for All Tables */
+      table.table tbody tr td,
+      .table tbody tr td,
+      table tbody tr td,
+      .paginated-table tbody tr td,
+      table.table tfoot tr td,
+      .table tfoot tr td {
+        padding: 5px 8px !important;
+        vertical-align: middle !important;
+        font-size: 0.81rem !important;
+        line-height: 1.3 !important;
+        height: auto !important;
+        white-space: nowrap !important;
+      }
+      table.table tbody tr td *,
+      .table tbody tr td *,
+      table tbody tr td *,
+      .paginated-table tbody tr td *,
+      table.table thead th,
+      .table thead th,
+      table thead th,
+      .paginated-table thead th,
+      table.table thead th *,
+      .table thead th * {
+        white-space: nowrap !important;
+      }
+      .column-search-row td {
+        padding: 3px 6px !important;
+        background: #ffffff !important;
+        vertical-align: middle !important;
+      }
+      table.table thead .column-search-row input,
+      table.table thead .column-search-row td input,
+      table.table thead .column-search,
+      table.table thead input.column-search,
+      .table thead .column-search-row input,
+      .paginated-table thead .column-search-row input,
+      .column-search-row td input,
+      .column-search-row input,
+      input.column-search,
+      .column-search {
+        width: 100% !important;
+        min-width: 60px !important;
+        height: 24px !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 2px solid #16a34a !important;
+        border-radius: 0 !important;
+        -webkit-border-radius: 0 !important;
+        -moz-border-radius: 0 !important;
+        padding: 2px 2px 3px 2px !important;
+        font-size: 12px !important;
+        color: #1e293b !important;
+        line-height: 1.2 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        cursor: pointer !important;
+        transition: border-bottom-color 0.15s ease, background-color 0.15s ease !important;
+      }
+      table.table thead .column-search-row input:hover,
+      table.table thead .column-search-row td input:hover,
+      table.table thead .column-search-row input:focus,
+      table.table thead .column-search-row td input:focus,
+      .column-search-row td input:hover,
+      .column-search-row td input:focus,
+      input.column-search:hover,
+      input.column-search:focus,
+      .column-search:hover,
+      .column-search:focus {
+        border: none !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 2px solid #047857 !important;
+        border-radius: 0 !important;
+        -webkit-border-radius: 0 !important;
+        -moz-border-radius: 0 !important;
+        background: rgba(16, 185, 129, 0.05) !important;
+        background-color: rgba(16, 185, 129, 0.05) !important;
+        box-shadow: none !important;
+        outline: none !important;
+      }
+      table.table thead .column-search-row input::placeholder,
+      .column-search-row td input::placeholder,
+      input.column-search::placeholder,
+      .column-search::placeholder {
+        color: #64748b !important;
+        font-size: 12px !important;
+        font-style: normal !important;
+        opacity: 0.85 !important;
+      }
+
+      /* Column Selector Dropdown: identical, clean, right-aligned positioning on hover and on click */
+      .col-selector-wrapper {
+        position: relative !important;
+        display: inline-block !important;
+      }
+      .col-selector-wrapper.show,
+      .col-selector-wrapper:hover,
+      .col-selector-wrapper:focus-within,
+      .col-selector-wrapper:has(.col-selector-menu.show) {
+        z-index: 1055 !important;
+      }
+      .col-selector-wrapper .dropdown-menu,
+      .col-selector-menu {
+        position: absolute !important;
+        top: calc(100% + 4px) !important;
+        right: 0 !important;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        min-width: 280px !important;
+        max-width: 320px !important;
+        width: 300px !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 18px 40px -4px rgba(15, 23, 42, 0.18), 0 8px 16px -4px rgba(15, 23, 42, 0.08) !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        z-index: 1055 !important;
+      }
+      .col-selector-menu::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -8px !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 8px !important;
+        background: transparent !important;
+      }
+      .col-selector-wrapper:hover .col-selector-menu,
+      .col-selector-wrapper.show .col-selector-menu,
+      .col-selector-menu.show {
+        display: flex !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: calc(100% + 4px) !important;
+        right: 0 !important;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      .action-dots-btn {
+        padding: 2px 6px !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        height: 24px !important;
+      }
+
+      /* Universal Compact Action Column & Action Buttons (Add & Download) for All Tables */
+      table.table thead th:first-child,
+      .table thead th:first-child,
+      table thead th:first-child,
+      .paginated-table thead th:first-child,
+      table.table tbody tr td:first-child,
+      .table tbody tr td:first-child,
+      table tbody tr td:first-child,
+      .paginated-table tbody tr td:first-child,
+      .column-search-row td:first-child {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 70px !important;
+        text-align: center !important;
+        padding: 4px 2px !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+      }
+
+      .column-search-row td:first-child > div,
+      .table-action-btns-wrap {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+      }
+
+      .column-search-row td:first-child a,
+      .table-action-add-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 14px !important;
+        color: #16a34a !important;
+        text-decoration: none !important;
+        border-radius: 4px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        transition: all 0.15s ease !important;
+      }
+      .column-search-row td:first-child a:hover,
+      .table-action-add-btn:hover {
+        background-color: rgba(22, 163, 74, 0.12) !important;
+        color: #15803d !important;
+      }
+
+      .column-search-row td:first-child form {
+        display: inline-flex !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1 !important;
+      }
+
+      .column-search-row td:first-child button,
+      .table-action-download-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 14px !important;
+        color: #334155 !important;
+        background: none !important;
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        box-shadow: none !important;
+        transition: all 0.15s ease !important;
+      }
+      .column-search-row td:first-child button:hover,
+      .table-action-download-btn:hover {
+        background-color: rgba(51, 65, 85, 0.12) !important;
+        color: #0f172a !important;
+      }
+
+      .column-search-row td:first-child i {
+        font-size: 14px !important;
+        line-height: 1 !important;
+      }
+
       .container {
         max-width: 100% !important;
       }
@@ -310,7 +606,7 @@
 
             <!-- Top Navbar Quick Search Bar (positioned right beside logo) -->
             <div class="top-nav-search-wrapper position-relative d-none d-sm-block">
-                <div class="top-nav-search-box d-flex align-items-center" id="searchBoxContainer">
+                <!-- <div class="top-nav-search-box d-flex align-items-center" id="searchBoxContainer">
                     <i class="bi bi-search top-nav-search-icon"></i>
                     <input type="text" id="globalConsoleSearch" class="top-nav-search-input" placeholder="Search menu, pages... (Ctrl+K)" autocomplete="off" spellcheck="false">
                     <span class="top-nav-shortcut-badge d-none d-md-inline-flex" title="Shortcut: Press Ctrl+K or /">
@@ -319,7 +615,7 @@
                     <button type="button" class="top-nav-search-clear d-none" id="searchClearBtn" aria-label="Clear search">
                         <i class="bi bi-x"></i>
                     </button>
-                </div>
+                </div> -->
 
                 <!-- Quick Navigate dropdown removed -->
             </div>
@@ -334,8 +630,8 @@
                 </button>
 
                 <!-- Notifications Dropdown -->
-                <div class="dropdown">
-                    <button class="gcp-icon-btn position-relative" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                <div class="dropdown position-relative">
+                    <button class="gcp-icon-btn position-relative" type="button" id="notifDropdown" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="true" aria-expanded="false" title="Notifications">
                         <i class="bi bi-bell"></i>
                         <span class="gcp-notif-dot"></span>
                     </button>
@@ -366,8 +662,8 @@
                 <div class="gcp-header-divider d-none d-sm-block"></div>
 
                 <!-- User Profile Pill / Menu -->
-                <div class="dropdown">
-                    <button class="gcp-user-pill dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown position-relative">
+                    <button class="gcp-user-pill dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="true" aria-expanded="false">
                         <div class="gcp-avatar-circle">
                             {{ request.user.username|slice:":1"|upper }}
                         </div>
@@ -382,8 +678,8 @@
                             <div class="fw-bold text-dark">{{ request.user.username }}</div>
                             <small class="text-muted">{{ request.user.email|default:"Active Staff Member" }}</small>
                         </li>
-                        <li><a class="dropdown-item py-2" href="/welcome/"><i class="bi bi-speedometer2 me-2"></i> Dashboard Overview</a></li>
-                        <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#helpCenterModal"><i class="bi bi-journal-text me-2"></i> CRM User Guide</a></li>
+                        <li><a class="dropdown-item py-2 user-dashboard-overview-link" href="/welcome/?tab=default-user"><i class="bi bi-speedometer2 me-2"></i> Dashboard Overview</a></li>
+                        <li><button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#helpCenterModal"><i class="bi bi-journal-text me-2"></i> CRM User Guide</button></li>
                         <li><hr class="dropdown-divider my-1"></li>
                         <li><a class="dropdown-item py-2 text-danger fw-semibold" href="/logout"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
                     </ul>
@@ -663,6 +959,32 @@
   </div>
 </div>
 
+<!-- Full Address Detail Modal -->
+<div class="modal fade" id="addressDetailModal" tabindex="-1" aria-labelledby="addressDetailModalLabel" aria-hidden="true" style="z-index: 1065;">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+      <div class="modal-header py-2 px-3 text-white" style="background: #064E3B;">
+        <h6 class="modal-title d-flex align-items-center gap-2 mb-0" id="addressDetailModalLabel" style="font-size: 0.95rem; font-weight: 600;">
+          <i class="bi bi-geo-alt-fill text-warning"></i> Full Address
+        </h6>
+        <button type="button" class="btn-close btn-close-white btn-close-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3 bg-light">
+        <div class="bg-white p-3 rounded border shadow-sm">
+          <div id="addressDetailModalContent" class="user-select-all" style="font-size: 13.5px; line-height: 1.5; color: #1e293b; max-height: 220px; overflow-y: auto; white-space: normal !important; word-break: break-word;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-2 px-3 bg-white border-top d-flex justify-content-between align-items-center">
+        <button type="button" class="btn btn-sm btn-outline-secondary px-3" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1 px-3 shadow-sm" id="addressModalCopyBtn" style="background: #1a7a38; border-color: #1a7a38;">
+          <i class="bi bi-clipboard"></i> <span id="addressModalCopyText">Copy Address</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -674,6 +996,207 @@
         });
       });
     }
+
+    // ── Universal Address Column Helper (Hover Tooltip, Click Modal, Auto-Enhance) ──
+    (function () {
+      let activeTooltip = null;
+      let activeTarget = null;
+      let modalInstance = null;
+
+      function createTooltipElement() {
+        let el = document.getElementById('addressHoverTooltip');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'addressHoverTooltip';
+          el.className = 'address-hover-tooltip';
+          el.innerHTML = `
+            <div class="tooltip-header"><i class="bi bi-geo-alt-fill text-warning"></i> Address</div>
+            <div class="tooltip-body"></div>
+            <div class="tooltip-footer"><i class="bi bi-cursor-fill"></i> Click to view full & copy</div>
+          `;
+          document.body.appendChild(el);
+        }
+        return el;
+      }
+
+      function showTooltip(target) {
+        if (!activeTooltip) activeTooltip = createTooltipElement();
+        const addr = target.getAttribute('data-full-address') || target.textContent.trim();
+        if (!addr || addr === '—' || addr === '-' || addr === 'None') return;
+
+        activeTarget = target;
+        const bodyEl = activeTooltip.querySelector('.tooltip-body');
+        if (bodyEl) bodyEl.textContent = addr;
+
+        if (target.hasAttribute('title')) {
+          target.setAttribute('data-orig-title', target.getAttribute('title'));
+          target.removeAttribute('title');
+        }
+
+        activeTooltip.style.display = 'block';
+        activeTooltip.classList.remove('is-active');
+
+        const rect = target.getBoundingClientRect();
+        const tooltipRect = activeTooltip.getBoundingClientRect();
+
+        let top = rect.bottom + 6;
+        let left = rect.left;
+
+        if (top + tooltipRect.height > window.innerHeight - 10) {
+          top = rect.top - tooltipRect.height - 6;
+        }
+        if (left + tooltipRect.width > window.innerWidth - 15) {
+          left = window.innerWidth - tooltipRect.width - 15;
+        }
+        if (left < 10) left = 10;
+
+        activeTooltip.style.top = top + 'px';
+        activeTooltip.style.left = left + 'px';
+        requestAnimationFrame(() => {
+          if (activeTarget === target) {
+            activeTooltip.classList.add('is-active');
+          }
+        });
+      }
+
+      function hideTooltip() {
+        if (activeTarget && activeTarget.hasAttribute('data-orig-title')) {
+          activeTarget.setAttribute('title', activeTarget.getAttribute('data-orig-title'));
+          activeTarget.removeAttribute('data-orig-title');
+        }
+        if (activeTooltip) {
+          activeTooltip.classList.remove('is-active');
+          activeTooltip.style.display = 'none';
+        }
+        activeTarget = null;
+      }
+
+      window.openAddressModal = function (addrText) {
+        hideTooltip();
+        const modalEl = document.getElementById('addressDetailModal');
+        if (!modalEl) return;
+        const contentEl = document.getElementById('addressDetailModalContent');
+        if (contentEl) contentEl.textContent = addrText;
+
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(modalEl);
+          }
+          modalInstance.show();
+        } else if (typeof $ !== 'undefined') {
+          $(modalEl).modal('show');
+        }
+      };
+
+      // Auto-scan tables for Address columns and enhance them
+      function autoEnhanceAddressColumns() {
+        document.querySelectorAll('table').forEach(table => {
+          const ths = table.querySelectorAll('thead th');
+          const addressColIndices = [];
+          ths.forEach((th, idx) => {
+            const txt = th.textContent.toLowerCase();
+            if (txt.includes('address')) {
+              th.classList.add('col-address');
+              addressColIndices.push(idx);
+            }
+          });
+
+          if (addressColIndices.length > 0) {
+            const searchRowTds = table.querySelectorAll('tr.column-search-row td');
+            addressColIndices.forEach(idx => {
+              if (searchRowTds[idx]) searchRowTds[idx].classList.add('col-address');
+            });
+
+            table.querySelectorAll('tbody tr').forEach(row => {
+              const tds = row.children;
+              addressColIndices.forEach(idx => {
+                const td = tds[idx];
+                if (td) {
+                  if (!td.classList.contains('col-address')) td.classList.add('col-address');
+                  if (!td.querySelector('.address-truncate-cell')) {
+                    const raw = td.textContent.trim();
+                    if (raw && raw !== '—' && raw !== '-' && raw !== 'None') {
+                      td.innerHTML = `<span class="address-truncate-cell" data-full-address="${raw.replace(/"/g, '&quot;')}" title="${raw.replace(/"/g, '&quot;')}" tabindex="0" role="button">${raw}</span>`;
+                    }
+                  }
+                }
+              });
+            });
+          }
+        });
+      }
+
+      // Event delegation for mouseover, mouseout, click
+      document.addEventListener('mouseover', function (e) {
+        const target = e.target.closest('.address-truncate-cell');
+        if (target) showTooltip(target);
+      });
+
+      document.addEventListener('mouseout', function (e) {
+        const target = e.target.closest('.address-truncate-cell');
+        if (target && target === activeTarget) hideTooltip();
+      });
+
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+
+      document.addEventListener('click', function (e) {
+        const target = e.target.closest('.address-truncate-cell');
+        if (target) {
+          e.preventDefault();
+          e.stopPropagation();
+          const addr = target.getAttribute('data-full-address') || target.textContent.trim();
+          if (addr && addr !== '—' && addr !== '-' && addr !== 'None') {
+            window.openAddressModal(addr);
+          }
+        }
+      });
+
+      // Copy Button
+      const copyBtn = document.getElementById('addressModalCopyBtn');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          const contentEl = document.getElementById('addressDetailModalContent');
+          const textToCopy = contentEl ? contentEl.textContent.trim() : '';
+          if (!textToCopy) return;
+
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            const btnText = document.getElementById('addressModalCopyText');
+            const icon = copyBtn.querySelector('i');
+            if (btnText) btnText.textContent = 'Copied!';
+            if (icon) icon.className = 'bi bi-check-lg';
+            copyBtn.classList.remove('btn-success');
+            copyBtn.classList.add('btn-dark');
+
+            setTimeout(() => {
+              if (btnText) btnText.textContent = 'Copy Address';
+              if (icon) icon.className = 'bi bi-clipboard';
+              copyBtn.classList.remove('btn-dark');
+              copyBtn.classList.add('btn-success');
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy address:', err);
+          });
+        });
+      }
+
+      // Initial runs & observer
+      autoEnhanceAddressColumns();
+      setTimeout(autoEnhanceAddressColumns, 300);
+      setTimeout(autoEnhanceAddressColumns, 1000);
+
+      if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function (mutations) {
+          for (let m of mutations) {
+            if (m.addedNodes && m.addedNodes.length) {
+              autoEnhanceAddressColumns();
+              break;
+            }
+          }
+        });
+        const mainContent = document.querySelector('main') || document.body;
+        observer.observe(mainContent, { childList: true, subtree: true });
+      }
+    })();
 
     // Global keyboard shortcut to focus search ('/' or Ctrl+K)
     const globalSearchInput = document.getElementById('globalConsoleSearch');
@@ -820,6 +1343,38 @@
       document.body.style.removeProperty('overflow');
       document.body.style.removeProperty('padding-right');
     });
+
+    // Smooth handling for User Dropdown "Dashboard Overview" click (avoid full page reload)
+    document.addEventListener('click', function(e) {
+      const dashLink = e.target.closest('.user-dashboard-overview-link');
+      if (dashLink) {
+        if (window.location.pathname.startsWith('/welcome') && typeof window.activateTab === 'function') {
+          e.preventDefault();
+          window.activateTab('default-user');
+          const ddBtn = document.getElementById('userMenuDropdown');
+          if (ddBtn && typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+            const inst = bootstrap.Dropdown.getInstance(ddBtn);
+            if (inst) inst.hide();
+          }
+          const menu = dashLink.closest('.dropdown-menu');
+          if (menu) menu.classList.remove('show');
+        }
+      }
+    });
+
+    // Touch Ghost-Click Shield for User Menu Dropdown on Mobile
+    const userMenuBtn = document.getElementById('userMenuDropdown');
+    if (userMenuBtn) {
+      userMenuBtn.addEventListener('show.bs.dropdown', function() {
+        const menu = userMenuBtn.nextElementSibling;
+        if (menu) {
+          menu.style.pointerEvents = 'none';
+          setTimeout(() => {
+            menu.style.pointerEvents = '';
+          }, 220);
+        }
+      });
+    }
 
     // Auto-dismiss Django flash messages after 6 seconds
     setTimeout(function() {
