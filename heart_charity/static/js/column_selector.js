@@ -118,6 +118,23 @@
     }
 
     /**
+     * Check if a column key or label represents an audit column
+     */
+    static isAuditColumn(key, label) {
+      const normalizedKey = (key || '').toLowerCase().trim();
+      const normalizedLabel = (label || '').toLowerCase().replace(/[\s_-]+/g, '_').trim();
+      
+      const auditKeys = [
+        'created_by', 'created_on', 'created_at',
+        'updated_by', 'updated_on', 'updated_at',
+        'is_deleted',
+        'deleted_by', 'deleted_on', 'deleted_at'
+      ];
+
+      return auditKeys.includes(normalizedKey) || auditKeys.includes(normalizedLabel);
+    }
+
+    /**
      * Resolves columns from options or auto-extracts from table headers
      */
     _resolveColumns() {
@@ -128,12 +145,16 @@
           const key = col.key || `col_${colIndex}`;
           const label = (col.label || key).trim();
           const isAction = col.alwaysVisible === true || /^(actions?|action)$/i.test(label) || /^(actions?|action)$/i.test(key);
+          const isAudit = TableColumnSelector.isAuditColumn(key, label);
+          // Audit columns default to unselected (hidden) unless explicitly set otherwise
+          const defaultVisible = col.defaultVisible !== undefined ? Boolean(col.defaultVisible) : (!isAudit);
           return {
             index: colIndex,
             key: key,
             label: label,
             alwaysVisible: isAction,
-            defaultVisible: col.defaultVisible !== false
+            isAudit: isAudit,
+            defaultVisible: defaultVisible
           };
         });
       }
@@ -155,13 +176,15 @@
         }
         const key = th.getAttribute('data-col-key') || th.getAttribute('data-col') || `col_${colIndex}`;
         const isAction = /^(actions?|action)$/i.test(label) || /^(actions?|action)$/i.test(key) || th.classList.contains('col-always-visible');
+        const isAudit = TableColumnSelector.isAuditColumn(key, label);
 
         return {
           index: colIndex,
           key: key,
           label: label,
           alwaysVisible: isAction,
-          defaultVisible: true
+          isAudit: isAudit,
+          defaultVisible: !isAudit
         };
       });
     }
@@ -170,7 +193,20 @@
      * Loads saved visible keys from localStorage
      */
     _loadState() {
+      const SCHEMA_VERSION = 'v2_audit_hidden';
+      const versionKey = `${this.storageKey}__schema_ver`;
+      const currentVer = localStorage.getItem(versionKey);
+
       try {
+        // Migration: If table hasn't migrated yet, clear old stored state so audit columns default to unselected
+        if (currentVer !== SCHEMA_VERSION) {
+          localStorage.removeItem(this.storageKey);
+          localStorage.setItem(versionKey, SCHEMA_VERSION);
+          return this.columns
+            .filter(c => c.defaultVisible !== false || c.alwaysVisible)
+            .map(c => c.key);
+        }
+
         const raw = localStorage.getItem(this.storageKey);
         if (raw) {
           const parsed = JSON.parse(raw);
@@ -198,6 +234,9 @@
      */
     _saveState() {
       try {
+        const SCHEMA_VERSION = 'v2_audit_hidden';
+        const versionKey = `${this.storageKey}__schema_ver`;
+        localStorage.setItem(versionKey, SCHEMA_VERSION);
         localStorage.setItem(this.storageKey, JSON.stringify(this.visibleKeys));
       } catch (e) {
         console.warn(`TableColumnSelector: Error saving to localStorage for "${this.storageKey}":`, e);
@@ -218,6 +257,7 @@
         .filter(c => c.defaultVisible !== false || c.alwaysVisible)
         .map(c => c.key);
 
+      this._saveState();
       this._updateUIState();
       this.applyVisibility();
 
@@ -402,9 +442,9 @@
             ${this.columns.map(col => {
         const isChecked = col.alwaysVisible || this.visibleKeys.includes(col.key);
         const isDisabled = col.alwaysVisible ? 'disabled' : '';
-        const lockedBadge = col.alwaysVisible
+        const extraBadge = col.alwaysVisible
           ? '<span class="badge bg-light text-secondary border ms-auto col-locked-badge" title="This column is required"><i class="bi bi-lock-fill me-1" style="font-size: 9px;"></i>Always Visible</span>'
-          : '';
+          : (col.isAudit ? '<span class="badge bg-light text-secondary border ms-auto col-audit-badge" style="font-size: 9px;" title="Audit Column"><i class="bi bi-clock-history me-1" style="font-size: 9px;"></i>Audit</span>' : '');
 
         return `
                 <label class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded col-checkbox-item ${col.alwaysVisible ? 'col-item-locked' : ''}">
@@ -418,7 +458,7 @@
                     <span class="form-check-label text-truncate" for="col_cb_${this.safeKey}_${col.key}" title="${col.label}">
                       ${col.label}
                     </span>
-                    ${lockedBadge}
+                    ${extraBadge}
                   </div>
                 </label>
               `;

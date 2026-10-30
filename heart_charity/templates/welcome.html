@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block meta_robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% load static %}
 {% load custom_tags %}
 {% block universal_nav %}{% endblock %}
@@ -243,7 +244,7 @@
     outline: none !important;
   }
 
-  /* ── Universal CRM Floating Filter Popover ── */
+  /* ── Universal CRM Floating Filter Popover  ── */
   .crm-floating-popover {
     position: fixed !important;
     z-index: 999999 !important;
@@ -674,6 +675,144 @@
   padding: 9px 16px; font-size: 13.5px;
   color: #1a7a38 !important; cursor: default;
 }
+
+/* ── Soft-Deleted Records Visual Status Styling ── */
+tr.soft-deleted-row,
+table tbody tr.soft-deleted-row,
+.table tbody tr.soft-deleted-row,
+.paginated-table tbody tr.soft-deleted-row {
+  background-color: #f1f5f9 !important;
+}
+
+tr.soft-deleted-row td,
+table tbody tr.soft-deleted-row td,
+.table tbody tr.soft-deleted-row td,
+.paginated-table tbody tr.soft-deleted-row td {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+tr.soft-deleted-row td span:not(.soft-deleted-badge),
+tr.soft-deleted-row td div:not(.action-dropdown-menu),
+tr.soft-deleted-row td a:not(.drop-danger) {
+  color: #64748b !important;
+}
+
+table tbody tr.soft-deleted-row:hover td,
+.table tbody tr.soft-deleted-row:hover td,
+.paginated-table tbody tr.soft-deleted-row:hover td {
+  background-color: #e2e8f0 !important;
+}
+
+/* Subtle Deleted Status Badge */
+.soft-deleted-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fca5a5 !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+}
+
+.soft-deleted-badge i {
+  color: #b91c1c !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+}
+
+{% if not user.is_superuser %}
+/* ── Dashboard Unclickable Links for non-superadmin ── */
+#default-user a,
+#default-user button,
+#default-user .btn,
+#default-user .gcp-stat-link,
+#default-user .gcp-action-tile {
+  pointer-events: none !important;
+  cursor: default !important;
+  text-decoration: none !important;
+}
+
+#default-user .gcp-stat-link,
+#default-user .gcp-stat-link i {
+  color: #94a3b8 !important;
+  cursor: default !important;
+}
+
+#default-user .gcp-action-tile:hover,
+#default-user .gcp-stat-card:hover {
+  transform: none !important;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04) !important;
+}
+{% else %}
+/* ── Dashboard Clickable Links & Hover Effects for Superadmin ── */
+#default-user a,
+#default-user button,
+#default-user .btn,
+#default-user .gcp-stat-link,
+#default-user .gcp-action-tile {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+#default-user .gcp-stat-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: #16a34a !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: color 0.15s ease, transform 0.15s ease !important;
+}
+
+#default-user .gcp-stat-link:hover {
+  color: #15803d !important;
+  text-decoration: underline !important;
+}
+
+#default-user .gcp-stat-link i {
+  color: #16a34a !important;
+  font-size: 0.85rem !important;
+  transition: transform 0.15s ease !important;
+}
+
+#default-user .gcp-stat-link:hover i {
+  transform: translateX(3px) !important;
+}
+
+#default-user .gcp-action-tile {
+  cursor: pointer !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#default-user .gcp-action-tile:hover {
+  transform: translateY(-2px) !important;
+  border-color: #86efac !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04) !important;
+}
+
+#default-user .gcp-stat-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#default-user .gcp-stat-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04) !important;
+}
+{% endif %}
 </style>
 
 <div class="dashboard-container">
@@ -698,7 +837,7 @@
       {% if user.is_superuser %}
       <!-- OVERVIEW -->
       <div class="sidebar-section-label">Overview</div>
-      <a class="tab-btn active" data-tab="default-user">
+      <a class="tab-btn {% if active_tab == 'default-user' or not active_tab %}active{% endif %}" data-tab="default-user">
         <i class="bi bi-speedometer2"></i>
         <span class="sidebar-text">Dashboard</span>
       </a>
@@ -713,7 +852,7 @@
           </div>
           <i class="bi bi-chevron-down chevron-icon"></i>
         </button>
-        <div class="sidebar-submenu" id="settingsSubmenu">
+        <div class="sidebar-submenu {% if active_tab == 'MDM' or active_tab == 'user' or active_tab == 'roles' %}show{% endif %}" id="settingsSubmenu">
           <a class="tab-btn mdm" data-tab="MDM">
             <i class="bi bi-table"></i>
             <span class="sidebar-text">Master Data (MDM)</span>
@@ -739,7 +878,7 @@
           </div>
           <i class="bi bi-chevron-down chevron-icon"></i>
         </button>
-        <div class="sidebar-submenu" id="donationsSubmenu">
+        <div class="sidebar-submenu {% if active_tab == 'Owner Details Module' or active_tab == 'Donation Box Module' or active_tab == 'Danpeti Module' %}show{% endif %}" id="donationsSubmenu">
           <a class="tab-btn" href="{% url 'owner_details_page' %}" data-tab="Owner Details Module">
             <i class="bi bi-person-badge"></i>
             <span class="sidebar-text">Donor Details</span>
@@ -982,11 +1121,11 @@
   <!-- =============Main Content========== -->
   <div class="content">
     <div class="gcp-breadcrumbs" style="padding: 12px 24px; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
-      <a href="/welcome/" style="color: #6b7280; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px;"><i class="bi bi-house-door"></i> Console</a> 
+      <a href="/welcome/?active_tab=default-user" id="breadcrumbConsoleLink" style="color: #6b7280; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px;"><i class="bi bi-house-door"></i> Console</a> 
       <i class="bi bi-chevron-right" style="font-size: 10px; color: #9ca3af;"></i> 
-      <span id="global-breadcrumb-text" style="color: #111827; font-weight: 600;">Dashboard</span>
+      <span id="global-breadcrumb-text" style="color: #111827; font-weight: 600;">{% if active_tab and active_tab != 'default-user' %}{{ active_tab }}{% else %}Dashboard{% endif %}</span>
     </div>
-    <div class="tab-content active" id="default-user">
+    <div class="tab-content {% if active_tab == 'default-user' or not active_tab %}active{% endif %}" id="default-user">
       <!-- Page Header & Breadcrumbs -->
       <div class="gcp-page-header">
         <div class="gcp-page-title-row">
@@ -995,8 +1134,13 @@
             CRM Dashboard
           </h1>
           <div class="d-flex align-items-center gap-2">
+            {% if user.is_superuser %}
             <a href="/adddonation" class="btn btn-primary shadow-sm"><i class="fa-solid fa-plus"></i> Record Donation</a>
             <button type="button" class="btn btn-secondary shadow-sm" data-bs-toggle="modal" data-bs-target="#helpCenterModal"><i class="fa-solid fa-circle-question"></i> Help Center</button>
+            {% else %}
+            <span class="btn btn-primary shadow-sm" style="pointer-events: none; cursor: default; opacity: 0.9;"><i class="fa-solid fa-plus"></i> Record Donation</span>
+            <span class="btn btn-secondary shadow-sm" style="pointer-events: none; cursor: default; opacity: 0.9;"><i class="fa-solid fa-circle-question"></i> Help Center</span>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -1031,9 +1175,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="#" onclick="window.activateTab('Donor/Volunteer Management System'); return false;" class="gcp-stat-link">
               View Donors <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              View Donors
+            </span>
+            {% endif %}
           </div>
         </div>
 
@@ -1050,9 +1200,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="#" onclick="window.activateTab('Donation Module'); return false;" class="gcp-stat-link">
               View Donations <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              View Donations
+            </span>
+            {% endif %}
           </div>
         </div>
 
@@ -1069,9 +1225,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="#" onclick="window.activateTab('user'); return false;" class="gcp-stat-link">
               Manage Users <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              Manage Users
+            </span>
+            {% endif %}
           </div>
         </div>
 
@@ -1088,9 +1250,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="#" onclick="window.activateTab('Employee Management System'); return false;" class="gcp-stat-link">
               View Employees <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              View Employees
+            </span>
+            {% endif %}
           </div>
         </div>
 
@@ -1107,9 +1275,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="{% url 'donation_box_page' %}" class="gcp-stat-link">
               View Boxes <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              View Boxes
+            </span>
+            {% endif %}
           </div>
         </div>
 
@@ -1126,9 +1300,15 @@
             </div>
           </div>
           <div class="gcp-stat-footer">
+            {% if user.is_superuser %}
             <a href="{% url 'danpeti_page' %}" class="gcp-stat-link">
               View Receipts <i class="bi bi-arrow-right"></i>
             </a>
+            {% else %}
+            <span class="gcp-stat-link" style="pointer-events: none; cursor: default;">
+              View Receipts
+            </span>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -1143,6 +1323,7 @@
           <span class="text-muted small">Frequent administrative tasks</span>
         </div>
         <div class="gcp-action-grid">
+          {% if user.is_superuser %}
           <a href="/adddonation" class="gcp-action-tile">
             <div class="gcp-action-icon"><i class="bi bi-cash-coin"></i></div>
             <div class="gcp-action-name">New Donation</div>
@@ -1178,11 +1359,48 @@
             <div class="gcp-action-name">Video Training</div>
             <div class="gcp-action-desc">6 step-by-step CRM tutorial videos</div>
           </a>
+          {% else %}
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-cash-coin"></i></div>
+            <div class="gcp-action-name">New Donation</div>
+            <div class="gcp-action-desc">Record cash, bank, or online donation</div>
+          </div>
+
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-person-plus"></i></div>
+            <div class="gcp-action-name">Add Donor / Volunteer</div>
+            <div class="gcp-action-desc">Register a new donor profile</div>
+          </div>
+
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-box"></i></div>
+            <div class="gcp-action-name">Donation Boxes</div>
+            <div class="gcp-action-desc">Manage Dan Peti boxes &amp; QR codes</div>
+          </div>
+
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-archive"></i></div>
+            <div class="gcp-action-name">Dan Peti Collection</div>
+            <div class="gcp-action-desc">View box collection receipts</div>
+          </div>
+
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-table"></i></div>
+            <div class="gcp-action-name">Master Data (MDM)</div>
+            <div class="gcp-action-desc">Lookup types, categories &amp; values</div>
+          </div>
+
+          <div class="gcp-action-tile" style="pointer-events: none; cursor: default;">
+            <div class="gcp-action-icon"><i class="bi bi-mortarboard"></i></div>
+            <div class="gcp-action-name">Video Training</div>
+            <div class="gcp-action-desc">6 step-by-step CRM tutorial videos</div>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
     <!-- ----------- MDM (Master Data)------------------ -->
-    <div class="tab-content" id="MDM">
+    <div class="tab-content {% if active_tab == 'MDM' %}active{% endif %}" id="MDM">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Master Data</h4>
@@ -1690,7 +1908,7 @@
       </div>
     </div>
     <!--   🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 All Users Section 🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿 -->
-    <div class="tab-content" id="user">
+    <div class="tab-content {% if active_tab == 'user' %}active{% endif %}" id="user">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Users</h4>
@@ -1928,7 +2146,7 @@
       </div>
     </div>
     <!-- ================Roles================== -->
-    <div class="tab-content" id="roles">
+    <div class="tab-content {% if active_tab == 'roles' %}active{% endif %}" id="roles">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Roles</h4>
@@ -2210,7 +2428,7 @@
     </div>
     <!-- ----------- Timesheet System------------------ -->
 
-    <div class="tab-content" id="Timesheet System">
+    <div class="tab-content {% if active_tab == 'Timesheet System' %}active{% endif %}" id="Timesheet System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Timesheet System</h4>
@@ -2274,7 +2492,7 @@
     </div>
     <!-- ----------- Leave Management System------------------ -->
 
-    <div class="tab-content" id="Leave Management System">
+    <div class="tab-content {% if active_tab == 'Leave Management System' %}active{% endif %}" id="Leave Management System">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Leave Management System</h4>
@@ -2522,7 +2740,7 @@
 
     <!-- ----------- Donor/Volunteer Management System ------------------ -->
 
-    <div class="tab-content" id="Donor/Volunteer Management System">
+    <div class="tab-content {% if active_tab == 'Donor/Volunteer Management System' %}active{% endif %}" id="Donor/Volunteer Management System">
       <div id="imagePopup"
         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
         <div
@@ -2547,22 +2765,24 @@
 
         <div class="card-body">
           <div class="search-container d-flex justify-content-between align-items-center">
-            <form method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center"
-              role="search">
+            <form id="donorVolunteerSearchForm" method="GET" action="{% url 'search_donor_volunteer' %}" class="d-flex align-items-center position-relative"
+              role="search" style="min-width: 280px; max-width: 440px;">
               <input type="hidden" name="active_tab" value="Donor/Volunteer Management System">
-              <input type="text" name="q" data-target="donorvolunteer"
-                class="form-control live-search search-input me-2 shadow-none" placeholder="🔍 Search..."
-                value="{{ query|default:'' }}">
-              {% if query %}
-              <a href="{% url 'search_donor_volunteer' %}" class="btn btn-outline-secondary ms-2 search-btn"></a>
-              {% endif %}
+              <div class="position-relative w-100 d-flex align-items-center">
+                <input type="text" id="donorVolunteerGlobalSearch" name="q" data-target="donorvolunteer"
+                  class="form-control live-search search-input shadow-none pe-4" placeholder="🔍 Search..."
+                  value="{{ query|default:'' }}" autocomplete="off" spellcheck="false">
+                <button type="button" id="donorVolunteerSearchClearBtn" class="btn btn-sm text-muted position-absolute end-0 top-50 translate-middle-y me-1 {% if not query %}d-none{% endif %}" style="background: none; border: none; font-size: 14px; padding: 2px 8px; cursor: pointer;" title="Clear search">✕</button>
+              </div>
             </form>
             <div id="colvis-mount-donor-volunteer" class="ms-auto"></div>
           </div>
-          {% if query2 %}
-          <h5>Showing results for: "<span ">{{ query2 }}</span>" </h5>
-              <hr>
-              {% endif %}
+          <div id="donorVolunteerSearchResultsInfo">
+            {% if query2 %}
+            <h5 class="mt-2 mb-1" style="font-size: 0.95rem; color: #475569;">Showing results for: "<span style="color: #0c6d34; font-weight: 600;">{{ query2 }}</span>"</h5>
+            <hr class="my-2">
+            {% endif %}
+          </div>
               {% if page_obj %}
               <div class="table-responsive">
                 <table class="table table-hover table-bordered align-middle paginated-table">
@@ -2651,7 +2871,7 @@
                   </thead>
                   <tbody id="donorvolunteer">
                     {% for donation in page_obj %}
-                    <tr>
+                    <tr class="{% if donation.is_deleted %}soft-deleted-row{% endif %}">
                       <td>
                         <div class="action-dropdown-wrapper">
                           <button class="action-dots-btn" onclick="toggleActionMenu(this)" title="Actions"><i class="bi bi-three-dots"></i></button>
@@ -2820,7 +3040,7 @@
                   </thead>
                   <tbody id="donorvolunteer">
                     {% for donation in page_obj %}
-                    <tr>
+                    <tr class="{% if donation.is_deleted %}soft-deleted-row{% endif %}">
                       <td>
                         <div class="action-dropdown-wrapper">
                           <button class="action-dots-btn" onclick="toggleActionMenu(this)" title="Actions"><i class="bi bi-three-dots"></i></button>
@@ -2948,7 +3168,7 @@
     </div>
 
     <!-- ----------- Employee Management System ------------------ -->
-    <div class="tab-content" id="Employee Management System">
+    <div class="tab-content {% if active_tab == 'Employee Management System' %}active{% endif %}" id="Employee Management System">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Employees</h4>
@@ -3178,7 +3398,7 @@
       </div>
     </div>
 
-    <div class="tab-content" id="Visitor Management System">
+    <div class="tab-content {% if active_tab == 'Visitor Management System' %}active{% endif %}" id="Visitor Management System">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Visitor Management System</h4>
@@ -3426,7 +3646,7 @@
 
     <!-- ----------- Vendor Management System ------------------ -->
 
-    <div class="tab-content" id="Vendor Management System">
+    <div class="tab-content {% if active_tab == 'Vendor Management System' %}active{% endif %}" id="Vendor Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Vendor Management System</h4>
@@ -3491,7 +3711,7 @@
 
     <!-- ----------- Event Management System ------------------ -->
 
-    <div class="tab-content" id="Event Management System">
+    <div class="tab-content {% if active_tab == 'Event Management System' %}active{% endif %}" id="Event Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Events</h4>
@@ -3555,7 +3775,7 @@
     </div>
     <!-- ----------- Request Management System------------------ -->
 
-    <div class="tab-content" id="Request Management System">
+    <div class="tab-content {% if active_tab == 'Request Management System' %}active{% endif %}" id="Request Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Request Management System</h4>
@@ -3620,7 +3840,7 @@
 
     <!-- ----------- Inventory Management System------------------ -->
 
-    <div class="tab-content" id="Inventory Management System">
+    <div class="tab-content {% if active_tab == 'Inventory Management System' %}active{% endif %}" id="Inventory Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Inventory Management System</h4>
@@ -3685,7 +3905,7 @@
 
     <!-- ----------- Asset Management System------------------ -->
 
-    <div class="tab-content" id="Asset Management System">
+    <div class="tab-content {% if active_tab == 'Asset Management System' %}active{% endif %}" id="Asset Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Asset Management System</h4>
@@ -3750,7 +3970,7 @@
 
     <!-- ----------- Fleet Management System------------------ -->
 
-    <div class="tab-content" id="Fleet Management System">
+    <div class="tab-content {% if active_tab == 'Fleet Management System' %}active{% endif %}" id="Fleet Management System">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Fleet Management System</h4>
@@ -3815,7 +4035,7 @@
 
     <!-- ---------Donation box module-------- -->
 
-    <div class="tab-content" id="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
+    <div class="tab-content {% if active_tab == 'Danpeti Module' or active_tab == 'Donation Box Module' %}active{% endif %}" id="{% if page_mode == 'danpeti' %}Danpeti Module{% else %}Donation Box Module{% endif %}">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">{% if page_mode == 'danpeti' %}Donation Details{% else %}Daanpeti Details{% endif %}</h4>
@@ -4015,8 +4235,28 @@
                   <td>{{ box.key_id }}</td>
                   <td>{{ box.box_size|title }}</td>
                   <td>{{ box.status }}</td>
-                  <td>{{ box.box_owner|default:"—" }}</td>
-                  <td>{{ box.box_owner_details.first|default:"—" }}</td>
+                  <td>
+                    {% if box.collector %}
+                      {{ box.collector.first_name }} {{ box.collector.last_name }}
+                    {% else %}
+                      {{ box.box_owner|default:"—" }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if box.owner_detail %}
+                      {% if box.owner_detail.business_name and box.owner_detail.first_name %}
+                        {{ box.owner_detail.business_name }} ({{ box.owner_detail.first_name }} {{ box.owner_detail.last_name }})
+                      {% elif box.owner_detail.business_name %}
+                        {{ box.owner_detail.business_name }}
+                      {% else %}
+                        {{ box.owner_detail.first_name }} {{ box.owner_detail.last_name }}
+                      {% endif %}
+                    {% elif box.box_owner_details.first %}
+                      {{ box.box_owner_details.first }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </td>
                   <td>{{ box.box_percentage|floatformat:"-2" }}</td>
                   <td>{{ box.created_by }}</td>
                   <td>{{ box.created_at|date:"d M Y" }}</td>
@@ -4138,8 +4378,28 @@
                   <td>{{ box.key_id }}</td>
                   <td>{{ box.box_size|title }}</td>
                   <td>{{ box.status }}</td>
-                  <td>{{ box.box_owner|default:"—" }}</td>
-                  <td>{{ box.box_owner_details.first|default:"—" }}</td>
+                  <td>
+                    {% if box.collector %}
+                      {{ box.collector.first_name }} {{ box.collector.last_name }}
+                    {% else %}
+                      {{ box.box_owner|default:"—" }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if box.owner_detail %}
+                      {% if box.owner_detail.business_name and box.owner_detail.first_name %}
+                        {{ box.owner_detail.business_name }} ({{ box.owner_detail.first_name }} {{ box.owner_detail.last_name }})
+                      {% elif box.owner_detail.business_name %}
+                        {{ box.owner_detail.business_name }}
+                      {% else %}
+                        {{ box.owner_detail.first_name }} {{ box.owner_detail.last_name }}
+                      {% endif %}
+                    {% elif box.box_owner_details.first %}
+                      {{ box.box_owner_details.first }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </td>
                   <td>{{ box.box_percentage|floatformat:"-2" }}</td>
                   <td>{{ box.created_by }}</td>
                   <td>{{ box.created_at|date:"d M Y" }}</td>
@@ -4221,7 +4481,7 @@
     </div>
 
     <!-- ================= OWNER DETAILS MODULE ================= -->
-    <div class="tab-content" id="Owner Details Module">
+    <div class="tab-content {% if active_tab == 'Owner Details Module' %}active{% endif %}" id="Owner Details Module">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donor Details</h4>
@@ -4449,7 +4709,7 @@
     </div>
 
     <!-- --------------START:  DONATION MODULE---------- -->
-    <div class="tab-content" id="Donation Module">
+    <div class="tab-content {% if active_tab == 'Donation Module' %}active{% endif %}" id="Donation Module">
       <div class="card border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">All Donations</h4>
@@ -4542,7 +4802,7 @@
               <tbody id="alldonations">
                 <!-- 🧾 Paginated Donation Records -->
                 {% for donation in donation_page_obj %}
-                <tr>
+                <tr class="{% if donation.is_deleted %}soft-deleted-row{% endif %}">
                   <td>
                     <div class="action-dropdown-wrapper">
                       <button class="action-dots-btn" onclick="toggleActionMenu(this)" title="Actions"><i class="bi bi-three-dots"></i></button>
@@ -4702,7 +4962,7 @@
               <tbody id="alldonations">
                 <!-- 🧾 Paginated Donation Records -->
                 {% for donation in donation_page_obj %}
-                <tr>
+                <tr class="{% if donation.is_deleted %}soft-deleted-row{% endif %}">
                   <td>
                     <div class="action-dropdown-wrapper">
                       <button class="action-dots-btn" onclick="toggleActionMenu(this)" title="Actions"><i class="bi bi-three-dots"></i></button>
@@ -4838,7 +5098,7 @@
     </div>
 
     <!-- ----------Financial Asset Module----------- -->
-    <div class="tab-content" id="Financial Asset Module">
+    <div class="tab-content {% if active_tab == 'Financial Asset Module' %}active{% endif %}" id="Financial Asset Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Financial Asset Module</h4>
@@ -4901,7 +5161,7 @@
       </div>
     </div>
     <!-- ----------Expense Module----------- -->
-    <div class="tab-content" id="Expense Module">
+    <div class="tab-content {% if active_tab == 'Expense Module' %}active{% endif %}" id="Expense Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Expense Module</h4>
@@ -4964,7 +5224,7 @@
       </div>
     </div>
     <!-- ----------Medical Module----------- -->
-    <div class="tab-content" id="Medical Module">
+    <div class="tab-content {% if active_tab == 'Medical Module' %}active{% endif %}" id="Medical Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Medical Module</h4>
@@ -5027,7 +5287,7 @@
       </div>
     </div>
     <!-- ----------Rehabilitation Module----------- -->
-    <div class="tab-content" id="Rehabilitation Module">
+    <div class="tab-content {% if active_tab == 'Rehabilitation Module' %}active{% endif %}" id="Rehabilitation Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Rehabilitation Module</h4>
@@ -5090,7 +5350,7 @@
       </div>
     </div>
     <!-- ----------Adoption Module----------- -->
-    <div class="tab-content" id="Adoption Module">
+    <div class="tab-content {% if active_tab == 'Adoption Module' %}active{% endif %}" id="Adoption Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Adoption Module</h4>
@@ -5154,7 +5414,7 @@
     </div>
     <!-- ----------Trees Module----------- -->
 
-    <div class="tab-content" id="Trees Module">
+    <div class="tab-content {% if active_tab == 'Trees Module' %}active{% endif %}" id="Trees Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Trees Module</h4>
@@ -5218,7 +5478,7 @@
     </div>
     <!-- ----------Seeds Module----------- -->
 
-    <div class="tab-content" id="Seeds Module">
+    <div class="tab-content {% if active_tab == 'Seeds Module' %}active{% endif %}" id="Seeds Module">
       <div class="card border-0">
         <div class="card-header  text-white d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Seeds Module</h4>
@@ -5283,23 +5543,7 @@
   </div>
 </div>
 <!-- -----------Javascript-------------- -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    if (!sessionStorage.getItem("dashboardLoaded")) {
-      document.querySelectorAll(".tab-content").forEach(tab => {
-        tab.classList.remove("active");
-      });
-      const dashboardTab = document.getElementById("default-user");
-      if (dashboardTab) {
-        dashboardTab.classList.add("active");
-      }
-      if (window.location.hash) {
-        history.replaceState(null, null, window.location.pathname);
-      }
-      sessionStorage.setItem("dashboardLoaded", "true");
-    }
-  });
-</script>
+<!-- dashboardLoaded blocker removed to maintain active tab without flash -->
 <!-- Live-search intercepted keydown blocker script removed to enable standard server-side search -->
 <script>
   let images = [];
@@ -5958,7 +6202,7 @@
 
     window.activateTab = activateTab;
 
-    // Initial Tab Activation from URL query param, back navigation, or saved state
+    // Initial Tab Activation from URL query param, back navigation, or default to Dashboard
     const urlParams = new URLSearchParams(window.location.search);
     const queryTab = urlParams.get('tab') || urlParams.get('active_tab');
     const backFromForm = localStorage.getItem('backFromForm');
@@ -5971,13 +6215,30 @@
     } else if (backFromForm) {
       initialTab = localStorage.getItem('activeTab') || 'default-user';
       localStorage.removeItem('backFromForm');
-    } else if (serverTab) {
+    } else if (serverTab && serverTab !== 'default-user') {
       initialTab = serverTab;
       localStorage.setItem('activeTab', serverTab);
     } else {
-      initialTab = localStorage.getItem('activeTab') || 'default-user';
+      // Whenever a user logs in or visits /welcome/ directly, ALWAYS default to Dashboard
+      initialTab = 'default-user';
+      localStorage.setItem('activeTab', 'default-user');
     }
     activateTab(initialTab);
+
+    // Console Breadcrumb Link Handler
+    const bcConsoleLink = document.getElementById('breadcrumbConsoleLink');
+    if (bcConsoleLink) {
+      bcConsoleLink.addEventListener('click', function(e) {
+        if (window.location.pathname.startsWith('/welcome')) {
+          e.preventDefault();
+          localStorage.setItem('activeTab', 'default-user');
+          activateTab('default-user');
+          history.pushState({ tab: 'default-user' }, '', '/welcome/');
+        } else {
+          localStorage.setItem('activeTab', 'default-user');
+        }
+      });
+    }
 
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function (e) {
@@ -5989,12 +6250,43 @@
         e.preventDefault();
         e.stopPropagation();
         activateTab(tabId);
+        const newUrl = tabId === 'default-user' ? '/welcome/' : ('/welcome/?active_tab=' + encodeURIComponent(tabId));
+        history.pushState({ tab: tabId }, '', newUrl);
 
         // Close sidebar on mobile after tab click
         if (window.innerWidth <= 991 && typeof toggleMobileDrawer === 'function') {
           toggleMobileDrawer(false);
         }
       });
+    });
+
+    // Handle browser Back / Forward history transitions without full page reload or dashboard flash
+    window.addEventListener('popstate', function (e) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetTab = (e.state && e.state.tab) ? e.state.tab : (urlParams.get('active_tab') || urlParams.get('tab') || 'default-user');
+      localStorage.setItem('activeTab', targetTab);
+      activateTab(targetTab);
+
+      if (window.location.search && targetTab !== 'default-user') {
+        const currentTabEl = document.getElementById(targetTab);
+        if (currentTabEl) {
+          fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTabEl = doc.getElementById(targetTab);
+            if (newTabEl) {
+              currentTabEl.innerHTML = newTabEl.innerHTML;
+              if (window.renderAllActiveFilterChips) window.renderAllActiveFilterChips();
+              if (typeof initAhinsadhamColumnSelectors === 'function') initAhinsadhamColumnSelectors();
+            }
+          })
+          .catch(err => console.error('Popstate fetch error:', err));
+        }
+      }
     });
   });
 </script>
@@ -6078,11 +6370,14 @@
     });
 
     // bfcache / Back navigation restore handler
-    window.addEventListener('pageshow', function () {
+    window.addEventListener('pageshow', function (event) {
       toggleMobileDrawer(false);
-      const curTab = localStorage.getItem('activeTab') || 'default-user';
-      if (typeof activateTab === 'function') {
-        activateTab(curTab);
+      // Only restore non-default tab on actual browser back/forward history navigation
+      if (event.persisted) {
+        const curTab = localStorage.getItem('activeTab') || 'default-user';
+        if (typeof activateTab === 'function') {
+          activateTab(curTab);
+        }
       }
     });
   });
@@ -6284,6 +6579,88 @@
 </script>
 
 <script>
+  function navigatePagination(targetUrl, tabId) {
+    if (!tabId) {
+      tabId = localStorage.getItem('activeTab') || 'default-user';
+    }
+    let tabEl = document.getElementById(tabId);
+    if (!tabEl && window.CSS && CSS.escape) {
+      try {
+        tabEl = document.querySelector('.tab-content[id="' + CSS.escape(tabId) + '"]');
+      } catch(e) {}
+    }
+    if (!tabEl) {
+      window.location.href = targetUrl;
+      return;
+    }
+
+    const container = tabEl.querySelector('.card-body') || tabEl;
+    container.style.transition = 'opacity 0.15s ease';
+    container.style.opacity = '0.5';
+    container.style.pointerEvents = 'none';
+
+    fetch(targetUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.text();
+    })
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      let newTabEl = doc.getElementById(tabId);
+      if (!newTabEl && window.CSS && CSS.escape) {
+        try {
+          newTabEl = doc.querySelector('.tab-content[id="' + CSS.escape(tabId) + '"]');
+        } catch(e) {}
+      }
+
+      if (newTabEl) {
+        tabEl.innerHTML = newTabEl.innerHTML;
+        history.pushState({ tab: tabId, url: targetUrl }, '', targetUrl);
+
+        if (typeof window.renderAllActiveFilterChips === 'function') {
+          window.renderAllActiveFilterChips();
+        }
+        if (typeof initAhinsadhamColumnSelectors === 'function') {
+          initAhinsadhamColumnSelectors();
+        }
+        if (typeof window.initDonorVolunteerLiveSearch === 'function') {
+          window.initDonorVolunteerLiveSearch();
+        }
+        const params = new URLSearchParams(window.location.search);
+        tabEl.querySelectorAll("th.sortable").forEach(header => {
+          let table = header.closest("table");
+          let searchInput = table ? table.querySelector(".column-search") : null;
+          if (!searchInput) return;
+          let prefix = searchInput.name.split('_')[0];
+          let colIndex = header.dataset.col;
+          let currentSort = params.get(`${prefix}_sort`);
+          let currentOrder = params.get(`${prefix}_order`);
+          let sortIcon = header.querySelector(".sort-icon");
+          if (sortIcon && currentSort === colIndex) {
+            sortIcon.innerText = currentOrder === 'desc' ? "⬇" : "⬆";
+            sortIcon.dataset.order = currentOrder || 'asc';
+          }
+        });
+      } else {
+        window.location.href = targetUrl;
+      }
+    })
+    .catch(err => {
+      console.warn('AJAX pagination fallback:', err);
+      window.location.href = targetUrl;
+    })
+    .finally(() => {
+      container.style.opacity = '';
+      container.style.pointerEvents = '';
+    });
+  }
+  window.navigatePagination = navigatePagination;
+
   function handlePaginationSelect(selectElement) {
     if (!selectElement) return;
     const pageNum = selectElement.value;
@@ -6298,7 +6675,8 @@
       localStorage.setItem('activeTab', tabId);
     }
 
-    window.location.href = window.location.pathname + '?' + currentParams.toString();
+    const targetUrl = window.location.pathname + '?' + currentParams.toString();
+    navigatePagination(targetUrl, tabId);
   }
   window.handlePaginationSelect = handlePaginationSelect;
 
@@ -6319,7 +6697,8 @@
       localStorage.setItem('activeTab', tabId);
     }
 
-    window.location.href = window.location.pathname + '?' + currentParams.toString();
+    const targetUrl = window.location.pathname + '?' + currentParams.toString();
+    navigatePagination(targetUrl, tabId);
   }
   window.handlePageSizeChange = handlePageSizeChange;
 
@@ -6343,7 +6722,8 @@
         localStorage.setItem('activeTab', tabId);
       }
 
-      window.location.href = window.location.pathname + '?' + currentParams.toString();
+      const targetUrl = window.location.pathname + '?' + currentParams.toString();
+      navigatePagination(targetUrl, tabId);
     });
 
     // Intercept pagination links to inject correct activeTab and params
@@ -6371,12 +6751,203 @@
         localStorage.setItem('activeTab', tabId);
       }
 
-      window.location.href = window.location.pathname + '?' + currentParams.toString();
+      const targetUrl = window.location.pathname + '?' + currentParams.toString();
+      navigatePagination(targetUrl, tabId);
     });
 
     // Initialize All Reusable Column Selectors
     initAhinsadhamColumnSelectors();
+    initDonorVolunteerLiveSearch();
   });
+
+
+  // --- Live Search / Real-Time Filtering for Donor / Volunteer ---
+  (function() {
+    let searchTimer = null;
+    let searchAbortController = null;
+    let searchRequestId = 0;
+
+    function initDonorVolunteerLiveSearch() {
+      const searchInput = document.getElementById('donorVolunteerGlobalSearch') || document.querySelector('#Donor\\/Volunteer\\ Management\\ System input[name="q"]');
+      const searchForm = document.getElementById('donorVolunteerSearchForm') || (searchInput ? searchInput.closest('form') : null);
+      const clearBtn = document.getElementById('donorVolunteerSearchClearBtn');
+
+      if (!searchInput) return;
+
+      // Avoid double binding
+      if (searchInput.dataset.liveSearchBound === 'true') return;
+      searchInput.dataset.liveSearchBound = 'true';
+
+      function performSearch(queryVal) {
+        clearTimeout(searchTimer);
+
+        // Abort previous in-flight request to prevent race conditions (Requirement 10)
+        if (searchAbortController) {
+          searchAbortController.abort();
+        }
+        searchAbortController = new AbortController();
+        const thisReqId = ++searchRequestId;
+
+        // Toggle clear button
+        if (clearBtn) {
+          if (queryVal && queryVal.trim().length > 0) {
+            clearBtn.classList.remove('d-none');
+          } else {
+            clearBtn.classList.add('d-none');
+          }
+        }
+
+        const currentParams = new URLSearchParams(window.location.search);
+        if (queryVal && queryVal.trim().length > 0) {
+          currentParams.set('q', queryVal.trim());
+        } else {
+          currentParams.delete('q');
+        }
+
+        // Reset to page 1 on new search
+        currentParams.delete('donor_page');
+        currentParams.set('active_tab', 'Donor/Volunteer Management System');
+
+        const tabEl = document.getElementById('Donor/Volunteer Management System');
+        if (!tabEl) return;
+
+        const tableWrap = tabEl.querySelector('.table-responsive');
+        const paginationWrap = tabEl.querySelector('.pagination-container');
+        const resultsInfo = document.getElementById('donorVolunteerSearchResultsInfo');
+
+        // Visual loading indicator on table only, WITHOUT affecting search input focus
+        if (tableWrap) {
+          tableWrap.style.transition = 'opacity 0.15s ease';
+          tableWrap.style.opacity = '0.5';
+          tableWrap.style.pointerEvents = 'none';
+        }
+
+        const actionUrl = searchForm && searchForm.getAttribute('action') ? searchForm.getAttribute('action') : '/welcome/';
+        const fetchUrl = actionUrl + '?' + currentParams.toString();
+
+        fetch(fetchUrl, {
+          signal: searchAbortController.signal,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.text();
+        })
+        .then(html => {
+          // Check if response is from the latest request (Requirement 10)
+          if (thisReqId !== searchRequestId) return;
+
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newTabEl = doc.getElementById('Donor/Volunteer Management System');
+          if (!newTabEl) return;
+
+          // Replace table contents without touching search input or losing focus
+          const newTable = newTabEl.querySelector('.table-responsive');
+          const currentTable = tabEl.querySelector('.table-responsive');
+          if (newTable && currentTable) {
+            currentTable.innerHTML = newTable.innerHTML;
+          }
+
+          // Replace pagination
+          const newPagination = newTabEl.querySelector('.pagination-container');
+          const currentPagination = tabEl.querySelector('.pagination-container');
+          if (newPagination && currentPagination) {
+            currentPagination.innerHTML = newPagination.innerHTML;
+            currentPagination.style.display = '';
+          } else if (newPagination && !currentPagination) {
+            const cardBody = tabEl.querySelector('.card-body');
+            if (cardBody) cardBody.appendChild(newPagination.cloneNode(true));
+          } else if (!newPagination && currentPagination) {
+            currentPagination.innerHTML = '';
+          }
+
+          // Update search results info banner
+          const newResultsInfo = doc.getElementById('donorVolunteerSearchResultsInfo');
+          if (newResultsInfo && resultsInfo) {
+            resultsInfo.innerHTML = newResultsInfo.innerHTML;
+          } else if (resultsInfo) {
+            if (queryVal && queryVal.trim().length > 0) {
+              const safeQuery = document.createElement('div');
+              safeQuery.textContent = queryVal.trim();
+              resultsInfo.innerHTML = `<h5 class="mt-2 mb-1" style="font-size: 0.95rem; color: #475569;">Showing results for: "<span style="color: #0c6d34; font-weight: 600;">${safeQuery.innerHTML}</span>"</h5><hr class="my-2">`;
+            } else {
+              resultsInfo.innerHTML = '';
+            }
+          }
+
+          // Update browser URL seamlessly
+          history.replaceState({ tab: 'Donor/Volunteer Management System', url: fetchUrl }, '', fetchUrl);
+
+          // Re-initialize column visibility selectors, filter chips, and sorting icons
+          if (typeof initAhinsadhamColumnSelectors === 'function') {
+            initAhinsadhamColumnSelectors();
+          }
+          if (typeof window.renderAllActiveFilterChips === 'function') {
+            window.renderAllActiveFilterChips();
+          }
+          const params = new URLSearchParams(window.location.search);
+          tabEl.querySelectorAll("th.sortable").forEach(header => {
+            let table = header.closest("table");
+            let searchInput = table ? table.querySelector(".column-search") : null;
+            if (!searchInput) return;
+            let prefix = searchInput.name.split('_')[0];
+            let colIndex = header.dataset.col;
+            let currentSort = params.get(`${prefix}_sort`);
+            let currentOrder = params.get(`${prefix}_order`);
+            let sortIcon = header.querySelector(".sort-icon");
+            if (sortIcon && currentSort === colIndex) {
+              sortIcon.innerText = currentOrder === 'desc' ? "⬇" : "⬆";
+              sortIcon.dataset.order = currentOrder || 'asc';
+            }
+          });
+        })
+        .catch(err => {
+          if (err.name === 'AbortError') return;
+          console.warn('Live search fetch error:', err);
+        })
+        .finally(() => {
+          if (tableWrap) {
+            tableWrap.style.opacity = '';
+            tableWrap.style.pointerEvents = '';
+          }
+        });
+      }
+
+      // Input event listener for character-by-character real-time search
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimer);
+        const queryVal = this.value;
+        searchTimer = setTimeout(() => {
+          performSearch(queryVal);
+        }, 250);
+      });
+
+      // Clear button listener
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          searchInput.value = '';
+          searchInput.focus();
+          performSearch('');
+        });
+      }
+
+      // Intercept Enter key and form submit to search immediately without full-page reload
+      if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          clearTimeout(searchTimer);
+          performSearch(searchInput.value);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initDonorVolunteerLiveSearch);
+    window.initDonorVolunteerLiveSearch = initDonorVolunteerLiveSearch;
+  })();
 
   function initAhinsadhamColumnSelectors() {
     if (typeof window.TableColumnSelector === 'undefined') return;
@@ -6397,13 +6968,13 @@
           { key: "collector", label: "COLLECTOR" },
           { key: "daanpeti_donor", label: "DAANPETI DONOR" },
           { key: "commission", label: "COMMISSION %" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6439,13 +7010,13 @@
           { key: "country", label: "COUNTRY" },
           { key: "postal_code", label: "POSTAL CODE" },
           { key: "native_place", label: "NATIVE PLACE" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6478,13 +7049,13 @@
           { key: "state", label: "STATE" },
           { key: "country", label: "COUNTRY" },
           { key: "postal_code", label: "POSTAL CODE" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
           { key: "status", label: "STATUS" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6513,13 +7084,13 @@
           { key: "description", label: "DESCRIPTION" },
           { key: "bank_name", label: "BANK NAME" },
           { key: "branch", label: "BRANCH" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" },
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false },
           { key: "verified_by", label: "VERIFIED BY" }
         ]
       });
@@ -6555,13 +7126,13 @@
           { key: "country", label: "COUNTRY" },
           { key: "state", label: "STATE" },
           { key: "postal_code", label: "POSTAL CODE" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6605,13 +7176,13 @@
           { key: "delete", label: "DELETE" },
           { key: "edit", label: "EDIT" },
           { key: "view", label: "VIEW" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6626,13 +7197,13 @@
           { key: "actions", label: "ACTIONS", alwaysVisible: true },
           { key: "id", label: "ID" },
           { key: "type_name", label: "TYPE NAME" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6647,13 +7218,13 @@
           { key: "actions", label: "ACTIONS", alwaysVisible: true },
           { key: "id", label: "ID" },
           { key: "type_name", label: "TYPE NAME" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6668,13 +7239,13 @@
           { key: "actions", label: "ACTIONS", alwaysVisible: true },
           { key: "id", label: "ID" },
           { key: "type_name", label: "TYPE NAME" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }
@@ -6690,13 +7261,13 @@
           { key: "id", label: "ID" },
           { key: "lookup_name", label: "LOOKUP NAME" },
           { key: "lookup_type", label: "LOOKUP TYPE" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }

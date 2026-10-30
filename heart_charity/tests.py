@@ -226,3 +226,163 @@ class UTMTrackingTestCase(TestCase):
         self.assertIsNotNone(donation)
         self.assertIsNone(donation.place_of_donation)
 
+
+from heart_charity.models import DonationBox, Employee, OwnerDetail
+from heart_charity.admin import DonationBoxAdmin
+from django.contrib.admin.sites import AdminSite
+from django.test import override_settings
+
+@override_settings(
+    STORAGES={
+        "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
+)
+class DonationBoxRelationshipTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser(username="adminuser", password="adminpassword", email="admin@test.com")
+        self.client.login(username="adminuser", password="adminpassword")
+
+        # Create employees
+        self.emp1 = Employee.objects.create(
+            first_name="Ramesh",
+            last_name="Kumar",
+            contact_number="9820011223"
+        )
+        self.emp2 = Employee.objects.create(
+            first_name="Suresh",
+            last_name="Patel",
+            contact_number="9820044556"
+        )
+
+        # Create owners
+        self.owner1 = OwnerDetail.objects.create(
+            business_name="Shreeji Sweets",
+            first_name="Jay",
+            last_name="Shah",
+            contact_number="9876501234"
+        )
+        self.owner2 = OwnerDetail.objects.create(
+            business_name="Arihant Enterprises",
+            first_name="Bhavin",
+            last_name="Mehta",
+            contact_number="9876505678"
+        )
+
+    def test_create_donation_box_with_collector_and_owner(self):
+        response = self.client.post(reverse('add_donation_box'), {
+            'key_id': 'KEY_001',
+            'box_size': 'medium',
+            'status': 'Active',
+            'collector': str(self.emp1.id),
+            'owner_detail': str(self.owner1.id),
+            'box_percentage': '15.00',
+        })
+        self.assertEqual(response.status_code, 302)
+
+        box = DonationBox.objects.filter(key_id='KEY_001').first()
+        self.assertIsNotNone(box)
+        self.assertEqual(box.collector_id, self.emp1.id)
+        self.assertEqual(box.collector, self.emp1)
+        self.assertEqual(box.owner_detail_id, self.owner1.id)
+        self.assertEqual(box.owner_detail, self.owner1)
+        self.assertEqual(box.collector_display_name, "Ramesh Kumar")
+        self.assertIn("Shreeji Sweets", box.owner_display_name)
+
+        # Verify OwnerDetail.donor_box two-way relationship
+        self.owner1.refresh_from_db()
+        self.assertEqual(self.owner1.donor_box_id, box.id)
+
+    def test_edit_donation_box_updates_relationships_and_syncs_owner(self):
+        box = DonationBox.objects.create(
+            key_id='KEY_002',
+            box_size='small',
+            status='Active',
+            collector=self.emp1,
+            owner_detail=self.owner1,
+            box_percentage=10.00,
+        )
+        self.owner1.donor_box = box
+        self.owner1.save()
+
+        # Edit to switch collector to emp2 and owner to owner2
+        response = self.client.post(reverse('edit_donation_box', args=[box.id]), {
+            'key_id': 'KEY_002_UPDATED',
+            'box_size': 'large',
+            'status': 'Active',
+            'collector': str(self.emp2.id),
+            'owner_detail': str(self.owner2.id),
+            'box_percentage': '20.00',
+        })
+        self.assertEqual(response.status_code, 302)
+
+        box.refresh_from_db()
+        self.assertEqual(box.key_id, 'KEY_002_UPDATED')
+        self.assertEqual(box.collector_id, self.emp2.id)
+        self.assertEqual(box.owner_detail_id, self.owner2.id)
+
+        # Verify previous owner unlinked and new owner linked
+        self.owner1.refresh_from_db()
+        self.owner2.refresh_from_db()
+        self.assertIsNone(self.owner1.donor_box)
+        self.assertEqual(self.owner2.donor_box_id, box.id)
+
+    def test_existing_unlinked_records_preserve_data(self):
+        box = DonationBox.objects.create(
+            key_id='KEY_LEGACY',
+            box_size='medium',
+            status='Active',
+            box_owner='vidyaa',
+            box_percentage=5.00,
+        )
+        self.assertIsNone(box.collector_id)
+        self.assertIsNone(box.owner_detail_id)
+        self.assertEqual(box.box_owner, 'vidyaa')
+        self.assertEqual(box.collector_display_name, 'vidyaa')
+        self.assertEqual(box.owner_display_name, '')
+
+    def test_admin_display_methods(self):
+        site = AdminSite()
+        box_admin = DonationBoxAdmin(DonationBox, site)
+
+        # With relationships
+        box_with_relations = DonationBox.objects.create(
+            key_id='KEY_ADMIN_1',
+            box_size='medium',
+            status='Active',
+            collector=self.emp1,
+            owner_detail=self.owner1,
+            box_percentage=10.00,
+        )
+        self.assertEqual(box_admin.get_collector_name(box_with_relations), "Ramesh Kumar")
+        self.assertEqual(box_admin.get_owner_name(box_with_relations), "Shreeji Sweets (Jay Shah)")
+
+        # Without relationships but legacy text
+        box_legacy = DonationBox.objects.create(
+            key_id='KEY_ADMIN_2',
+            box_size='medium',
+            status='Active',
+            box_owner='vidyaa',
+            box_percentage=10.00,
+        )
+        self.assertEqual(box_admin.get_collector_name(box_legacy), "vidyaa")
+        self.assertEqual(box_admin.get_owner_name(box_legacy), "—")
+
+    def test_edit_view_get_retains_selection(self):
+        box = DonationBox.objects.create(
+            key_id='KEY_EDIT_FORM',
+            box_size='medium',
+            status='Active',
+            collector=self.emp1,
+            owner_detail=self.owner1,
+            box_percentage=12.00,
+        )
+        response = self.client.get(reverse('edit_donation_box', args=[box.id]))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        # Check collector selected
+        self.assertIn(f'value="{self.emp1.id}" selected', content)
+        # Check owner selected
+        self.assertIn(f'value="{self.owner1.id}" selected', content)
+
+

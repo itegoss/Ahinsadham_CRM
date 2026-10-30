@@ -296,13 +296,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const method = paymentSelect.options[paymentSelect.selectedIndex].text.trim().toLowerCase();
         const amountValue = parseFloat(amountInput.value || "0");
 
-        if (method !== "razorpay") {
+        if (method !== "razorpay" && method !== "online") {
             donationForm.submit();
             return;
         }
 
         if (!amountValue || amountValue <= 0) {
-            alert("Please enter paid amount before making Razorpay payment.");
+            alert("Please enter paid amount before making Online payment.");
             return;
         }
 

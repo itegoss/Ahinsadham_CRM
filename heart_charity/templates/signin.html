@@ -1,5 +1,6 @@
 {% extends 'base.html' %} 
 {% block title %} Ahinsadham CRM | Sign In {% endblock %}
+{% block meta_robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block messages %}{% endblock %}
 {% load static %}
 {% block content %}
@@ -430,4 +431,12 @@
 
 </div>
 
+<script>
+  try {
+    localStorage.removeItem('activeTab');
+    localStorage.removeItem('backFromForm');
+    localStorage.setItem('activeTab', 'default-user');
+    sessionStorage.removeItem('lastActiveSearchInput');
+  } catch (e) {}
+</script>
 {% endblock %}

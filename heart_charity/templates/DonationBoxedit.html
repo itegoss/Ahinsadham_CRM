@@ -157,20 +157,20 @@
                     <input type="number" name="box_percentage" class="form-control" value="{{ box.box_percentage}}" min="0" max="100" step="0.01" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Collector Name</label>
-                    <select name="box_owner" id="box_owner" class="form-select" required>
+                    <label class="form-label">Collector Name <span style="color: #d9534f;">*</span></label>
+                    <select name="collector" id="collector" class="form-select" required>
                         <option value="">Select Collector</option>
                         {% for emp in employees %}
-                            <option value="{{ emp.first_name }} {{ emp.last_name }}" {% if emp.first_name|add:" "|add:emp.last_name == box.box_owner %}selected{% endif %}>{{ emp.first_name }} {{ emp.last_name }}{% if emp.designation %} - {{ emp.designation.lookup_name }}{% endif %}</option>
+                            <option value="{{ emp.id }}" {% if box.collector_id == emp.id or emp.first_name|add:" "|add:emp.last_name == box.box_owner %}selected{% endif %}>{{ emp.first_name }} {{ emp.last_name }}{% if emp.designation %} - {{ emp.designation.lookup_name }}{% endif %}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Daanpeti Donor</label>
-                    <select name="assigned_to" id="assigned_to" class="form-select">
-                        <option value="">Select Donor</option>
+                    <label class="form-label">Box Owner / Daanpeti Donor</label>
+                    <select name="owner_detail" id="owner_detail" class="form-select">
+                        <option value="">Select Box Owner</option>
                         {% for owner in owners %}
-                            <option value="{{ owner.id }}" {% if current_assigned == owner.id %}selected{% endif %}>{% if owner.business_name %}{{ owner.business_name }} ({% endif %}{{ owner.first_name }} {{ owner.last_name }}{% if owner.business_name %}){% endif %}</option>
+                            <option value="{{ owner.id }}" {% if box.owner_detail_id == owner.id or current_assigned == owner.id %}selected{% endif %}>{% if owner.business_name %}{{ owner.business_name }} ({% endif %}{{ owner.first_name }} {{ owner.last_name }}{% if owner.business_name %}){% endif %}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -223,15 +223,15 @@
 <script>
 $(document).ready(function() {
     if ($.fn.select2) {
-        $('#assigned_to').select2({
-            placeholder: "Select Donor",
+        $('#owner_detail, #assigned_to').select2({
+            placeholder: "Select Box Owner",
             allowClear: true,
             width: '100%',
             templateSelection: function(data) {
                 return data.text ? data.text.trim() : data.text;
             }
         });
-        $('#box_owner').select2({
+        $('#collector, #box_owner').select2({
             placeholder: "Select Collector",
             allowClear: false,
             width: '100%',

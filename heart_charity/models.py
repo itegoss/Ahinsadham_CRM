@@ -72,6 +72,20 @@ class DonationBox(models.Model):
         blank=True,
         null=True
     )
+    collector = models.ForeignKey(
+        'Employee',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='donation_boxes',
+    )
+    owner_detail = models.ForeignKey(
+        'OwnerDetail',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_donation_boxes',
+    )
 
     box_percentage = models.DecimalField(
         max_digits=5,   # total digits
@@ -169,8 +183,11 @@ class DonationBox(models.Model):
         # Define GCS path for QR code
         qr_path = f"donation_box_qr/{self.id or self.donation_id}.png"
         # Save PNG bytes to default storage (GCS)
-        saved_path = default_storage.save(qr_path, ContentFile(buffer.getvalue()))
-        self.qr_code.name = saved_path
+        try:
+            saved_path = default_storage.save(qr_path, ContentFile(buffer.getvalue()))
+            self.qr_code.name = saved_path
+        except Exception:
+            pass
         # Assign the storage path to ImageField
 
 
@@ -195,8 +212,25 @@ class DonationBox(models.Model):
             self.generate_qr_code()
             super().save(update_fields=['qr_code'])
 
+    @property
+    def collector_display_name(self):
+        if self.collector:
+            name = f"{self.collector.first_name or ''} {self.collector.last_name or ''}".strip()
+            if name:
+                return name
+        return self.box_owner or ""
+
+    @property
+    def owner_display_name(self):
+        if self.owner_detail:
+            return str(self.owner_detail)
+        first_owner = self.box_owner_details.filter(is_deleted=False).first() or self.box_owner_details.first()
+        if first_owner:
+            return str(first_owner)
+        return ""
+
     def __str__(self):
-        owner = self.box_owner if self.box_owner else "Donation Box"
+        owner = self.owner_display_name or self.box_owner or "Donation Box"
         return f"{owner} ({self.donation_id})"
 gender_choices = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 

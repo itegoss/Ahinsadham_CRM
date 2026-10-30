@@ -793,7 +793,6 @@ if (typeof toggleActionMenu === 'undefined') {
       options: [
         { value: '', label: 'All Payment Methods' },
         { value: 'Cash', label: 'Cash' },
-        { value: 'Razorpay', label: 'Razorpay' },
         { value: 'Online', label: 'Online' },
         { value: 'Cheque', label: 'Cheque' },
         { value: 'Pending', label: 'Pending' }
@@ -1240,13 +1239,13 @@ if (typeof toggleActionMenu === 'undefined') {
           { key: "amount", label: "AMOUNT" },
           { key: "payment_method", label: "PAYMENT METHOD" },
           { key: "transaction_id", label: "TRANSACTION ID" },
-          { key: "created_by", label: "CREATED BY" },
-          { key: "created_on", label: "CREATED ON" },
-          { key: "updated_by", label: "UPDATED BY" },
-          { key: "updated_on", label: "UPDATED ON" },
-          { key: "deleted_by", label: "DELETED BY" },
-          { key: "is_deleted", label: "IS DELETED" },
-          { key: "deleted_on", label: "DELETED ON" }
+          { key: "created_by", label: "CREATED BY", defaultVisible: false },
+          { key: "created_on", label: "CREATED ON", defaultVisible: false },
+          { key: "updated_by", label: "UPDATED BY", defaultVisible: false },
+          { key: "updated_on", label: "UPDATED ON", defaultVisible: false },
+          { key: "deleted_by", label: "DELETED BY", defaultVisible: false },
+          { key: "is_deleted", label: "IS DELETED", defaultVisible: false },
+          { key: "deleted_on", label: "DELETED ON", defaultVisible: false }
         ]
       });
     }

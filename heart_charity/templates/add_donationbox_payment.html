@@ -726,7 +726,7 @@
               <label>Donation Box <span class="req-star">*</span></label>
               <div style="position: relative;">
                   <input type="text" class="form-control" readonly 
-                         value="{% if current_box.box_owner %}{{ current_box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ current_box.donation_id }})"
+                         value="{% if current_box.owner_display_name %}{{ current_box.owner_display_name }}{% elif current_box.box_owner %}{{ current_box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ current_box.donation_id }})"
                          style="background-color: #f1f8f3; font-weight: 700; color: #15803d; border-color: #86efac; cursor: default; padding-right: 120px;">
                   <span style="position: absolute; right: 10px; top: 10px; font-size: 12px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 8px;">
                       <i class="bi bi-qr-code-scan"></i> Linked Box
@@ -744,7 +744,7 @@
                   <option value="">-- Select Donation Box --</option>
                   {% for box in donation_boxes %}
                       <option value="{{ box.id }}" {% if selected_box_id == box.id or form_data.donation_box == box.id|stringformat:'s' %}selected{% endif %}>
-                          {% if box.box_owner %}{{ box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ box.donation_id }})
+                          {% if box.owner_display_name %}{{ box.owner_display_name }}{% elif box.box_owner %}{{ box.box_owner }}{% else %}Donation Box{% endif %} (ID: {{ box.donation_id }})
                       </option>
                   {% endfor %}
               </select>
@@ -786,7 +786,7 @@
               <div class="form-group">
                   <label for="boxOwnerDisplay">Registered Box Owner</label>
                   <input type="text" id="boxOwnerDisplay" name="owner_name" readonly class="owner-input"
-                         value="{% if current_box %}{{ current_box.box_owner|default:'—' }}{% endif %}"
+                         value="{% if current_box %}{{ current_box.owner_display_name|default:current_box.box_owner|default:'—' }}{% endif %}"
                          style="background-color: #f8fafc; font-weight: 600; color: #166534;" placeholder="Auto-filled from Box selection">
               </div>
               <div class="form-group">
@@ -876,7 +876,7 @@
                       <option value="">-- Select Payment Mode --</option>
                       {% for mode in payment_modes %}
                           <option value="{{ mode.id }}" {% if form_data.payment_mode == mode.id|stringformat:'s' %}selected{% endif %}>
-                              {{ mode.lookup_name }}
+                              {% if mode.lookup_name|lower == 'razorpay' %}Online{% else %}{{ mode.lookup_name }}{% endif %}
                           </option>
                       {% endfor %}
                   </select>
@@ -1346,7 +1346,7 @@ function validateForm() {
 function togglePaymentFields() {
     const paymentFields = document.querySelectorAll(".payment-field");
     if (!paymentSelect || paymentFields.length === 0) return;
-    const showFor = ["cheque", "neft", "rtgs", "bank transfer", "online", "upi"];
+    const showFor = ["cheque", "neft", "rtgs", "bank transfer"];
     const selectedText = paymentSelect.options[paymentSelect.selectedIndex] ? paymentSelect.options[paymentSelect.selectedIndex].text.trim().toLowerCase() : "";
     paymentFields.forEach(el => {
         el.style.display = showFor.some(kw => selectedText.includes(kw)) ? "grid" : "none";

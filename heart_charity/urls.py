@@ -1,5 +1,7 @@
 from django.urls import include, path
+from django.contrib.sitemaps.views import sitemap
 from . import views
+from .sitemaps import AhinsadhamStaticSitemap
 from .views import (
     donation_view,
     payment_failed,
@@ -8,7 +10,16 @@ from .views import (
     payment_verify,
     schemes_view,
 )
+
+sitemaps = {
+    'static': AhinsadhamStaticSitemap,
+}
+
 urlpatterns = [
+    # SEO & Crawlers
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+
     path("", views.home, name="home"),
     path('login/', views.signin_view, name='login'),
     path("logout", views.logout_view, name="logout"),

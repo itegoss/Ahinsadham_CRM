@@ -15,6 +15,7 @@ ALLOWED_HOSTS = [
     'ahinsadham-crm-856395380155.us-central1.run.app',
     'ahinsadham-crm-testing-856395380155.us-central1.run.app',
     '.run.app',
+    'testserver',
 ]
 SOCIAL_AUTH_ASSOCIATE_BY_EMAIL = True
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = os.getenv("ENV", "DEV") != 'DEV'
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     "social_django",  
     'heart_charity.apps.HeartCharityConfig',
     "whitenoise.runserver_nostatic",
@@ -93,6 +95,8 @@ DATABASES = {
             'PORT': os.environ.get('DATABASE_PORT'),
         }
     }
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

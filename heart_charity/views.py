@@ -14,7 +14,9 @@ from django.conf import settings
 from django.contrib import messages
 import csv
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Value, CharField
+from django.db.models.functions import Concat, Cast
+from datetime import datetime, date
 import json
 from .utils import generate_receipt_id, generate_ach_receipt_id
 from django.shortcuts import render, redirect
@@ -371,15 +373,24 @@ box_mapping = {
     '3': 'key_id',
     '4': 'box_size',
     '5': 'status',
-    '6': 'box_owner',
-    '7': 'box_percentage',
-    '8': 'created_by__username',
-    '9': 'created_at',
-    '10': 'updated_by__username',
-    '11': 'updated_at',
-    '12': 'is_deleted',
-    '13': 'deleted_by__username',
-    '14': 'deleted_at',
+    '6': 'status',
+    '7': ['collector__first_name', 'collector__last_name', 'box_owner'],
+    '8': [
+        'owner_detail__business_name',
+        'owner_detail__first_name',
+        'owner_detail__last_name',
+        'box_owner_details__business_name',
+        'box_owner_details__first_name',
+        'box_owner_details__last_name',
+    ],
+    '9': 'box_percentage',
+    '10': 'created_by__username',
+    '11': 'created_at',
+    '12': 'updated_by__username',
+    '13': 'updated_at',
+    '14': 'is_deleted',
+    '15': 'deleted_by__username',
+    '16': 'deleted_at',
 }
 
 employee_mapping = {
@@ -411,6 +422,178 @@ employee_mapping = {
     '27': 'deleted_at',
 }
 
+def filter_donor_volunteer_queryset(donorvolunteer, query_str):
+    if not query_str:
+        return donorvolunteer
+    query_str = str(query_str).strip()
+    if not query_str:
+        return donorvolunteer
+
+    month_map = {
+        "jan": 1, "january": 1,
+        "feb": 2, "february": 2,
+        "mar": 3, "march": 3,
+        "apr": 4, "april": 4,
+        "may": 5,
+        "jun": 6, "june": 6,
+        "jul": 7, "july": 7,
+        "aug": 8, "august": 8,
+        "sep": 9, "sept": 9, "september": 9,
+        "oct": 10, "october": 10,
+        "nov": 11, "november": 11,
+        "dec": 12, "december": 12,
+    }
+
+    qlow = query_str.lower()
+    donorvolunteer = donorvolunteer.annotate(
+        id_str=Cast('id', CharField()),
+        full_name=Concat('first_name', Value(' '), 'last_name'),
+        full_name_mid=Concat('first_name', Value(' '), 'middle_name', Value(' '), 'last_name'),
+    )
+
+    filters = (
+        Q(id_str__icontains=query_str) |
+        Q(person_type__lookup_name__icontains=query_str) |
+        Q(first_name__icontains=query_str) |
+        Q(middle_name__icontains=query_str) |
+        Q(last_name__icontains=query_str) |
+        Q(full_name__icontains=query_str) |
+        Q(full_name_mid__icontains=query_str) |
+        Q(gender__icontains=query_str) |
+        Q(blood_group__icontains=query_str) |
+        Q(email__icontains=query_str) |
+        Q(contact_number__icontains=query_str) |
+        Q(whatsapp_number__icontains=query_str) |
+        Q(donor_box__donation_id__icontains=query_str) |
+        Q(donor_box__key_id__icontains=query_str) |
+        Q(old_box_id__icontains=query_str) |
+        Q(address__icontains=query_str) |
+        Q(area__icontains=query_str) |
+        Q(city__icontains=query_str) |
+        Q(state__icontains=query_str) |
+        Q(country__icontains=query_str) |
+        Q(postal_code__icontains=query_str) |
+        Q(native_place__icontains=query_str) |
+        Q(id_type__lookup_name__icontains=query_str) |
+        Q(id_number__icontains=query_str) |
+        Q(pan_number__icontains=query_str) |
+        Q(occupation_name__icontains=query_str) |
+        Q(occupation_nature__lookup_name__icontains=query_str) |
+        Q(occupation_type__lookup_name__icontains=query_str) |
+        Q(gst_number__icontains=query_str) |
+        Q(created_by__username__icontains=query_str) |
+        Q(updated_by__username__icontains=query_str)
+    )
+
+    if query_str.isdigit():
+        try:
+            num = int(query_str)
+            filters |= (
+                Q(id=num) |
+                Q(age=num) |
+                Q(donor_box_id=num)
+            )
+        except ValueError:
+            pass
+
+    truthy = {"true", "yes", "active", "1"}
+    falsy = {"false", "no", "inactive", "0"}
+    if qlow in truthy or qlow in falsy:
+        if qlow in truthy:
+            filters |= Q(is_deleted=False)
+        else:
+            filters |= Q(is_deleted=True)
+
+    if qlow in month_map:
+        month_num = month_map[qlow]
+        filters |= (
+            Q(date_of_birth__month=month_num) |
+            Q(created_at__month=month_num) |
+            Q(updated_at__month=month_num) |
+            Q(deleted_at__month=month_num)
+        )
+
+    try:
+        import re
+        date_parsed = False
+        clean_query = re.sub(r'[-./\s]+', ' ', query_str).strip()
+        for fmt in ("%d %m %Y", "%d %m %y", "%Y %m %d", "%d %b %Y", "%d %B %Y", "%d %b %y", "%d %B %y"):
+            try:
+                parsed = datetime.strptime(clean_query, fmt).date()
+                filters |= (
+                    Q(date_of_birth=parsed) |
+                    Q(created_at__date=parsed) |
+                    Q(updated_at__date=parsed) |
+                    Q(deleted_at__date=parsed)
+                )
+                date_parsed = True
+                break
+            except ValueError:
+                pass
+
+        if not date_parsed:
+            if len(query_str) == 4 and query_str.isdigit():
+                y = int(query_str)
+                filters |= (
+                    Q(date_of_birth__year=y) |
+                    Q(created_at__year=y) |
+                    Q(updated_at__year=y) |
+                    Q(deleted_at__year=y)
+                )
+
+            match_dd_mm = re.match(r'^(\d{1,2})[-/.](\d{1,2})$', query_str)
+            if match_dd_mm:
+                d = int(match_dd_mm.group(1))
+                m = int(match_dd_mm.group(2))
+                if 1 <= d <= 31 and 1 <= m <= 12:
+                    filters |= (
+                        Q(date_of_birth__day=d, date_of_birth__month=m) |
+                        Q(created_at__day=d, created_at__month=m) |
+                        Q(updated_at__day=d, updated_at__month=m) |
+                        Q(deleted_at__day=d, deleted_at__month=m)
+                    )
+
+            match_mm_yyyy = re.match(r'^(\d{1,2})[-/.](\d{4})$', query_str)
+            if match_mm_yyyy:
+                m = int(match_mm_yyyy.group(1))
+                y = int(match_mm_yyyy.group(2))
+                if 1 <= m <= 12:
+                    filters |= (
+                        Q(date_of_birth__month=m, date_of_birth__year=y) |
+                        Q(created_at__month=m, created_at__year=y) |
+                        Q(updated_at__month=m, updated_at__year=y) |
+                        Q(deleted_at__month=m, deleted_at__year=y)
+                    )
+
+            for month_name, month_num in month_map.items():
+                if month_name in qlow:
+                    year_match = re.search(r'\b(\d{4})\b', qlow)
+                    if year_match:
+                        y_val = int(year_match.group(1))
+                        filters |= (
+                            Q(date_of_birth__month=month_num, date_of_birth__year=y_val) |
+                            Q(created_at__month=month_num, created_at__year=y_val) |
+                            Q(updated_at__month=month_num, updated_at__year=y_val) |
+                            Q(deleted_at__month=month_num, deleted_at__year=y_val)
+                        )
+                    text_to_search_day = qlow
+                    if year_match:
+                        text_to_search_day = qlow.replace(year_match.group(1), '')
+                    day_match = re.search(r'\b(\d{1,2})\b', text_to_search_day)
+                    if day_match:
+                        d_val = int(day_match.group(1))
+                        if 1 <= d_val <= 31:
+                            filters |= (
+                                Q(date_of_birth__day=d_val, date_of_birth__month=month_num) |
+                                Q(created_at__day=d_val, created_at__month=month_num) |
+                                Q(updated_at__day=d_val, updated_at__month=month_num) |
+                                Q(deleted_at__day=d_val, deleted_at__month=month_num)
+                            )
+    except Exception:
+        pass
+
+    return donorvolunteer.filter(filters).distinct().order_by("-updated_at", "-id")
+
 def get_welcome_context(request, donors=None, donations=None, roles_qs=None, users=None, lookup_types=None, lookups=None, donation_boxes=None, donation_payment=None, employees=None, owner_details=None, extra_context=None):
     user = request.user
     permissions = get_user_permissions(user)
@@ -435,8 +618,16 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         donations = Donation.objects.all()
     donations = donations.select_related('donor', 'donation_category', 'donation_sub_category', 'payment_method', 'payment_status', 'created_by', 'updated_by', 'deleted_by', 'verified_by').order_by('-updated_at', '-id')
 
+    donor_q = request.GET.get('q', '').strip()
+    active_tab_param = request.GET.get('active_tab') or request.GET.get('tab')
+
     if donors is None:
         donors = DonorVolunteer.objects.all()
+        if donor_q and (active_tab_param == 'Donor/Volunteer Management System' or not active_tab_param or request.path.endswith('search_donor_volunteer/')):
+            donors = filter_donor_volunteer_queryset(donors, donor_q)
+    elif donor_q:
+        donors = filter_donor_volunteer_queryset(donors, donor_q)
+
     donors = donors.select_related("person_type", "donor_box", "id_type", "occupation_nature", "occupation_type", "created_by", "updated_by", "deleted_by").order_by('-updated_at', '-id')
 
     if owner_details is None:
@@ -472,7 +663,7 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
 
     if donation_boxes is None:
         donation_boxes = DonationBox.objects.all()
-    donation_boxes = donation_boxes.select_related('uploaded_by', 'created_by', 'deleted_by').order_by("-updated_at", "-id")
+    donation_boxes = donation_boxes.select_related('collector', 'owner_detail', 'uploaded_by', 'created_by', 'deleted_by').prefetch_related('box_owner_details').order_by("-updated_at", "-id")
 
     if donation_payment is None:
         donation_payment = DonationPaymentBox.objects.all()
@@ -595,6 +786,8 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
         'payments_page_size': payments_page_size,
         'box_page_size': box_page_size,
         'page_size_options': [10, 25, 50, 75, 100],
+        'query': donor_q if (active_tab_param == 'Donor/Volunteer Management System' or not active_tab_param or request.path.endswith('search_donor_volunteer/')) else '',
+        'query2': donor_q if (active_tab_param == 'Donor/Volunteer Management System' or not active_tab_param or request.path.endswith('search_donor_volunteer/')) else '',
     }
 
     # Pass column filter parameters back to the context
@@ -672,6 +865,8 @@ def get_welcome_context(request, donors=None, donations=None, roles_qs=None, use
             context['page_mode'] = 'danpeti'
         elif req_tab == "Owner Details Module":
             context['page_mode'] = 'owner_details'
+    elif not context.get('active_tab'):
+        context['active_tab'] = 'default-user'
 
     return context
 
@@ -1105,166 +1300,9 @@ def search_donor_volunteer(request):
         "department", "position", "designation", "deleted_by"
     ).all().order_by("-updated_at", "-id")
 
-    query2 = request.GET.get('q')
+    query2 = request.GET.get('q', '').strip()
     if query2:
-        query2 = query2.strip()
-        if query2 != "":
-            month_map = {
-                "jan": 1, "january": 1,
-                "feb": 2, "february": 2,
-                "mar": 3, "march": 3,
-                "apr": 4, "april": 4,
-                "may": 5,
-                "jun": 6, "june": 6,
-                "jul": 7, "july": 7,
-                "aug": 8, "august": 8,
-                "sep": 9, "sept": 9, "september": 9,
-                "oct": 10, "october": 10,
-                "nov": 11, "november": 11,
-                "dec": 12, "december": 12,
-            }
-
-            qlow = query2.lower()
-            filters = (
-                Q(person_type__lookup_name__icontains=query2) |
-                Q(first_name__icontains=query2) |
-                Q(middle_name__icontains=query2) |
-                Q(last_name__icontains=query2) |
-                Q(gender__icontains=query2) |
-                Q(blood_group__icontains=query2) |
-                Q(email__icontains=query2) |
-                Q(contact_number__icontains=query2) |
-                Q(whatsapp_number__icontains=query2) |
-                Q(donor_box__donation_id__icontains=query2) |
-                Q(donor_box__key_id__icontains=query2) |
-                Q(address__icontains=query2) |
-                Q(city__icontains=query2) |
-                Q(state__icontains=query2) |
-                Q(country__icontains=query2) |
-                Q(postal_code__icontains=query2) |
-                Q(native_place__icontains=query2) |
-                # Q(native_postal_code__icontains=query2) |
-                Q(id_type__lookup_name__icontains=query2) |
-                Q(id_number__icontains=query2) |
-                Q(pan_number__icontains=query2) |
-                Q(created_by__username__icontains=query2) |
-                Q(updated_by__username__icontains=query2)
-            )
-            if query2.isdigit():
-                try:
-                    num = int(query2)
-                    filters |= (
-                        Q(id=num) |
-                        Q(age=num)
-                    )
-                except ValueError:
-                    pass
-            truthy = {"true", "yes", "active", "1"}
-            falsy = {"false", "no", "inactive", "0"}
-            if qlow in truthy or qlow in falsy:
-                if qlow in truthy:
-                    filters |= Q(is_deleted=False)
-                else:
-                    filters |= Q(is_deleted=True)
-            if qlow in month_map:
-                month_num = month_map[qlow]
-                filters |= (
-                    Q(date_of_birth__month=month_num) |
-                    Q(created_at__month=month_num) |
-                    Q(updated_at__month=month_num) |
-                    Q(deleted_at__month=month_num)
-                )
-            try:
-                import re
-
-                date_parsed = False
-
-                # 1. Date formats with separators (e.g. "15-07-2026", "15.07.26", "15/07/2026", "22 jun 2026")
-                # Normalize separators: dots, slashes, dashes, multiple spaces to a single space
-                clean_query = re.sub(r'[-./\s]+', ' ', query2).strip()
-                for fmt in ("%d %m %Y", "%d %m %y", "%Y %m %d", "%d %b %Y", "%d %B %Y", "%d %b %y", "%d %B %y"):
-                    try:
-                        parsed = datetime.strptime(clean_query, fmt).date()
-                        filters |= (
-                            Q(date_of_birth=parsed) |
-                            Q(created_at__date=parsed) |
-                            Q(updated_at__date=parsed) |
-                            Q(deleted_at__date=parsed)
-                        )
-                        date_parsed = True
-                        break
-                    except ValueError:
-                        pass
-
-                # If it's a full date, we do not run other partial/year matches to prevent polluting results.
-                if not date_parsed:
-                    # 2. 4-digit year search (e.g. "2026")
-                    if len(query2) == 4 and query2.isdigit():
-                        y = int(query2)
-                        filters |= (
-                            Q(date_of_birth__year=y) |
-                            Q(created_at__year=y) |
-                            Q(updated_at__year=y) |
-                            Q(deleted_at__year=y)
-                        )
-
-                    # 3. Partial dates: DD-MM (e.g. "15-07", "15/07", "15.07")
-                    match_dd_mm = re.match(r'^(\d{1,2})[-/.](\d{1,2})$', query2)
-                    if match_dd_mm:
-                        d = int(match_dd_mm.group(1))
-                        m = int(match_dd_mm.group(2))
-                        if 1 <= d <= 31 and 1 <= m <= 12:
-                            filters |= (
-                                Q(date_of_birth__day=d, date_of_birth__month=m) |
-                                Q(created_at__day=d, created_at__month=m) |
-                                Q(updated_at__day=d, updated_at__month=m) |
-                                Q(deleted_at__day=d, deleted_at__month=m)
-                            )
-
-                    # 4. Partial dates: MM-YYYY (e.g. "07-2026", "07/2026", "07.2026")
-                    match_mm_yyyy = re.match(r'^(\d{1,2})[-/.](\d{4})$', query2)
-                    if match_mm_yyyy:
-                        m = int(match_mm_yyyy.group(1))
-                        y = int(match_mm_yyyy.group(2))
-                        if 1 <= m <= 12:
-                            filters |= (
-                                Q(date_of_birth__month=m, date_of_birth__year=y) |
-                                Q(created_at__month=m, created_at__year=y) |
-                                Q(updated_at__month=m, updated_at__year=y) |
-                                Q(deleted_at__month=m, deleted_at__year=y)
-                            )
-
-                    # 5. Natural month names and combinations (e.g. "July 2026", "15 July")
-                    for month_name, month_num in month_map.items():
-                        if month_name in qlow:
-                            # Extract year
-                            year_match = re.search(r'\b(\d{4})\b', qlow)
-                            y_val = None
-                            if year_match:
-                                y_val = int(year_match.group(1))
-                                filters |= (
-                                    Q(date_of_birth__month=month_num, date_of_birth__year=y_val) |
-                                    Q(created_at__month=month_num, created_at__year=y_val) |
-                                    Q(updated_at__month=month_num, updated_at__year=y_val) |
-                                    Q(deleted_at__month=month_num, deleted_at__year=y_val)
-                                )
-                            # Extract day (excluding the year match digits)
-                            text_to_search_day = qlow
-                            if year_match:
-                                text_to_search_day = qlow.replace(year_match.group(1), '')
-                            day_match = re.search(r'\b(\d{1,2})\b', text_to_search_day)
-                            if day_match:
-                                d_val = int(day_match.group(1))
-                                if 1 <= d_val <= 31:
-                                    filters |= (
-                                        Q(date_of_birth__day=d_val, date_of_birth__month=month_num) |
-                                        Q(created_at__day=d_val, created_at__month=month_num) |
-                                        Q(updated_at__day=d_val, updated_at__month=month_num) |
-                                        Q(deleted_at__day=d_val, deleted_at__month=month_num)
-                                    )
-            except Exception:
-                pass
-            donorvolunteer = donorvolunteer.filter(filters).distinct().order_by("-updated_at", "-id")
+        donorvolunteer = filter_donor_volunteer_queryset(donorvolunteer, query2)
 
     # ---- DOWNLOAD CSV ----
     if request.GET.get('download') == '1':
@@ -1571,8 +1609,8 @@ def search_donation_box(request):
     box_query = request.GET.get("box_query", "").strip()
     page_mode = request.GET.get("page_mode", "")
     boxes = DonationBox.objects.select_related(
-        'uploaded_by', 'created_by', 'deleted_by'
-    ).filter(is_deleted=False).order_by("-updated_at", "-id")
+        'collector', 'owner_detail', 'uploaded_by', 'created_by', 'deleted_by'
+    ).prefetch_related('box_owner_details').filter(is_deleted=False).order_by("-updated_at", "-id")
     if box_query:
         qlow = box_query.lower()
         month_map = {
@@ -1594,6 +1632,12 @@ def search_donation_box(request):
             Q(key_id__icontains=box_query) |
             Q(box_size__icontains=box_query) |
             Q(status__icontains=box_query) |
+            Q(box_owner__icontains=box_query) |
+            Q(collector__first_name__icontains=box_query) |
+            Q(collector__last_name__icontains=box_query) |
+            Q(owner_detail__business_name__icontains=box_query) |
+            Q(owner_detail__first_name__icontains=box_query) |
+            Q(owner_detail__last_name__icontains=box_query) |
             Q(uploaded_by__username__icontains=box_query) |
             Q(created_by__username__icontains=box_query)
         )
@@ -1891,9 +1935,9 @@ def adddonation(request):
         payment_method_id = fk(request.POST.get("payment_method"))
 
         payment_method_obj = Lookup.objects.filter(id=payment_method_id).first() if payment_method_id else None
-        if payment_method_obj and payment_method_obj.lookup_name.strip().lower() == "razorpay":
+        if payment_method_obj and payment_method_obj.lookup_name.strip().lower() in ["razorpay", "online"]:
             if not transaction_id:
-                messages.error(request, "Razorpay payment is required when payment method is Razorpay.")
+                messages.error(request, "Online payment is required when payment method is Online.")
                 return redirect("adddonation")
             if not payment_status_id:
                 payment_status_id = Lookup.objects.filter(
@@ -2531,17 +2575,35 @@ def add_donation_payment(request, box_id=None):
             "address": address,
         })
 
+    # Include OwnerDetail mappings for donation boxes
+    for ob in DonationBox.objects.filter(is_deleted=False, owner_detail__isnull=False).select_related('owner_detail'):
+        if not any(item["box_id"] == ob.id for item in box_owner_map):
+            od = ob.owner_detail
+            address = ", ".join(filter(None, [od.address_line_1, od.address_line_2, od.area, od.city, od.state, od.postal_code]))
+            box_owner_map.append({
+                "box_id": ob.id,
+                "owner_id": od.id,
+                "owner_name": str(od),
+                "first_name": od.first_name or "",
+                "middle_name": od.middle_name or "",
+                "last_name": od.last_name or "",
+                "mobile_number": od.whatsapp_number or od.contact_number or "",
+                "pan_number": od.pan_number or "",
+                "address": address,
+            })
+
     # If current_box is known and not in box_owner_map, add it for client autofill
     if current_box and not any(item["box_id"] == current_box.id for item in box_owner_map):
+        owner_name = current_box.owner_display_name or current_box.box_owner or ""
         box_owner_map.append({
             "box_id": current_box.id,
-            "owner_id": None,
-            "owner_name": current_box.box_owner or "",
-            "first_name": current_box.box_owner or "",
-            "middle_name": "",
-            "last_name": "",
-            "mobile_number": "",
-            "pan_number": "",
+            "owner_id": current_box.owner_detail_id,
+            "owner_name": owner_name,
+            "first_name": (current_box.owner_detail.first_name if current_box.owner_detail else owner_name),
+            "middle_name": (current_box.owner_detail.middle_name if current_box.owner_detail else ""),
+            "last_name": (current_box.owner_detail.last_name if current_box.owner_detail else ""),
+            "mobile_number": (current_box.owner_detail.whatsapp_number or current_box.owner_detail.contact_number) if current_box.owner_detail else "",
+            "pan_number": (current_box.owner_detail.pan_number if current_box.owner_detail else ""),
             "address": "",
         })
 
@@ -2858,12 +2920,12 @@ def danpeti_create_order(request):
         ).first()
         razorpay_mode = None
         if payment_type:
-            razorpay_mode = Lookup.objects.filter(lookup_name__iexact="Razorpay").first()
+            razorpay_mode = Lookup.objects.filter(lookup_name__iexact="Online").first()
             if not razorpay_mode:
-                razorpay_mode = Lookup.objects.filter(lookup_name__icontains="Online").first()
+                razorpay_mode = Lookup.objects.filter(lookup_name__iexact="Razorpay").first()
             if not razorpay_mode:
                 razorpay_mode = Lookup.objects.create(
-                    lookup_name="Razorpay",
+                    lookup_name="Online",
                     lookup_type=payment_type,
                     created_by=user_for_audit
                 )
@@ -3321,12 +3383,12 @@ def add_donation_box(request):
         old_box_id = request.POST.get("old_box_id")
         box_size = request.POST.get("box_size")
         status = request.POST.get("status")
-        box_owner = request.POST.get("box_owner")
         box_percentage = request.POST.get("box_percentage")
-        assigned_to = request.POST.get("assigned_to")
+        collector_raw = request.POST.get("collector") or request.POST.get("collector_id") or request.POST.get("box_owner")
+        owner_raw = request.POST.get("owner_detail") or request.POST.get("owner_detail_id") or request.POST.get("assigned_to")
 
-        if not box_owner or not box_percentage:
-            messages.error(request, "Box Owner and Box % are required!")
+        if not collector_raw or not box_percentage:
+            messages.error(request, "Collector and Commission % are required!")
             return redirect("add_donation_box")
 
         try:
@@ -3338,12 +3400,34 @@ def add_donation_box(request):
             messages.error(request, "Invalid Box % value!")
             return redirect("add_donation_box")
 
+        collector_obj = None
+        box_owner_str = None
+        if collector_raw:
+            if str(collector_raw).isdigit():
+                collector_obj = Employee.objects.filter(id=int(collector_raw), is_deleted=False).first()
+            if collector_obj:
+                box_owner_str = f"{collector_obj.first_name or ''} {collector_obj.last_name or ''}".strip()
+            else:
+                collector_obj = Employee.objects.filter(
+                    is_deleted=False
+                ).filter(
+                    Q(first_name__iexact=str(collector_raw).strip()) |
+                    Q(first_name__iexact=str(collector_raw).split()[0])
+                ).first()
+                box_owner_str = str(collector_raw).strip()
+
+        owner_detail_obj = None
+        if owner_raw and str(owner_raw).isdigit():
+            owner_detail_obj = OwnerDetail.objects.filter(id=int(owner_raw), is_deleted=False).first()
+
         box = DonationBox(
             key_id=key_id,
             old_box_id=old_box_id or None,
             box_size=box_size,
             status=status,
-            box_owner=box_owner,
+            collector=collector_obj,
+            owner_detail=owner_detail_obj,
+            box_owner=box_owner_str,
             box_percentage=box_percentage,
             uploaded_by=request.user,
             created_by=request.user,
@@ -3355,15 +3439,11 @@ def add_donation_box(request):
         box.generate_qr_code(base_url=base_url)
         box.save(update_fields=['qr_code'])
 
-        # If assigned to an owner (Danpeti Donor)
-        if assigned_to:
-            owner_obj = OwnerDetail.objects.filter(
-                id=assigned_to,
-                is_deleted=False
-            ).first()
-            if owner_obj:
-                owner_obj.donor_box = box
-                owner_obj.save(update_fields=['donor_box'])
+        # Keep OwnerDetail.donor_box relationship synchronized
+        if owner_detail_obj:
+            OwnerDetail.objects.filter(donor_box=box).exclude(id=owner_detail_obj.id).update(donor_box=None)
+            owner_detail_obj.donor_box = box
+            owner_detail_obj.save(update_fields=['donor_box'])
 
         messages.success(request, f"Donation Box ({box.donation_id}) added successfully with unique QR code!")
         return redirect("donation_box_page")
@@ -3796,7 +3876,38 @@ def edit_donation_box(request, id):
         box.key_id = request.POST.get('key_id')
         box.old_box_id = request.POST.get('old_box_id') or None
         box.box_size = request.POST.get('box_size')
-        box.box_owner = request.POST.get('box_owner')
+
+        collector_raw = request.POST.get('collector') or request.POST.get('collector_id') or request.POST.get('box_owner')
+        if collector_raw:
+            if str(collector_raw).isdigit():
+                emp_obj = Employee.objects.filter(id=int(collector_raw), is_deleted=False).first()
+                if emp_obj:
+                    box.collector = emp_obj
+                    box.box_owner = f"{emp_obj.first_name or ''} {emp_obj.last_name or ''}".strip()
+            else:
+                emp_obj = Employee.objects.filter(
+                    is_deleted=False
+                ).filter(
+                    Q(first_name__iexact=str(collector_raw).strip()) |
+                    Q(first_name__iexact=str(collector_raw).split()[0])
+                ).first()
+                if emp_obj:
+                    box.collector = emp_obj
+                box.box_owner = str(collector_raw).strip()
+        elif collector_raw == "":
+            box.collector = None
+
+        owner_raw = request.POST.get('owner_detail') or request.POST.get('owner_detail_id') or request.POST.get('assigned_to')
+        if owner_raw and str(owner_raw).isdigit():
+            owner_obj = OwnerDetail.objects.filter(id=int(owner_raw), is_deleted=False).first()
+            if owner_obj:
+                box.owner_detail = owner_obj
+                OwnerDetail.objects.filter(donor_box=box).exclude(id=owner_obj.id).update(donor_box=None)
+                owner_obj.donor_box = box
+                owner_obj.save(update_fields=['donor_box'])
+        elif owner_raw == "":
+            box.owner_detail = None
+            OwnerDetail.objects.filter(donor_box=box).update(donor_box=None)
 
         percentage = request.POST.get('box_percentage')
         if percentage:
@@ -3805,13 +3916,6 @@ def edit_donation_box(request, id):
             box.box_percentage = None
 
         box.status = request.POST.get('status')
-
-        assigned_to = request.POST.get('assigned_to')
-        if assigned_to:
-            OwnerDetail.objects.filter(donor_box=box).exclude(id=assigned_to).update(donor_box=None)
-            OwnerDetail.objects.filter(id=assigned_to, is_deleted=False).update(donor_box=box)
-        elif assigned_to == "":
-            OwnerDetail.objects.filter(donor_box=box).update(donor_box=None)
 
         if request.POST.get('regenerate_qr') or not box.qr_code:
             base_url = request.build_absolute_uri('/')[:-1]
@@ -3822,7 +3926,7 @@ def edit_donation_box(request, id):
         messages.success(request, "Donation Box updated successfully!")
         return redirect("donation_box_page")
 
-    current_owner = OwnerDetail.objects.filter(
+    current_owner = box.owner_detail or OwnerDetail.objects.filter(
         donor_box=box,
         is_deleted=False
     ).first()
@@ -4058,6 +4162,10 @@ def get_donation_box_details(request, box_id):
             'donation_id': box.donation_id,
             'key_id': box.key_id or '',
             'box_owner': box.box_owner or '',
+            'collector_id': box.collector_id,
+            'collector_name': box.collector_display_name,
+            'owner_detail_id': box.owner_detail_id,
+            'owner_name': box.owner_display_name,
             'box_size': box.box_size,
             'payment_id': f"PAY_{box.donation_id}_{DonationPaymentBox.objects.filter(donation_box=box).count() + 1:03d}",
             'last_payment_method': last_payment.payment_method_id if last_payment else (last_donation.payment_method_id if last_donation else None),
@@ -5080,7 +5188,8 @@ def add_owner_details(request):
             if donor_box_obj:
                 full_name = f"{owner.first_name or ''} {owner.last_name or ''}".strip()
                 donor_box_obj.box_owner = owner.business_name or full_name or f"Owner #{owner.id}"
-                donor_box_obj.save(update_fields=['box_owner'])
+                donor_box_obj.owner_detail = owner
+                donor_box_obj.save(update_fields=['box_owner', 'owner_detail'])
 
             messages.success(request, "Owner details saved successfully!")
             return redirect(reverse("owner_details_page"))
@@ -5195,7 +5304,11 @@ def edit_owner_details(request, id):
             if donor_box_obj:
                 full_name = f"{owner.first_name or ''} {owner.last_name or ''}".strip()
                 donor_box_obj.box_owner = owner.business_name or full_name or f"Owner #{owner.id}"
-                donor_box_obj.save(update_fields=['box_owner'])
+                donor_box_obj.owner_detail = owner
+                donor_box_obj.save(update_fields=['box_owner', 'owner_detail'])
+                DonationBox.objects.filter(owner_detail=owner).exclude(id=donor_box_obj.id).update(owner_detail=None)
+            else:
+                DonationBox.objects.filter(owner_detail=owner).update(owner_detail=None)
 
             messages.success(request, "Owner details updated successfully!")
             return redirect(reverse("owner_details_page"))
@@ -5456,3 +5569,69 @@ def delete_employee(request, id):
         employee.save()
         messages.success(request, "Employee deactivated successfully!")
     return redirect(reverse("welcome") + "?active_tab=Employee Management System")
+
+
+def robots_txt(request):
+    """
+    Dynamically served robots.txt for Ahinsadham.
+    - Allows indexing of public informational and donation routes.
+    - Disallows search engine crawlers from indexing private CRM, admin, auth,
+      and sensitive user/donor management endpoints.
+    - References canonical HTTPS sitemap.xml.
+    """
+    sitemap_url = getattr(settings, 'SITE_URL', 'https://admin.ahinsadham.org').rstrip('/') + '/sitemap.xml'
+    lines = [
+        "User-agent: *",
+        "Allow: /$",
+        "Allow: /schemes/$",
+        "Allow: /donate/$",
+        "Allow: /static/",
+        "Allow: /media/",
+        "",
+        "# Internal CRM, Admin & Authentication",
+        "Disallow: /admin/",
+        "Disallow: /welcome/",
+        "Disallow: /auth/",
+        "Disallow: /access_control/",
+        "Disallow: /login/",
+        "Disallow: /logout",
+        "",
+        "# Internal Donors, Donations & Danpeti Management",
+        "Disallow: /donations/",
+        "Disallow: /donation/",
+        "Disallow: /donation-",
+        "Disallow: /danpeti/",
+        "Disallow: /payment/",
+        "Disallow: /donor/",
+        "Disallow: /download-donor-report/",
+        "",
+        "# Internal Search, Lookups & Role Management",
+        "Disallow: /search/",
+        "Disallow: /search-",
+        "Disallow: /search_",
+        "Disallow: /lookup/",
+        "Disallow: /lookup-",
+        "Disallow: /lookup_type_create/",
+        "Disallow: /show_lookup_data/",
+        "Disallow: /manage_user_roles/",
+        "Disallow: /assign_role/",
+        "",
+        "# Internal CRUD & AJAX Endpoints",
+        "Disallow: /add_",
+        "Disallow: /add-",
+        "Disallow: /adddonation",
+        "Disallow: /edit_",
+        "Disallow: /edit-",
+        "Disallow: /delete_",
+        "Disallow: /delete-",
+        "Disallow: /events/",
+        "Disallow: /create-order/",
+        "Disallow: /get-",
+        "Disallow: /select_donation_box/",
+        "Disallow: /send-otp/",
+        "Disallow: /donor-autocomplete-ajax/",
+        "",
+        f"Sitemap: {sitemap_url}",
+    ]
+    return HttpResponse("\n".join(lines) + "\n", content_type="text/plain; charset=utf-8")
+
