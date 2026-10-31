@@ -4350,8 +4350,9 @@ def _validate_donation_post(post_data):
         except ValidationError:
             errors['email'] = ['Enter a valid email address.']
 
-    if cleaned_data['country'] and cleaned_data['country'] not in ('India', 'Other'):
-        errors['country'] = ['Select a valid choice.']
+    # Allow all countries dynamically loaded from CountriesNow API
+    # if cleaned_data['country'] and cleaned_data['country'] not in ('India', 'Other'):
+    #     errors['country'] = ['Select a valid choice.']
 
     amount = cleaned_data['donation_amount']
     if amount:

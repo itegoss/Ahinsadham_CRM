@@ -902,28 +902,22 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">City <span class="req-star">*</span></label>
-                            <input type="text" name="city" class="form-control" placeholder="Mumbai/Ahmedabad" required>
+                            <select id="city" name="city" class="form-select" required disabled>
+                                <option value="">Select State first</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Country <span class="req-star">*</span></label>
                             <select id="country" name="country" class="form-select" required>
-                                <option value="India" selected>India</option>
-                                <option value="United States">United States</option>
-                                <option value="United Kingdom">United Kingdom</option>
-                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                <option value="Australia">Australia</option>
-                                <option value="Canada">Canada</option>
-                                <option value="Singapore">Singapore</option>
-                                <option value="Germany">Germany</option>
-                                <option value="France">France</option>
-                                <option value="Other">Other</option>
+                                <option value="">Select Country</option>
                             </select>
                         </div>
                         <div class="col-md-6" id="stateDropdownBox">
                             <label class="form-label">State <span class="req-star">*</span></label>
-                            <select id="state" name="state" class="form-select">
+                            <select id="state" name="state" class="form-select" required disabled>
+                                <option value="">Select Country first</option>
                             </select>
                         </div>
                         <div class="col-md-6" id="stateTextboxBox" style="display: none;">
@@ -1109,61 +1103,7 @@ if (whatsappInput && contactInput && checkbox) {
 </script>
 
 <script>
-/* --- Country & State switcher --- */
-const indiaStates = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal"
-];
-
-const countryEl = document.getElementById('country');
-if (countryEl) {
-    countryEl.addEventListener('change', function() {
-        const country = this.value;
-        const dropdownBox = document.getElementById('stateDropdownBox');
-        const textboxBox = document.getElementById('stateTextboxBox');
-        const stateSelect = document.getElementById('state');
-        if (country === "India") {
-            dropdownBox.style.display = "block";
-            textboxBox.style.display = "none";
-            stateSelect.innerHTML = "";
-            indiaStates.forEach(function(state) {
-                let opt = document.createElement("option");
-                opt.value = state;
-                opt.text = state;
-                stateSelect.appendChild(opt);
-            });
-        } else {
-            dropdownBox.style.display = "none";
-            textboxBox.style.display = "block";
-        }
-    });
-}
+/* Dynamic Country, State and City Dropdowns initialized automatically via country_state_city.js */
 </script>
 
 <script>

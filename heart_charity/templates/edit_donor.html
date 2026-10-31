@@ -724,26 +724,20 @@
     </div>
     <div class="col-md-6">
         <label class="form-label">City <span class="req-star" style="color: #d9534f;">*</span></label>
-        <input type="text" name="city" value="{{ donor.city }}" class="form-control" placeholder="Mumbai/Ahmedabad" required>
+        <select id="city" name="city" class="form-select" required data-selected-city="{{ donor.city|default:'' }}">
+            {% if donor.city %}<option value="{{ donor.city }}" selected>{{ donor.city }}</option>{% else %}<option value="">Select State first</option>{% endif %}
+        </select>
     </div>
     <div class="col-md-6">
         <label class="form-label">Country <span class="req-star" style="color: #d9534f;">*</span></label>
-        <select id="country" name="country" class="form-select" required>
-            <option value="India" {% if donor.country == "India" or not donor.country %}selected{% endif %}>India</option>
-            <option value="United States" {% if donor.country == "United States" %}selected{% endif %}>United States</option>
-            <option value="United Kingdom" {% if donor.country == "United Kingdom" %}selected{% endif %}>United Kingdom</option>
-            <option value="United Arab Emirates" {% if donor.country == "United Arab Emirates" %}selected{% endif %}>United Arab Emirates</option>
-            <option value="Australia" {% if donor.country == "Australia" %}selected{% endif %}>Australia</option>
-            <option value="Canada" {% if donor.country == "Canada" %}selected{% endif %}>Canada</option>
-            <option value="Singapore" {% if donor.country == "Singapore" %}selected{% endif %}>Singapore</option>
-            <option value="Germany" {% if donor.country == "Germany" %}selected{% endif %}>Germany</option>
-            <option value="France" {% if donor.country == "France" %}selected{% endif %}>France</option>
-            <option value="Other" {% if donor.country == "Other" %}selected{% endif %}>Other</option>
+        <select id="country" name="country" class="form-select" required data-selected-country="{{ donor.country|default:'' }}">
+            {% if donor.country %}<option value="{{ donor.country }}" selected>{{ donor.country }}</option>{% else %}<option value="">Select Country</option>{% endif %}
         </select>
     </div>
     <div class="col-md-6" id="stateDropdownBox">
         <label class="form-label">State <span class="req-star" style="color: #d9534f;">*</span></label>
-        <select id="state" name="state" class="form-select" data-selected-state="{{ donor.state }}">
+        <select id="state" name="state" class="form-select" required data-selected-state="{{ donor.state|default:'' }}">
+            {% if donor.state %}<option value="{{ donor.state }}" selected>{{ donor.state }}</option>{% else %}<option value="">Select Country first</option>{% endif %}
         </select>
     </div>
     <div class="col-md-6" id="stateTextboxBox" style="display: none;">
@@ -896,53 +890,7 @@ checkbox.addEventListener("change", function(){
 
 </script>
 <script>
-const indiaStates = [
-  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
-  "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
-  "Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
-  "Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan",
-  "Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh",
-  "Uttarakhand","West Bengal"
-];
-const selectedCountry = "{{ donor.country }}";
-const selectedState = "{{ donor.state }}";
-
-const countryDropdown = document.getElementById('country');
-const stateSelect = document.getElementById('state');
-const dropdownBox = document.getElementById('stateDropdownBox');
-const textboxBox = document.getElementById('stateTextboxBox');
-
-document.addEventListener("DOMContentLoaded", function () {
-    countryDropdown.value = selectedCountry;
-    loadStates();
-});
-function loadStates() {
-    const country = countryDropdown.value;
-
-    if (country === "India") {
-        dropdownBox.style.display = "block";
-        textboxBox.style.display = "none";
-        stateSelect.innerHTML = "";
-        indiaStates.forEach(function(state) {
-            let opt = document.createElement("option");
-            opt.value = state;
-            opt.text = state;
-
-            if (state === selectedState) {
-                opt.selected = true;
-            }
-            stateSelect.appendChild(opt);
-        });
-    } else {
-        dropdownBox.style.display = "none";
-        textboxBox.style.display = "block";
-        const stateTextbox = document.getElementById("state_text");
-        if (stateTextbox) {
-            stateTextbox.value = selectedState;
-        }
-    }
-}
-countryDropdown.addEventListener('change', loadStates);
+/* Dynamic Country, State and City Dropdowns initialized automatically via country_state_city.js */
 </script>
 <!-- ================= AGE AUTO CALCULATION ================= -->
 <script>
