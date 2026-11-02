@@ -54,8 +54,10 @@
 .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 45px;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+    width: 100%;
 }
 .btn-update {
     background: #15803d;
@@ -146,8 +148,9 @@
         <label>Transaction ID</label>
         <input type="text"name="transaction_id"class="form-control"value="{{ payment.transaction_id }}">
     </div>
-<div class="text-center mt-5">
-    <button type="submit" class="btn btn-success me-3">✔ Update</button>
+</div>
+<div class="action-buttons d-flex justify-content-center align-items-center gap-3 mt-4" style="width: 100%;">
+    <button type="submit" class="btn btn-success">✔ Update</button>
     <a href="{% url 'welcome' %}" class="btn btn-secondary">← Back</a>
 </div>
 </form>

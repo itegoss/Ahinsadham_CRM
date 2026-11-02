@@ -3,6 +3,7 @@
 {% load static %}
 {% load custom_tags %}
 {% block universal_nav %}{% endblock %}
+{% block messages %}{% endblock %}
 {% block content %}
 <style>
   /* Universal Compact Row Height & Single-Line Enforcement for All Tables */
@@ -439,15 +440,80 @@
     color: #b91c1c !important;
   }
 
-  /* ── Welcome Page Component Specific Styles ── */
+  /* ── Universal Navigation & Sidebar Layout Fixes (Zero Gap between Header and Sidebar) ── */
+  header.gcp-header {
+    margin-bottom: 0 !important;
+  }
+  main.flex-grow-1,
+  .container-fluid.p-0 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
   .dashboard-container {
     display: flex;
-    min-height: calc(100vh - var(--gcp-header-height));
-    background-color: var(--gcp-bg);
+    height: calc(100vh - var(--gcp-header-height, 70px)) !important;
+    min-height: calc(100vh - var(--gcp-header-height, 70px)) !important;
+    background: linear-gradient(to right, var(--gcp-brand-primary, #064E3B) var(--gcp-sidebar-width, 260px), var(--gcp-bg, #F8FAFC) var(--gcp-sidebar-width, 260px)) !important;
     position: relative;
     width: 100% !important;
     max-width: 100vw !important;
-    overflow-x: hidden !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    overflow: hidden !important;
+  }
+  .sidebar-wrapper {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    top: 0 !important;
+    background: var(--gcp-brand-primary, #064E3B) !important;
+    border-top: none !important;
+  }
+  .sidebar {
+    margin-top: 0 !important;
+    padding-top: 0.75rem !important;
+    background: var(--gcp-brand-primary, #064E3B) !important;
+    border-top: none !important;
+  }
+  @media (min-width: 992px) {
+    .mobile-drawer-header,
+    .sidebar .mobile-drawer-header {
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+    }
+  }
+  @media (max-width: 991px) {
+    .mobile-drawer-header,
+    .sidebar .mobile-drawer-header {
+      display: flex !important;
+    }
+  }
+
+  /* ── Submenu Active & Selected Module Icons: Match Green Module Text ── */
+  .sidebar .sidebar-submenu a.tab-btn.active i,
+  .sidebar .sidebar-submenu a.tab-btn.active svg,
+  .sidebar .sidebar-submenu a.tab-btn.active .sidebar-icon,
+  .sidebar-submenu a.tab-btn.active i,
+  .sidebar-submenu a.tab-btn.active svg,
+  .sidebar-submenu a.tab-btn.active .sidebar-icon,
+  .sidebar-wrapper.collapsed a.tab-btn.active i,
+  .sidebar-wrapper.collapsed a.tab-btn.active svg,
+  .sidebar-wrapper.collapsed a.tab-btn.active .sidebar-icon {
+    color: var(--gcp-brand-action, #047857) !important;
+    opacity: 1 !important;
+  }
+
+  .sidebar .sidebar-submenu a.tab-btn:hover i,
+  .sidebar .sidebar-submenu a.tab-btn:hover svg,
+  .sidebar .sidebar-submenu a.tab-btn:hover .sidebar-icon,
+  .sidebar-submenu a.tab-btn:hover i,
+  .sidebar-submenu a.tab-btn:hover svg,
+  .sidebar-submenu a.tab-btn:hover .sidebar-icon {
+    color: var(--gcp-brand-primary, #064E3B) !important;
+    opacity: 1 !important;
   }
 
   @media (max-width: 991px) {
@@ -824,7 +890,7 @@ table tbody tr.soft-deleted-row:hover td,
     <div class="sidebar" id="sidebar">
 
       <!-- Mobile Drawer Close Header -->
-      <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom border-white border-opacity-10 mb-2">
+      <div class="mobile-drawer-header d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom border-white border-opacity-10 mb-2">
         <div class="d-flex align-items-center gap-2">
           <img src="{% static 'images/Ahinsa-logo.png' %}" alt="Logo" style="height: 28px; width: auto; background: #fff; padding: 2px 4px; border-radius: 4px;">
           <span class="text-white fw-bold small">Navigation</span>
@@ -1107,7 +1173,7 @@ table tbody tr.soft-deleted-row:hover td,
       {% else %}
       <div class="welcome-unassigned-card">
         <i class="bi bi-shield-lock text-muted fs-1 mb-3 d-block"></i>
-        <h5 class="fw-bold text-dark">Welcome, {{ user.username }}</h5>
+        <h5 class="fw-bold text-dark">Welcome, {{ user.get_full_name|default:user.username }}</h5>
         <p class="text-muted small">You currently do not have access privileges assigned. Please contact the administrator to grant module permissions.</p>
         <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#helpCenterModal">
           <i class="bi bi-question-circle me-1"></i> Open Help Center
@@ -1120,6 +1186,18 @@ table tbody tr.soft-deleted-row:hover td,
 
   <!-- =============Main Content========== -->
   <div class="content">
+    {% if messages %}
+    <div class="container my-2 p-0" id="welcomeMessagesContainer">
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show shadow-sm d-flex align-items-center justify-content-between py-2 px-3 mb-2" role="alert" style="border-radius: 8px;">
+          <div class="d-flex align-items-center gap-2 flex-grow-1">
+            <span class="fw-semibold text-dark">{{ message }}</span>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
     <div class="gcp-breadcrumbs" style="padding: 12px 24px; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
       <a href="/welcome/?active_tab=default-user" id="breadcrumbConsoleLink" style="color: #6b7280; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px;"><i class="bi bi-house-door"></i> Console</a> 
       <i class="bi bi-chevron-right" style="font-size: 10px; color: #9ca3af;"></i> 
@@ -1148,7 +1226,7 @@ table tbody tr.soft-deleted-row:hover td,
       <!-- Welcome Hero Card -->
       <div class="gcp-hero-banner">
         <div>
-          <h2 class="gcp-hero-title">Welcome , {{ request.user.username }} 👋</h2>
+          <h2 class="gcp-hero-title">Welcome, {{ request.user.get_full_name|default:request.user.username }} 👋</h2>
           <p class="gcp-hero-desc">
             Ahinsadham Admin Console provides a centralized control hub for managing donor relationships, tracking Dan Peti collections, organizing volunteers, and monitoring real-time operations.
           </p>

@@ -672,19 +672,20 @@
 
                 <!-- User Profile Pill / Menu -->
                 <div class="dropdown position-relative">
+                    {% with user_display_name=request.user.get_full_name|default:request.user.username %}
                     <button class="gcp-user-pill dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="true" aria-expanded="false">
                         <div class="gcp-avatar-circle">
-                            {{ request.user.username|slice:":1"|upper }}
+                            {{ user_display_name|first|upper }}
                         </div>
                         <div class="d-none d-md-flex flex-column text-start">
-                            <span class="gcp-username">{{ request.user.username }}</span>
+                            <span class="gcp-username">{{ user_display_name }}</span>
                             <span class="gcp-user-role">{% if user.is_superuser %}Super Admin{% else %}CRM Staff{% endif %}</span>
                         </div>
                         <i class="bi bi-chevron-down d-none d-md-inline" style="font-size: 10px;"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end gcp-dropdown-menu shadow-lg" aria-labelledby="userMenuDropdown">
                         <li class="px-3 py-2 border-bottom">
-                            <div class="fw-bold text-dark">{{ request.user.username }}</div>
+                            <div class="fw-bold text-dark">{{ user_display_name }}</div>
                             <small class="text-muted">{{ request.user.email|default:"Active Staff Member" }}</small>
                         </li>
                         <li><a class="dropdown-item py-2 user-dashboard-overview-link" href="/welcome/?tab=default-user"><i class="bi bi-speedometer2 me-2"></i> Dashboard Overview</a></li>
@@ -692,6 +693,7 @@
                         <li><hr class="dropdown-divider my-1"></li>
                         <li><a class="dropdown-item py-2 text-danger fw-semibold" href="/logout" onclick="try{localStorage.removeItem('activeTab');localStorage.removeItem('backFromForm');}catch(e){}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
                     </ul>
+                    {% endwith %}
                 </div>
             {% else %}
                 <a href="{% url 'login' %}" class="btn btn-success fw-bold px-4">Sign In</a>
@@ -763,7 +765,7 @@
 {% endif %}
 {% endblock %}
 
-<main class="flex-grow-1 p-0">
+<main class="flex-grow-1 p-0" style="margin-top: 0 !important; padding-top: 0 !important;">
     {% block messages %}
     {% if messages %}
     <div class="container my-3" style="max-width: 960px;" id="djangoMessagesContainer">
@@ -1392,10 +1394,27 @@
         var alerts = msgBox.querySelectorAll('.alert');
         alerts.forEach(function(alert) {
           alert.classList.remove('show');
-          setTimeout(function() { alert.remove(); }, 350);
+          setTimeout(function() {
+            alert.remove();
+            if (msgBox && msgBox.querySelectorAll('.alert').length === 0) {
+              msgBox.remove();
+            }
+          }, 350);
         });
       }
     }, 6000);
+
+    // Remove empty message container on manual close
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#djangoMessagesContainer .btn-close')) {
+        setTimeout(function() {
+          var msgBox = document.getElementById('djangoMessagesContainer');
+          if (msgBox && msgBox.querySelectorAll('.alert').length === 0) {
+            msgBox.remove();
+          }
+        }, 350);
+      }
+    });
   });
 </script>
 </body>

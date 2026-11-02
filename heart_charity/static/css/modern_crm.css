@@ -431,10 +431,23 @@ a:hover {
 .dashboard-container {
   display: flex;
   height: calc(100vh - var(--gcp-header-height));
+  min-height: calc(100vh - var(--gcp-header-height));
   overflow: hidden;
   position: relative;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
   /* Sidebar column color extends full height */
-  background: linear-gradient(to right, var(--gcp-brand-primary) var(--gcp-sidebar-width), var(--gcp-bg) var(--gcp-sidebar-width));
+  background: linear-gradient(to right, var(--gcp-brand-primary) var(--gcp-sidebar-width), var(--gcp-bg) var(--gcp-sidebar-width)) !important;
+}
+
+header.gcp-header {
+  margin-bottom: 0 !important;
+}
+
+main.flex-grow-1,
+.container-fluid.p-0 {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Mobile backdrop */
@@ -669,11 +682,31 @@ a:hover {
   background: var(--gcp-surface-hover) !important;
 }
 
+.sidebar-submenu a.tab-btn:hover i,
+.sidebar-submenu a.tab-btn:hover svg,
+.sidebar-submenu a.tab-btn:hover .sidebar-icon {
+  color: var(--gcp-brand-primary) !important;
+  opacity: 1 !important;
+}
+
 .sidebar-submenu a.tab-btn.active {
   background: var(--gcp-brand-teal-light) !important;
   color: var(--gcp-brand-action) !important;
   border-left: 2px solid var(--gcp-brand-action) !important;
   font-weight: 600 !important;
+}
+
+.sidebar .sidebar-submenu a.tab-btn.active i,
+.sidebar .sidebar-submenu a.tab-btn.active svg,
+.sidebar .sidebar-submenu a.tab-btn.active .sidebar-icon,
+.sidebar-submenu a.tab-btn.active i,
+.sidebar-submenu a.tab-btn.active svg,
+.sidebar-submenu a.tab-btn.active .sidebar-icon,
+.sidebar-wrapper.collapsed a.tab-btn.active i,
+.sidebar-wrapper.collapsed a.tab-btn.active svg,
+.sidebar-wrapper.collapsed a.tab-btn.active .sidebar-icon {
+  color: var(--gcp-brand-action) !important;
+  opacity: 1 !important;
 }
 
 /* Collapsed Sidebar (Google Cloud Console icon mode) */
