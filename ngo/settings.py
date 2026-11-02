@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 import environ
 import os
@@ -85,7 +86,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "ngo.wsgi.application"
 import os
 ENV = os.getenv("ENV", "DEV")
-DATABASES = {
+if 'test' in sys.argv or os.environ.get('DATABASE_ENGINE') == 'sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ.get('DATABASE_NAME'),
@@ -202,3 +211,13 @@ GS_DEFAULT_ACL = os.environ.get("GS_DEFAULT_ACL", None)
 GS_FILE_OVERWRITE = os.environ.get("GS_FILE_OVERWRITE", "False") == 'True'
 GS_IAM_SIGN_BLOB = os.environ.get("GS_IAM_SIGN_BLOB", "False") == 'True'
 GS_SA_EMAIL = os.environ.get("GS_SA_EMAIL", "319338334172-compute@developer.gserviceaccount.com")
+
+
+# ==============================================================================
+# WhatsApp Business Cloud API Configuration (11za)
+# ==============================================================================
+WHATSAPP_API = os.environ.get("WHATSAPP_API", "https://api.11za.in/apis/template/sendTemplate")
+WHATSAPP_ACCESS_TOKEN = os.environ.get("WHATSAPP_ACCESS_TOKEN", "")
+WHATSAPP_ORIGIN_WEBSITE = os.environ.get("WHATSAPP_ORIGIN_WEBSITE", "https://www.itegoss.in/")
+WHATSAPP_BUTTON_VALUE = os.environ.get("WHATSAPP_BUTTON_VALUE", "https://www.itegoss.in/")
+WHATSAPP_TEMPLATE_NAME = os.environ.get("WHATSAPP_TEMPLATE_NAME", "otp")

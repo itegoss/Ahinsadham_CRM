@@ -1,3 +1,12 @@
+import logging
+logger = logging.getLogger(__name__)
+import hashlib
+import secrets
+import datetime
+from django.http import JsonResponse
+from .models import WhatsAppOTP
+from .whatsapp_service import send_login_otp_whatsapp, normalize_phone_10_digits
+
 from django.forms import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -943,35 +952,418 @@ def logout_view(req):
     logout(req)
     return redirect("home")
 
-def send_otp(request):
-    if request.method == "POST":
-        phone = request.POST.get("phone")
-        otp = str(random.randint(100000, 999999))
-        otp_storage[phone] = otp
-        print(f"OTP for {phone}: {otp}")  # For testing only
-        return redirect(f"/verify-otp/?phone={phone}")
-    return redirect('signin')  # fallback if GET
+# ==============================================================================
+# WhatsApp OTP Authentication Views (11za API Integration)
+# ==============================================================================
 
-from twilio.rest import Client
-TWILIO_ACCOUNT_SID = 'AC730c5a6779806941ef6ef4215f92629a'
-TWILIO_AUTH_TOKEN = '8ab4ce8083246cb7fc38dccacc5a521b'
-TWILIO_PHONE = '+917208542366'  
+def find_eligible_user_by_mobile(raw_phone):
+    """
+    Searches for an active Ahinsadham User associated strictly with the given mobile number.
+    Checks in sequence:
+    1. Active UserRole.mobile_number matching the 10-digit canonical mobile number.
+    2. Active User.username matching canonical 10-digit mobile number or 'user_{phone10}'.
+    
+    Security & Superuser Protection Rules:
+    - Does NOT hardcode any credentials, mobile numbers, or superuser accounts.
+    - Does NOT infer or map users through third-party donor, owner, or employee email addresses.
+    - Ensures each mobile number is strictly mapped to its own authentic user account.
+    Returns (user, 10_digit_phone) or (None, 10_digit_phone/None).
+    """
+    phone10 = normalize_phone_10_digits(raw_phone)
+    if not phone10:
+        return None, None
 
-def send_otp(request):
-    if request.method == "POST":
-        phone = request.POST.get("phone")
-        otp = str(random.randint(100000, 999999))
-        otp_storage[phone] = otp
-
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        client.messages.create(
-            body=f"Your OTP is {otp}",
-            from_=TWILIO_PHONE,
-            to=f"+91{phone}" 
+    # 1. Match UserRole.mobile_number (exact canonical 10 digits or standard country prefix)
+    user_role = (
+        UserRole.objects.filter(is_deleted=False)
+        .filter(
+            Q(mobile_number=phone10)
+            | Q(mobile_number=f"+91{phone10}")
+            | Q(mobile_number=f"91{phone10}")
+            | Q(mobile_number=f"0{phone10}")
         )
+        .select_related("user")
+        .first()
+    )
+    if user_role and user_role.user:
+        if user_role.user.is_active:
+            return user_role.user, phone10
 
-        return redirect(f"/verify-otp/?phone={phone}")
-    return redirect('signin')
+    # 2. Match User.username (exact 10 digits or user_{phone10})
+    candidate_usernames = [
+        phone10,
+        f"user_{phone10}",
+    ]
+    user = User.objects.filter(is_active=True, username__in=candidate_usernames).first()
+    if user:
+        try:
+            ur, _ = UserRole.objects.get_or_create(user=user)
+            if ur.mobile_number != phone10:
+                ur.mobile_number = phone10
+                ur.save(update_fields=["mobile_number"])
+        except Exception:
+            pass
+        return user, phone10
+
+    return None, phone10
+
+
+def send_whatsapp_login_otp(request):
+    """
+    Initiates WhatsApp OTP login for an Ahinsadham user.
+    - Validates 10-digit Indian mobile number.
+    - Enforces 60-second resend cooldown.
+    - Resolves existing user if already registered (None for first-time user).
+    - Generates cryptographically secure 6-digit OTP using secrets.
+    - Hashes OTP with random salt (never stored or logged in plaintext).
+    - Dispatches message using approved 'otp' template via 11za WhatsApp API.
+    - Persists WhatsAppOTP record ONLY after the provider confirms acceptance.
+    - Does NOT create a database user before OTP verification.
+    - Returns success only when the provider confirms acceptance.
+    """
+    is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest" or "application/json" in request.headers.get("Accept", "")
+
+    if request.user.is_authenticated:
+        if is_ajax:
+            return JsonResponse({"success": True, "redirect_url": reverse("welcome")})
+        return redirect("welcome")
+
+    if request.method != "POST":
+        return redirect("login")
+
+    raw_mobile = (request.POST.get("mobile") or "").strip()
+    if not raw_mobile and request.body:
+        import json
+        try:
+            body_data = json.loads(request.body.decode("utf-8"))
+            raw_mobile = str(body_data.get("mobile", "")).strip()
+        except Exception:
+            pass
+
+    phone10 = normalize_phone_10_digits(raw_mobile)
+    if not phone10:
+        err = "Please enter a valid 10-digit mobile number."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    # 60-second resend cooldown check
+    now = timezone.now()
+    recent_otp = (
+        WhatsAppOTP.objects.filter(mobile=phone10, is_used=False)
+        .order_by("-created_at")
+        .first()
+    )
+    if recent_otp:
+        elapsed = (now - recent_otp.created_at).total_seconds()
+        if elapsed < 60:
+            remaining = int(60 - elapsed)
+            err = f"Please wait {remaining} seconds before requesting a new OTP."
+            if is_ajax:
+                return JsonResponse({"success": False, "error": err, "cooldown_remaining": remaining}, status=429)
+            messages.warning(request, err)
+            return redirect("login")
+
+    # Look up existing registered user (may be None for first-time user)
+    user, _ = find_eligible_user_by_mobile(phone10)
+
+    # Generate secure 6-digit OTP and salted hash
+    otp = f"{secrets.SystemRandom().randint(100000, 999999)}"
+    salt = secrets.token_hex(16)
+    otp_hash = hashlib.sha256(f"{otp}:{salt}".encode()).hexdigest()
+    from datetime import timedelta
+    expires_at = now + timedelta(minutes=5)
+
+    # Dispatch via 11za WhatsApp API using approved 'otp' template
+    wa_result = send_login_otp_whatsapp(phone10, otp, user=user)
+    if not wa_result.get("success"):
+        logger.error(f"[auth wa error] Delivery failed for mobile {phone10}: {wa_result.get('error')}")
+        err = wa_result.get("error") or "Failed to deliver OTP to your WhatsApp number. Please check your number or try again later."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=502)
+        messages.error(request, err)
+        return redirect("login")
+
+    # Invalidate any previously unused OTPs for this mobile number ONLY AFTER provider confirms message acceptance
+    WhatsAppOTP.objects.filter(mobile=phone10, is_used=False).update(is_used=True)
+
+    # Persist secure OTP record ONLY AFTER provider confirms message acceptance (no user created yet for new numbers)
+    WhatsAppOTP.objects.create(
+        mobile=phone10,
+        otp_hash=otp_hash,
+        otp_salt=salt,
+        user=user,
+        expires_at=expires_at,
+        is_used=False,
+    )
+
+    request.session["login_otp_mobile"] = phone10
+    request.session["login_otp_sent_at"] = now.timestamp()
+    request.session["login_otp_verified"] = False
+
+    success_msg = f"OTP has been sent to your WhatsApp number (+91 {phone10[:5]} {phone10[5:]})."
+    if is_ajax:
+        return JsonResponse({
+            "success": True,
+            "message": success_msg,
+            "mobile": phone10,
+            "resend_after": 60,
+        })
+    messages.success(request, success_msg)
+    return redirect("login")
+
+
+def verify_whatsapp_login_otp(request):
+    """
+    Verifies the WhatsApp OTP submitted by the user.
+    - Validates 6 digits.
+    - Validates expiry (5 minutes).
+    - Enforces attempt limit (max 3).
+    - Verifies cryptographic hash with stored salt.
+    - Marks OTP as used (single-use protection).
+    - If user does not exist, auto-registers a new permanent user record in database.
+    - If user exists, retrieves the existing user without creating duplicates.
+    - Saves the verified mobile number permanently in UserRole table.
+    - Authenticates user and establishes normal Django session.
+    - Preserves user roles, module permissions, and redirects to dashboard.
+    """
+    is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest" or "application/json" in request.headers.get("Accept", "")
+
+    if request.user.is_authenticated:
+        if is_ajax:
+            return JsonResponse({"success": True, "redirect_url": reverse("welcome")})
+        return redirect("welcome")
+
+    if request.method != "POST":
+        return redirect("login")
+
+    raw_otp = (request.POST.get("otp") or "").strip()
+    raw_mobile = (request.POST.get("mobile") or "").strip() or request.session.get("login_otp_mobile")
+
+    if not raw_otp and request.body:
+        import json
+        try:
+            body_data = json.loads(request.body.decode("utf-8"))
+            raw_otp = str(body_data.get("otp", "")).strip()
+            if not raw_mobile:
+                raw_mobile = str(body_data.get("mobile", "")).strip()
+        except Exception:
+            pass
+
+    phone10 = normalize_phone_10_digits(raw_mobile)
+    if not phone10 or not raw_otp:
+        err = "Mobile number and 6-digit OTP are required."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    if len(raw_otp) != 6 or not raw_otp.isdigit():
+        err = "Please enter a valid 6-digit OTP code."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    otp_record = (
+        WhatsAppOTP.objects.filter(mobile=phone10, is_used=False)
+        .order_by("-created_at")
+        .first()
+    )
+
+    if not otp_record:
+        err = "No active OTP found. Please request a new OTP."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    now = timezone.now()
+    if now > otp_record.expires_at:
+        otp_record.is_used = True
+        otp_record.save(update_fields=["is_used"])
+        err = "OTP has expired. Please request a new one."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    # Increment and check verification attempts
+    otp_record.attempts += 1
+    otp_record.save(update_fields=["attempts"])
+
+    if otp_record.attempts > otp_record.max_attempts:
+        otp_record.is_used = True
+        otp_record.save(update_fields=["is_used"])
+        err = "Maximum OTP verification attempts exceeded. Please request a new OTP."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=429)
+        messages.error(request, err)
+        return redirect("login")
+
+    # Constant-time comparison of salted SHA-256 hash
+    computed_hash = hashlib.sha256(f"{raw_otp}:{otp_record.otp_salt}".encode()).hexdigest()
+    if not secrets.compare_digest(computed_hash, otp_record.otp_hash):
+        remaining_attempts = max(0, otp_record.max_attempts - otp_record.attempts)
+        err = (
+            f"Invalid verification code. {remaining_attempts} attempt{'s' if remaining_attempts != 1 else ''} remaining."
+            if remaining_attempts > 0
+            else "Maximum attempts exceeded. Please request a new OTP."
+        )
+        if remaining_attempts == 0:
+            otp_record.is_used = True
+            otp_record.save(update_fields=["is_used"])
+
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err, "remaining_attempts": remaining_attempts}, status=400)
+        messages.error(request, err)
+        return redirect("login")
+
+    # Successful verification -> invalidate OTP
+    otp_record.is_used = True
+    otp_record.save(update_fields=["is_used"])
+    request.session.pop("login_otp_mobile", None)
+    request.session.pop("login_otp_sent_at", None)
+
+    # Database User Resolution & Auto-Registration (Atomic)
+    with transaction.atomic():
+        # Check whether user with that mobile already exists
+        user, _ = find_eligible_user_by_mobile(phone10)
+
+        # If user does not exist, create new user record permanently
+        if not user:
+            if not User.objects.filter(username=phone10).exists():
+                username = phone10
+            elif not User.objects.filter(username=f"user_{phone10}").exists():
+                username = f"user_{phone10}"
+            else:
+                counter = 1
+                while User.objects.filter(username=f"user_{phone10}_{counter}").exists():
+                    counter += 1
+                username = f"user_{phone10}_{counter}"
+
+            first_name = ""
+            last_name = ""
+            email = ""
+
+            matched_profile = None
+            donor = (
+                DonorVolunteer.objects.filter(is_deleted=False)
+                .filter(Q(contact_number__icontains=phone10) | Q(whatsapp_number__icontains=phone10))
+                .order_by("-id")
+                .first()
+            )
+            if donor:
+                matched_profile = donor
+            else:
+                owner = (
+                    OwnerDetail.objects.filter(is_deleted=False)
+                    .filter(Q(contact_number__icontains=phone10) | Q(whatsapp_number__icontains=phone10))
+                    .order_by("-id")
+                    .first()
+                )
+                if owner:
+                    matched_profile = owner
+                else:
+                    emp = (
+                        Employee.objects.filter(is_deleted=False)
+                        .filter(Q(contact_number__icontains=phone10) | Q(whatsapp_number__icontains=phone10))
+                        .order_by("-id")
+                        .first()
+                    )
+                    if emp:
+                        matched_profile = emp
+
+            if matched_profile:
+                first_name = (getattr(matched_profile, "first_name", "") or "").strip()
+                last_name = (getattr(matched_profile, "last_name", "") or "").strip()
+                cand_email = (getattr(matched_profile, "email", "") or "").strip()
+                # Strict Superuser Protection: Never reuse or copy an email if another User already has it
+                if cand_email and not User.objects.filter(email__iexact=cand_email).exists():
+                    email = cand_email
+
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                )
+                user.set_unusable_password()
+                user.is_superuser = False
+                user.is_staff = False
+                user.is_active = True
+                user.save()
+                logger.info(f"[auth] Created permanent database user '{user.username}' for verified mobile {phone10}.")
+            except IntegrityError:
+                user = User.objects.filter(username=username).first()
+                if not user:
+                    user, _ = find_eligible_user_by_mobile(phone10)
+
+        # Superuser Protection check: WhatsApp login must NEVER authenticate as a superuser
+        # unless that exact mobile number is already explicitly and safely associated in UserRole
+        if user and user.is_superuser:
+            ur_check = UserRole.objects.filter(user=user, is_deleted=False, mobile_number=phone10).first()
+            if not ur_check:
+                logger.error(f"[auth security] Prevented unauthorized superuser login attempt for mobile {phone10} as '{user.username}'.")
+                user = User.objects.filter(username=phone10, is_superuser=False).first()
+                if not user:
+                    user = User.objects.create_user(
+                        username=f"user_{phone10}",
+                        is_active=True
+                    )
+                    user.set_unusable_password()
+                    user.is_superuser = False
+                    user.is_staff = False
+                    user.save()
+
+        # Permanently save verified mobile in UserRole table
+        user_role, _ = UserRole.objects.get_or_create(user=user)
+        if user_role.mobile_number != phone10:
+            user_role.mobile_number = phone10
+            user_role.is_deleted = False
+            user_role.save(update_fields=["mobile_number", "is_deleted"])
+
+        # Link OTP record to user
+        if otp_record.user != user:
+            otp_record.user = user
+            otp_record.save(update_fields=["user"])
+
+    if not user or not user.is_active:
+        err = "User account not found or is currently inactive. Please contact the administrator."
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err}, status=403)
+        messages.error(request, err)
+        return redirect("login")
+
+    # Authenticate using standard Django auth backend
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    logger.info(f"[auth] User '{user.username}' (id={user.id}) successfully authenticated via WhatsApp OTP.")
+
+    redirect_url = reverse("welcome")
+    if is_ajax:
+        return JsonResponse({
+            "success": True,
+            "message": "Login successful! Redirecting...",
+            "redirect_url": redirect_url,
+        })
+    messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+    return redirect(redirect_url)
+
+
+def resend_whatsapp_login_otp(request):
+    """
+    Resend endpoint enforcing 60-second cooldown and regenerating single-use OTP.
+    """
+    return send_whatsapp_login_otp(request)
+
+
+def send_otp(request):
+    """
+    Backward-compatible alias for existing route 'send-otp/'.
+    """
+    return send_whatsapp_login_otp(request)
 
 # ------------Globle All Search-------------------
 
@@ -3602,6 +3994,9 @@ def edit_user(request, id):
         user_obj.last_name  = request.POST.get('last_name')
         user_obj.username   = new_username
         user_obj.email      = request.POST.get('email')
+        mobile_val = (request.POST.get('mobile_number') or '').strip()
+        user_role_obj.mobile_number = mobile_val or None
+        user_role_obj.save()
 
         role_name_selected = request.POST.get('role')
         if role_name_selected in ["", "none", "None", None]:

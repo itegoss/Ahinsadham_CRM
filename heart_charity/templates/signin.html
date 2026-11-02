@@ -74,7 +74,7 @@
     border: 1px solid #A7F3D0;
     border-radius: 10px;
     padding: 0.85rem 1rem;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
     font-size: 0.84rem;
     color: #065F46;
     font-weight: 500;
@@ -121,7 +121,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin: 1.4rem 0;
+    margin: 1.25rem 0;
     color: #94a3b8;
     font-size: 0.8rem;
     font-weight: 600;
@@ -135,8 +135,8 @@
     background: #e2e8f0;
   }
 
-  /* Mobile button */
-  .signin-btn-mobile {
+  /* Toggle Button for Mobile Login */
+  .signin-btn-mobile-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -153,16 +153,185 @@
     transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
   }
-  .signin-btn-mobile:hover {
+  .signin-btn-mobile-toggle:hover {
     background: #ECFDF5;
     border-color: #10B981;
     color: #064E3B !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(16,185,129,0.12);
   }
-  .signin-btn-mobile i {
+  .signin-btn-mobile-toggle i {
     font-size: 1.1rem;
-    color: #10B981;
+    color: #25D366;
+  }
+
+  /* WhatsApp OTP Container */
+  .whatsapp-auth-card {
+    background: #FAFDFA;
+    border: 1.5px solid #d1fae5;
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .whatsapp-auth-card.hidden {
+    display: none;
+  }
+
+  .whatsapp-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .whatsapp-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #064E3B;
+  }
+  .whatsapp-card-title i {
+    font-size: 1.15rem;
+    color: #25D366;
+  }
+  .whatsapp-close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .whatsapp-close-btn:hover {
+    color: #064E3B;
+  }
+
+  .signin-input-group {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #d1fae5;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 0.2rem 0.75rem;
+    margin-bottom: 0.85rem;
+    transition: all 0.2s ease;
+  }
+  .signin-input-group:focus-within {
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  }
+  .signin-country-prefix {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #064E3B;
+    padding-right: 0.6rem;
+    border-right: 1.5px solid #a7f3d0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    user-select: none;
+  }
+  .signin-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #064E3B;
+  }
+  .signin-input::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+  }
+
+  .signin-btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background: #16a34a;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: 0 3px 12px rgba(22, 163, 74, 0.25);
+  }
+  .signin-btn-whatsapp:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(22, 163, 74, 0.3);
+  }
+  .signin-btn-whatsapp:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .signin-otp-input {
+    width: 100%;
+    border: 1.5px solid #d1fae5;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 8px;
+    color: #064E3B;
+    outline: none;
+    margin-bottom: 0.85rem;
+    transition: all 0.2s ease;
+  }
+  .signin-otp-input:focus {
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  }
+
+  .signin-resend-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.85rem;
+    font-size: 0.82rem;
+  }
+  .signin-resend-link {
+    color: #047857;
+    font-weight: 700;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.82rem;
+  }
+  .signin-resend-link:hover {
+    text-decoration: underline;
+  }
+  .signin-resend-link:disabled {
+    color: #94a3b8;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+
+  .change-number-link {
+    color: #047857;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .change-number-link:hover {
+    text-decoration: underline;
   }
 
   /* Alerts */
@@ -185,6 +354,11 @@
     background: #ffe4e6;
     border: 1px solid #fecdd3;
     color: #be123c;
+  }
+  .signin-alert-success {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    color: #065F46;
   }
 
   /* Footer credit inside left panel */
@@ -239,30 +413,33 @@
   /* Dot grid pattern */
   .signin-dot-grid {
     position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
-    background-size: 28px 28px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
     pointer-events: none;
   }
 
-  /* Right panel content */
   .signin-brand-content {
     position: relative;
     z-index: 2;
+    max-width: 540px;
   }
 
   .signin-brand-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(9,230,193,0.12);
-    border: 1px solid rgba(9,230,193,0.25);
+    background: rgba(9, 230, 193, 0.12);
+    border: 1px solid rgba(9, 230, 193, 0.3);
     border-radius: 999px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.78rem;
-    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
     color: #09e6c1;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
   }
@@ -359,10 +536,13 @@
     <!-- Domain notice -->
     <div class="signin-info-box">
       <i class="fa-solid fa-circle-info"></i>
-      <span>Use your official <strong>@ahinsadham.org</strong> Google account to sign in.</span>
+      <span>Sign in with your registered <strong>WhatsApp Mobile Number</strong> or official Google account.</span>
     </div>
 
-    <!-- Error/warning messages -->
+    <!-- Dynamic Alert Container -->
+    <div id="authAlertBox" style="display: none;"></div>
+
+    <!-- Static error/warning messages -->
     {% if errmsg %}
     <div class="signin-alert signin-alert-warning">
       <i class="fa-solid fa-triangle-exclamation"></i>{{ errmsg }}
@@ -370,8 +550,8 @@
     {% endif %}
     {% if messages %}
     {% for message in messages %}
-    <div class="signin-alert signin-alert-danger">
-      <i class="fa-solid fa-circle-xmark"></i>{{ message }}
+    <div class="signin-alert {% if message.tags == 'success' %}signin-alert-success{% elif message.tags == 'warning' %}signin-alert-warning{% else %}signin-alert-danger{% endif %}">
+      <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-xmark{% endif %}"></i>{{ message }}
     </div>
     {% endfor %}
     {% endif %}
@@ -384,11 +564,65 @@
 
     <div class="signin-divider">OR</div>
 
-    <!-- Mobile sign in -->
-    <a href="{% url 'social:begin' 'google-oauth2' %}" class="signin-btn-mobile">
-      <i class="fa-solid fa-mobile-screen-button"></i>
-      Sign in with Mobile Number
-    </a>
+    <!-- Toggle button to open WhatsApp OTP login -->
+    <button type="button" id="toggleMobileLoginBtn" class="signin-btn-mobile-toggle">
+      <i class="fa-brands fa-whatsapp"></i>
+      Sign in with WhatsApp Mobile Number
+    </button>
+
+    <!-- ─── WhatsApp OTP Authentication Box ─── -->
+    <div id="whatsappAuthCard" class="whatsapp-auth-card hidden">
+      <div class="whatsapp-card-header">
+        <span class="whatsapp-card-title">
+          <i class="fa-brands fa-whatsapp"></i>
+          WhatsApp OTP Sign In
+        </span>
+        <button type="button" class="whatsapp-close-btn" id="closeWhatsAppCardBtn">Close</button>
+      </div>
+
+      <!-- STEP 1: Enter Mobile Number Form -->
+      <form id="sendOtpForm" method="POST" action="{% url 'send_whatsapp_login_otp' %}">
+        {% csrf_token %}
+        <label style="display:block; font-size:0.78rem; font-weight:700; color:#064E3B; margin-bottom:0.35rem; text-transform:uppercase; letter-spacing:0.5px;">Registered WhatsApp Number</label>
+        <div class="signin-input-group">
+          <span class="signin-country-prefix"><i class="fa-solid fa-phone" style="font-size:0.75rem;"></i> +91</span>
+          <input type="tel" name="mobile" id="mobileInput" class="signin-input" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[6-9][0-9]{9}" required autofocus autocomplete="tel">
+        </div>
+        <button type="submit" id="sendOtpBtn" class="signin-btn-whatsapp">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span id="sendOtpBtnText">Send OTP on WhatsApp</span>
+        </button>
+      </form>
+
+      <!-- STEP 2: Verify OTP Form (Hidden initially) -->
+      <form id="verifyOtpForm" method="POST" action="{% url 'verify_whatsapp_login_otp' %}" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="mobile" id="verifyMobileHidden">
+
+        <div style="font-size:0.83rem; color:#475569; margin-bottom:0.65rem;">
+          OTP sent to WhatsApp: <strong id="displayMobileNumber" style="color:#064E3B;"></strong>
+          <span style="margin: 0 4px;">•</span>
+          <a href="javascript:void(0)" id="changeMobileBtn" class="change-number-link">Change</a>
+        </div>
+
+        <label style="display:block; font-size:0.78rem; font-weight:700; color:#064E3B; margin-bottom:0.35rem; text-transform:uppercase; letter-spacing:0.5px;">6-Digit Verification Code</label>
+        <input type="text" name="otp" id="otpInput" class="signin-otp-input" placeholder="••••••" maxlength="6" pattern="\d{6}" required autocomplete="one-time-code">
+
+        <button type="submit" id="verifyOtpBtn" class="signin-btn-whatsapp">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i>
+          <span id="verifyOtpBtnText">Verify &amp; Sign In</span>
+        </button>
+
+        <div class="signin-resend-row">
+          <span id="cooldownTimerText" style="color:#64748b; font-weight:500;">
+            Resend OTP in <strong id="cooldownSeconds" style="color:#064E3B;">60</strong>s
+          </span>
+          <button type="button" id="resendOtpBtn" class="signin-resend-link" style="display:none;">
+            <i class="fa-brands fa-whatsapp"></i> Resend OTP
+          </button>
+        </div>
+      </form>
+    </div>
 
     <!-- Footer credit -->
     <div class="signin-left-footer">
@@ -438,5 +672,258 @@
     localStorage.setItem('activeTab', 'default-user');
     sessionStorage.removeItem('lastActiveSearchInput');
   } catch (e) {}
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('toggleMobileLoginBtn');
+    const authCard = document.getElementById('whatsappAuthCard');
+    const closeBtn = document.getElementById('closeWhatsAppCardBtn');
+
+    const sendForm = document.getElementById('sendOtpForm');
+    const verifyForm = document.getElementById('verifyOtpForm');
+
+    const mobileInput = document.getElementById('mobileInput');
+    const otpInput = document.getElementById('otpInput');
+    const verifyMobileHidden = document.getElementById('verifyMobileHidden');
+    const displayMobileNumber = document.getElementById('displayMobileNumber');
+
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const sendOtpBtnText = document.getElementById('sendOtpBtnText');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const verifyOtpBtnText = document.getElementById('verifyOtpBtnText');
+
+    const alertBox = document.getElementById('authAlertBox');
+    const cooldownTimerText = document.getElementById('cooldownTimerText');
+    const cooldownSecondsSpan = document.getElementById('cooldownSeconds');
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+    const changeMobileBtn = document.getElementById('changeMobileBtn');
+
+    let cooldownTimer = null;
+    let secondsLeft = 60;
+
+    function showAlert(msg, type = 'danger') {
+      let icon = 'fa-circle-xmark';
+      let alertClass = 'signin-alert-danger';
+      if (type === 'success') {
+        icon = 'fa-circle-check';
+        alertClass = 'signin-alert-success';
+      } else if (type === 'warning') {
+        icon = 'fa-triangle-exclamation';
+        alertClass = 'signin-alert-warning';
+      }
+      alertBox.className = 'signin-alert ' + alertClass;
+      alertBox.innerHTML = `<i class="fa-solid ${icon}"></i> ${msg}`;
+      alertBox.style.display = 'flex';
+    }
+
+    function clearAlert() {
+      alertBox.style.display = 'none';
+      alertBox.innerHTML = '';
+    }
+
+    // Toggle Mobile Login Card
+    toggleBtn.addEventListener('click', function () {
+      authCard.classList.remove('hidden');
+      toggleBtn.style.display = 'none';
+      mobileInput.focus();
+    });
+
+    closeBtn.addEventListener('click', function () {
+      authCard.classList.add('hidden');
+      toggleBtn.style.display = 'flex';
+      clearAlert();
+    });
+
+    // Start 60-second cooldown timer
+    function startCooldown(duration = 60) {
+      if (cooldownTimer) clearInterval(cooldownTimer);
+      secondsLeft = duration;
+      cooldownTimerText.style.display = 'inline';
+      resendOtpBtn.style.display = 'none';
+      cooldownSecondsSpan.textContent = secondsLeft;
+
+      cooldownTimer = setInterval(function () {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+          clearInterval(cooldownTimer);
+          cooldownTimerText.style.display = 'none';
+          resendOtpBtn.style.display = 'inline';
+        } else {
+          cooldownSecondsSpan.textContent = secondsLeft;
+        }
+      }, 1000);
+    }
+
+    // Switch between Step 1 (Mobile) and Step 2 (OTP)
+    function showStep2(mobileNum, duration = 60) {
+      sendForm.style.display = 'none';
+      verifyForm.style.display = 'block';
+      verifyMobileHidden.value = mobileNum;
+      displayMobileNumber.textContent = '+91 ' + mobileNum;
+      otpInput.value = '';
+      otpInput.focus();
+      startCooldown(duration);
+    }
+
+    function showStep1() {
+      verifyForm.style.display = 'none';
+      sendForm.style.display = 'block';
+      otpInput.value = '';
+      mobileInput.focus();
+      if (cooldownTimer) clearInterval(cooldownTimer);
+    }
+
+    changeMobileBtn.addEventListener('click', function () {
+      clearAlert();
+      showStep1();
+    });
+
+    // Format mobile input (digits only)
+    mobileInput.addEventListener('input', function (e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Format OTP input (digits only)
+    otpInput.addEventListener('input', function (e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+
+    // Handle Send OTP (AJAX)
+    sendForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearAlert();
+
+      const mobileVal = mobileInput.value.trim();
+      if (mobileVal.length !== 10) {
+        showAlert('Please enter a valid 10-digit mobile number.', 'warning');
+        return;
+      }
+
+      sendOtpBtn.disabled = true;
+      sendOtpBtnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending WhatsApp OTP...';
+
+      const formData = new FormData(sendForm);
+
+      fetch("{% url 'send_whatsapp_login_otp' %}", {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      })
+      .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, body: data })))
+      .then(result => {
+        sendOtpBtn.disabled = false;
+        sendOtpBtnText.textContent = 'Send OTP on WhatsApp';
+
+        if (result.ok && result.body.success) {
+          showAlert(result.body.message || 'OTP sent successfully to your WhatsApp!', 'success');
+          showStep2(mobileVal, result.body.resend_after || 60);
+        } else {
+          const err = (result.body && result.body.error) ? result.body.error : 'Failed to send OTP. Please try again.';
+          showAlert(err, 'danger');
+        }
+      })
+      .catch(err => {
+        sendOtpBtn.disabled = false;
+        sendOtpBtnText.textContent = 'Send OTP on WhatsApp';
+        showAlert('Network error communicating with server. Please try again.', 'danger');
+      });
+    });
+
+    // Handle Resend OTP Click
+    resendOtpBtn.addEventListener('click', function () {
+      clearAlert();
+      const mobileVal = verifyMobileHidden.value.trim() || mobileInput.value.trim();
+      if (!mobileVal) {
+        showStep1();
+        return;
+      }
+
+      resendOtpBtn.disabled = true;
+      resendOtpBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resending...';
+
+      const formData = new FormData();
+      formData.append('mobile', mobileVal);
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      formData.append('csrfmiddlewaretoken', csrfToken);
+
+      fetch("{% url 'resend_whatsapp_login_otp' %}", {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      })
+      .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, body: data })))
+      .then(result => {
+        resendOtpBtn.disabled = false;
+        resendOtpBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Resend OTP';
+
+        if (result.ok && result.body.success) {
+          showAlert(result.body.message || 'New OTP sent to your WhatsApp number!', 'success');
+          startCooldown(result.body.resend_after || 60);
+        } else {
+          const err = (result.body && result.body.error) ? result.body.error : 'Unable to resend OTP at this time.';
+          showAlert(err, 'danger');
+        }
+      })
+      .catch(err => {
+        resendOtpBtn.disabled = false;
+        resendOtpBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Resend OTP';
+        showAlert('Network error. Please try again.', 'danger');
+      });
+    });
+
+    // Handle Verify OTP (AJAX)
+    verifyForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearAlert();
+
+      const otpVal = otpInput.value.trim();
+      if (otpVal.length !== 6) {
+        showAlert('Please enter the full 6-digit OTP code received on WhatsApp.', 'warning');
+        return;
+      }
+
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+      const formData = new FormData(verifyForm);
+
+      fetch("{% url 'verify_whatsapp_login_otp' %}", {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      })
+      .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, body: data })))
+      .then(result => {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtnText.textContent = 'Verify & Sign In';
+
+        if (result.ok && result.body.success) {
+          showAlert(result.body.message || 'Login successful! Redirecting...', 'success');
+          setTimeout(function () {
+            window.location.href = result.body.redirect_url || "{% url 'welcome' %}";
+          }, 600);
+        } else {
+          const err = (result.body && result.body.error) ? result.body.error : 'Invalid OTP. Please try again.';
+          showAlert(err, 'danger');
+        }
+      })
+      .catch(err => {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtnText.textContent = 'Verify & Sign In';
+        showAlert('Network error during verification. Please try again.', 'danger');
+      });
+    });
+  });
 </script>
 {% endblock %}

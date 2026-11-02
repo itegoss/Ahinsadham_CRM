@@ -17,6 +17,7 @@ class Module(models.Model):
     is_deleted = models.BooleanField(default=False, db_index=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
+
     def __str__(self):
         return self.module_name
 
@@ -53,6 +54,17 @@ class UserRole(models.Model):
     is_deleted = models.BooleanField(default=False, db_index=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
+    mobile_number = models.CharField(max_length=20, blank=True, null=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['mobile_number'],
+                condition=models.Q(is_deleted=False, mobile_number__isnull=False) & ~models.Q(mobile_number=''),
+                name='unique_active_userrole_mobile_number',
+            )
+        ]
+
     def __str__(self):
         return f"{self.user.username} - {self.role.name if self.role else 'No Role'}"
 
@@ -517,6 +529,7 @@ class DonationPaymentBox_Hist(models.Model):
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="%(class)s_deleted_by")
+    mobile_number = models.CharField(max_length=20, blank=True, null=True)
     action = models.CharField(max_length=20)
     action_at = models.DateTimeField(auto_now_add=True)
 
@@ -646,3 +659,37 @@ class Employee(models.Model):
 
     def __str__(self):
         return f"{self.first_name or ''} {self.last_name or ''}".strip()
+
+
+# ==============================================================================
+# WhatsApp OTP Authentication Model
+# ==============================================================================
+class WhatsAppOTP(models.Model):
+    """
+    Stores cryptographically salted hashes of login OTPs for 11za WhatsApp verification.
+    Security protections:
+    - 6-digit dynamic OTP stored strictly as a salted SHA-256 hash.
+    - 5-minute time-to-live (expires_at).
+    - Single-use only (is_used=True once verified).
+    - Rate-limiting (max 3 verification attempts).
+    - Invalidation on new OTP generation.
+    """
+    mobile = models.CharField(max_length=20, db_index=True)
+    otp_hash = models.CharField(max_length=128)
+    otp_salt = models.CharField(max_length=32)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='whatsapp_otps')
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(db_index=True)
+    is_used = models.BooleanField(default=False, db_index=True)
+    attempts = models.PositiveIntegerField(default=0)
+    max_attempts = models.PositiveIntegerField(default=3)
+    last_sent_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['mobile', 'is_used', 'expires_at']),
+        ]
+
+    def __str__(self):
+        return f"WhatsAppOTP({self.mobile}, used={self.is_used})"

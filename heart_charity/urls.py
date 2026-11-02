@@ -22,6 +22,10 @@ urlpatterns = [
 
     path("", views.home, name="home"),
     path('login/', views.signin_view, name='login'),
+    path('signin/', views.signin_view, name='signin'),
+    path('login/send-otp/', views.send_whatsapp_login_otp, name='send_whatsapp_login_otp'),
+    path('login/verify-otp/', views.verify_whatsapp_login_otp, name='verify_whatsapp_login_otp'),
+    path('login/resend-otp/', views.resend_whatsapp_login_otp, name='resend_whatsapp_login_otp'),
     path("logout", views.logout_view, name="logout"),
     path('welcome/', views.welcome_view, name='welcome'),
     path('donations/dan-peti/', views.danpeti_page, name='danpeti_page'),
