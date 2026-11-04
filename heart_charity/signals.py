@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 from datetime import timezone
 from django.utils import timezone
 from django.db.models.signals import post_save, pre_save
@@ -160,6 +162,16 @@ def generate_receipt_on_verification(sender, instance, created, **kwargs):
         instance.verified_at = instance.verified_at or now()
         instance.save(update_fields=["receipt_id", "verified_at"])
 
+        # Automatically trigger WhatsApp receipt delivery once verified and receipt_id assigned
+        try:
+            from .receipt_service import deliver_donation_receipt_whatsapp
+            deliver_donation_receipt_whatsapp(instance)
+        except Exception as wa_err:
+            logger.error(
+                "[signals] Non-blocking error delivering WhatsApp receipt for Donation ID %s: %s",
+                instance.id, wa_err, exc_info=True
+            )
+
 @receiver(post_save, sender=DonationPaymentBox)
 def generate_danpeti_receipt(sender, instance, created, **kwargs):
     """
@@ -172,3 +184,13 @@ def generate_danpeti_receipt(sender, instance, created, **kwargs):
         instance.receipt_id = generate_receipt_id()
         instance.verified_at = instance.verified_at or now()
         instance.save(update_fields=["receipt_id", "verified_at"])
+
+        # Automatically trigger WhatsApp receipt delivery once verified and receipt_id assigned
+        try:
+            from .receipt_service import deliver_donation_receipt_whatsapp
+            deliver_donation_receipt_whatsapp(instance)
+        except Exception as wa_err:
+            logger.error(
+                "[signals] Non-blocking error delivering WhatsApp receipt for Daanpeti Payment ID %s: %s",
+                instance.id, wa_err, exc_info=True
+            )

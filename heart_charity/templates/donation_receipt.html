@@ -156,8 +156,44 @@ table {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
+.resend-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px;
+    background: #25D366;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 16px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+}
+.resend-wa-btn:hover {
+    background: #20ba5a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.resend-wa-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+.resend-wa-btn svg {
+    width: 15px;
+    height: 15px;
+    display: block;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
 @media print {
-    .buttons, .mini-btn { 
+    .buttons, .mini-btn, .resend-wa-btn { 
         display: none !important; 
     }
     body {
@@ -316,8 +352,15 @@ table {
 </table>
 </td></tr></table>
 </div>
+<form id="csrfForm" style="display:none;">{% csrf_token %}</form>
 <div class="buttons">
-    <button class="btn mini-btn" onclick="window.print()" title="Print" aria-label="Print receipt">
+    <button type="button" class="btn resend-wa-btn" id="btnResendWhatsApp" onclick="resendWhatsAppReceipt()" title="Resend WhatsApp Receipt">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.01L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.3C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67ZM8.83 7.35C8.64 7.35 8.34 7.42 8.08 7.7C7.83 7.98 7.11 8.65 7.11 10.02C7.11 11.39 8.11 12.71 8.25 12.9C8.39 13.09 10.18 15.99 13.01 17.12C15.3 18.04 15.77 17.86 16.27 17.81C16.76 17.77 17.86 17.15 18.09 16.5C18.32 15.85 18.32 15.29 18.25 15.18C18.18 15.07 18 15 17.62 14.81C17.25 14.63 15.39 13.71 15.04 13.59C14.7 13.46 14.45 13.4 14.2 13.78C13.96 14.15 13.25 14.99 13.04 15.24C12.82 15.49 12.61 15.52 12.24 15.33C11.86 15.15 10.66 14.75 9.24 13.48C8.13 12.49 7.38 11.27 7.16 10.89C6.95 10.52 7.14 10.31 7.33 10.13C7.5 9.96 7.7 9.73 7.89 9.51C8.08 9.3 8.14 9.14 8.27 8.89C8.39 8.64 8.33 8.43 8.24 8.24C8.14 8.06 7.43 6.31 7.13 5.6C6.84 4.9 6.55 5 6.33 4.99C6.13 4.98 5.89 4.98 5.65 4.98"/>
+        </svg>
+        <span id="btnResendWhatsAppText">Resend WhatsApp Receipt</span>
+    </button>
+    <button class="btn mini-btn" onclick="window.print()"  title="Print" aria-label="Print receipt">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
@@ -348,6 +391,95 @@ table {
     </button>
 </div>
 <script>
+
+function getCsrfToken() {
+    const el = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (el) return el.value;
+    const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+    return cookie ? cookie.split('=')[1] : '';
+}
+
+function resendWhatsAppReceipt() {
+    const btn = document.getElementById('btnResendWhatsApp');
+    const txt = document.getElementById('btnResendWhatsAppText');
+    if (!btn || btn.disabled) return;
+
+    if (!confirm('Resend donation receipt PDF to donor via WhatsApp?')) {
+        return;
+    }
+
+    btn.disabled = true;
+    const originalText = txt ? txt.textContent : 'Resend WhatsApp Receipt';
+    if (txt) txt.textContent = 'Sending...';
+
+    const csrfToken = getCsrfToken();
+    const url = "{% url 'send_receipt_whatsapp' donation.id %}";
+
+    fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: 'force=true&format=json'
+    })
+    .then(async response => {
+        // 1. Detect if request was redirected to login page
+        if (response.redirected && (response.url.includes('/login') || response.url.includes('signin'))) {
+            alert('Your session has expired. Please log in again to send WhatsApp receipts.');
+            window.location.href = response.url;
+            return null;
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+
+        // 2. Handle 401 Unauthorized (session expired) or 403 Forbidden
+        if (response.status === 401 || response.status === 403) {
+            let errorMsg = 'Your session has expired. Please log in again to send WhatsApp receipts.';
+            let redirectUrl = '/login/?next=' + encodeURIComponent(window.location.pathname);
+            if (isJson) {
+                try {
+                    const errData = await response.json();
+                    if (errData && errData.error) errorMsg = errData.error;
+                    if (errData && errData.login_url) redirectUrl = errData.login_url;
+                } catch (e) {}
+            }
+            alert(errorMsg);
+            window.location.href = redirectUrl;
+            return null;
+        }
+
+        // 3. Prevent parsing unexpected HTML as JSON
+        if (!isJson) {
+            throw new Error('Unexpected response received from server. Please refresh the page and try again.');
+        }
+
+        const data = await response.json();
+        return data;
+    })
+    .then(data => {
+        if (!data) return; // Already handled by session-expired redirect
+        btn.disabled = false;
+        if (txt) txt.textContent = originalText;
+        if (data.success) {
+            alert('WhatsApp receipt successfully delivered!');
+        } else {
+            alert('WhatsApp receipt delivery failed: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        if (txt) txt.textContent = originalText;
+        console.error('Error dispatching WhatsApp receipt:', err);
+        const errorMsg = err && err.message ? err.message : 'An error occurred while dispatching the WhatsApp receipt. Please check your network and try again.';
+        alert(errorMsg);
+    });
+}
+
 function shareReceipt() {
     const pdfUrl = "{% url 'download_receipt_pdf' donation.id %}";
     if (navigator.share) {

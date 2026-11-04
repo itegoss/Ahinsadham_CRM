@@ -97,7 +97,7 @@
         <select name="donor" id="donor" class="form-select select2-search" required>
             <option value="">-- Select or Type Donor --</option>
             {% for donor in donors %}
-                <option value="{{ donor.id }}">{{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }} - {{donor.pan_number}}</option>
+                <option value="{{ donor.id }}" data-donor-id="{{ donor.id }}" data-donor-name="{{ donor.first_name }}{% if donor.middle_name %} {{ donor.middle_name }}{% endif %} {{ donor.last_name }}" data-pan-number="{{ donor.pan_number|default:'' }}">{{ donor.first_name }} {% if donor.middle_name %}{{ donor.middle_name }} {% endif %}{{ donor.last_name }}{% if donor.pan_number %} - {{ donor.pan_number }}{% endif %}</option>
             {% endfor %}
         </select>
     </div>
@@ -245,13 +245,31 @@ document.addEventListener("DOMContentLoaded", function () {
     const donorSelect = $("#donor");   // jQuery for Select2
     const displayNameInput = document.getElementById("display_name");
     const lockCheckbox = document.getElementById("lock_display_name");
+    function getPureDonorName(data) {
+        if (data && data.donor_name) {
+            return data.donor_name.trim();
+        }
+        const opt = $("#donor option:selected");
+        const fromData = opt.data("donor-name");
+        if (fromData) {
+            return String(fromData).trim();
+        }
+        const text = (data && data.text) ? data.text : opt.text();
+        if (!text) return "";
+        const idx = text.lastIndexOf(" - ");
+        return (idx !== -1 ? text.substring(0, idx) : text).trim();
+    }
+
+    function applyDisplayName(data) {
+        if (!displayNameInput) return;
+        displayNameInput.value = getPureDonorName(data);
+    }
+
     donorSelect.on("select2:select", function (e) {
-        const selectedText = e.params.data.text;
-        displayNameInput.value = selectedText.trim();
+        applyDisplayName(e.params ? e.params.data : null);
     });
     donorSelect.on("change", function () {
-        const selectedText = $("#donor option:selected").text();
-        displayNameInput.value = selectedText.trim();
+        applyDisplayName(null);
     });
     lockCheckbox.addEventListener("change", function () {
         displayNameInput.readOnly = this.checked;

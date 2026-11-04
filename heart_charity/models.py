@@ -693,3 +693,46 @@ class WhatsAppOTP(models.Model):
 
     def __str__(self):
         return f"WhatsAppOTP({self.mobile}, used={self.is_used})"
+
+
+# ==============================================================================
+# WhatsApp Donation Receipt Tracking Model
+# ==============================================================================
+class DonationWhatsAppReceipt(models.Model):
+    """
+    Tracks WhatsApp donation receipt delivery status, PDF attachments, and 11za responses.
+    Prevents duplicate deliveries, maintains delivery logs, and supports controlled retries.
+    """
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SENT', 'Sent'),
+        ('FAILED', 'Failed'),
+    ]
+
+    receipt_id = models.CharField(max_length=50, unique=True, db_index=True)
+    donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, null=True, blank=True, related_name='whatsapp_receipts')
+    donation_payment_box = models.ForeignKey(DonationPaymentBox, on_delete=models.SET_NULL, null=True, blank=True, related_name='whatsapp_receipts')
+    recipient_phone = models.CharField(max_length=20, db_index=True)
+    donor_name = models.CharField(max_length=150)
+    amount = models.CharField(max_length=50)
+    donation_date = models.CharField(max_length=50)
+    gcs_path = models.CharField(max_length=255, blank=True, null=True)
+    document_url = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', db_index=True)
+    message_id = models.CharField(max_length=100, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    response_payload = models.JSONField(null=True, blank=True)
+    retry_count = models.PositiveIntegerField(default=0)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['receipt_id', 'status']),
+            models.Index(fields=['recipient_phone', 'status']),
+        ]
+
+    def __str__(self):
+        return f"DonationWhatsAppReceipt({self.receipt_id}, {self.recipient_phone}, status={self.status})"

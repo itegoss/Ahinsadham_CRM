@@ -149,9 +149,9 @@
         <input type="text"name="transaction_id"class="form-control"value="{{ payment.transaction_id }}">
     </div>
 </div>
-<div class="action-buttons d-flex justify-content-center align-items-center gap-3 mt-4" style="width: 100%;">
-    <button type="submit" class="btn btn-success">✔ Update</button>
-    <a href="{% url 'welcome' %}" class="btn btn-secondary">← Back</a>
+<div class="action-buttons" style="display: flex !important; justify-content: center !important; align-items: center !important; gap: 20px !important; margin: 40px auto 0 auto !important; width: 100% !important; text-align: center !important;">
+    <button type="submit" class="btn btn-success" style="min-width: 160px; text-align: center; text-transform: uppercase;">✔ Update</button>
+    <a href="{% url 'welcome' %}" class="btn btn-secondary" style="min-width: 160px; text-align: center; text-transform: uppercase;">← Back</a>
 </div>
 </form>
 </div>

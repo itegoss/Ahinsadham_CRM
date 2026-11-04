@@ -104,6 +104,7 @@ else:
             'PORT': os.environ.get('DATABASE_PORT'),
         }
     }
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -144,7 +145,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Session Management (Auto-logout on browser close)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 7200  # 2 hours max session inactivity
+SESSION_COOKIE_AGE = 7200
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_HTTPONLY = True
 
@@ -182,11 +183,9 @@ AWS_DEFAULT_ACL = os.environ.get("AWS_DEFAULT_ACL")
 AWS_S3_VERITY = os.environ.get("AWS_S3_VERITY", "True") == 'True'
 DEFAULT_FILE_STORAGE = os.environ.get("DEFAULT_FILE_STORAGE")
 
-
 # Razorpay Test Keys
 RAZORPAY_KEY_ID = "rzp_live_VYcozrWng2p4M0"
 RAZORPAY_KEY_SECRET = "qwL7A2iiPT3xMZvNdBFouGzF"
-
 
 STORAGES = {
     "default": {
@@ -211,7 +210,6 @@ GS_FILE_OVERWRITE = os.environ.get("GS_FILE_OVERWRITE", "False") == 'True'
 GS_IAM_SIGN_BLOB = os.environ.get("GS_IAM_SIGN_BLOB", "False") == 'True'
 GS_SA_EMAIL = os.environ.get("GS_SA_EMAIL", "319338334172-compute@developer.gserviceaccount.com")
 
-
 # ==============================================================================
 # WhatsApp Business Cloud API Configuration (11za)
 # ==============================================================================
@@ -220,3 +218,6 @@ WHATSAPP_ACCESS_TOKEN = os.environ.get("WHATSAPP_ACCESS_TOKEN", "")
 WHATSAPP_ORIGIN_WEBSITE = os.environ.get("WHATSAPP_ORIGIN_WEBSITE", "https://www.itegoss.in/")
 WHATSAPP_BUTTON_VALUE = os.environ.get("WHATSAPP_BUTTON_VALUE", "https://www.itegoss.in/")
 WHATSAPP_TEMPLATE_NAME = os.environ.get("WHATSAPP_TEMPLATE_NAME", "otp")
+WHATSAPP_RECEIPT_TEMPLATE_NAME = os.environ.get("WHATSAPP_RECEIPT_TEMPLATE_NAME", "utility_5671")
+WHATSAPP_TEMPLATE_LANGUAGE = os.environ.get("WHATSAPP_TEMPLATE_LANGUAGE", "en")
+

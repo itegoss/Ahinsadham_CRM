@@ -95,8 +95,11 @@
     <option value="">-- Select or Type Donor --</option>
     {% for donor in donors %}
         <option value="{{ donor.id }}"
+            data-donor-id="{{ donor.id }}"
+            data-donor-name="{{ donor.first_name }}{% if donor.middle_name %} {{ donor.middle_name }}{% endif %} {{ donor.last_name }}"
+            data-pan-number="{{ donor.pan_number|default:'' }}"
             {% if donation.donor_id == donor.id %}selected{% endif %}>
-            {{ donor.first_name }} {{ donor.middle_name }} {{ donor.last_name }} - {{ donor.pan_number }}
+            {{ donor.first_name }} {% if donor.middle_name %}{{ donor.middle_name }} {% endif %}{{ donor.last_name }}{% if donor.pan_number %} - {{ donor.pan_number }}{% endif %}
         </option>
     {% endfor %}
 </select>
@@ -339,9 +342,26 @@ $(document).ready(function () {
             this.value = "";
         }
     });
-    donorSelect.on("select2:select change", function (e) {
-        const text = $("#donor option:selected").text().trim();
-        displayNameInput.val(text);
+    function getPureSummaryDonorName(data) {
+        if (data && data.donor_name) {
+            return data.donor_name.trim();
+        }
+        const opt = $("#donor option:selected");
+        const fromData = opt.data("donor-name");
+        if (fromData) {
+            return String(fromData).trim();
+        }
+        const text = (data && data.text) ? data.text : opt.text();
+        if (!text) return "";
+        const idx = text.lastIndexOf(" - ");
+        return (idx !== -1 ? text.substring(0, idx) : text).trim();
+    }
+
+    donorSelect.on("select2:select", function (e) {
+        displayNameInput.val(getPureSummaryDonorName(e.params ? e.params.data : null));
+    });
+    donorSelect.on("change", function () {
+        displayNameInput.val(getPureSummaryDonorName(null));
     });
 
     lockCheckbox.on("change", function () {

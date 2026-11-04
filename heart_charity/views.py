@@ -1,4 +1,5 @@
 import logging
+import re
 logger = logging.getLogger(__name__)
 import hashlib
 import secrets
@@ -1671,7 +1672,6 @@ def assign_role(request):
                 user_role, created = UserRole.objects.get_or_create(user=user)
                 user_role.role = role
                 user_role.save()
-
                 print(f"✅ Saved: {user.username} → {role.name}")
             else:
                 print("❌ Role not found!")
@@ -1733,8 +1733,6 @@ def search_donor_volunteer(request):
                 dv.department,
                 dv.position,
                 dv.designation,
-                # dv.business_type,
-                # dv.id_type.lookup_name if dv.id_type else '',
                 dv.id_number,
                 dv.pan_number,
                 dv.age,
@@ -1814,7 +1812,6 @@ def search_donation(request):
             'is_deleted',
             'Verified By',
             'Verified at',
-
         ])
 
         for d in donations:
@@ -2337,9 +2334,19 @@ def adddonation(request):
                     lookup_name__in=["Completed", "Paid", "Success"]
                 ).values_list("id", flat=True).first()
 
+        # Clean display_name so it never retains the dropdown " - PAN" suffix
+        raw_display_name = (request.POST.get("display_name") or "").strip()
+        canonical_donor_name = f"{donor_obj.first_name or ''} {donor_obj.last_name or ''}".strip()
+        donor_pan = (donor_obj.pan_number or "").strip().upper()
+        clean_display_name = raw_display_name
+        if donor_pan:
+            clean_display_name = re.sub(rf"\s*-\s*{re.escape(donor_pan)}\s*$", "", clean_display_name, flags=re.IGNORECASE).strip()
+        if not clean_display_name:
+            clean_display_name = canonical_donor_name
+
         Donation.objects.create(
             donor=donor_obj,
-            display_name=request.POST.get("display_name"),
+            display_name=clean_display_name,
             donation_amount_declared=declared_amount,
             donation_amount_paid=paid_amount,
             donation_date=donation_date,
@@ -2400,7 +2407,17 @@ def donation_summary(request, id):
         def fk(val):
             return val if val not in ("", None) else None
         donation.donor_id = request.POST.get("donor")
-        donation.display_name = request.POST.get("display_name")
+        donor_obj = DonorVolunteer.objects.filter(id=donation.donor_id, is_deleted=False).first()
+        raw_display_name = (request.POST.get("display_name") or "").strip()
+        clean_display_name = raw_display_name
+        if donor_obj:
+            canonical_donor_name = f"{donor_obj.first_name or ''} {donor_obj.last_name or ''}".strip()
+            donor_pan = (donor_obj.pan_number or "").strip().upper()
+            if donor_pan:
+                clean_display_name = re.sub(rf"\s*-\s*{re.escape(donor_pan)}\s*$", "", clean_display_name, flags=re.IGNORECASE).strip()
+            if not clean_display_name:
+                clean_display_name = canonical_donor_name
+        donation.display_name = clean_display_name
         donation.reference_name = request.POST.get("reference_name")
         donation.donation_category_id = fk(request.POST.get("donation_category"))
         donation.donation_sub_category_id = fk(request.POST.get("donation_sub_category"))
@@ -4449,23 +4466,6 @@ def delete_donation_box(request, id):
         return redirect("donation_box_page")
 # ************* delete Data end *************
 
-def edit_box_payment(request, id):
-    payment = get_object_or_404(DonationPaymentBox, id=id)
-
-    if request.method == 'POST':
-        payment.address = request.POST.get('address')
-        payment.amount = request.POST.get('amount')
-        payment.i_witness = request.POST.get('i_witness')
-        payment.updated_by = request.user
-        payment.save()
-
-        messages.success(request, "Payment updated successfully!")
-        return redirect('danpeti_page') 
-
-    return render(request, 'BoxPayment.html', {
-        'payment': payment
-    })
-
 # donationbox eidt view------------------------------
 
 @login_required
@@ -5302,6 +5302,15 @@ def payment_verify(request):
         else:
             logger.warning("Skipping email receipt sending because recipient email_norm is empty/None.")
 
+        # Automatic WhatsApp Donation Receipt Delivery (Template: utility_5671 with PDF Attachment)
+        try:
+            from .receipt_service import deliver_donation_receipt_whatsapp
+            logger.info("Triggering automatic WhatsApp receipt delivery for Donation ID: %s", donation.id)
+            wa_result = deliver_donation_receipt_whatsapp(donation)
+            logger.info("WhatsApp receipt delivery completed for Donation ID %s: status=%s, success=%s", donation.id, wa_result.get('status'), wa_result.get('success'))
+        except Exception as wa_err:
+            logger.error("Non-blocking error delivering WhatsApp receipt for Donation ID %s: %s", donation.id, wa_err, exc_info=True)
+
     except Exception as e:
         logger.critical("Critical database save or processing failure in payment_verify view! Exception: %s. Traceback:\n%s", e, traceback.format_exc())
         return JsonResponse({
@@ -5450,10 +5459,16 @@ def donor_autocomplete_ajax(request):
             )
         results = []
         for d in donors.only('id', 'first_name', 'last_name', 'pan_number').order_by('-id')[:50]:
-            pan_suffix = f" - {d.pan_number}" if d.pan_number else ""
+            pan_val = (d.pan_number or "").strip()
+            pan_suffix = f" - {pan_val}" if pan_val else ""
+            name = f"{d.first_name} {d.last_name}".strip()
             results.append({
                 "id": d.id,
-                "text": f"{d.first_name} {d.last_name}{pan_suffix}".strip()
+                "text": f"{name}{pan_suffix}".strip(),
+                "donor_id": d.id,
+                "donor_name": name,
+                "pan_number": pan_val,
+                "display_label": f"{name}{pan_suffix}".strip(),
             })
         return JsonResponse({"results": results})
 
@@ -5472,12 +5487,17 @@ def donor_autocomplete_ajax(request):
     
     results = []
     for d in donors.only('id', 'first_name', 'middle_name', 'last_name', 'pan_number').order_by('-id')[:50]:
-        pan_suffix = f" - {d.pan_number}" if d.pan_number else ""
+        pan_val = (d.pan_number or "").strip()
+        pan_suffix = f" - {pan_val}" if pan_val else ""
         mid = f" {d.middle_name}" if d.middle_name else ""
         name = f"{d.first_name}{mid} {d.last_name}".strip()
         results.append({
             "id": d.id,
-            "text": f"{name}{pan_suffix}".strip()
+            "text": f"{name}{pan_suffix}".strip(),
+            "donor_id": d.id,
+            "donor_name": name,
+            "pan_number": pan_val,
+            "display_label": f"{name}{pan_suffix}".strip(),
         })
     return JsonResponse({"results": results})
 
@@ -6031,3 +6051,103 @@ def robots_txt(request):
     ]
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain; charset=utf-8")
 
+
+
+# ==============================================================================
+# WhatsApp Receipt On-Demand / Resend Views
+# ==============================================================================
+from functools import wraps
+
+def ajax_login_required(view_func):
+    """
+    Decorator for views that require authentication.
+    - If user is not authenticated:
+      * For AJAX / Fetch requests (X-Requested-With, Accept: application/json, or format=json):
+        Returns HTTP 401 Unauthorized with JSON payload, preventing unexpected 302 HTML redirects.
+      * For standard browser navigation:
+        Redirects (HTTP 302) to LOGIN_URL with ?next= query parameter.
+    - If user is inactive:
+      * Returns HTTP 403 Forbidden with JSON payload for AJAX, or redirects to login for browser.
+    """
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        is_ajax = (
+            request.headers.get('x-requested-with') == 'XMLHttpRequest'
+            or request.GET.get('format') == 'json'
+            or request.POST.get('format') == 'json'
+            or 'application/json' in request.headers.get('accept', '')
+        )
+        if not request.user.is_authenticated:
+            login_url = f"{reverse('login')}?next={request.path}"
+            if is_ajax:
+                return JsonResponse({
+                    "success": False,
+                    "error": "Your session has expired. Please log in again to send WhatsApp receipts.",
+                    "session_expired": True,
+                    "login_url": login_url,
+                }, status=401)
+            return redirect(login_url)
+
+        if not request.user.is_active:
+            if is_ajax:
+                return JsonResponse({
+                    "success": False,
+                    "error": "Your account is currently inactive. Please contact the administrator.",
+                }, status=403)
+            messages.error(request, "Your account is currently inactive. Please contact the administrator.")
+            return redirect('login')
+
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+@ajax_login_required
+def send_receipt_whatsapp_view(request, id):
+    """
+    Allows staff/admin to manually dispatch or retry WhatsApp receipt delivery for a Donation.
+    """
+    donation = get_object_or_404(Donation, id=id)
+    force = request.GET.get('force', 'false').lower() == 'true' or request.POST.get('force', 'false').lower() == 'true'
+    
+    from .receipt_service import deliver_donation_receipt_whatsapp
+    result = deliver_donation_receipt_whatsapp(donation, force_resend=force)
+    
+    phone = result.get('phone', 'donor')
+    if result.get("success"):
+        if result.get("already_sent"):
+            messages.info(request, f"WhatsApp receipt already delivered previously to {phone} (Message ID: {result.get('message_id')}).")
+        else:
+            messages.success(request, f"WhatsApp receipt successfully delivered to {phone}!")
+    else:
+        messages.error(request, f"WhatsApp receipt delivery failed: {result.get('error')}")
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json' or request.POST.get('format') == 'json' or 'application/json' in request.headers.get('accept', ''):
+        return JsonResponse(result)
+
+    return redirect(reverse("donation_receipt_preview", kwargs={"id": id}))
+
+
+@ajax_login_required
+def send_danpeti_receipt_whatsapp_view(request, id):
+    """
+    Allows staff/admin to manually dispatch or retry WhatsApp receipt delivery for a Daanpeti Payment.
+    """
+    payment = get_object_or_404(DonationPaymentBox, id=id, is_deleted=False)
+    force = request.GET.get('force', 'false').lower() == 'true' or request.POST.get('force', 'false').lower() == 'true'
+
+    from .receipt_service import deliver_donation_receipt_whatsapp
+    result = deliver_donation_receipt_whatsapp(payment, force_resend=force)
+
+    phone = result.get('phone', 'donor')
+    if result.get("success"):
+        if result.get("already_sent"):
+            messages.info(request, f"WhatsApp receipt already delivered previously to {phone} (Message ID: {result.get('message_id')}).")
+        else:
+            messages.success(request, f"WhatsApp receipt successfully delivered to {phone}!")
+    else:
+        messages.error(request, f"WhatsApp receipt delivery failed: {result.get('error')}")
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json' or request.POST.get('format') == 'json' or 'application/json' in request.headers.get('accept', ''):
+        return JsonResponse(result)
+
+    return redirect(reverse("donation_payment_receipt_view", kwargs={"id": id}))
